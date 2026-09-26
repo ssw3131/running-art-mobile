@@ -1,48 +1,85 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# Dependencies and local toolchains
 node_modules/
 .tools/
 .cache/
+.npm/
+
+# Local environment values (keep the empty setup example)
 .env
 .env.*
+.env*.local
 !.env.example
 
-# Expo
+# Expo and web output
 .expo/
 dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Generated native projects and build caches
+/android/
+/ios/
+/build/
+.gradle/
 .kotlin/
+.cxx/
+local.properties
 *.orig.*
+
+# App packages and profiling output
+*.apk
+*.aab
+*.apks
+*.ipa
+*.hprof
+
+# Signing keys and local EAS credentials
+/credentials.json
+*.keystore
 *.jks
 *.p8
 *.p12
+*.pfx
 *.key
+*.pem
 *.mobileprovision
 
 # Metro
 .metro-health-check*
+.metro-cache/
 
-# debug
+# Logs and test / lint output
+*.log
+logs/
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+pnpm-debug.*
+coverage/
+.nyc_output/
+/test-results/
+.eslintcache
 
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
+# TypeScript
 *.tsbuildinfo
 
-example
+# Local IDE files (keep the shared VS Code settings)
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.code-workspace
 
-# generated native folders
-/ios
-/android
+# OS files and editor temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*.tmp
+*.temp
+*~
+
+# Generated starter example
+example

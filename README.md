@@ -59,4 +59,6 @@ running-art-mobile/
 
 `.tools`, `.cache`, `node_modules`, `.expo`, `dist`, `android`, `ios`는 로컬 도구 또는 생성물입니다. 소스 공유 대상이 아니며 설치·빌드로 생성합니다. VS Code에서는 도구·캐시·의존성을 숨깁니다. 기존 `docs/` 루트의 세 문서는 이전 링크 호환용입니다.
 
+[`.gitignore`](.gitignore)는 로컬 환경 값·IDE 개인 파일·로그·캐시·테스트 결과·앱 패키지·서명키도 제외합니다. `.env.example`, VS Code 공통 설정(`settings.json`, `extensions.json`), Codex 설정·스킬과 소스·문서·잠금 파일은 공유합니다.
+
 이 폴더만으로 현재 기본 앱을 설치·빌드할 수 있습니다. 향후 알고리즘·화면 이식에는 [원본 위치 안내](docs/architecture/prototype-migration.md)의 소스가 필요합니다. 현재 코드에서 형제 폴더를 import하지 않습니다.
