@@ -2,7 +2,7 @@
 
 - 기록 생성: 2026-09-26T16:44:43+09:00 (Asia/Seoul)
 - 실행 시작: 2026-09-26T16:44:43+09:00
-- 상태: 진행 중
+- 상태: 완료
 - 기록 유형: 실행 시작 시 계획 작성
 - 요청·계획 출처: 사용자가 `running-art-mobile` 폴더를 Git에 올리도록 요청했습니다.
 
@@ -16,17 +16,28 @@
 
 ## 실행 결과
 
-진행 중입니다.
+- 기존 앱 소스·문서·설정과 이번 실행 기록을 포함한 80개 파일로 최초 커밋을 생성했습니다.
+- 기본 브랜치를 `master`에서 `main`으로 정리했습니다.
+- 커밋 작성자는 기존 형제 프로젝트의 최근 작성자와 같은 `alo-haha`로 이 저장소에만 설정했습니다.
+- 사용자가 제공한 `https://github.com/ssw3131/running-art-mobile.git`을 `origin`으로 연결했습니다.
+- 원격 저장소가 비어 있음을 확인한 뒤 `git push --set-upstream origin main`으로 업로드했습니다. `main`은 `origin/main`을 추적합니다.
+- 현재 상태와 실행 기록 목록을 갱신했습니다. 기존 파일의 내용은 보존했고 CI/CD 구성은 추가하지 않았습니다.
 
 ## 검증
 
 - 최초 공유 대상 79개 파일, 총 1,604,445바이트를 확인했습니다.
 - `.env.local`, `.tools`, `.cache`, `node_modules`, `android`, `dist`의 Git 제외를 확인했습니다.
 - 공유 대상에서 알려진 비밀키 형식과 실제 로컬 MapTiler 키의 일치 항목이 없음을 확인했습니다. 키 값은 기록하지 않았습니다.
+- `powershell -ExecutionPolicy Bypass -File .\dev.ps1 check`: TypeScript·ESLint 통과.
+- `git diff --cached --check`: 기존 계획 문서의 Markdown 줄바꿈용 끝 공백 1곳을 확인했습니다. 해당 문서는 보존하고 `git -c core.whitespace=-blank-at-eol diff --cached --check`가 통과했습니다.
+- `git ls-files`에 로컬 환경 파일·개발 도구·의존성·빌드 결과물이 포함되지 않았습니다. `.env.example`만 공유합니다.
+- `git push --set-upstream origin main`: 원격 `main` 생성 및 추적 설정 성공. 업로드 직후 `git status --short --branch`는 `main...origin/main`이며 작업 트리는 깨끗했습니다.
+- 네트워크 실행 계정과 샌드박스 계정의 소유권 차이는 해당 Git 명령에만 저장소 경로를 `safe.directory`로 지정해 처리했습니다. 전역 Git 설정은 변경하지 않았습니다.
 
 ## 남은 작업과 종료
 
-- 최초 커밋, 원격 주소 확인·연결, 인증 및 업로드 확인이 남아 있습니다.
-- 마지막 갱신: 2026-09-26T16:44:43+09:00
+- 요청한 소스 업로드를 완료했습니다. 결과 문서도 후속 커밋으로 반영합니다.
+- CI/CD·앱 배포는 기존 보류 범위이며 별도 요청이 필요합니다.
+- 실행 종료: 2026-09-26T16:47:40+09:00
 
 <!-- 실행 전 계획은 보존한다. 이후 범위 변경·재개는 날짜가 있는 절로 덧붙인다. -->
