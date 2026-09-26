@@ -1,0 +1,21 @@
+{
+  "files.exclude": {
+    "**/.tools": true,
+    "**/.cache": true,
+    "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/.tools/**": true,
+    "**/.cache/**": true,
+    "**/node_modules/**": true,
+    "**/.expo/**": true,
+    "**/android/**": true,
+    "**/ios/**": true,
+    "**/dist/**": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
+    "source.sortMembers": "explicit"
+  }
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Running Art Android 환경"
+  short_description: "Android Studio 설치·환경 연결·빌드와 기기 실행 검증"
+  default_prompt: "$running-art-android로 현재 모바일 개발 환경을 확인하고 요청한 실행 문제를 해결해 줘."
+policy:
+  allow_implicit_invocation: true

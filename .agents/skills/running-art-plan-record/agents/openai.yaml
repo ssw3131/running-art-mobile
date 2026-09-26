@@ -1,0 +1,6 @@
+interface:
+  display_name: "Running Art 실행 계획 기록"
+  short_description: "실제로 실행한 계획만 날짜별로 보존하고 검증·결과 기록"
+  default_prompt: "$running-art-plan-record로 이번에 실제 실행하는 계획을 보존하고 종료 결과까지 기록해 줘."
+policy:
+  allow_implicit_invocation: true

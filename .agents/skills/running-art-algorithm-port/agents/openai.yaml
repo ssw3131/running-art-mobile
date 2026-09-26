@@ -1,0 +1,6 @@
+interface:
+  display_name: "Running Art 알고리즘 이식"
+  short_description: "Codex v0.3 계산 의미를 보존하는 모바일 이식·검증"
+  default_prompt: "$running-art-algorithm-port로 v0.3 알고리즘을 앱 내부 모듈로 이식하고 회귀를 검증해 줘."
+policy:
+  allow_implicit_invocation: true

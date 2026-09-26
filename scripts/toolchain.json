@@ -1,0 +1,26 @@
+{
+  "node": {
+    "version": "24.21.0",
+    "url": "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip",
+    "algorithm": "SHA256",
+    "checksum": "158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541"
+  },
+  "java": {
+    "version": "17.0.20.1+1",
+    "url": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.20.1%2B1/OpenJDK17U-jdk_x64_windows_hotspot_17.0.20.1_1.zip",
+    "algorithm": "SHA256",
+    "checksum": "e53a79c3c3d86865bd7e787903884331068e71321714ffd44f145785affc7cb0"
+  },
+  "ninja": {
+    "version": "1.13.1",
+    "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.1/ninja-win.zip",
+    "algorithm": "SHA256",
+    "checksum": "26a40fa8595694dec2fad4911e62d29e10525d2133c9a4230b66397774ae25bf"
+  },
+  "androidCommandLine": {
+    "version": "19.0",
+    "url": "https://dl.google.com/android/repository/commandlinetools-win-13114758_latest.zip",
+    "algorithm": "SHA1",
+    "checksum": "54a582f3bf73e04253602f2d1c80bd5868aac115"
+  }
+}

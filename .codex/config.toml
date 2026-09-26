@@ -1,0 +1,4 @@
+# Portable project settings. Personal model, account, and permissions stay local.
+# Project config is loaded by Codex only for a trusted project.
+project_doc_max_bytes = 32768
+project_root_markers = [".git", "AGENTS.md"]
