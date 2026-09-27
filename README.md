@@ -28,7 +28,7 @@
 ## 핵심 기준
 
 - 기능·흐름: Google AI Studio 프로토타입을 기준으로 모바일에 맞게 재구현합니다.
-- 계산: Codex 프로토타입 **루트 v0.3 알고리즘**을 휴대폰 내부 모듈로 이식합니다. export 폴더의 v0.2와 혼동하지 않습니다.
+- 계산: Codex 프로토타입 **v0.2 알고리즘**을 휴대폰 내부 모듈로 이식합니다. 사용자 표현의 v2.0은 저장소의 v0.2이며, `exports/running-art-algorithm/` 소스를 사용합니다. 루트 v0.3은 테스트 버전으로 이식 기준에서 제외합니다.
 - 기술: React Native·Expo·TypeScript·Expo Router. 지도는 MapLibre React Native·MapTiler, 전경 위치는 Expo Location, 저장 기반은 Expo SQLite를 연결했습니다. 백그라운드 TaskManager는 후속 구현입니다.
 - 데이터: 전국 사용자 위치 주변의 OSM 보행 데이터를 지역 파일로 내려받고 캐시합니다. 지도 타일과 경로 계산용 그래프는 별개입니다.
 - 경로 계산에는 생성형 AI 호출이 필요하지 않습니다. Gemini 코칭·그림 생성은 현재 범위에서 제외합니다.

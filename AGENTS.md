@@ -5,7 +5,7 @@
 ## 유지할 제품 결정
 
 - 현재는 핵심 기능 테스트용 앱을 개발한다. 실제 서비스 기획·디자인은 사용자가 이후 전달하며, 지금의 화면·문구·정보 구조를 최종 서비스 설계로 확정하지 않는다.
-- 기능·사용자 흐름은 Google AI Studio 프로토타입이 기준이다. Codex 프로토타입에서는 루트 v0.3 알고리즘을 이식한다. export 폴더의 v0.2를 대신 쓰지 않는다.
+- 기능·사용자 흐름은 Google AI Studio 프로토타입이 기준이다. 알고리즘은 2026-09-27 사용자 결정에 따라 Codex v0.2(사용자 표현 v2.0)를 이식한다. `../running-art/exports/running-art-algorithm/` 소스를 사용하고 `../running-art/versions/v0.2/` 보관본과 대조한다. 루트 v0.3(사용자 표현 V3.0)은 테스트 버전이며 이식 기준에서 제외한다.
 - React Native·Expo·TypeScript·Expo Router, Android 우선이다. 경로 계산은 휴대폰 내부 모듈에서 한다. 계산 서버나 Gemini 호출을 추가하지 않는다.
 - 지도는 MapLibre React Native·MapTiler, 도로 그래프는 지역별 OSM 파일·캐시로 분리한다. OSM 노드 ID·연결성을 보존한다.
 - 위 구성 중 아직 미구현인 항목이 있다. 파일과 상태 문서를 확인하고 계획을 구현 사실로 보고하지 않는다.
@@ -42,7 +42,7 @@ Windows에서는 `powershell -ExecutionPolicy Bypass -File .\dev.ps1 check`로 �
 ## 분야별 스킬
 
 - `$running-art-android`: Android Studio·도구 설치·로컬 빌드·기기 연결 진단.
-- `$running-art-algorithm-port`: v0.3 계산 모듈 이식·회귀 검증.
+- `$running-art-algorithm-port`: v0.2 계산 모듈 이식·회귀 검증.
 - `$running-art-plan-record`: 실행 전 계획 보존과 결과·날짜 기록.
 
 사용법과 확인 방법은 [Codex 안내](docs/development/codex.md)에 있다.

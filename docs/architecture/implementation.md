@@ -44,7 +44,7 @@ OSM 식별자·연결 관계를 보존한 보행 그래프
 ## 알고리즘 경계
 
 - 입력은 보행 그래프·출발 위치·목표 거리·도형·탐색 설정, 결과는 후보의 좌표·거리·점수·통계 또는 후보 없음입니다.
-- 원본 v0.3의 `buildGraph(elements, origin, radius)`, `search(graph, options, progress)`부터 분석합니다. 모바일에는 아직 해당 API가 없습니다.
+- [v0.2 독립 소스](prototype-migration.md)의 `buildGraph(elements, origin, radius)`, `search(graph, options, progress)`부터 분석하며 `options.version`은 `'0.2'`로 명시합니다. 도형 정의도 같은 엔진에서 가져옵니다. 모바일에는 아직 해당 API가 없습니다.
 - OSM 위경도, 원점 기준 미터 좌표, 지도 배열의 순서·단위를 명시합니다. MapLibre의 GeoJSON 경계에서는 경도·위도 순서를 사용합니다.
 - 네트워크·캐시·UI·SQLite는 계산 밖에 두어 고정 그래프로 회귀를 검증합니다.
 - 큰 동기 계산을 `async`로 감싸도 UI 정지가 해결되지 않습니다. Web Worker를 그대로 이식하지 말고 실기기 측정 후 분할 실행 또는 호환되는 별도 실행 컨텍스트를 결정합니다. 진행률·중단은 실제 연산과 연결합니다.

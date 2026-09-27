@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | 제품 | [목표·결정 이유](product/overview.md) | 사용자 경험, 선택 이유, 포함·제외 범위 |
 | 구현 | [모듈·데이터 흐름](architecture/implementation.md) | 현재 코드와 앞으로 만들 구조 |
-| 구현 | [프로토타입 이식](architecture/prototype-migration.md) | 기능 기준, v0.3 출처, 이식 주의점 |
+| 구현 | [프로토타입 이식](architecture/prototype-migration.md) | 기능 기준, v0.2 출처, 이식 주의점 |
 | 개발 | [Android 개발 환경 — 중심 안내](development/android-studio.md) | 도구·버전·경로, 새 PC 최초 설정, 매일 Studio 실행·종료, 확인 기준 |
 | 개발 | [Windows — CLI 보조 안내](development/windows-android.md) | 설치 스크립트의 범위·CLI 명령·환경 변수·기기 관리 |
 | 개발 | [Codex 사용법](development/codex.md) | 지침·스킬·자동 기록 |

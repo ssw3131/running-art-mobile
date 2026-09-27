@@ -21,7 +21,7 @@ Codex에 **running-art-mobile 폴더 자체**를 프로젝트로 추가하고 �
 | 스킬 | 적용 시점 |
 | --- | --- |
 | `$running-art-android` | Android Studio·Windows Android 설치·빌드·기기 연결·실행 문제 |
-| `$running-art-algorithm-port` | Codex v0.3 계산 모듈의 실제 이식·회귀 검증 |
+| `$running-art-algorithm-port` | Codex v0.2 계산 모듈의 실제 이식·회귀 검증 |
 | `$running-art-plan-record` | 계획에 따른 실행 시작과 종료, 날짜별 계획·결과 기록 |
 
 세 스킬 모두 자동 선택을 허용합니다. 실행 기록은 AGENTS.md에도 작업 규칙으로 두어 별도 요청 없이 적용하게 합니다. 목록에 보이지 않으면 프로젝트를 다시 열거나 새 작업을 시작하고, 필요하면 AGENTS.md에 연결된 SKILL.md를 직접 읽도록 요청합니다.
