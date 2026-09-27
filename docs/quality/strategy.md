@@ -9,14 +9,16 @@
 | TypeScript·화면 | `powershell -ExecutionPolicy Bypass -File .\dev.ps1 check` | 타입·ESLint |
 | 위치·권한·지도 설정 | `npm run test:location` | Node 내장 테스트, 권한 실패·취소·구독 해제·키 설정 회귀 검사 |
 | SQLite 저장소 | `npm run test:storage` | Node 내장 실제 SQLite로 마이그레이션·롤백·CRUD·파일 재열기·연결 재시도 검사 |
-| 전체 기능 로직 | `npm test` | 현재 위치·지도 설정·저장소 테스트 전체 실행 |
+| 코스 계산 | `npm run test:route-engine` | 원본 해시·전체 결과 회귀·연결·거리·중복·크기·취소·늦은 결과 차단·GeoJSON 좌표·기기 비교 검사 |
+| 지도 중심·주변 도로 | `node --test tests/route-center-road.test.mjs` | 지도/GPS 경쟁·요청 중심 보존·캐시 범위/만료·손상/시간 초과·다운로드 취소·시간 분리 |
+| 전체 기능 로직 | `npm test` | 현재 위치·지도 설정·저장소·코스 계산 테스트 전체 실행 |
 | Expo 의존성·설정 | `powershell -ExecutionPolicy Bypass -File .\dev.ps1 doctor` | 호환성 진단, 네트워크 필요 |
 | 네이티브 설정·패키지 | `powershell -ExecutionPolicy Bypass -File .\dev.ps1 build` | prebuild·개발용 APK |
 | 화면·권한·네이티브 동작 | `powershell -ExecutionPolicy Bypass -File .\dev.ps1 android` | 기기에서 실행 |
 | Studio 개발 환경 | [Studio 안내](../development/android-studio.md)의 동기화 → Run → Metro 연결 | CLI 빌드와 별도로 IDE·에뮬레이터 동작 확인 |
 | 문서·Codex 지침·스킬 | 링크·경로·명령·TOML/YAML·실행 이력 확인 | 앱 빌드로 문서 정확성을 대신하지 않음 |
 
-직접 npm 명령을 실행할 때는 `scripts/env.ps1`을 현재 셸에 적용합니다. 웹 확인은 Android 검증을 대신하지 않습니다. 지도·위치 결과는 [지도 검증 기록](map-location-verification.md), 저장소 결과는 [저장소 검증 기록](storage-verification.md)에 있습니다.
+직접 npm 명령을 실행할 때는 `scripts/env.ps1`을 현재 셸에 적용합니다. 웹 확인은 Android 검증을 대신하지 않습니다. 실제 결과는 [지도 검증](map-location-verification.md)·[저장소 검증](storage-verification.md)·[코스 계산 검증](route-engine-verification.md)에 있습니다.
 
 현재 Jest·React Native Testing Library·Maestro·GitHub Actions는 없습니다. `test:ci`, `verify`, `android:preview`, `test:e2e`는 [CI/CD 계획](../planning/ci-cd-validation-plan.md)의 예정 명령입니다.
 

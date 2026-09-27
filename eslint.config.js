@@ -3,5 +3,6 @@ const expoConfig = require('eslint-config-expo/flat');
 
 module.exports = defineConfig([
   expoConfig,
-  { ignores: ['dist/*', '.tools/**', '.cache/**', 'android/**', 'ios/**'] },
+  // Immutable upstream fixtures are hash-verified by the route regression tests.
+  { ignores: ['dist/*', '.tools/**', '.cache/**', 'android/**', 'ios/**', 'tests/reference/**'] },
 ]);

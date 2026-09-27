@@ -1,13 +1,19 @@
 import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from '@maplibre/maplibre-react-native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { Position } from '@/modules/location/locate';
+import type { MapSurfaceProps as Props } from './types';
+import { centerFromMap } from './coordinates';
 
-type Props = { styleUrl: string; position: Position | null };
+const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
-function MapAttempt({ styleUrl, position, onRetry }: Props & { onRetry(): void }) {
+function MapAttempt({ styleUrl, position, routeOverlay, origin, syntheticRoads, centerSelection, onRetry }: Props & { onRetry(): void }) {
   const camera = useRef<CameraRef>(null);
+  const selection = useRef(centerSelection);
+  useLayoutEffect(() => { selection.current = centerSelection; }, [centerSelection]);
+  const userMoving = useRef(false);
+  const selecting = !!centerSelection;
+  const target = centerSelection?.target;
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
   useEffect(() => {
@@ -17,28 +23,76 @@ function MapAttempt({ styleUrl, position, onRetry }: Props & { onRetry(): void }
   }, [status]);
 
   useEffect(() => {
-    if (position && status === 'ready') {
+    if (position && status === 'ready' && !selecting) {
       camera.current?.easeTo({
         center: [position.longitude, position.latitude],
         zoom: position.accuracy !== null && position.accuracy > 500 ? 12 : 16,
         duration: 600,
       });
     }
-  }, [position, status]);
+  }, [position, status, selecting]);
+
+  useEffect(() => {
+    selection.current?.onReady(status === 'ready');
+    return () => selection.current?.onReady(false);
+  }, [status]);
+
+  useEffect(() => {
+    if (status === 'ready' && target) camera.current?.jumpTo({ center: [target.center.lng, target.center.lat], zoom: 13 });
+  }, [status, target]);
+
+  useEffect(() => {
+    if (status === 'ready' && routeOverlay && !selecting) {
+      camera.current?.fitBounds(routeOverlay.bounds, { padding: { top: 28, bottom: 28, left: 28, right: 28 }, duration: 400 });
+    }
+  }, [routeOverlay, status, selecting]);
 
   return (
     <View style={styles.fill}>
       <Map
         testID="native-map"
         style={styles.fill}
-        mapStyle={styleUrl}
+        mapStyle={syntheticRoads ? syntheticStyle : styleUrl}
         attribution
         logo={false}
         compass
+        onRegionWillChange={(event) => {
+          if (event.nativeEvent.userInteraction && !userMoving.current) {
+            userMoving.current = true;
+            selection.current?.onMoveStart();
+          }
+        }}
+        onRegionIsChanging={(event) => {
+          if (event.nativeEvent.userInteraction && !userMoving.current) {
+            userMoving.current = true;
+            selection.current?.onMoveStart();
+          }
+        }}
+        onRegionDidChange={(event) => {
+          if (!userMoving.current && !event.nativeEvent.userInteraction) return;
+          userMoving.current = false;
+          const center = centerFromMap(event.nativeEvent.center);
+          selection.current?.onMoveEnd(center);
+        }}
         onDidFinishLoadingMap={() => setStatus('ready')}
         onDidFailLoadingMap={() => setStatus('error')}
       >
-        <Camera ref={camera} initialViewState={{ center: [127.8, 36.3], zoom: 6 }} />
+        <Camera ref={camera} initialViewState={{ center: origin ? [origin.lng, origin.lat] : [127.8, 36.3], zoom: origin ? 13 : 6 }} />
+        {syntheticRoads && <GeoJSONSource id="synthetic-roads" data={syntheticRoads}>
+          <Layer id="synthetic-road-lines" type="line" paint={{ 'line-color': '#BFCAC1', 'line-width': 1.5 }} />
+        </GeoJSONSource>}
+        {routeOverlay && <>
+          <GeoJSONSource id="route-target" data={routeOverlay.target}>
+            <Layer id="target-line" type="line" paint={{ 'line-color': '#B66A31', 'line-width': 2.5, 'line-dasharray': [3, 2] }} />
+          </GeoJSONSource>
+          <GeoJSONSource id="selected-route" data={routeOverlay.route}>
+            <Layer id="route-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': 7 }} />
+            <Layer id="route-line" type="line" paint={{ 'line-color': '#23694C', 'line-width': 4 }} />
+          </GeoJSONSource>
+          <GeoJSONSource id="route-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: routeOverlay.start } }}>
+            <Layer id="route-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#183C32', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} />
+          </GeoJSONSource>
+        </>}
         {position && (
           <GeoJSONSource id="current-position" data={{
             type: 'Feature',

@@ -1,0 +1,11 @@
+{
+  "name": "running-art-route-algorithm",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Standalone shape-matching walking-road route search",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "demo": "node cli.js examples/grid.json output/demo.json"
+  }
+}

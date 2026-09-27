@@ -48,7 +48,7 @@ Android Studio 설치, Node 사용자 Path 등록, Studio의 SDK·Gradle JDK·�
 
 Android Studio Run과 CLI 빌드는 동시에 실행하지 않습니다. `doctor`는 npx로 진단 도구를 가져오며 현재 별도 버전 고정이 없습니다. `web`은 Android 네이티브 동작을 검증하지 않습니다.
 
-CLI `build` 결과는 `android/app/build/outputs/apk/debug/app-debug.apk`, Studio Run 결과는 `android/app/build/intermediates/apk/debug/app-debug.apk`에 있을 수 있습니다. Studio의 Build·설치 결과로 실제 실행한 빌드를 확인합니다. 현재 앱 ID는 `com.runningart.mobile.dev`이며 APK는 Metro가 필요한 개발용입니다.
+CLI `build` 결과는 `android/app/build/outputs/apk/debug/app-debug.apk`, Studio Run 결과는 `android/app/build/intermediates/apk/debug/app-debug.apk`에 있을 수 있습니다. Studio의 Build·설치 결과로 실제 실행한 빌드를 확인합니다. 현재 앱 ID는 `com.runningart.mobile.dev`이며 이 명령들의 기본 APK는 Metro가 필요한 개발용입니다. PC 없이 실행할 테스트 APK는 [독립 실행 빌드·설치](android-test-apk.md)를 따릅니다.
 
 ## CLI 기기 사용
 
@@ -80,7 +80,7 @@ powershell -ExecutionPolicy Bypass -File .\dev.ps1 devices
 powershell -ExecutionPolicy Bypass -File .\dev.ps1 android
 ```
 
-`devices` 결과가 `device`여야 합니다. `unauthorized`면 휴대폰의 승인 화면을 확인합니다. 목록이 비어 있으면 케이블·제조사 USB 드라이버를 확인합니다. 실제 휴대폰에는 에뮬레이터 가속이 필요하지 않습니다. 이 절차의 실제 휴대폰 검증은 아직 수행하지 않았습니다.
+`devices` 결과가 `device`여야 합니다. `unauthorized`면 휴대폰의 승인 화면을 확인합니다. 목록이 비어 있으면 케이블·제조사 USB 드라이버를 확인합니다. 실제 휴대폰에는 에뮬레이터 가속이 필요하지 않습니다. 2026-09-27 SM-S942N에서 개발 APK와 독립 실행 테스트 APK를 확인했으며 최신 결과는 [현재 상태](../handoff/status.md)를 따릅니다.
 
 ## 환경 변수와 유지 관리
 

@@ -2,7 +2,9 @@
 
 사용자가 선택하거나 직접 그린 도형을 닮은 **실제 보행 도로 코스**를 찾고, 달린 궤적과 기록을 남기는 모바일 앱입니다. Android를 먼저 개발·배포하고 이후 iOS로 확장합니다.
 
-**현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 현재 위치·권한 처리와 SQLite 저장 기반을 구현했습니다. 홈의 **저장소 테스트**에서 메모 저장·조회·수정·삭제와 앱 재실행 후 복원을 확인할 수 있습니다. 최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [지도·현재 위치 테스트](docs/development/map-location.md)와 [SQLite 저장소 테스트](docs/development/storage.md)를 참고하세요. 알고리즘·러닝 추적·실제 코스 및 러닝 기록 저장은 미구현이며 CI/CD는 계획만 저장했습니다.
+**현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 위치·SQLite 저장 기반과 **v0.2 코스 계산**을 구현했습니다. 홈의 **코스 계산 테스트 → 서울 OSM**에서 현재 위치나 지도 이동으로 중심을 정하고 주변 도로로 계산합니다. 결과에 **도로 조회·코스 계산·전체 시간**을 표시합니다. [지도 중심 조회와 메모리 캐시](docs/development/route-center.md), [결과를 보존하는 성능 개선](docs/development/route-engine-performance.md)을 적용했습니다. [설치용 테스트 APK](docs/development/android-test-apk.md)는 PC 개발 서버 없이 실행합니다.
+
+최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [코스 계산](docs/development/route-engine.md)·[지도·현재 위치](docs/development/map-location.md)·[SQLite 저장소](docs/development/storage.md)를 참고하세요. 주변 도로 API 조회·메모리 캐시는 구현했고 영구 지역 파일·오프라인 캐시, 러닝 추적, 실제 코스·러닝 기록 저장은 후속 단계입니다. 이번 지도 중심 변경은 사용자 요청에 따라 에뮬레이터에서 검증하며 휴대폰 설치는 나중에 진행합니다. CI/CD는 계획만 저장했습니다.
 
 ## 처음 열었다면
 
@@ -23,7 +25,7 @@
 3. 상단의 **app·Pixel 7 → ▶ Run**으로 빌드·설치합니다. 개발 서버 선택 화면이 나오면 Metro 터미널에서 **a**를 누릅니다.
 4. **시작 화면 → 개발 환경 확인 → 실행 환경 → Android 뒤로 가기**를 확인합니다.
 
-현재 앱은 Metro가 필요한 **Expo development build**입니다. 도구 버전·설정 위치·수정 반영·종료 방법은 [중심 안내](docs/development/android-studio.md), 설치 스크립트와 CLI 명령은 [Windows 보조 안내](docs/development/windows-android.md)에 있습니다. 다른 PC의 최초 전체 설치와 실제 휴대폰은 아직 검증하지 않았습니다.
+위 실행 순서의 기본 앱은 Metro가 필요한 **Expo development build**입니다. 휴대폰에 설치한 독립 실행 테스트 APK는 [별도 빌드·설치 안내](docs/development/android-test-apk.md)를 따릅니다. 도구 버전·설정 위치·수정 반영·종료 방법은 [중심 안내](docs/development/android-studio.md), 설치 스크립트와 CLI 명령은 [Windows 보조 안내](docs/development/windows-android.md)에 있습니다. 다른 PC의 최초 전체 설치는 미검증입니다. 실제 휴대폰은 개발용·릴리스 APK의 코스 계산·지도 결과·입력·취소를 확인했으며 GPS·저장소·야외 사용은 별도 검증이 필요합니다.
 
 ## 핵심 기준
 
@@ -50,7 +52,8 @@ running-art-mobile/
 │  ├─ handoff/              현재 상태·다음 담당자 안내
 │  └─ history/executed-plans/ 실제 실행한 계획과 결과
 ├─ src/app/                 현재 구현된 화면과 라우팅
-├─ assets/                  앱 이미지·아이콘
+├─ assets/                  앱 이미지·아이콘·고정 도로 표본
+├─ tests/                   회귀 검사·v0.2 참조 원본·기준 결과
 ├─ scripts/                 설치·환경·에뮬레이터 도구
 ├─ dev.ps1                  로컬 개발 명령 진입점
 ├─ app.json                 현재 Expo 설정
@@ -61,4 +64,4 @@ running-art-mobile/
 
 [`.gitignore`](.gitignore)는 로컬 환경 값·IDE 개인 파일·로그·캐시·테스트 결과·앱 패키지·서명키도 제외합니다. `.env.example`, VS Code 공통 설정(`settings.json`, `extensions.json`), Codex 설정·스킬과 소스·문서·잠금 파일은 공유합니다.
 
-이 폴더만으로 현재 기본 앱을 설치·빌드할 수 있습니다. 향후 알고리즘·화면 이식에는 [원본 위치 안내](docs/architecture/prototype-migration.md)의 소스가 필요합니다. 현재 코드에서 형제 폴더를 import하지 않습니다.
+이 폴더만으로 현재 앱을 설치·빌드하고 고정 데이터 회귀를 실행할 수 있습니다. v0.2 참조 소스는 `tests/reference/v02/`에 보존했으며 앱에서 형제 폴더를 import하지 않습니다. 표본을 다시 추출하거나 후속 화면을 이식할 때는 [원본 위치 안내](docs/architecture/prototype-migration.md)를 따릅니다.
