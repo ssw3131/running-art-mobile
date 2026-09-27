@@ -1,6 +1,6 @@
 # 지도 중심·주변 도로 조회 검증
 
-검증일: 2026-09-27 (Asia/Seoul). 사용자 요청 범위는 에뮬레이터 검증과 설치용 APK 생성이다. 실제 휴대폰 설치·GPS 검증은 수행하지 않는다.
+검증일: 2026-09-27 (Asia/Seoul). 최초 요청 범위는 에뮬레이터 검증과 설치용 APK 생성이며, 20:18 KST 후속 요청으로 휴대폰 업데이트·독립 실행을 추가 확인했다. 실제 휴대폰 GPS 기준 조회·계산은 미검증이다.
 
 ## 자동 검사
 
@@ -43,6 +43,22 @@ Pixel 7 x86_64 / Android 16.1 에뮬레이터, Metro 8081의 `--no-dev --minify`
 
 최종 로컬 증거: `.cache/map-center-qa/apk-verification.json`, `release-universal.log`, `release-home`, `release-location`, `release-panned`, `release-result`, `release-selected`, `release-delivery`, `release-final-metrics.log`. 빌드 파일과 증거는 Git에서 제외한다.
 
+## 후속 휴대폰 설치·기본 실행 — 2026-09-27 20:18 KST
+
+- 연결된 SM-S942N에 위 전달 APK를 `adb -s SERIAL install -r --no-streaming build/install/running-art-0.1.0-20260927.apk`로 업데이트했으며 `Success`를 확인했다. 새 빌드·앱 삭제·데이터 초기화는 수행하지 않았다.
+- 패키지·버전은 그대로이며 최종 업데이트 시각은 20:18:05, 최초 설치 시각은 16:29:39로 유지됐다. 데이터 경로도 `/data/user/0/com.runningart.mobile.dev` 그대로다. 저장소 CRUD는 재검증하지 않았다.
+- 휴대폰에 설치된 `base.apk`의 SHA-256은 위 전달 파일과 일치한다. `adb reverse --list`는 비어 있었다.
+- 앱을 강제 종료한 뒤 `.MainActivity`를 새로 실행해 `Status: ok`를 확인했다. UI 계층과 화면 이미지에서 개발 서버 선택 화면 없이 홈·코스 계산 테스트 진입 버튼이 표시됐다. 휴대폰은 홈으로 남겼다.
+- 로컬 증거: `.cache/map-center-qa/phone-updated-home.xml`·`.png`. 이번 후속은 설치·기본 실행 확인이며 실제 GPS·동적 도로 조회·계산·반복 성능 검증은 수행하지 않았다.
+
+## GitHub 사전 릴리스 — 2026-09-27 21:23 KST
+
+- [v0.1.0-test.20260927](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-test.20260927)을 공개했다. 위에서 검증한 APK를 그대로 사용했고 앱 코드를 바꾸거나 새로 빌드하지 않았다.
+- 태그가 소스 커밋 `076d3688ffac4ad56efc6c4a7986f2f223eb6e5a`를 가리키고 공개된 사전 릴리스인지 확인했다.
+- APK(95,414,459바이트), `.apk.sha256`(98바이트), `INSTALL-ko.txt` 한글 안내(1,239바이트)를 업로드했다. 안내에는 후속 휴대폰 설치·실행 완료 사실을 반영했다.
+- 인증 없는 공개 다운로드로 세 파일 모두 HTTP 성공·크기·원본 SHA-256 일치를 확인했다. APK SHA-256은 위 에뮬레이터·휴대폰 설치본과 같다.
+- 배포 증거는 Git 제외 경로 `.cache/release-20260927/public-verification.json`에 있다. 이번 변경은 배포·문서 작업이므로 기존 앱 테스트 결과를 유지한다.
+
 ## 남은 범위
 
-사용자가 이번 휴대폰 설치·검증을 제외했다. 실제 휴대폰 GPS, 서울 밖 도로 공급자 성공 범위, 오프라인 지역 파일·영구 캐시, 장시간·배터리·야외 사용, 스토어 서명·배포는 이번 완료 범위가 아니다.
+휴대폰 업데이트 설치·독립 실행은 후속 요청으로 완료했다. 실제 휴대폰 GPS 기준 조회·계산, 서울 밖 도로 공급자 성공 범위, 오프라인 지역 파일·영구 캐시, 장시간·배터리·야외 사용, 스토어 서명·배포는 이번 완료 범위가 아니다.

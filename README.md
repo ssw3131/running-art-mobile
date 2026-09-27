@@ -4,7 +4,13 @@
 
 **현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 위치·SQLite 저장 기반과 **v0.2 코스 계산**을 구현했습니다. 홈의 **코스 계산 테스트 → 서울 OSM**에서 현재 위치나 지도 이동으로 중심을 정하고 주변 도로로 계산합니다. 결과에 **도로 조회·코스 계산·전체 시간**을 표시합니다. [지도 중심 조회와 메모리 캐시](docs/development/route-center.md), [결과를 보존하는 성능 개선](docs/development/route-engine-performance.md)을 적용했습니다. [설치용 테스트 APK](docs/development/android-test-apk.md)는 PC 개발 서버 없이 실행합니다.
 
-최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [코스 계산](docs/development/route-engine.md)·[지도·현재 위치](docs/development/map-location.md)·[SQLite 저장소](docs/development/storage.md)를 참고하세요. 주변 도로 API 조회·메모리 캐시는 구현했고 영구 지역 파일·오프라인 캐시, 러닝 추적, 실제 코스·러닝 기록 저장은 후속 단계입니다. 이번 지도 중심 변경은 사용자 요청에 따라 에뮬레이터에서 검증하며 휴대폰 설치는 나중에 진행합니다. CI/CD는 계획만 저장했습니다.
+최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [코스 계산](docs/development/route-engine.md)·[지도·현재 위치](docs/development/map-location.md)·[SQLite 저장소](docs/development/storage.md)를 참고하세요. 주변 도로 API 조회·메모리 캐시는 구현했고 영구 지역 파일·오프라인 캐시, 러닝 추적, 실제 코스·러닝 기록 저장은 후속 단계입니다. 이번 지도 중심 변경은 에뮬레이터에서 검증했고, 후속 사용자 요청으로 휴대폰에도 업데이트 설치와 독립 실행을 확인했습니다. 실제 휴대폰 GPS 기준 조회·계산 검증은 후속입니다. CI/CD는 계획만 저장했습니다.
+
+## 휴대폰 테스트 APK 다운로드
+
+[APK 바로 다운로드](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-test.20260927/running-art-0.1.0-20260927.apk) · [테스트 릴리스·설치 안내·SHA-256](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-test.20260927)
+
+앱 버전 0.1.0, Android 7.0 이상, arm64 휴대폰·x86_64 에뮬레이터 공용(약 95.4MB)입니다. 휴대폰에서 APK를 내려받아 열면 설치할 수 있습니다. 기존 테스트 앱은 삭제하지 않고 업데이트합니다. PC 개발 서버는 필요 없고 지도·새 도로 조회에는 인터넷이 필요합니다.
 
 ## 처음 열었다면
 
