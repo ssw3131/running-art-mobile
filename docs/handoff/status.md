@@ -8,7 +8,15 @@
 
 지도 화면·MapLibre/MapTiler 연결·전경 현재 위치 확인·권한 거부 및 설정 이동·시간 초과·요청 취소를 구현했습니다. 타입·린트, 위치·설정 테스트 17개, Expo 진단 21개, Android JS 번들·개발용 APK 빌드·서명 검증이 통과했습니다. Pixel 7 에뮬레이터에서 지도·지명, 권한 거부와 설정 이동, 설정 허용 후 복귀, 모의 GPS 위치 점·지도 이동, 기기 위치 꺼짐 안내를 확인했습니다. 실제 휴대폰 GPS는 미검증입니다. 사용자 로컬 MapTiler 키 연결은 HTTP 200을 확인했습니다. 자세한 내용은 [사용법](../development/map-location.md), [검증 기록](../quality/map-location-verification.md), [실행 계획](../history/executed-plans/2026-09-26-1518-map-location.md)에 있습니다.
 
-현재 Android 지도는 에뮬레이터 OpenGL의 글자 누락 문제를 해결한 Vulkan 설정입니다. `prebuild:android`에 `--no-clean`을 적용했고 기존 IDE/JDK/SDK 로컬 설정 보존을 확인했습니다. 최종 APK는 `android/app/build/outputs/apk/debug/app-debug.apk`이며 검증용 Metro 8082에 연결했습니다. 아래 Studio 검증 이력은 이전 환경 단계의 결과이며 이번 설정 복원 후 Studio UI Sync·Run을 다시 확인한 것은 아닙니다.
+현재 Android 지도는 에뮬레이터 OpenGL의 글자 누락 문제를 해결한 Vulkan 설정입니다. `prebuild:android`에 `--no-clean`을 적용했고 지도 단계에서 기존 IDE/JDK/SDK 로컬 설정 보존을 확인했습니다. 지도 단계는 Metro 8082로 검증했으며 최신 SQLite APK·검증 연결은 아래 저장소 항목을 따릅니다. 아래 Studio 검증 이력은 이전 환경 단계의 결과이며 이번 설정 복원 후 Studio UI Sync·Run을 다시 확인한 것은 아닙니다.
+
+## SQLite 저장 기반
+
+Expo SQLite `~57.0.3`으로 앱 전용 `running-art.db`를 추가했습니다. 지연 초기화·동시 요청 공유·스키마 버전 1·트랜잭션 마이그레이션·실패 롤백·미래 버전 보호·재시도를 구현했습니다. 홈의 **저장소 테스트**에서 테스트 메모를 저장·조회·수정·삭제할 수 있습니다. 테스트 메모만 저장하며 코스·러닝 기록 스키마는 아직 구현하지 않았습니다.
+
+전체 로직 테스트 29개(저장소 12개 + 기존 위치·설정 17개), 타입·린트, Expo 진단 21개, Android JS 번들·개발용 APK 빌드·서명 검증이 통과했습니다. Pixel 7 Android 16 에뮬레이터에서 빈 입력·CRUD·삭제 취소를 확인했고, 프로세스 강제 종료·새 PID 재실행 후 수정 내용과 삭제 결과가 유지됐습니다. 실제 Android DB를 읽어 `user_version=1`, `integrity_check=ok`, 수정한 메모 1개를 확인했습니다. 기존 지도·모의 GPS 현재 위치도 정상입니다. 실제 휴대폰·iOS는 미검증입니다.
+
+최신 APK는 `android/app/build/outputs/apk/debug/app-debug.apk`, 검증용 Metro는 **8083**입니다. SQLite 네이티브 모듈 추가 전 APK를 사용하는 경우 다시 빌드·설치해야 합니다. 사용법·DB 위치는 [저장소 안내](../development/storage.md), 증거·제한은 [저장소 검증](../quality/storage-verification.md), 계획 원문·실행 결과는 [실행 기록](../history/executed-plans/2026-09-26-1745-sqlite-storage.md)에 있습니다.
 
 ## 완료된 개발 환경
 
@@ -44,11 +52,11 @@
 
 ## 미구현·미검증과 보류 범위
 
-- SQLite·경로 알고리즘·러닝 추적·기록은 미구현입니다. 지도·전경 위치의 검증 상태는 위 현재 작업 항목을 확인합니다.
+- SQLite 저장 기반·테스트 메모는 구현했습니다. 경로 알고리즘·러닝 추적·실제 코스 및 러닝 기록 저장은 미구현입니다. 지도·전경 위치·저장소의 검증 상태는 위 현재 작업 항목을 확인합니다.
 - 다른 PC의 최초 전체 설치, 실제 휴대폰, iOS, 배포용 빌드는 미검증입니다.
 - CI/CD는 **계획 저장·실행 보류**입니다. GitHub 원격 연결과 소스 업로드는 완료했으며 워크플로·Jest·Maestro·preview 서명·배포는 미구성입니다.
 - 아이콘·스플래시는 Expo 기본 자산입니다.
-- MapTiler 지도 키는 사용자 로컬 `.env.local`에 설정되어 있으며 Git 공유 대상이 아닙니다. 새 PC에서는 별도 설정합니다. 도로 데이터 주소·정식 앱 ID·서명·저장 스키마는 해당 구현 단계에서 정합니다.
+- MapTiler 지도 키는 사용자 로컬 `.env.local`에 설정되어 있으며 Git 공유 대상이 아닙니다. 새 PC에서는 별도 설정합니다. 도로 데이터 주소·정식 앱 ID·서명·코스 및 러닝 저장 스키마는 해당 구현 단계에서 정합니다.
 - 실제 이식에는 [프로토타입 출처](../architecture/prototype-migration.md)의 원본이 필요합니다. 원본 전체를 모바일 폴더에 복제하지 않았습니다.
 - 의존성 취약점 수치는 [환경 검증 기록](../quality/setup-verification.md)의 측정일 기준입니다.
 

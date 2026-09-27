@@ -2,7 +2,7 @@
 
 사용자가 선택하거나 직접 그린 도형을 닮은 **실제 보행 도로 코스**를 찾고, 달린 궤적과 기록을 남기는 모바일 앱입니다. Android를 먼저 개발·배포하고 이후 iOS로 확장합니다.
 
-**현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 현재 위치·권한 처리를 구현했고 Android 빌드와 에뮬레이터 확인을 마쳤습니다. 최신 검증 상태는 [현재 상태](docs/handoff/status.md), 키 설정·기능 확인은 [지도·현재 위치 테스트](docs/development/map-location.md)를 참고하세요. 저장소·알고리즘·러닝 추적은 미구현이며 CI/CD는 계획만 저장했습니다.
+**현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 현재 위치·권한 처리와 SQLite 저장 기반을 구현했습니다. 홈의 **저장소 테스트**에서 메모 저장·조회·수정·삭제와 앱 재실행 후 복원을 확인할 수 있습니다. 최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [지도·현재 위치 테스트](docs/development/map-location.md)와 [SQLite 저장소 테스트](docs/development/storage.md)를 참고하세요. 알고리즘·러닝 추적·실제 코스 및 러닝 기록 저장은 미구현이며 CI/CD는 계획만 저장했습니다.
 
 ## 처음 열었다면
 
@@ -29,7 +29,7 @@
 
 - 기능·흐름: Google AI Studio 프로토타입을 기준으로 모바일에 맞게 재구현합니다.
 - 계산: Codex 프로토타입 **루트 v0.3 알고리즘**을 휴대폰 내부 모듈로 이식합니다. export 폴더의 v0.2와 혼동하지 않습니다.
-- 기술: React Native·Expo·TypeScript·Expo Router. 지도는 MapLibre React Native·MapTiler, 전경 위치는 Expo Location을 연결했습니다. 백그라운드 TaskManager와 SQLite는 후속 구현입니다.
+- 기술: React Native·Expo·TypeScript·Expo Router. 지도는 MapLibre React Native·MapTiler, 전경 위치는 Expo Location, 저장 기반은 Expo SQLite를 연결했습니다. 백그라운드 TaskManager는 후속 구현입니다.
 - 데이터: 전국 사용자 위치 주변의 OSM 보행 데이터를 지역 파일로 내려받고 캐시합니다. 지도 타일과 경로 계산용 그래프는 별개입니다.
 - 경로 계산에는 생성형 AI 호출이 필요하지 않습니다. Gemini 코칭·그림 생성은 현재 범위에서 제외합니다.
 

@@ -2,12 +2,13 @@
 
 ## 현재와 예정 구조
 
-현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 `map.tsx`·`environment.tsx`로 이동합니다. 지도·전경 위치는 아래 모듈로 분리했습니다. 나머지 분야는 실제 구현 시 생성합니다. 화면은 핵심 기능 테스트용이며 이후 서비스 기획·디자인에 맞춰 변경합니다.
+현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 `map.tsx`·`storage.tsx`·`environment.tsx`로 이동합니다. 지도·전경 위치·저장소는 아래 모듈로 분리했습니다. 나머지 분야는 실제 구현 시 생성합니다. 화면은 핵심 기능 테스트용이며 이후 서비스 기획·디자인에 맞춰 변경합니다.
 
 - `src/modules/map/`: MapLibre 네이티브 지도·MapTiler 스타일 URL·현재 위치 점·카메라·지도 실패 처리. 웹은 Android 확인 안내를 표시합니다.
 - `src/modules/location/`: UI 독립적인 권한·위치 획득·취소 로직과 Expo 어댑터. 위치는 한 번 얻은 뒤 구독을 해제합니다.
 - `src/features/map/use-current-location.ts`: 화면 포커스·앱 전경 수명과 위치 요청 상태 연결, 설정 복귀 재확인.
-- `tests/`: 위치·설정 단위 검증. Router 화면 경로 밖에 둡니다.
+- `src/modules/storage/`: Expo SQLite 지연 초기화, 트랜잭션 마이그레이션, 테스트 메모 CRUD. 화면에서는 준비·실패·재시도를 처리하며 지도는 DB 초기화에 종속되지 않습니다. [저장 구조·사용법](../development/storage.md)을 참고합니다.
+- `tests/`: 위치·설정 단위 검증과 실제 SQLite를 사용하는 저장소 검증. Router 화면 경로 밖에 둡니다.
 
 | 위치 (일부 구현·나머지 예정) | 책임 |
 | --- | --- |

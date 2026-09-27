@@ -13,11 +13,13 @@
 | 개발 | [Windows — CLI 보조 안내](development/windows-android.md) | 설치 스크립트의 범위·CLI 명령·환경 변수·기기 관리 |
 | 개발 | [Codex 사용법](development/codex.md) | 지침·스킬·자동 기록 |
 | 개발 | [지도·현재 위치 테스트](development/map-location.md) | MapTiler 키·권한·실패 처리·확인 방법 |
+| 개발 | [SQLite 저장소 테스트](development/storage.md) | DB 위치·테스트 메모·마이그레이션·실행 방법 |
 | 계획 | [단계별 개발](planning/roadmap.md) | 순서와 완료 조건 |
 | 계획 | [CI/CD 자동화](planning/ci-cd-validation-plan.md) | 계획 저장, 아직 미실행 |
 | 검증 | [검증 기준](quality/strategy.md) | 변경별 확인 방법 |
 | 검증 | [환경 검증 기록](quality/setup-verification.md) | 실제 통과·미검증 사항 |
 | 검증 | [지도·위치 검증 기록](quality/map-location-verification.md) | 자동 검사·Android 빌드·기기 결과 |
+| 검증 | [저장소 검증 기록](quality/storage-verification.md) | 실제 SQLite 테스트·Android CRUD·프로세스 재시작 복원 |
 | 검증 | [Studio Gradle 복구](quality/gradle-recovery.md) | 사용자 Path·JDK·SDK 복구와 GUI 실행 결과 |
 | 인수인계 | [현재 상태](handoff/status.md) | 진행 상황과 다음 작업 |
 | 기록 | [실행한 계획](history/executed-plans/README.md) | 계획·날짜·결과 |

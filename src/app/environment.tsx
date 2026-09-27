@@ -10,6 +10,7 @@ export default function EnvironmentScreen() {
     ['지도', 'MapLibre · MapTiler'],
     ['지도 키', process.env.EXPO_PUBLIC_MAPTILER_API_KEY?.trim() ? '설정됨 · 실제 연결은 지도에서 확인' : '미설정'],
     ['위치', 'Expo Location · 전경에서 한 번 확인'],
+    ['저장소', 'Expo SQLite · 기기 내부 테스트 메모'],
     ['알고리즘 실행 계획', '휴대폰 내부 모듈'],
   ];
 
@@ -26,7 +27,7 @@ export default function EnvironmentScreen() {
         ))}
       </View>
       <Text style={styles.description}>지도 키는 모바일 루트의 .env.local에 EXPO_PUBLIC_MAPTILER_API_KEY로 설정한 뒤 Metro를 재시작하세요. 지도 표시에만 필요하며, 현재 위치·권한 처리는 키 없이 확인할 수 있습니다.</Text>
-      <Text style={styles.description}>러닝 기록 · 경로 계산 · 저장소는 아직 연결하지 않았습니다.</Text>
+      <Text style={styles.description}>저장소 테스트 화면에서 메모 저장·복원을 확인할 수 있습니다. 러닝 기록 · 경로 계산은 아직 연결하지 않았습니다.</Text>
     </ScrollView>
   );
 }
