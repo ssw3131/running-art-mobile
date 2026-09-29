@@ -2,13 +2,13 @@
 
 사용자가 선택하거나 직접 그린 도형을 닮은 **실제 보행 도로 코스**를 찾고, 달린 궤적과 기록을 남기는 모바일 앱입니다. Android를 먼저 개발·배포하고 이후 iOS로 확장합니다.
 
-**현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 위치·SQLite 저장 기반과 **v0.2 코스 계산**을 구현했습니다. 홈의 **코스 계산 테스트 → 주변 OSM**에서 현재 위치나 지도 이동으로 중심을 정하고 주변 도로로 계산합니다. 결과에 **도로 조회·코스 계산·전체 시간**을 표시합니다. 지도 이동 후에도 완료된 경로는 재탐색 전까지 유지하며, 기본 도로 API가 지연·실패하면 공개 Overpass 직접 조회로 전환합니다. 기존 API도 Overpass에 의존하므로 이 보완은 중계 서버 우회이며 독립적인 도로 공급원을 확보한 것은 아닙니다. [지도 중심 조회와 메모리 캐시](docs/development/route-center.md), [결과를 보존하는 성능 개선](docs/development/route-engine-performance.md)을 적용했습니다. [설치용 테스트 APK](docs/development/android-test-apk.md)는 PC 개발 서버 없이 실행합니다.
+**현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 위치·SQLite 저장 기반과 **v0.2 코스 계산**을 구현했습니다. 홈의 **코스 계산 테스트 → 주변 OSM**에서 현재 위치나 지도 이동으로 중심을 정하고 주변 도로로 계산합니다. 결과에 **도로 조회·코스 계산·전체 시간**을 표시하며, 지도 이동 후에도 완료된 경로는 재탐색 전까지 유지합니다. 현재 소스는 앱의 도로 API 호출을 1회로 제한하고 Overpass 공급자 전환을 기존 서버로 단일화했습니다. 앱 전체 제한은 65초, 수정 서버는 공급자당 25초·전체 55초입니다. **9월 30일 00:49 KST에 최신 APK를 휴대폰에 업데이트하고 독립 실행을 확인했습니다. 기존 Sites 접근 오류로 서버는 아직 이전 코드이며, 서버의 새 시간 제한·검증 정책은 미반영입니다.** [지도 중심 조회와 메모리 캐시](docs/development/route-center.md), [결과를 보존하는 성능 개선](docs/development/route-engine-performance.md), [재시도 검증과 남은 작업](docs/quality/road-retry-verification.md)을 참고하세요. [설치용 테스트 APK](docs/development/android-test-apk.md)는 PC 개발 서버 없이 실행합니다.
 
 최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [코스 계산](docs/development/route-engine.md)·[지도·현재 위치](docs/development/map-location.md)·[SQLite 저장소](docs/development/storage.md)를 참고하세요. 주변 도로 API 조회·메모리 캐시는 구현했고 영구 지역 파일·오프라인 캐시, 러닝 추적, 실제 코스·러닝 기록 저장은 후속 단계입니다. 이번 지도 중심 변경은 에뮬레이터에서 검증했고, 후속 사용자 요청으로 휴대폰에도 업데이트 설치와 독립 실행을 확인했습니다. 실제 휴대폰 GPS 기준 조회·계산 검증은 후속입니다. CI/CD는 계획만 저장했습니다.
 
 ## 휴대폰 테스트 APK 다운로드
 
-**2026-09-29 수정 APK:** 로컬 `build/install/running-art-0.1.0-20260929.apk`. 새 지역 도로 조회 보완과 지도 이동 후 경로 유지를 포함합니다. 아래 GitHub 다운로드는 이전 2026-09-27 버전입니다.
+**2026-09-30 수정 APK:** 로컬 `build/install/running-art-0.1.0-20260930.apk`. 앱 직접 Overpass 재시도 제거·API 1회 호출·65초 제한을 포함합니다. SM-S942N에 기존 데이터를 유지해 업데이트했고 개발 서버 없는 실행·지도 표시·설치본 해시 일치를 확인했습니다. 서버 코드는 아직 운영 미반영입니다. 아래 GitHub 다운로드는 이전 2026-09-27 버전입니다.
 
 [APK 바로 다운로드](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-test.20260927/running-art-0.1.0-20260927.apk) · [테스트 릴리스·설치 안내·SHA-256](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-test.20260927)
 

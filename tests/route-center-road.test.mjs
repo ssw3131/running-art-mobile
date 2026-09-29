@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createRoadLoader, roadBounds } from '../src/modules/road-data/client.ts';
+import { createRoadLoader, roadBounds, DEFAULT_ROAD_DATA_URL } from '../src/modules/road-data/client.ts';
 import { createLabSession } from '../src/features/route-lab/session.ts';
 import { createCenterController } from '../src/features/route-lab/center-controller.ts';
 import { centerFromMap } from '../src/modules/map/coordinates.ts';
 
-const singleProvider = (options) => createRoadLoader({ ...options, overpassEndpoints: [] });
+const singleProvider = createRoadLoader;
 
 const origin = { lat: 37.57162, lng: 126.9764 };
 const way = { type: 'way', id: 41, nodes: [123, 456], geometry: [{ lat: 37.571, lon: 126.976 }, { lat: 37.572, lon: 126.976 }], tags: { highway: 'footway' } };
@@ -79,97 +79,77 @@ test('road timeout aborts network work and returns a retryable error', async () 
   await assert.rejects(load(origin, 2000, signal()), /시간이 초과/);
 });
 
-test('a hanging primary lookup falls back for the same new region and caches only the complete response', async () => {
-  const center = { lat: 37.4979, lng: 127.0276 };
-  const localWay = { ...way, geometry: [{ lat: center.lat, lon: center.lng }, { lat: center.lat + .001, lon: center.lng }] };
-  const calls = [];
-  let primarySignal;
-  const load = createRoadLoader({ attemptTimeoutMs: 10, fetcher: async (url, settings) => {
-    calls.push({ url, settings });
-    if (calls.length === 1) { primarySignal = settings.signal; return new Promise(() => {}); }
-    return new Response(JSON.stringify({ elements: [localWay] }));
-  } });
-  const actual = await load(center, 2000, signal());
-  assert.equal(primarySignal.aborted, true);
-  assert.equal(calls.length, 2);
-  assert.equal(calls[1].settings.method, 'POST');
-  assert.match(calls[1].settings.headers['User-Agent'], /RunningArtMobile/);
-  const query = new URLSearchParams(calls[1].settings.body).get('data');
-  assert.match(query, /37\.4600000,127\.0000000,37\.5200000,127\.0600000/);
-  assert.match(query, /out geom;/);
-  assert.match(query, /motorway/);
-  assert.match(query, /\["access"!~/);
-  assert.deepEqual(actual.elements, [localWay]);
-  assert.match(actual.source, /overpass-api.de/);
-  assert.equal((await load({ ...center, lng: center.lng + .0001 }, 2000, signal())).cached, true);
-  assert.equal(calls.length, 2);
+test('default and custom endpoints each make one GET and one diagnostic event; cache hits make none', async () => {
+  for (const endpoint of [undefined, 'https://roads.example.test/api']) {
+    const calls = [], events = [];
+    const load = createRoadLoader({ endpoint, onAttempt: (event) => events.push(event), fetcher: async (url, init) => {
+      calls.push(url);
+      const actual = new URL(url), expected = new URL(endpoint ?? DEFAULT_ROAD_DATA_URL);
+      assert.equal(actual.origin + actual.pathname, expected.origin + expected.pathname);
+      assert.equal(actual.searchParams.get('dataset'), '20260920');
+      assert.equal(init.method ?? 'GET', 'GET');
+      assert.equal(init.body, undefined);
+      return response();
+    } });
+    assert.deepEqual((await load(origin, 2000, signal())).elements, [way]);
+    assert.equal((await load(origin, 2000, signal())).cached, true);
+    assert.equal(calls.length, 1); assert.equal(events.length, 1);
+    assert.equal(events[0].outcome, 'success'); assert.equal(events[0].status, 200);
+  }
 });
 
-test('server errors and partial Overpass payloads try the next provider without accepting truncated roads', async () => {
-  let calls = 0;
-  const load = createRoadLoader({ fetcher: async () => {
-    calls++;
-    if (calls === 1) return new Response('upstream timeout', { status: 502 });
-    if (calls === 2) return new Response(JSON.stringify({ elements: [way], remark: 'runtime error: Query timed out' }));
-    return new Response(JSON.stringify({ elements: [way] }));
-  } });
-  const actual = await load(origin, 2000, signal());
-  assert.equal(calls, 3);
-  assert.match(actual.source, /overpass.private.coffee/);
-  assert.deepEqual(actual.elements, [way]);
+test('HTTP errors, network failures and incomplete data never trigger client retries or populate cache', async () => {
+  for (const fail of [
+    ...[400, 406, 429, 502, 503, 504].map((status) => () => new Response('', { status })),
+    () => { throw new TypeError('network'); },
+    () => new Response('{'),
+    () => response({ elements: [way], remark: 'runtime error: timeout' }),
+    () => response(null),
+  ]) {
+    let calls = 0;
+    const events = [];
+    const load = createRoadLoader({ onAttempt: (e) => events.push(e), fetcher: async () => ++calls === 1 ? fail() : response() });
+    await assert.rejects(load(origin, 2000, signal()));
+    assert.equal(calls, 1); assert.equal(events.length, 1); assert.equal(events[0].outcome, 'failed');
+    assert.equal((await load(origin, 2000, signal())).cached, false);
+    assert.equal(calls, 2);
+  }
 });
 
-test('lookup timeout includes a stalled response body and the next provider can still succeed', async () => {
-  let calls = 0;
-  const load = createRoadLoader({ attemptTimeoutMs: 10, fetcher: async () => {
-    if (++calls === 1) return { ok: true, text: () => new Promise(() => {}) };
+test('a stalled response body times out, aborts transport and permits a later explicit retry', async () => {
+  let calls = 0, transport;
+  const load = createRoadLoader({ timeoutMs: 10, fetcher: async (_url, init) => {
+    if (++calls === 1) { transport = init.signal; return { ok: true, text: () => new Promise(() => {}) }; }
     return response();
   } });
-  assert.equal((await load(origin, 2000, signal())).elements.length, 1);
-  assert.equal(calls, 2);
-});
-
-test('cancelling a fallback suppresses later providers and prevents a late response entering the cache', async () => {
-  const pending = deferred(), enteredFallback = deferred();
-  let calls = 0;
-  const load = createRoadLoader({ fetcher: async () => {
-    calls++;
-    if (calls === 1) return new Response('', { status: 503 });
-    if (calls === 2) { enteredFallback.resolve(); await pending.promise; }
-    return response();
-  } });
-  const controller = new AbortController();
-  const job = load(origin, 2000, controller.signal);
-  await enteredFallback.promise;
-  controller.abort();
-  await assert.rejects(job, /취소/);
-  assert.equal(calls, 2);
-  pending.resolve(); await tick();
-  assert.equal((await load(origin, 2000, signal())).cached, false);
-  assert.equal(calls, 3);
-});
-
-test('all failed providers leave no cache and a later retry requests roads again', async () => {
-  let calls = 0;
-  const load = createRoadLoader({ fetcher: async () => ++calls <= 3 ? new Response('', { status: 429 }) : response() });
-  await assert.rejects(load(origin, 2000, signal()), /요청이 많아요/);
-  assert.equal(calls, 3);
-  assert.equal((await load(origin, 2000, signal())).cached, false);
-  assert.equal(calls, 4);
-});
-
-test('the total deadline and explicit custom provider both bound fallback attempts', async () => {
-  let calls = 0;
-  const load = createRoadLoader({ timeoutMs: 10, attemptTimeoutMs: 100, fetcher: async () => { calls++; return new Promise(() => {}); } });
   await assert.rejects(load(origin, 2000, signal()), /시간이 초과/);
-  assert.equal(calls, 1);
-  const custom = createRoadLoader({ endpoint: 'https://roads.example.test/api', fetcher: async (url) => {
-    assert.equal(new URL(url).hostname, 'roads.example.test');
-    calls++;
-    return new Response('', { status: 502 });
+  assert.equal(calls, 1); assert.equal(transport.aborted, true);
+  assert.equal((await load(origin, 2000, signal())).cached, false); assert.equal(calls, 2);
+});
+
+test('cancelling the API call prevents a late response from entering the cache', async () => {
+  const pending = deferred(); let calls = 0, transport;
+  const load = createRoadLoader({ fetcher: async (_url, init) => {
+    if (++calls === 1) { transport = init.signal; await pending.promise; }
+    return response();
   } });
-  await assert.rejects(custom(origin, 2000, signal()));
-  assert.equal(calls, 2);
+  const controller = new AbortController(), job = load(origin, 2000, controller.signal);
+  controller.abort(); await assert.rejects(job, /취소/);
+  assert.equal(calls, 1); assert.equal(transport.aborted, true);
+  pending.resolve(); await tick();
+  assert.equal((await load(origin, 2000, signal())).cached, false); assert.equal(calls, 2);
+});
+
+test('default deadline waits for server failover beyond 25 seconds and ends at 65 seconds', async (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  let calls = 0, transport;
+  const load = createRoadLoader({ fetcher: async (_url, init) => { calls++; transport = init.signal; return new Promise(() => {}); } });
+  const job = load(origin, 2000, signal());
+  const rejected = assert.rejects(job, /시간이 초과/);
+  t.mock.timers.tick(25001); assert.equal(transport.aborted, false);
+  t.mock.timers.tick(39998); assert.equal(transport.aborted, false);
+  t.mock.timers.tick(1); await rejected;
+  assert.equal(transport.aborted, true); assert.equal(calls, 1);
 });
 
 test('session snapshots the selected center, passes matching roads, and separates lookup/calculation/total wall times', async () => {

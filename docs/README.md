@@ -26,6 +26,7 @@
 | 검증 | [저장소 검증 기록](quality/storage-verification.md) | 실제 SQLite 테스트·Android CRUD·프로세스 재시작 복원 |
 | 검증 | [코스 계산 검증](quality/route-engine-verification.md) | 원본 회귀·Android 결과·시간·메모리·응답성 |
 | 검증 | [지도 중심 조회 검증](quality/route-center-verification.md) | 중심 선택·주변 도로·취소·시간 표시·설치용 APK |
+| 검증 | [도로 재시도 서버 단일화](quality/road-retry-verification.md) | 단일 API 호출·서버 공급자 전환·취소·시간 제한·운영 반영 상태 |
 | 검증 | [Studio Gradle 복구](quality/gradle-recovery.md) | 사용자 Path·JDK·SDK 복구와 GUI 실행 결과 |
 | 인수인계 | [현재 상태](handoff/status.md) | 진행 상황과 다음 작업 |
 | 기록 | [실행한 계획](history/executed-plans/README.md) | 계획·날짜·결과 |
