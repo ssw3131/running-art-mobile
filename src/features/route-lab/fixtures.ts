@@ -16,7 +16,7 @@ const disconnected: SearchInput = {
 };
 export const datasets = {
   grid: { name: '합성 격자', description: '알고리즘 비교용 가상 도로예요. 실제 달릴 길이 아닙니다.', input: grid, synthetic: true },
-  seoul: { name: '서울 OSM', description: '지도를 움직여 중심을 고르면 주변 2km 도로를 조회해 코스를 계산해요.', input: seoul, synthetic: false },
+  seoul: { name: '주변 OSM', description: '지도를 움직여 중심을 고르면 주변 2km 도로를 조회해 코스를 계산해요. 서울 밖에서도 사용할 수 있어요.', input: seoul, synthetic: false },
   disconnected: { name: '단절 테스트', description: '서로 연결되지 않은 짧은 가상 도로로 후보 없음 처리를 확인해요.', input: disconnected, synthetic: true },
 } satisfies Record<DatasetId, { name: string; description: string; input: SearchInput; synthetic: boolean }>;
 

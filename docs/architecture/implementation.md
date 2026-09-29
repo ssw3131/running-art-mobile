@@ -9,7 +9,7 @@
 - `src/features/map/use-current-location.ts`: 화면 포커스·앱 전경 수명과 위치 요청 상태 연결, 설정 복귀 재확인.
 - `src/modules/storage/`: Expo SQLite 지연 초기화, 트랜잭션 마이그레이션, 테스트 메모 CRUD. 화면에서는 준비·실패·재시도를 처리하며 지도는 DB 초기화에 종속되지 않습니다. [저장 구조·사용법](../development/storage.md)을 참고합니다.
 - `src/modules/route-engine/`: v0.2 TypeScript 엔진·타입, 분할 실행·취소·요청 교체, 지도 좌표 변환, 원본 비교. 엔진은 React·지도 SDK·네트워크·DB를 import하지 않습니다.
-- `src/modules/road-data/`: 선택 중심 주변 OSM API 조회·범위 검사·최대 2영역/15분 메모리 캐시. 영구 지역 파일 캐시는 후속입니다.
+- `src/modules/road-data/`: 선택 중심 주변 OSM API 조회·기본 공급자 실패 시 Overpass 대체 조회·범위 검사·최대 2영역/15분 메모리 캐시. 공급자별 25초·전체 90초 제한과 취소를 적용합니다. 영구 지역 파일 캐시는 후속입니다.
 - `src/features/route-lab/`: 지도 중심·현재 위치 요청, 다운로드부터 계산까지 취소하는 세션, 조회/계산 시간, 고정 표본과 원본 비교, React Native 실행기. `assets/route-lab/`의 원본 표본은 보존합니다. [지도 중심 조회](../development/route-center.md)·[코스 계산 안내](../development/route-engine.md)를 참고합니다.
 - `tests/`: 위치·설정 단위 검증, 실제 SQLite 저장소 검증, v0.2 원본 보존·고정 결과 회귀·제약·취소·지도 변환 검증. Router 화면 경로 밖에 둡니다.
 

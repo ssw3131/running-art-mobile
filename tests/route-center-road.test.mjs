@@ -5,6 +5,8 @@ import { createLabSession } from '../src/features/route-lab/session.ts';
 import { createCenterController } from '../src/features/route-lab/center-controller.ts';
 import { centerFromMap } from '../src/modules/map/coordinates.ts';
 
+const singleProvider = (options) => createRoadLoader({ ...options, overpassEndpoints: [] });
+
 const origin = { lat: 37.57162, lng: 126.9764 };
 const way = { type: 'way', id: 41, nodes: [123, 456], geometry: [{ lat: 37.571, lon: 126.976 }, { lat: 37.572, lon: 126.976 }], tags: { highway: 'footway' } };
 const response = (data = { elements: [way], sourceLabel: 'OSM sample' }, area = '37.54,126.94,37.60,127.00') => new Response(JSON.stringify(data), { headers: { 'X-Road-Area': area } });
@@ -15,7 +17,7 @@ const input = () => ({ origin: { ...origin }, options: { version: '0.2', shape: 
 
 test('road query uses the selected latitude/longitude and keeps OSM IDs and full way geometry', async () => {
   let requested;
-  const load = createRoadLoader({ fetcher: async (url) => { requested = new URL(url); return response(); } });
+  const load = singleProvider({ fetcher: async (url) => { requested = new URL(url); return response(); } });
   const result = await load(origin, 2000, signal());
   assert.equal(requested.searchParams.get('lat'), '37.57162');
   assert.equal(requested.searchParams.get('lng'), '126.9764');
@@ -26,7 +28,7 @@ test('road query uses the selected latitude/longitude and keeps OSM IDs and full
 
 test('cache reuse requires the whole requested circle, expires, and cannot fall back to a different region', async () => {
   let requests = 0, now = 1000;
-  const load = createRoadLoader({ now: () => now, fetcher: async () => { requests++; return response(); } });
+  const load = singleProvider({ now: () => now, fetcher: async () => { requests++; return response(); } });
   await load(origin, 2000, signal());
   assert.equal((await load({ ...origin, lng: origin.lng + .0001 }, 2000, signal())).cached, true);
   assert.equal(requests, 1);
@@ -40,7 +42,7 @@ test('cache reuse requires the whole requested circle, expires, and cannot fall 
 test('a different area downloads independently and an aborted late response never enters the cache', async () => {
   let requests = 0;
   const pending = deferred();
-  const load = createRoadLoader({ fetcher: async (_url, options) => {
+  const load = singleProvider({ fetcher: async (_url, options) => {
     requests++;
     if (requests === 1) { await pending.promise; assert.equal(options.signal.aborted, true); }
     return response();
@@ -51,7 +53,7 @@ test('a different area downloads independently and an aborted late response neve
   await assert.rejects(first, /취소/);
   assert.equal((await load(origin, 2000, signal())).cached, false);
   assert.equal(requests, 2);
-  const elsewhere = createRoadLoader({ fetcher: async () => response({ elements: [way] }, '37.54,127.08,37.60,127.16') });
+  const elsewhere = singleProvider({ fetcher: async () => response({ elements: [way] }, '37.54,127.08,37.60,127.16') });
   assert.equal((await elsewhere({ ...origin, lng: 127.12 }, 2000, signal())).cached, false);
 });
 
@@ -64,17 +66,110 @@ test('partial, malformed, out-of-coverage and rate-limited data fail explicitly'
     () => response({ elements: [way] }, '37.57,126.97,37.58,126.98'),
     () => new Response('too many requests', { status: 429 }),
   ]) {
-    await assert.rejects(createRoadLoader({ fetcher: async () => makeResponse() })(origin, 2000, signal()));
+    await assert.rejects(singleProvider({ fetcher: async () => makeResponse() })(origin, 2000, signal()));
   }
   assert.throws(() => roadBounds({ lat: NaN, lng: 127 }, 2000));
   assert.throws(() => roadBounds({ lat: 0, lng: 180 }, 2000));
 });
 
 test('road timeout aborts network work and returns a retryable error', async () => {
-  const load = createRoadLoader({ timeoutMs: 5, fetcher: (_url, options) => new Promise((_resolve, reject) => {
+  const load = singleProvider({ timeoutMs: 5, fetcher: (_url, options) => new Promise((_resolve, reject) => {
     options.signal.addEventListener('abort', () => reject(new Error('abort')), { once: true });
   }) });
   await assert.rejects(load(origin, 2000, signal()), /시간이 초과/);
+});
+
+test('a hanging primary lookup falls back for the same new region and caches only the complete response', async () => {
+  const center = { lat: 37.4979, lng: 127.0276 };
+  const localWay = { ...way, geometry: [{ lat: center.lat, lon: center.lng }, { lat: center.lat + .001, lon: center.lng }] };
+  const calls = [];
+  let primarySignal;
+  const load = createRoadLoader({ attemptTimeoutMs: 10, fetcher: async (url, settings) => {
+    calls.push({ url, settings });
+    if (calls.length === 1) { primarySignal = settings.signal; return new Promise(() => {}); }
+    return new Response(JSON.stringify({ elements: [localWay] }));
+  } });
+  const actual = await load(center, 2000, signal());
+  assert.equal(primarySignal.aborted, true);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].settings.method, 'POST');
+  assert.match(calls[1].settings.headers['User-Agent'], /RunningArtMobile/);
+  const query = new URLSearchParams(calls[1].settings.body).get('data');
+  assert.match(query, /37\.4600000,127\.0000000,37\.5200000,127\.0600000/);
+  assert.match(query, /out geom;/);
+  assert.match(query, /motorway/);
+  assert.match(query, /\["access"!~/);
+  assert.deepEqual(actual.elements, [localWay]);
+  assert.match(actual.source, /overpass-api.de/);
+  assert.equal((await load({ ...center, lng: center.lng + .0001 }, 2000, signal())).cached, true);
+  assert.equal(calls.length, 2);
+});
+
+test('server errors and partial Overpass payloads try the next provider without accepting truncated roads', async () => {
+  let calls = 0;
+  const load = createRoadLoader({ fetcher: async () => {
+    calls++;
+    if (calls === 1) return new Response('upstream timeout', { status: 502 });
+    if (calls === 2) return new Response(JSON.stringify({ elements: [way], remark: 'runtime error: Query timed out' }));
+    return new Response(JSON.stringify({ elements: [way] }));
+  } });
+  const actual = await load(origin, 2000, signal());
+  assert.equal(calls, 3);
+  assert.match(actual.source, /overpass.private.coffee/);
+  assert.deepEqual(actual.elements, [way]);
+});
+
+test('lookup timeout includes a stalled response body and the next provider can still succeed', async () => {
+  let calls = 0;
+  const load = createRoadLoader({ attemptTimeoutMs: 10, fetcher: async () => {
+    if (++calls === 1) return { ok: true, text: () => new Promise(() => {}) };
+    return response();
+  } });
+  assert.equal((await load(origin, 2000, signal())).elements.length, 1);
+  assert.equal(calls, 2);
+});
+
+test('cancelling a fallback suppresses later providers and prevents a late response entering the cache', async () => {
+  const pending = deferred(), enteredFallback = deferred();
+  let calls = 0;
+  const load = createRoadLoader({ fetcher: async () => {
+    calls++;
+    if (calls === 1) return new Response('', { status: 503 });
+    if (calls === 2) { enteredFallback.resolve(); await pending.promise; }
+    return response();
+  } });
+  const controller = new AbortController();
+  const job = load(origin, 2000, controller.signal);
+  await enteredFallback.promise;
+  controller.abort();
+  await assert.rejects(job, /취소/);
+  assert.equal(calls, 2);
+  pending.resolve(); await tick();
+  assert.equal((await load(origin, 2000, signal())).cached, false);
+  assert.equal(calls, 3);
+});
+
+test('all failed providers leave no cache and a later retry requests roads again', async () => {
+  let calls = 0;
+  const load = createRoadLoader({ fetcher: async () => ++calls <= 3 ? new Response('', { status: 429 }) : response() });
+  await assert.rejects(load(origin, 2000, signal()), /요청이 많아요/);
+  assert.equal(calls, 3);
+  assert.equal((await load(origin, 2000, signal())).cached, false);
+  assert.equal(calls, 4);
+});
+
+test('the total deadline and explicit custom provider both bound fallback attempts', async () => {
+  let calls = 0;
+  const load = createRoadLoader({ timeoutMs: 10, attemptTimeoutMs: 100, fetcher: async () => { calls++; return new Promise(() => {}); } });
+  await assert.rejects(load(origin, 2000, signal()), /시간이 초과/);
+  assert.equal(calls, 1);
+  const custom = createRoadLoader({ endpoint: 'https://roads.example.test/api', fetcher: async (url) => {
+    assert.equal(new URL(url).hostname, 'roads.example.test');
+    calls++;
+    return new Response('', { status: 502 });
+  } });
+  await assert.rejects(custom(origin, 2000, signal()));
+  assert.equal(calls, 2);
 });
 
 test('session snapshots the selected center, passes matching roads, and separates lookup/calculation/total wall times', async () => {

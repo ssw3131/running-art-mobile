@@ -17,7 +17,9 @@ import type { ShapeId } from '@/modules/route-engine/types';
 import { compareReference } from '@/modules/route-engine/verification';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
-const loadRoads = createRoadLoader({ endpoint: process.env.EXPO_PUBLIC_ROAD_DATA_URL });
+const loadRoads = createRoadLoader({ endpoint: process.env.EXPO_PUBLIC_ROAD_DATA_URL,
+  onAttempt: (event) => console.info('ROAD_DATA_ATTEMPT', JSON.stringify(event)),
+});
 type State = { kind: 'idle' | 'running' | 'cancelled' | 'error' | 'done'; message: string };
 type Completed = LabCalculation & { comparison: string; maxTimerLagMs: number; timerTicks: number };
 const time = (ms: number) => `${(ms / 1000).toFixed(2)}초`;
@@ -86,6 +88,11 @@ export default function RouteLabScreen() {
     cancel(); setCompleted(null); setSelected(0); setSeconds(0);
     setState({ kind: 'idle', message: '선택한 조건으로 코스를 계산해 보세요.' });
   };
+  // Editing the next search must not erase the last completed route or its origin.
+  const changeSearch = () => {
+    cancel();
+    if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
+  };
   const start = () => {
     if (!dataset.synthetic && (!mapReady || mapMoving || !validCenter || centerState.location.kind === 'loading')) return;
     cancel(); setCompleted(null); setSelected(0); setTaps(0); setSeconds(0);
@@ -124,7 +131,7 @@ export default function RouteLabScreen() {
   };
 
   const locate = () => {
-    reset();
+    changeSearch();
     const location = centerState.location;
     if (location.kind === 'denied' && !location.canAskAgain) {
       returningFromSettings.current = true;
@@ -140,7 +147,7 @@ export default function RouteLabScreen() {
     <View style={styles.map}>
       {dataset.synthetic || styleUrl ? <MapSurface key={datasetId} styleUrl={styleUrl ?? ''} position={dataset.synthetic ? null : centerState.position} origin={dataset.synthetic ? dataset.input.origin : centerState.center} syntheticRoads={roads} routeOverlay={overlay} centerSelection={dataset.synthetic ? undefined : {
         target: centerState.cameraTarget,
-        onMoveStart: () => { reset(); center.beginMove(); setMapMoving(true); },
+        onMoveStart: () => { changeSearch(); center.beginMove(); setMapMoving(true); },
         onMoveEnd: (origin) => { setValidCenter(!!origin); if (origin) center.move(origin); setMapMoving(false); },
         onReady: setMapReady,
       }} /> : <View style={styles.placeholder}><Text>지도를 연결하면 화면 중심으로 코스를 계산할 수 있어요.</Text></View>}
@@ -163,8 +170,8 @@ export default function RouteLabScreen() {
       <Text style={styles.description}>{dataset.description}</Text>
       {!dataset.synthetic && <Text testID={`route-location-${centerState.location.kind}`} style={styles.small}>{locationMessage(centerState)}</Text>}
       <Text style={styles.label}>도형</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>{SHAPES.map((item) => <Pressable key={item.id} testID={`shape-${item.id}`} accessibilityRole="button" accessibilityState={{ selected: shape === item.id }} style={[styles.chip, shape === item.id && styles.chipSelected]} onPress={() => { reset(); setShape(item.id as ShapeId); }}><Text style={shape === item.id ? styles.chipTextSelected : styles.chipText}>{item.name}</Text></Pressable>)}</ScrollView>
-      <View style={styles.row}><Text style={styles.label}>목표 거리</Text>{[3, 5, 7].map((km) => <Pressable key={km} testID={`distance-${km}`} accessibilityRole="button" accessibilityState={{ selected: targetKm === km }} style={[styles.chip, targetKm === km && styles.chipSelected]} onPress={() => { reset(); setTargetKm(km); }}><Text style={targetKm === km ? styles.chipTextSelected : styles.chipText}>{km} km</Text></Pressable>)}</View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>{SHAPES.map((item) => <Pressable key={item.id} testID={`shape-${item.id}`} accessibilityRole="button" accessibilityState={{ selected: shape === item.id }} style={[styles.chip, shape === item.id && styles.chipSelected]} onPress={() => { changeSearch(); setShape(item.id as ShapeId); }}><Text style={shape === item.id ? styles.chipTextSelected : styles.chipText}>{item.name}</Text></Pressable>)}</ScrollView>
+      <View style={styles.row}><Text style={styles.label}>목표 거리</Text>{[3, 5, 7].map((km) => <Pressable key={km} testID={`distance-${km}`} accessibilityRole="button" accessibilityState={{ selected: targetKm === km }} style={[styles.chip, targetKm === km && styles.chipSelected]} onPress={() => { changeSearch(); setTargetKm(km); }}><Text style={targetKm === km ? styles.chipTextSelected : styles.chipText}>{km} km</Text></Pressable>)}</View>
       <View style={styles.row}>
         <Pressable testID="calculate-route" accessibilityRole="button" accessibilityState={{ disabled: cannotCalculate }} disabled={cannotCalculate} onPress={start} style={[styles.primary, cannotCalculate && styles.disabled]}><Text style={styles.primaryText}>{mapMoving ? '지도 중심 선택 중' : state.kind === 'running' ? '처음부터 다시 계산' : '코스 계산하기'}</Text></Pressable>
         {state.kind === 'running' && <Pressable testID="cancel-route" accessibilityRole="button" onPress={() => cancel()} style={styles.cancel}><Text style={styles.chipText}>취소</Text></Pressable>}
