@@ -1,0 +1,61 @@
+{
+  "recordedAt": "2026-09-30T07:51:52.060Z",
+  "runtime": "v24.21.0",
+  "environment": "local-mock-store-and-loopback-http",
+  "realR2Verified": false,
+  "realCdnVerified": false,
+  "phoneTested": false,
+  "releaseId": "kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+  "manifestSha256": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+  "immutableObjects": 25,
+  "immutableBytes": 1206038,
+  "pointerBytes": 733,
+  "upload": {
+    "uploaded": 25,
+    "reused": 0,
+    "currentChanged": false
+  },
+  "retry": {
+    "uploaded": 0,
+    "reused": 25,
+    "currentChanged": false
+  },
+  "promotion": {
+    "previousSha256": "absent",
+    "currentSha256": "bee3509d90ace81ff74f9604554b8c77ca9896a61cfc37f05fb232f66dea320d",
+    "verifiedObjects": 25,
+    "currentChanged": true
+  },
+  "samples": [
+    {
+      "id": "seoul-gangnam",
+      "files": 9,
+      "ways": 3454,
+      "nodes": 13614,
+      "edges": 15363,
+      "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "busan-cityhall",
+      "files": 6,
+      "ways": 2008,
+      "nodes": 9181,
+      "edges": 9972,
+      "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "boundary-guro-gwangmyeong",
+      "files": 8,
+      "ways": 2929,
+      "nodes": 11189,
+      "edges": 12384,
+      "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+      "inputEqual": true,
+      "graphEqual": true
+    }
+  ]
+}

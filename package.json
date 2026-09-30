@@ -29,6 +29,7 @@
     "scheduler": "0.27.0"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "3.1143.0",
     "@types/react": "~19.2.2",
     "eslint": "9.39.5",
     "eslint-config-expo": "~57.0.2",
@@ -51,6 +52,11 @@
     "roads:verify": "node scripts/road-data/verify.mjs",
     "roads:benchmark": "node scripts/road-data/benchmark-local.mjs",
     "roads:serve": "node scripts/road-data/serve.mjs",
+    "roads:deploy": "node scripts/road-data/deploy.mjs",
+    "roads:rehearse": "node scripts/road-data/rehearse.mjs",
+    "roads:cache-rehearse": "node scripts/road-data/cache-rehearse.mjs",
+    "test:road-cache": "node --test tests/road-cache.test.mjs",
+    "test:road-deploy": "node --test tests/road-deployment.test.mjs",
     "test": "node --test tests/*.test.mjs",
     "doctor": "npx --yes expo-doctor",
     "prebuild:android": "expo prebuild --platform android --no-clean",

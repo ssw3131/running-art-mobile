@@ -2,11 +2,15 @@
 
 2026-09-30 결정에 따라 기존 두 테스트 프로젝트와 서버·도로 공급·데이터·배포를 독립시킵니다. 아래 현재 구현에는 기존 도로 API 연결이 남아 있습니다. 목표 구성과 전환 순서는 [독립 서버 전략](../planning/server-strategy.md)에 있으며 실제 서버 구축·앱 전환은 아직 미착수입니다. 로그인·동기화·공유·커뮤니티는 예정 범위이고 유료화·생성 횟수 제한은 후속 계획으로만 둡니다.
 
-현재 **4-1 독립 표본 가공·PC 비교를 완료했고 실제 휴대폰 처리 비용 측정이 남았습니다.** `scripts/road-data/`가 새 PBF를 고정·가공·비교하고 `road-data/file-format.ts`가 격자 선택·검증·ID 병합을 담당합니다. `road-file-lab`는 별도 로컬 측정 화면입니다. 이후 4-2 실제 서버 구축·배포와 4-3 앱 전환·영구 캐시를 진행합니다. [표본 구조](../development/road-samples.md)
+현재 **4-1 독립 표본 가공·PC 비교를 완료했고 실제 휴대폰 처리 비용 측정이 남았습니다.** `scripts/road-data/`가 새 PBF를 고정·가공·비교하고 `road-data/file-format.ts`가 격자 선택·검증·ID 병합을 담당합니다. `road-file-lab`는 별도 로컬 측정 화면입니다. 4-2 실제 서버 구축·배포와 4-3 일반 계산의 공급 전환은 후속이며 영구 캐시의 선행 구현은 아래와 같습니다. [표본 구조](../development/road-samples.md)
+
+4-2의 **배포 준비·로컬 검증**도 완료했습니다. `scripts/road-data/deployment.mjs`는 검증된 불변 묶음, `publish.mjs`는 업로드·HTTP 검사·조건부 전환, `r2-store.mjs`는 공식 S3 SDK 연결, `deploy.mjs`는 CLI, `rehearse.mjs`는 실제 표본의 로컬 통합 검증을 담당합니다. 설정 예시는 `infra/road-data/r2.example.json`입니다. SDK는 개발 도구에만 포함하며 앱 공급 연결은 바뀌지 않았습니다. [배포 계약과 사용법](../development/road-deployment.md)
+
+후속 사용자 결정으로 실제 서버 배포·휴대폰 테스트를 보류하고 **4-3 영구 캐시**를 먼저 구현했습니다. `persistent-cache.ts`가 별도 SQLite 스키마·전체 검증 후 저장·현재 버전·만료·용량 정리를 담당하고, `cache-database.ts`가 Expo SQLite 전용 연결을 공유합니다. `road-cache-lab.tsx`와 `features/road-cache-lab/source.ts`는 고정 loopback 표본을 사용하는 별도 검증 화면입니다. PC 실제 SQLite와 모바일 codec으로 재시작·오프라인 입력/그래프 대조를 완료했으며 일반 계산의 기존 API·메모리 캐시는 유지합니다. [캐시 계약](../development/road-cache.md)
 
 ## 현재와 예정 구조
 
-현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 `map.tsx`·`route-lab.tsx`·`road-file-lab.tsx`·`storage.tsx`·`environment.tsx`로 이동합니다. 화면은 핵심 기능 테스트용이며 이후 서비스 기획·디자인에 맞춰 변경합니다.
+현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 `map.tsx`·`route-lab.tsx`·`road-file-lab.tsx`·`road-cache-lab.tsx`·`storage.tsx`·`environment.tsx`로 이동합니다. 화면은 핵심 기능 테스트용이며 이후 서비스 기획·디자인에 맞춰 변경합니다.
 
 - `src/modules/map/`: MapLibre 네이티브 지도·MapTiler 스타일 URL·현재 위치 점·카메라·지도 실패 처리. 웹은 Android 확인 안내를 표시합니다.
 - `src/modules/location/`: UI 독립적인 권한·위치 획득·취소 로직과 Expo 어댑터. 위치는 한 번 얻은 뒤 구독을 해제합니다.
@@ -46,7 +50,7 @@ OSM 식별자·연결 관계를 보존한 보행 그래프
 
 지도 스타일·타일은 MapTiler에서 MapLibre로 공급합니다. 보행 그래프는 현재 기존 웹의 도로 데이터 API에서 받은 OSM 자료로 구성하며 실제 경로 계산은 기기 내부에서 합니다. 서울 도심은 저장 표본, 공급자 저장 범위 밖은 Overpass 조회 경로입니다. 배경 지도와 계산용 도로 데이터는 별개입니다.
 
-지역별 정적 파일·버전 매니페스트는 4-1 표본과 별도 검증 화면에 구현했고, 일반 조회 연결·영구 캐시는 후속 범위입니다. 일반 조회의 공급자 주소는 `EXPO_PUBLIC_ROAD_DATA_URL`로 설정하며 기본값은 기존 웹 프로토타입의 `/api/roads`입니다. 서버는 도로 자료를 제공하고 코스 배치·경로 탐색·점수 계산은 앱에서 실행합니다.
+지역별 정적 파일·버전 매니페스트와 영구 캐시는 각각의 별도 검증 화면에 구현했고, 일반 조회 연결은 후속 범위입니다. 일반 조회의 공급자 주소는 `EXPO_PUBLIC_ROAD_DATA_URL`로 설정하며 기본값은 기존 웹 프로토타입의 `/api/roads`입니다. 서버는 도로 자료를 제공하고 코스 배치·경로 탐색·점수 계산은 앱에서 실행합니다.
 
 ## 독립 서버의 목표 경계
 

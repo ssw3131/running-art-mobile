@@ -2,7 +2,7 @@
 
 처음 참여할 때는 **목표 → 현재 상태 → 개발 환경 → 구현 구조 → 계획** 순서로 읽습니다. 명령은 별도 설명이 없으면 프로젝트 루트에서 실행합니다.
 
-독립 표본 가공·PC 검증은 완료했고 **휴대폰 연결 테스트는 사용자 요청으로 보류**했습니다. 다음 제안은 **4-2 독립 도로 서버 배포 준비**입니다. [표본 사용법](development/road-samples.md)·[검증 결과](quality/road-samples-verification.md), 전체 순서는 [로드맵](planning/roadmap.md), 최신 상태는 [인수인계](handoff/status.md)를 기준으로 확인합니다.
+**실제 서버 배포·휴대폰 테스트는 보류하고 4-3 영구 캐시 모듈·로컬 검증을 완료**했습니다. 일반 코스 계산의 공급 전환은 후속이며 다음 권장 작업은 코스의 기기 저장·목록·다시 열기입니다. [캐시 사용법](development/road-cache.md)·[검증 결과](quality/road-cache-verification.md), 전체 순서는 [로드맵](planning/roadmap.md), 최신 상태는 [인수인계](handoff/status.md)를 기준으로 확인합니다.
 
 개발 환경은 [Android 개발 환경 설정과 실행](development/android-studio.md)을 중심 안내로 사용합니다. 확정 구성, 새 PC 최초 설정, 매일 실행, 정상 확인을 한 문서에서 볼 수 있습니다.
 
@@ -21,6 +21,8 @@
 | 개발 | [지도 중심 기준 코스 조회](development/route-center.md) | 현재 위치·지도 이동·주변 도로 API·메모리 캐시·시간 표시 |
 | 개발 | [코스 계산 성능·웹 비교](development/route-engine-performance.md) | 최적화 전략·원본 보존·PC 벤치마크·실기기 측정 구분 |
 | 개발 | [독립 도로 표본·파일 형식](development/road-samples.md) | PBF 가공·검증 재현, 파일 계약, 휴대폰 로컬 측정 |
+| 개발 | [독립 도로 서버 배포](development/road-deployment.md) | 버전별 묶음·R2 설정·업로드·HTTP 검사·전환·복구 |
+| 개발 | [영구 도로 캐시](development/road-cache.md) | SQLite 저장·오프라인 조회·취소·손상 복구·용량·별도 검증 화면 |
 | 계획 | [단계별 개발](planning/roadmap.md) | 순서와 완료 조건 |
 | 계획 | [모바일 독립 서버 전략](planning/server-strategy.md) | 테스트 프로젝트 분리, 도로 공급·회원·커뮤니티 구성, 무료 출시와 유료화 후속 범위 |
 | 계획 | [CI/CD 자동화](planning/ci-cd-validation-plan.md) | 계획 저장, 아직 미실행 |
@@ -32,6 +34,8 @@
 | 검증 | [지도 중심 조회 검증](quality/route-center-verification.md) | 중심 선택·주변 도로·취소·시간 표시·설치용 APK |
 | 검증 | [도로 재시도 서버 단일화](quality/road-retry-verification.md) | 단일 API 호출·서버 공급자 전환·취소·시간 제한·운영 반영 상태 |
 | 검증 | [4-1 도로 표본 검증](quality/road-samples-verification.md) | 연결·전체 결과·파일 크기·PC 전송, 실제 휴대폰 미완료 구분 |
+| 검증 | [4-2 도로 배포 준비 검증](quality/road-deployment-verification.md) | 로컬 S3·HTTP 검증, 실제 표본 대조, 실환경 배포 미실행 구분 |
+| 검증 | [4-3 영구 도로 캐시 검증](quality/road-cache-verification.md) | 실제 SQLite 실패·재시작·실제 표본 오프라인 대조, 네이티브 검증은 후속 |
 | 검증 | [Studio Gradle 복구](quality/gradle-recovery.md) | 사용자 Path·JDK·SDK 복구와 GUI 실행 결과 |
 | 인수인계 | [현재 상태](handoff/status.md) | 진행 상황과 다음 작업 |
 | 기록 | [실행한 계획](history/executed-plans/README.md) | 계획·날짜·결과 |

@@ -1,5 +1,5 @@
 // Small async boundary shared by Expo SQLite and the real SQLite test adapter.
-export type SqlValue = string | number | null;
+export type SqlValue = string | number | null | Uint8Array;
 
 export interface SqlExecutor {
   execAsync(sql: string): Promise<void>;
