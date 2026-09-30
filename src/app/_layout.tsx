@@ -10,6 +10,7 @@ export default function RootLayout() {
         <Stack.Screen name="map" options={{ title: '내 주변 지도' }} />
         <Stack.Screen name="storage" options={{ title: '저장소 테스트' }} />
         <Stack.Screen name="route-lab" options={{ title: '코스 계산 테스트' }} />
+        <Stack.Screen name="road-file-lab" options={{ title: '도로 파일 검증' }} />
         <Stack.Screen name="environment" options={{ title: '개발 환경' }} />
       </Stack>
     </>

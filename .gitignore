@@ -63,6 +63,10 @@ coverage/
 # TypeScript
 *.tsbuildinfo
 
+# Python road-data tooling
+__pycache__/
+*.py[cod]
+
 # Local IDE files (keep the shared VS Code settings)
 .idea/
 *.iml

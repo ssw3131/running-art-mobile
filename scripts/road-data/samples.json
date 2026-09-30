@@ -1,0 +1,9 @@
+{
+  "radiusMeters": 2000,
+  "gridStepsE7": [100000, 200000, 400000],
+  "samples": [
+    { "id": "seoul-gangnam", "label": "서울 강남역", "origin": { "lat": 37.4979, "lng": 127.0276 } },
+    { "id": "busan-cityhall", "label": "부산시청", "origin": { "lat": 35.1796, "lng": 129.0756 } },
+    { "id": "boundary-guro-gwangmyeong", "label": "구로·광명 인근 / 4개 격자 교점", "origin": { "lat": 37.48, "lng": 126.88 } }
+  ]
+}

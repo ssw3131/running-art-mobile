@@ -30,6 +30,11 @@ export default function HomeScreen() {
               <Text style={styles.secondaryText}>저장소 테스트</Text>
             </Pressable>
           </Link>
+          <Link href="/road-file-lab" asChild>
+            <Pressable accessibilityRole="button" style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>도로 파일 로컬 검증</Text>
+            </Pressable>
+          </Link>
           <Link href="/environment" asChild>
             <Pressable accessibilityRole="button" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>개발 환경 확인</Text>

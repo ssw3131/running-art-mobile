@@ -1,0 +1,246 @@
+{
+  "kind": "emulator",
+  "model": "sdk_gphone64_x86_64",
+  "api": 36,
+  "apk": "debug",
+  "hermes": true,
+  "developmentJavaScript": false,
+  "gridStepE7": 200000,
+  "records": [
+    {
+      "sample": "seoul-gangnam",
+      "gridStepE7": 200000,
+      "run": 1,
+      "files": 9,
+      "bytes": 476751,
+      "downloadMs": 441.2534000000451,
+      "decodeMs": 3137.693199999747,
+      "hashMs": 2703.522900000331,
+      "gunzipMs": 237.16029999998864,
+      "utf8Ms": 123.3434999998426,
+      "mergeMs": 877.670599999954,
+      "graphMs": 121.78410000004806,
+      "totalMs": 5776.278600000078,
+      "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+      "nodes": 13614,
+      "edges": 15363,
+      "inputEqual": true
+    },
+    {
+      "sample": "seoul-gangnam",
+      "gridStepE7": 200000,
+      "run": 2,
+      "files": 9,
+      "bytes": 476751,
+      "downloadMs": 259.1308000002755,
+      "decodeMs": 3331.6637000000337,
+      "hashMs": 2861.155200000154,
+      "gunzipMs": 259.7179999999935,
+      "utf8Ms": 128.14240000024438,
+      "mergeMs": 733.203899999964,
+      "graphMs": 258.8810999999987,
+      "totalMs": 5735.650499999989,
+      "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+      "nodes": 13614,
+      "edges": 15363,
+      "inputEqual": true
+    },
+    {
+      "sample": "seoul-gangnam",
+      "gridStepE7": 200000,
+      "run": 3,
+      "files": 9,
+      "bytes": 476751,
+      "downloadMs": 221.0671999999322,
+      "decodeMs": 3026.3362999999663,
+      "hashMs": 2622.4502000004286,
+      "gunzipMs": 226.0934000001289,
+      "utf8Ms": 110.93429999996442,
+      "mergeMs": 497.23770000005607,
+      "graphMs": 156.37460000009742,
+      "totalMs": 5026.710199999972,
+      "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+      "nodes": 13614,
+      "edges": 15363,
+      "inputEqual": true
+    },
+    {
+      "sample": "busan-cityhall",
+      "gridStepE7": 200000,
+      "run": 1,
+      "files": 6,
+      "bytes": 287058,
+      "downloadMs": 381.86800000001676,
+      "decodeMs": 1670.29850000015,
+      "hashMs": 1446.5789000001969,
+      "gunzipMs": 125.65289999986999,
+      "utf8Ms": 60.744200000190176,
+      "mergeMs": 278.7892999999458,
+      "graphMs": 66.75600000005215,
+      "totalMs": 3139.860400000005,
+      "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+      "nodes": 9181,
+      "edges": 9972,
+      "inputEqual": true
+    },
+    {
+      "sample": "busan-cityhall",
+      "gridStepE7": 200000,
+      "run": 2,
+      "files": 6,
+      "bytes": 287058,
+      "downloadMs": 132.6526999998605,
+      "decodeMs": 1675.4486000000034,
+      "hashMs": 1447.340599999996,
+      "gunzipMs": 130.1734999999171,
+      "utf8Ms": 59.079799999832176,
+      "mergeMs": 263.97400000004563,
+      "graphMs": 117.6315000000177,
+      "totalMs": 2937.946200000006,
+      "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+      "nodes": 9181,
+      "edges": 9972,
+      "inputEqual": true
+    },
+    {
+      "sample": "busan-cityhall",
+      "gridStepE7": 200000,
+      "run": 3,
+      "files": 6,
+      "bytes": 287058,
+      "downloadMs": 124.39939999987837,
+      "decodeMs": 1682.517600000021,
+      "hashMs": 1450.4490000001388,
+      "gunzipMs": 135.25330000009853,
+      "utf8Ms": 59.35320000001229,
+      "mergeMs": 271.41399999998976,
+      "graphMs": 62.92119999998249,
+      "totalMs": 2888.662000000011,
+      "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+      "nodes": 9181,
+      "edges": 9972,
+      "inputEqual": true
+    },
+    {
+      "sample": "boundary-guro-gwangmyeong",
+      "gridStepE7": 200000,
+      "run": 1,
+      "files": 8,
+      "bytes": 430705,
+      "downloadMs": 487.01250000006985,
+      "decodeMs": 2633.446799999918,
+      "hashMs": 2270.038799999864,
+      "gunzipMs": 199.71549999981653,
+      "utf8Ms": 103.41090000001714,
+      "mergeMs": 447.6802000000607,
+      "graphMs": 159.9562000000151,
+      "totalMs": 4664.874300000025,
+      "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+      "nodes": 11189,
+      "edges": 12384,
+      "inputEqual": true
+    },
+    {
+      "sample": "boundary-guro-gwangmyeong",
+      "gridStepE7": 200000,
+      "run": 2,
+      "files": 8,
+      "bytes": 430705,
+      "downloadMs": 171.6665000000503,
+      "decodeMs": 2645.696399999899,
+      "hashMs": 2291.980300000054,
+      "gunzipMs": 196.01049999997485,
+      "utf8Ms": 100.2881999994861,
+      "mergeMs": 431.6054000000004,
+      "graphMs": 116.6429000000935,
+      "totalMs": 4304.979900000035,
+      "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+      "nodes": 11189,
+      "edges": 12384,
+      "inputEqual": true
+    },
+    {
+      "sample": "boundary-guro-gwangmyeong",
+      "gridStepE7": 200000,
+      "run": 3,
+      "files": 8,
+      "bytes": 430705,
+      "downloadMs": 156.95670000009704,
+      "decodeMs": 2655.9531000000425,
+      "hashMs": 2289.897799999686,
+      "gunzipMs": 197.9102999997558,
+      "utf8Ms": 104.09069999982603,
+      "mergeMs": 465.4314000000013,
+      "graphMs": 100.80449999996927,
+      "totalMs": 4303.503999999957,
+      "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+      "nodes": 11189,
+      "edges": 12384,
+      "inputEqual": true
+    }
+  ],
+  "memorySamples": [
+    {
+      "at": "2026-09-30T15:48:29.4157800+09:00",
+      "pssKB": 350763,
+      "rssKB": 455112
+    },
+    {
+      "at": "2026-09-30T15:48:30.1345954+09:00",
+      "pssKB": 370489,
+      "rssKB": 479652
+    },
+    {
+      "at": "2026-09-30T15:48:30.8372462+09:00",
+      "pssKB": 373344,
+      "rssKB": 482224
+    },
+    {
+      "at": "2026-09-30T15:48:31.4920714+09:00",
+      "pssKB": 379519,
+      "rssKB": 488380
+    },
+    {
+      "at": "2026-09-30T15:48:32.1517394+09:00",
+      "pssKB": 380893,
+      "rssKB": 489752
+    },
+    {
+      "at": "2026-09-30T15:48:32.8395948+09:00",
+      "pssKB": 385670,
+      "rssKB": 494544
+    },
+    {
+      "at": "2026-09-30T15:48:33.5104304+09:00",
+      "pssKB": 386617,
+      "rssKB": 495536
+    },
+    {
+      "at": "2026-09-30T15:48:34.1816310+09:00",
+      "pssKB": 408933,
+      "rssKB": 517872
+    },
+    {
+      "at": "2026-09-30T15:48:34.8994799+09:00",
+      "pssKB": 415152,
+      "rssKB": 523688
+    },
+    {
+      "at": "2026-09-30T15:48:35.5710240+09:00",
+      "pssKB": 412553,
+      "rssKB": 521092
+    },
+    {
+      "at": "2026-09-30T15:48:36.2237465+09:00",
+      "pssKB": 394682,
+      "rssKB": 503224
+    },
+    {
+      "at": "2026-09-30T15:48:36.9268071+09:00",
+      "pssKB": 396838,
+      "rssKB": 505364
+    }
+  ],
+  "memoryLimitations": "12 snapshots only during first Seoul runs; not whole-run peak; includes entire debug app",
+  "physicalPhoneVerified": false
+}
