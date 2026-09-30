@@ -15,6 +15,7 @@ import { SHAPES } from '@/modules/route-engine/engine';
 import { candidateOverlay } from '@/modules/route-engine/geojson';
 import type { ShapeId } from '@/modules/route-engine/types';
 import { compareReference } from '@/modules/route-engine/verification';
+import SaveCoursePanel from '@/features/courses/SaveCoursePanel';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const loadRoads = createRoadLoader({ endpoint: process.env.EXPO_PUBLIC_ROAD_DATA_URL,
@@ -196,6 +197,7 @@ export default function RouteLabScreen() {
           <Text style={styles.small}>도형 크기 {(candidate.scaleRatio * 100).toFixed(0)}% · 접근/복귀 {candidate.accessKm.toFixed(2)} km</Text>
         </Pressable>)}
         <Text style={styles.small}>점수는 후보 비교용이며 정확한 일치율이 아니에요. 출발점은 입력 좌표에서 {completed.result.snapMeters.toFixed(1)}m 떨어진 도로 위 점이에요.</Text>
+        {completed.result.candidates.length > 0 && <SaveCoursePanel completed={completed} selected={selected} />}
       </>}
     </ScrollView>
   </SafeAreaView>;

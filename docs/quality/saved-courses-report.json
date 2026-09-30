@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-09-30T19:10:04.863204+09:00",
+  "environment": "RunningArt_API_36 x86_64 / development APK with local Metro",
+  "phoneTested": false,
+  "externalNetworkDisabledForReopen": true,
+  "localMetroRequired": true,
+  "databaseSchema": 2,
+  "savedCourses": 1,
+  "routePoints": 151,
+  "targetPoints": 27,
+  "lengthKm": 5.400000000001176,
+  "score": 94,
+  "snapshotSha256": "b399236e2bf9bb0d1e20627bbab03ed38009e7f50f63b61fbb2fbcb305753e2f",
+  "renamePreservedSnapshot": true,
+  "forceStopPreservedAllColumns": true,
+  "deleteCancellationPreservedAllColumns": true,
+  "coursesAfterDelete": 0,
+  "databaseMigrationFromV1TestedOnPCOnly": true
+}

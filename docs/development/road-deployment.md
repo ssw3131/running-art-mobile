@@ -1,6 +1,6 @@
 # 4-2 독립 도로 서버 배포 준비
 
-0.02도·gzip 잠정 표본의 **배포 준비와 로컬 검증**을 구현했다. 실제 R2 버킷·도메인은 아직 지정하지 않았으며 외부 업로드는 실행하지 않았다. 휴대폰 연결 테스트는 사용자 보류를 유지한다. [표본 재현](road-samples.md) · [배포 검증 결과](../quality/road-deployment-verification.md)
+0.02도·gzip 표본의 **배포 준비와 로컬 검증**을 구현했다. 후속 SM-S942N 27회 검증으로 이 형식을 4-2 표본 배포에 채택했다. 실제 R2 버킷·도메인은 아직 지정하지 않았으며 외부 업로드는 실행하지 않았다. 실제 R2/CDN 배포·휴대폰 공개 주소 연결은 다음 서버 작업이다. [표본 재현](road-samples.md) · [표본·휴대폰 검증](../quality/road-samples-verification.md) · [배포 검증 결과](../quality/road-deployment-verification.md)
 
 ## 배포 묶음과 주소
 

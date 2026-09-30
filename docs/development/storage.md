@@ -1,6 +1,6 @@
 # SQLite 저장소 테스트
 
-현재는 핵심 기능 테스트용 저장 기반입니다. 이 문서의 `running-art.db`는 테스트 메모를 저장하며 실제 코스·러닝 기록 형식은 해당 기능을 구현할 때 정합니다. 도로 파일은 별도 `running-art-road-cache.db`에 저장합니다. [영구 도로 캐시](road-cache.md)를 참고하세요. 공통 SQL 인터페이스에 BLOB용 `Uint8Array`를 추가했으며 기존 메모 스키마는 그대로 유지합니다.
+현재는 핵심 기능 테스트용 저장 기반입니다. `running-art.db`에 테스트 메모와 계산한 코스를 저장합니다. [코스 저장](saved-courses.md)에 버전 2 스키마와 사용법이 있습니다. 도로 파일은 별도 `running-art-road-cache.db`에 저장합니다. [영구 도로 캐시](road-cache.md)를 참고하세요. 러닝 기록·회원 동기화는 아직 구현하지 않았습니다.
 
 ## 실행과 사용
 
@@ -29,8 +29,8 @@ WAL 모드이므로 실행 중에는 `running-art.db-wal`·`running-art.db-shm` 
 
 ## 모듈과 마이그레이션
 
-- `src/modules/storage/database.ts`: 필요할 때 네이티브 모듈을 불러오고 DB를 엽니다. `client.ts`는 동시 초기화 요청을 하나로 합치고, 실패한 연결을 닫아 재시도를 허용합니다.
-- `migrations.ts`: `PRAGMA user_version`으로 버전을 관리합니다. 현재 버전은 **1**이며 `storage_test_notes` 테이블을 생성합니다. `id`, `content`, `created_at`, `updated_at`을 저장하고 시각은 Unix 밀리초입니다.
+- `src/modules/storage/database.ts`: 필요할 때 네이티브 모듈을 불러오고 DB를 엽니다. `client.ts`는 메모·코스 저장소의 동시 초기화 요청을 하나로 합치고, 실패한 연결을 닫아 재시도를 허용합니다.
+- `migrations.ts`: `PRAGMA user_version`으로 버전을 관리합니다. 현재 버전은 **2**입니다. 버전 1은 `storage_test_notes`, 버전 2는 `saved_courses`와 목록 인덱스를 추가합니다. 메모에는 `id`, `content`, `created_at`, `updated_at`을 저장하고 시각은 Unix 밀리초입니다.
 - 이미 적용한 마이그레이션은 수정하지 않고 배열 끝에 새 SQL을 추가합니다. 미적용 변경과 버전 갱신을 하나의 배타적 트랜잭션에서 처리해 실패 시 함께 롤백합니다. 더 높은 버전의 DB는 삭제·다운그레이드하지 않고 앱 업데이트 안내를 표시합니다.
 - `test-notes.ts`: 테스트 메모의 `list`, `create`, `update`, `remove` API입니다. SQL 값 바인딩, 입력 검증, 존재하지 않는 ID 처리를 포함합니다. UI와 Expo에 직접 의존하지 않습니다.
 

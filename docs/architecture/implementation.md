@@ -8,14 +8,16 @@
 
 후속 사용자 결정으로 실제 서버 배포·휴대폰 테스트를 보류하고 **4-3 영구 캐시**를 먼저 구현했습니다. `persistent-cache.ts`가 별도 SQLite 스키마·전체 검증 후 저장·현재 버전·만료·용량 정리를 담당하고, `cache-database.ts`가 Expo SQLite 전용 연결을 공유합니다. `road-cache-lab.tsx`와 `features/road-cache-lab/source.ts`는 고정 loopback 표본을 사용하는 별도 검증 화면입니다. PC 실제 SQLite와 모바일 codec으로 재시작·오프라인 입력/그래프 대조를 완료했으며 일반 계산의 기존 API·메모리 캐시는 유지합니다. [캐시 계약](../development/road-cache.md)
 
+5단계 로컬 코스 저장도 구현했습니다. `modules/courses/`는 검증된 경로 스냅샷·중복·목록·상세·이름 변경·삭제를 담당하고, 기존 사용자 DB에 버전 2를 추가합니다. `features/courses/SaveCoursePanel.tsx`가 완료한 후보를 저장하고 `app/courses/`에서 재계산 없이 복원합니다. 기본 경로 표시는 배경 지도·네트워크·GPS를 사용하지 않습니다. [저장 구조와 사용법](../development/saved-courses.md)
+
 ## 현재와 예정 구조
 
-현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 `map.tsx`·`route-lab.tsx`·`road-file-lab.tsx`·`road-cache-lab.tsx`·`storage.tsx`·`environment.tsx`로 이동합니다. 화면은 핵심 기능 테스트용이며 이후 서비스 기획·디자인에 맞춰 변경합니다.
+현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 `map.tsx`·`route-lab.tsx`·`road-file-lab.tsx`·`road-cache-lab.tsx`·`courses/`·`storage.tsx`·`environment.tsx`로 이동합니다. 화면은 핵심 기능 테스트용이며 이후 서비스 기획·디자인에 맞춰 변경합니다.
 
 - `src/modules/map/`: MapLibre 네이티브 지도·MapTiler 스타일 URL·현재 위치 점·카메라·지도 실패 처리. 웹은 Android 확인 안내를 표시합니다.
 - `src/modules/location/`: UI 독립적인 권한·위치 획득·취소 로직과 Expo 어댑터. 위치는 한 번 얻은 뒤 구독을 해제합니다.
 - `src/features/map/use-current-location.ts`: 화면 포커스·앱 전경 수명과 위치 요청 상태 연결, 설정 복귀 재확인.
-- `src/modules/storage/`: Expo SQLite 지연 초기화, 트랜잭션 마이그레이션, 테스트 메모 CRUD. 화면에서는 준비·실패·재시도를 처리하며 지도는 DB 초기화에 종속되지 않습니다. [저장 구조·사용법](../development/storage.md)을 참고합니다.
+- `src/modules/storage/`: Expo SQLite 지연 초기화, 트랜잭션 마이그레이션, 테스트 메모 CRUD와 코스 저장소의 공유 초기화. 화면에서는 준비·실패·재시도를 처리하며 지도는 DB 초기화에 종속되지 않습니다. [저장 구조·사용법](../development/storage.md)을 참고합니다.
 - `src/modules/route-engine/`: v0.2 TypeScript 엔진·타입, 분할 실행·취소·요청 교체, 지도 좌표 변환, 원본 비교. 엔진은 React·지도 SDK·네트워크·DB를 import하지 않습니다.
 - `src/modules/road-data/`: 기존 테스트 사이트의 OSM API 단일 호출·범위 검사·최대 2영역/15분 메모리 캐시. 앱 전체 65초 제한과 취소를 적용합니다. 이전 테스트 서버 수정의 25초/55초 정책은 운영 미반영 이력이며 모바일 작업으로 배포를 재개하지 않습니다. 다음 구현은 독립 도로 파일 공급·영구 캐시 연결입니다.
 - `src/features/route-lab/`: 지도 중심·현재 위치 요청, 다운로드부터 계산까지 취소하는 세션, 조회/계산 시간, 고정 표본과 원본 비교, React Native 실행기. `assets/route-lab/`의 원본 표본은 보존합니다. [지도 중심 조회](../development/route-center.md)·[코스 계산 안내](../development/route-engine.md)를 참고합니다.
@@ -45,7 +47,7 @@ OSM 식별자·연결 관계를 보존한 보행 그래프
        ↓
 앱 내부 계산: 도형 배치 → 실제 도로 연결 → 점수·후보 선정
        ↓
-지도 좌표 변환 → 후보 비교·선택 (코스 저장은 후속)
+지도 좌표 변환 → 후보 비교·선택 → 기기 코스 저장·목록·상세
 ```
 
 지도 스타일·타일은 MapTiler에서 MapLibre로 공급합니다. 보행 그래프는 현재 기존 웹의 도로 데이터 API에서 받은 OSM 자료로 구성하며 실제 경로 계산은 기기 내부에서 합니다. 서울 도심은 저장 표본, 공급자 저장 범위 밖은 Overpass 조회 경로입니다. 배경 지도와 계산용 도로 데이터는 별개입니다.

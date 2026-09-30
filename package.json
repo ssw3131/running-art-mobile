@@ -46,6 +46,7 @@
     "check": "npm run typecheck && npm run lint",
     "test:location": "node --test tests/location.test.mjs tests/map-config.test.mjs",
     "test:storage": "node --test tests/storage.test.mjs",
+    "test:courses": "node --test tests/courses.test.mjs",
     "test:route-engine": "node --test tests/route-engine-*.test.mjs",
     "test:road-files": "node --test tests/road-file-format.test.mjs tests/road-mobile-codecs.test.mjs",
     "roads:package": "node scripts/road-data/package.mjs",

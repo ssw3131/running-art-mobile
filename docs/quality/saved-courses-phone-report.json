@@ -1,0 +1,60 @@
+{
+  "recordedAt": "2026-09-30T22:19:06.316901+09:00",
+  "device": {
+    "model": "SM-S942N",
+    "android": "16",
+    "sdk": 36
+  },
+  "installedAt": "2026-09-30 22:09:04 +09:00",
+  "build": {
+    "apk": "build/install/running-art-0.1.0-20260930-courses.apk",
+    "bytes": 95595419,
+    "sha256": "d98437c15854221331b07b754b4797ccfa0947e03ab7df49bb8bb7202de78b6a",
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "bundleSha256": "549b5282ce27ea8f167918c43597c990d0057f209bff867ab4304b23ec258a61",
+    "embeddedBundleMatchesGenerated": true,
+    "appSourceMatches": 40,
+    "sourceDifferences": []
+  },
+  "signingCertificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "checks": {
+    "firstInstallTimePreserved": true,
+    "applicationIdPreserved": true,
+    "dataDirectoryPreserved": true,
+    "standaloneReleaseWithoutMetro": true,
+    "installedApkMatches": true,
+    "upgradeNotePreserved": true,
+    "calculationMatchesReference": true,
+    "saveConfirmed": true,
+    "duplicatePreserved": true,
+    "renameRestoredAfterForceStop": true,
+    "offlineRestoreWithoutDefaultNetwork": true,
+    "networkSettingsRestored": true,
+    "deleteCancelPreserved": true,
+    "deletePersistedAfterRestart": true,
+    "courseDeletePreservedNote": true,
+    "testNoteCleaned": true
+  },
+  "visualVerification": [
+    "detail.png",
+    "offline-detail.png"
+  ],
+  "calculation": {
+    "fixture": "synthetic grid heart 5km",
+    "count": 5,
+    "secondsSingleObservation": 3.57,
+    "selectedLengthKmDisplay": 5.4,
+    "selectedScore": 94,
+    "referenceTolerance": 1e-06
+  },
+  "limitations": [
+    "Release APK UI verification; private SQLite bytes were not extracted.",
+    "No actual GPS/OSM road request, online background toggle, persistent road-cache or road-file performance test.",
+    "No storage-full, outdoor/battery or store-release verification.",
+    "No in-calculation interaction timing verified in this run."
+  ],
+  "localEvidenceDirectory": ".cache/phone-courses-qa/"
+}

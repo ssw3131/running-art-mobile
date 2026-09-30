@@ -25,6 +25,11 @@ export default function HomeScreen() {
               <Text style={styles.secondaryText}>코스 계산 테스트</Text>
             </Pressable>
           </Link>
+          <Link href="/courses" asChild>
+            <Pressable accessibilityRole="button" testID="open-courses" style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>저장한 코스</Text>
+            </Pressable>
+          </Link>
           <Link href="/storage" asChild>
             <Pressable accessibilityRole="button" testID="open-storage" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>저장소 테스트</Text>

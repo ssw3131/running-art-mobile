@@ -1,0 +1,2258 @@
+{
+  "recordedAt": "2026-09-30T13:42:39.317Z",
+  "status": "4-1 complete: phone sample verification and v1 format decision",
+  "device": {
+    "model": "SM-S942N",
+    "android": "16",
+    "sdk": 36,
+    "kind": "physical phone",
+    "usbPowered": true,
+    "batteryBefore": {
+      "percent": 38,
+      "temperatureC": 34.9
+    },
+    "batteryAfter": {
+      "percent": 42,
+      "temperatureC": 35.6
+    }
+  },
+  "runtime": {
+    "apk": "debug",
+    "apkSha256": "dad2db67eb593cf2c01267343b5d9ac27dffaaa55fa7350e07a777a651ea6942",
+    "javaScript": "production --no-dev --minify",
+    "hermes": true,
+    "developmentJavaScript": false,
+    "gridOrder": [
+      100000,
+      200000,
+      400000
+    ],
+    "sameAppProcess": true,
+    "explicitWarmup": false,
+    "randomizedOrder": false
+  },
+  "transport": "USB adb reverse to Windows 127.0.0.1:8766, Cache-Control no-store, sequential fetch; not CDN or mobile network",
+  "release": "kr-20260929-9d436449e16f-roads-v1",
+  "sourceHashes": {
+    "src/features/road-file-lab/benchmark.ts": "5e03500dacc166168b96405b7315e636e6c6a38ebbef17e7127e1de2a8c87231",
+    "src/modules/road-data/file-format.ts": "47697ec31231c2671349e369d10ee90e8075b91b0d10e1d2e8f197957fe9bd65",
+    "src/modules/road-data/mobile-codecs.ts": "80487f135cd3cee5e0bdf223a79bd06be71d15ef4c0848a103beee60a6dc8e67",
+    "src/modules/route-engine/engine.ts": "9aeea90e1cb800f75272b439fb7c4a0c667c84803f952237111541e295026276",
+    "scripts/road-data/serve.mjs": "55f5be02f364e7c721e65ab3cc40c6fb531f0038167b7b5d52d173148d5a50ca"
+  },
+  "checks": {
+    "runs": 27,
+    "fullMergedInputHashMatchesPc": true,
+    "graphNodeAndEdgeCountsMatchPc": true,
+    "completionUiPerGrid": true,
+    "wholeIntervalMemorySampled": true,
+    "cancellation": {
+      "beforeTap": "2026-09-30T13:39:21.858Z",
+      "observedAt": "2026-09-30T13:39:24.318Z",
+      "elapsedIncludingAdbAndUiDumpMs": 2460,
+      "cancelledMessage": true,
+      "noLateComplete": true,
+      "settleWaitMs": 3000
+    }
+  },
+  "summary": [
+    {
+      "gridStepE7": 100000,
+      "sample": "seoul-gangnam",
+      "files": 30,
+      "bytes": 472283,
+      "medianMs": {
+        "downloadMs": 623.8972644805908,
+        "decodeMs": 2328.0019500255585,
+        "hashMs": 2008.2411279678345,
+        "gunzipMs": 173.70324563980103,
+        "utf8Ms": 90.10766220092773,
+        "mergeMs": 411.4047658443451,
+        "graphMs": 73.37312507629395,
+        "totalMs": 4364.636327981949
+      },
+      "totalMsRange": [
+        3646.2365231513977,
+        6130.353788852692
+      ]
+    },
+    {
+      "gridStepE7": 100000,
+      "sample": "busan-cityhall",
+      "files": 20,
+      "bytes": 274232,
+      "medianMs": {
+        "downloadMs": 461.81906294822693,
+        "decodeMs": 1714.3825385570526,
+        "hashMs": 1477.6969118118286,
+        "gunzipMs": 136.42030954360962,
+        "utf8Ms": 58.85179591178894,
+        "mergeMs": 261.1247661113739,
+        "graphMs": 75.07203102111816,
+        "totalMs": 3272.7023038864136
+      },
+      "totalMsRange": [
+        3164.983008146286,
+        3741.8445320129395
+      ]
+    },
+    {
+      "gridStepE7": 100000,
+      "sample": "boundary-guro-gwangmyeong",
+      "files": 24,
+      "bytes": 349052,
+      "medianMs": {
+        "downloadMs": 542.3894906044006,
+        "decodeMs": 2304.8270320892334,
+        "hashMs": 1980.656994342804,
+        "gunzipMs": 182.96207356452942,
+        "utf8Ms": 86.80156087875366,
+        "mergeMs": 323.9441409111023,
+        "graphMs": 95.6954300403595,
+        "totalMs": 4314.341640949249
+      },
+      "totalMsRange": [
+        4290.615195035934,
+        4513.2963280677795
+      ]
+    },
+    {
+      "gridStepE7": 200000,
+      "sample": "seoul-gangnam",
+      "files": 9,
+      "bytes": 476751,
+      "medianMs": {
+        "downloadMs": 223.44379138946533,
+        "decodeMs": 2088.1780076026917,
+        "hashMs": 1799.2116417884827,
+        "gunzipMs": 158.1739456653595,
+        "utf8Ms": 81.46499919891357,
+        "mergeMs": 319.39246106147766,
+        "graphMs": 101.73351502418518,
+        "totalMs": 3805.4807419776917
+      },
+      "totalMsRange": [
+        3523.373983860016,
+        4802.400429964066
+      ]
+    },
+    {
+      "gridStepE7": 200000,
+      "sample": "busan-cityhall",
+      "files": 6,
+      "bytes": 287058,
+      "medianMs": {
+        "downloadMs": 157.63211011886597,
+        "decodeMs": 1796.0297660827637,
+        "hashMs": 1545.5085933208466,
+        "gunzipMs": 140.5492970943451,
+        "utf8Ms": 64.35621166229248,
+        "mergeMs": 216.3573820590973,
+        "graphMs": 108.71269488334656,
+        "totalMs": 3116.3175780773163
+      },
+      "totalMsRange": [
+        2930.030077934265,
+        3270.8558599948883
+      ]
+    },
+    {
+      "gridStepE7": 200000,
+      "sample": "boundary-guro-gwangmyeong",
+      "files": 8,
+      "bytes": 430705,
+      "medianMs": {
+        "downloadMs": 216.05546808242798,
+        "decodeMs": 2764.408594608307,
+        "hashMs": 2381.183358669281,
+        "gunzipMs": 207.038672208786,
+        "utf8Ms": 107.56019306182861,
+        "mergeMs": 405.26660108566284,
+        "graphMs": 83.06128883361816,
+        "totalMs": 4624.545429944992
+      },
+      "totalMsRange": [
+        4340.150273799896,
+        4844.220546007156
+      ]
+    },
+    {
+      "gridStepE7": 400000,
+      "sample": "seoul-gangnam",
+      "files": 4,
+      "bytes": 668019,
+      "medianMs": {
+        "downloadMs": 130.5114860534668,
+        "decodeMs": 4027.1342170238495,
+        "hashMs": 3486.0196487903595,
+        "gunzipMs": 289.6829686164856,
+        "utf8Ms": 152.6750771999359,
+        "mergeMs": 625.3539850711823,
+        "graphMs": 136.68437480926514,
+        "totalMs": 6029.974570035934
+      },
+      "totalMsRange": [
+        4334.027850866318,
+        6344.989686965942
+      ]
+    },
+    {
+      "gridStepE7": 400000,
+      "sample": "busan-cityhall",
+      "files": 2,
+      "bytes": 375152,
+      "medianMs": {
+        "downloadMs": 87.91148400306702,
+        "decodeMs": 2544.5976951122284,
+        "hashMs": 2200.9239830970764,
+        "gunzipMs": 194.1177351474762,
+        "utf8Ms": 97.20117282867432,
+        "mergeMs": 441.956405878067,
+        "graphMs": 71.37749981880188,
+        "totalMs": 3889.763086080551
+      },
+      "totalMsRange": [
+        3886.3767960071564,
+        4340.378085851669
+      ]
+    },
+    {
+      "gridStepE7": 400000,
+      "sample": "boundary-guro-gwangmyeong",
+      "files": 4,
+      "bytes": 800517,
+      "medianMs": {
+        "downloadMs": 144.18531131744385,
+        "decodeMs": 5999.414686918259,
+        "hashMs": 5111.350469827652,
+        "gunzipMs": 452.03664088249207,
+        "utf8Ms": 241.4623830318451,
+        "mergeMs": 966.3073828220367,
+        "graphMs": 114.13386678695679,
+        "totalMs": 8438.899140834808
+      },
+      "totalMsRange": [
+        8372.972031116486,
+        8756.369609117508
+      ]
+    }
+  ],
+  "memorySummary": [
+    {
+      "gridStepE7": 100000,
+      "count": 66,
+      "before": {
+        "at": "2026-09-30T13:35:56.264Z",
+        "phase": "before",
+        "pssKiB": 396301,
+        "rssKiB": 498872
+      },
+      "after": {
+        "at": "2026-09-30T13:36:34.767Z",
+        "phase": "after",
+        "pssKiB": 416600,
+        "rssKiB": 528924
+      },
+      "observedMaxPssKiB": 451298,
+      "observedMaxRssKiB": 562920,
+      "intervalMedianMs": 590,
+      "intervalMaxMs": 684
+    },
+    {
+      "gridStepE7": 200000,
+      "count": 62,
+      "before": {
+        "at": "2026-09-30T13:36:58.093Z",
+        "phase": "before",
+        "pssKiB": 415558,
+        "rssKiB": 527984
+      },
+      "after": {
+        "at": "2026-09-30T13:37:34.052Z",
+        "phase": "after",
+        "pssKiB": 418655,
+        "rssKiB": 531072
+      },
+      "observedMaxPssKiB": 454545,
+      "observedMaxRssKiB": 566948,
+      "intervalMedianMs": 592,
+      "intervalMaxMs": 634
+    },
+    {
+      "gridStepE7": 400000,
+      "count": 92,
+      "before": {
+        "at": "2026-09-30T13:37:53.707Z",
+        "phase": "before",
+        "pssKiB": 419150,
+        "rssKiB": 531420
+      },
+      "after": {
+        "at": "2026-09-30T13:38:48.709Z",
+        "phase": "after",
+        "pssKiB": 448102,
+        "rssKiB": 560328
+      },
+      "observedMaxPssKiB": 507246,
+      "observedMaxRssKiB": 619468,
+      "intervalMedianMs": 606,
+      "intervalMaxMs": 703
+    }
+  ],
+  "grids": [
+    {
+      "gridStepE7": 100000,
+      "begin": "2026-09-30T13:35:56.260Z",
+      "finishedAt": "2026-09-30T13:36:38.204Z",
+      "metadata": {
+        "gridStepE7": 100000,
+        "hermes": true,
+        "developmentJavaScript": false
+      },
+      "records": [
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 100000,
+          "run": 1,
+          "files": 30,
+          "bytes": 472283,
+          "downloadMs": 623.8972644805908,
+          "decodeMs": 1770.334724664688,
+          "hashMs": 1527.76660323143,
+          "gunzipMs": 131.05519843101501,
+          "utf8Ms": 67.56863164901733,
+          "mergeMs": 370.2083978652954,
+          "graphMs": 68.95101499557495,
+          "totalMs": 3646.2365231513977,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 100000,
+          "run": 2,
+          "files": 30,
+          "bytes": 472283,
+          "downloadMs": 460.61859130859375,
+          "decodeMs": 2328.0019500255585,
+          "hashMs": 2008.2411279678345,
+          "gunzipMs": 173.70324563980103,
+          "utf8Ms": 90.10766220092773,
+          "mergeMs": 411.4047658443451,
+          "graphMs": 73.37312507629395,
+          "totalMs": 4364.636327981949,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 100000,
+          "run": 3,
+          "files": 30,
+          "bytes": 472283,
+          "downloadMs": 655.2451543807983,
+          "decodeMs": 3450.5272641181946,
+          "hashMs": 2978.501285791397,
+          "gunzipMs": 261.6625409126282,
+          "utf8Ms": 128.7421886920929,
+          "mergeMs": 613.1083600521088,
+          "graphMs": 108.36257815361023,
+          "totalMs": 6130.353788852692,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 100000,
+          "run": 1,
+          "files": 20,
+          "bytes": 274232,
+          "downloadMs": 729.7210161685944,
+          "decodeMs": 1842.5892956256866,
+          "hashMs": 1584.2843730449677,
+          "gunzipMs": 153.47730231285095,
+          "utf8Ms": 60.89527440071106,
+          "mergeMs": 349.03328108787537,
+          "graphMs": 60.81527280807495,
+          "totalMs": 3741.8445320129395,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 100000,
+          "run": 2,
+          "files": 20,
+          "bytes": 274232,
+          "downloadMs": 410.5669140815735,
+          "decodeMs": 1714.3825385570526,
+          "hashMs": 1477.6969118118286,
+          "gunzipMs": 136.42030954360962,
+          "utf8Ms": 58.85179591178894,
+          "mergeMs": 219.23429703712463,
+          "graphMs": 163.30249977111816,
+          "totalMs": 3272.7023038864136,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 100000,
+          "run": 3,
+          "files": 20,
+          "bytes": 274232,
+          "downloadMs": 461.81906294822693,
+          "decodeMs": 1638.375819683075,
+          "hashMs": 1411.984299659729,
+          "gunzipMs": 133.30780839920044,
+          "utf8Ms": 55.3416006565094,
+          "mergeMs": 261.1247661113739,
+          "graphMs": 75.07203102111816,
+          "totalMs": 3164.983008146286,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 100000,
+          "run": 1,
+          "files": 24,
+          "bytes": 349052,
+          "downloadMs": 821.5372252464294,
+          "decodeMs": 2304.8270320892334,
+          "hashMs": 1980.656994342804,
+          "gunzipMs": 182.96207356452942,
+          "utf8Ms": 86.80156087875366,
+          "mergeMs": 323.9441409111023,
+          "graphMs": 112.86308598518372,
+          "totalMs": 4513.2963280677795,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 100000,
+          "run": 2,
+          "files": 24,
+          "bytes": 349052,
+          "downloadMs": 525.3952331542969,
+          "decodeMs": 2423.700390100479,
+          "hashMs": 2074.652580499649,
+          "gunzipMs": 202.84351515769958,
+          "utf8Ms": 90.15538954734802,
+          "mergeMs": 316.6191020011902,
+          "graphMs": 95.6954300403595,
+          "totalMs": 4314.341640949249,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 100000,
+          "run": 3,
+          "files": 24,
+          "bytes": 349052,
+          "downloadMs": 542.3894906044006,
+          "decodeMs": 2287.5060544013977,
+          "hashMs": 1975.6388676166534,
+          "gunzipMs": 174.35222220420837,
+          "utf8Ms": 84.37097668647766,
+          "mergeMs": 376.9526951313019,
+          "graphMs": 79.96582007408142,
+          "totalMs": 4290.615195035934,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        }
+      ],
+      "memorySamples": [
+        {
+          "at": "2026-09-30T13:35:56.264Z",
+          "phase": "before",
+          "pssKiB": 396301,
+          "rssKiB": 498872
+        },
+        {
+          "at": "2026-09-30T13:35:56.846Z",
+          "phase": "during",
+          "pssKiB": 396596,
+          "rssKiB": 500664
+        },
+        {
+          "at": "2026-09-30T13:35:57.437Z",
+          "phase": "during",
+          "pssKiB": 407864,
+          "rssKiB": 519660
+        },
+        {
+          "at": "2026-09-30T13:35:57.993Z",
+          "phase": "during",
+          "pssKiB": 409870,
+          "rssKiB": 521600
+        },
+        {
+          "at": "2026-09-30T13:35:58.555Z",
+          "phase": "during",
+          "pssKiB": 408109,
+          "rssKiB": 519808
+        },
+        {
+          "at": "2026-09-30T13:35:59.110Z",
+          "phase": "during",
+          "pssKiB": 411006,
+          "rssKiB": 522508
+        },
+        {
+          "at": "2026-09-30T13:35:59.670Z",
+          "phase": "during",
+          "pssKiB": 451298,
+          "rssKiB": 562920
+        },
+        {
+          "at": "2026-09-30T13:36:00.233Z",
+          "phase": "during",
+          "pssKiB": 441942,
+          "rssKiB": 553564
+        },
+        {
+          "at": "2026-09-30T13:36:00.806Z",
+          "phase": "during",
+          "pssKiB": 438155,
+          "rssKiB": 549804
+        },
+        {
+          "at": "2026-09-30T13:36:01.383Z",
+          "phase": "during",
+          "pssKiB": 429792,
+          "rssKiB": 541628
+        },
+        {
+          "at": "2026-09-30T13:36:01.940Z",
+          "phase": "during",
+          "pssKiB": 426054,
+          "rssKiB": 538084
+        },
+        {
+          "at": "2026-09-30T13:36:02.504Z",
+          "phase": "during",
+          "pssKiB": 426274,
+          "rssKiB": 538328
+        },
+        {
+          "at": "2026-09-30T13:36:03.082Z",
+          "phase": "during",
+          "pssKiB": 427772,
+          "rssKiB": 539848
+        },
+        {
+          "at": "2026-09-30T13:36:03.639Z",
+          "phase": "during",
+          "pssKiB": 448233,
+          "rssKiB": 560308
+        },
+        {
+          "at": "2026-09-30T13:36:04.246Z",
+          "phase": "during",
+          "pssKiB": 443090,
+          "rssKiB": 555052
+        },
+        {
+          "at": "2026-09-30T13:36:04.824Z",
+          "phase": "during",
+          "pssKiB": 436566,
+          "rssKiB": 548528
+        },
+        {
+          "at": "2026-09-30T13:36:05.399Z",
+          "phase": "during",
+          "pssKiB": 433162,
+          "rssKiB": 545128
+        },
+        {
+          "at": "2026-09-30T13:36:05.989Z",
+          "phase": "during",
+          "pssKiB": 423634,
+          "rssKiB": 535604
+        },
+        {
+          "at": "2026-09-30T13:36:06.579Z",
+          "phase": "during",
+          "pssKiB": 424091,
+          "rssKiB": 536084
+        },
+        {
+          "at": "2026-09-30T13:36:07.214Z",
+          "phase": "during",
+          "pssKiB": 424390,
+          "rssKiB": 536488
+        },
+        {
+          "at": "2026-09-30T13:36:07.821Z",
+          "phase": "during",
+          "pssKiB": 425241,
+          "rssKiB": 537344
+        },
+        {
+          "at": "2026-09-30T13:36:08.423Z",
+          "phase": "during",
+          "pssKiB": 426277,
+          "rssKiB": 538380
+        },
+        {
+          "at": "2026-09-30T13:36:09.014Z",
+          "phase": "during",
+          "pssKiB": 427098,
+          "rssKiB": 539204
+        },
+        {
+          "at": "2026-09-30T13:36:09.619Z",
+          "phase": "during",
+          "pssKiB": 441818,
+          "rssKiB": 553924
+        },
+        {
+          "at": "2026-09-30T13:36:10.239Z",
+          "phase": "during",
+          "pssKiB": 445726,
+          "rssKiB": 557836
+        },
+        {
+          "at": "2026-09-30T13:36:10.847Z",
+          "phase": "during",
+          "pssKiB": 444577,
+          "rssKiB": 556688
+        },
+        {
+          "at": "2026-09-30T13:36:11.453Z",
+          "phase": "during",
+          "pssKiB": 426414,
+          "rssKiB": 538528
+        },
+        {
+          "at": "2026-09-30T13:36:12.063Z",
+          "phase": "during",
+          "pssKiB": 426093,
+          "rssKiB": 538244
+        },
+        {
+          "at": "2026-09-30T13:36:12.673Z",
+          "phase": "during",
+          "pssKiB": 426493,
+          "rssKiB": 538652
+        },
+        {
+          "at": "2026-09-30T13:36:13.280Z",
+          "phase": "during",
+          "pssKiB": 425548,
+          "rssKiB": 537732
+        },
+        {
+          "at": "2026-09-30T13:36:13.869Z",
+          "phase": "during",
+          "pssKiB": 434733,
+          "rssKiB": 546920
+        },
+        {
+          "at": "2026-09-30T13:36:14.553Z",
+          "phase": "during",
+          "pssKiB": 438738,
+          "rssKiB": 550932
+        },
+        {
+          "at": "2026-09-30T13:36:15.156Z",
+          "phase": "during",
+          "pssKiB": 432302,
+          "rssKiB": 544496
+        },
+        {
+          "at": "2026-09-30T13:36:15.742Z",
+          "phase": "during",
+          "pssKiB": 423478,
+          "rssKiB": 535680
+        },
+        {
+          "at": "2026-09-30T13:36:16.335Z",
+          "phase": "during",
+          "pssKiB": 420275,
+          "rssKiB": 532480
+        },
+        {
+          "at": "2026-09-30T13:36:16.926Z",
+          "phase": "during",
+          "pssKiB": 420882,
+          "rssKiB": 533088
+        },
+        {
+          "at": "2026-09-30T13:36:17.531Z",
+          "phase": "during",
+          "pssKiB": 439526,
+          "rssKiB": 551736
+        },
+        {
+          "at": "2026-09-30T13:36:18.124Z",
+          "phase": "during",
+          "pssKiB": 428514,
+          "rssKiB": 540724
+        },
+        {
+          "at": "2026-09-30T13:36:18.715Z",
+          "phase": "during",
+          "pssKiB": 418859,
+          "rssKiB": 531072
+        },
+        {
+          "at": "2026-09-30T13:36:19.290Z",
+          "phase": "during",
+          "pssKiB": 414919,
+          "rssKiB": 527140
+        },
+        {
+          "at": "2026-09-30T13:36:19.864Z",
+          "phase": "during",
+          "pssKiB": 414969,
+          "rssKiB": 527196
+        },
+        {
+          "at": "2026-09-30T13:36:20.450Z",
+          "phase": "during",
+          "pssKiB": 426386,
+          "rssKiB": 538616
+        },
+        {
+          "at": "2026-09-30T13:36:21.055Z",
+          "phase": "during",
+          "pssKiB": 425454,
+          "rssKiB": 537684
+        },
+        {
+          "at": "2026-09-30T13:36:21.644Z",
+          "phase": "during",
+          "pssKiB": 423814,
+          "rssKiB": 536044
+        },
+        {
+          "at": "2026-09-30T13:36:22.255Z",
+          "phase": "during",
+          "pssKiB": 415637,
+          "rssKiB": 527876
+        },
+        {
+          "at": "2026-09-30T13:36:22.876Z",
+          "phase": "during",
+          "pssKiB": 415846,
+          "rssKiB": 528084
+        },
+        {
+          "at": "2026-09-30T13:36:23.468Z",
+          "phase": "during",
+          "pssKiB": 416204,
+          "rssKiB": 528448
+        },
+        {
+          "at": "2026-09-30T13:36:24.073Z",
+          "phase": "during",
+          "pssKiB": 416294,
+          "rssKiB": 528544
+        },
+        {
+          "at": "2026-09-30T13:36:24.663Z",
+          "phase": "during",
+          "pssKiB": 429117,
+          "rssKiB": 541368
+        },
+        {
+          "at": "2026-09-30T13:36:25.272Z",
+          "phase": "during",
+          "pssKiB": 433090,
+          "rssKiB": 545340
+        },
+        {
+          "at": "2026-09-30T13:36:25.847Z",
+          "phase": "during",
+          "pssKiB": 430137,
+          "rssKiB": 542388
+        },
+        {
+          "at": "2026-09-30T13:36:26.436Z",
+          "phase": "during",
+          "pssKiB": 418354,
+          "rssKiB": 530608
+        },
+        {
+          "at": "2026-09-30T13:36:27.026Z",
+          "phase": "during",
+          "pssKiB": 416758,
+          "rssKiB": 529016
+        },
+        {
+          "at": "2026-09-30T13:36:27.618Z",
+          "phase": "during",
+          "pssKiB": 417030,
+          "rssKiB": 529300
+        },
+        {
+          "at": "2026-09-30T13:36:28.209Z",
+          "phase": "during",
+          "pssKiB": 415677,
+          "rssKiB": 527948
+        },
+        {
+          "at": "2026-09-30T13:36:28.786Z",
+          "phase": "during",
+          "pssKiB": 417073,
+          "rssKiB": 529356
+        },
+        {
+          "at": "2026-09-30T13:36:29.373Z",
+          "phase": "during",
+          "pssKiB": 444022,
+          "rssKiB": 556304
+        },
+        {
+          "at": "2026-09-30T13:36:29.963Z",
+          "phase": "during",
+          "pssKiB": 430894,
+          "rssKiB": 543176
+        },
+        {
+          "at": "2026-09-30T13:36:30.541Z",
+          "phase": "during",
+          "pssKiB": 415497,
+          "rssKiB": 527784
+        },
+        {
+          "at": "2026-09-30T13:36:31.150Z",
+          "phase": "during",
+          "pssKiB": 417149,
+          "rssKiB": 529464
+        },
+        {
+          "at": "2026-09-30T13:36:31.740Z",
+          "phase": "during",
+          "pssKiB": 416749,
+          "rssKiB": 529064
+        },
+        {
+          "at": "2026-09-30T13:36:32.333Z",
+          "phase": "during",
+          "pssKiB": 417762,
+          "rssKiB": 530080
+        },
+        {
+          "at": "2026-09-30T13:36:32.955Z",
+          "phase": "during",
+          "pssKiB": 418458,
+          "rssKiB": 530776
+        },
+        {
+          "at": "2026-09-30T13:36:33.543Z",
+          "phase": "during",
+          "pssKiB": 432465,
+          "rssKiB": 544784
+        },
+        {
+          "at": "2026-09-30T13:36:34.179Z",
+          "phase": "during",
+          "pssKiB": 431297,
+          "rssKiB": 543616
+        },
+        {
+          "at": "2026-09-30T13:36:34.767Z",
+          "phase": "after",
+          "pssKiB": 416600,
+          "rssKiB": 528924
+        }
+      ]
+    },
+    {
+      "gridStepE7": 200000,
+      "begin": "2026-09-30T13:36:58.090Z",
+      "finishedAt": "2026-09-30T13:37:37.415Z",
+      "metadata": {
+        "gridStepE7": 200000,
+        "hermes": true,
+        "developmentJavaScript": false
+      },
+      "records": [
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 200000,
+          "run": 1,
+          "files": 9,
+          "bytes": 476751,
+          "downloadMs": 423.3748428821564,
+          "decodeMs": 1922.8771090507507,
+          "hashMs": 1659.556368112564,
+          "gunzipMs": 145.18320178985596,
+          "utf8Ms": 72.73120975494385,
+          "mergeMs": 294.03843808174133,
+          "graphMs": 131.7814450263977,
+          "totalMs": 3523.373983860016,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 200000,
+          "run": 2,
+          "files": 9,
+          "bytes": 476751,
+          "downloadMs": 223.44379138946533,
+          "decodeMs": 2088.1780076026917,
+          "hashMs": 1799.2116417884827,
+          "gunzipMs": 158.1739456653595,
+          "utf8Ms": 81.46499919891357,
+          "mergeMs": 319.39246106147766,
+          "graphMs": 101.73351502418518,
+          "totalMs": 3805.4807419776917,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 200000,
+          "run": 3,
+          "files": 9,
+          "bytes": 476751,
+          "downloadMs": 207.50765681266785,
+          "decodeMs": 2980.963397026062,
+          "hashMs": 2566.7410135269165,
+          "gunzipMs": 220.4989447593689,
+          "utf8Ms": 120.61058616638184,
+          "mergeMs": 411.17218685150146,
+          "graphMs": 86.58023405075073,
+          "totalMs": 4802.400429964066,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 200000,
+          "run": 1,
+          "files": 6,
+          "bytes": 287058,
+          "downloadMs": 405.66249990463257,
+          "decodeMs": 1796.9411725997925,
+          "hashMs": 1545.5085933208466,
+          "gunzipMs": 145.2550401687622,
+          "utf8Ms": 64.35621166229248,
+          "mergeMs": 215.1934769153595,
+          "graphMs": 93.75843715667725,
+          "totalMs": 3270.8558599948883,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 200000,
+          "run": 2,
+          "files": 6,
+          "bytes": 287058,
+          "downloadMs": 157.63211011886597,
+          "decodeMs": 1651.8110156059265,
+          "hashMs": 1424.3224976062775,
+          "gunzipMs": 127.52445197105408,
+          "utf8Ms": 60.06132769584656,
+          "mergeMs": 216.3573820590973,
+          "graphMs": 108.71269488334656,
+          "totalMs": 2930.030077934265,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 200000,
+          "run": 3,
+          "files": 6,
+          "bytes": 287058,
+          "downloadMs": 134.13359594345093,
+          "decodeMs": 1796.0297660827637,
+          "hashMs": 1546.929961681366,
+          "gunzipMs": 140.5492970943451,
+          "utf8Ms": 64.98121118545532,
+          "mergeMs": 226.52835988998413,
+          "graphMs": 127.43078112602234,
+          "totalMs": 3116.3175780773163,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 200000,
+          "run": 1,
+          "files": 8,
+          "bytes": 430705,
+          "downloadMs": 521.5832033157349,
+          "decodeMs": 2783.5754709243774,
+          "hashMs": 2386.0488271713257,
+          "gunzipMs": 222.86664247512817,
+          "utf8Ms": 107.56019306182861,
+          "mergeMs": 405.26660108566284,
+          "graphMs": 154.19910192489624,
+          "totalMs": 4844.220546007156,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 200000,
+          "run": 2,
+          "files": 8,
+          "bytes": 430705,
+          "downloadMs": 216.05546808242798,
+          "decodeMs": 2593.6692595481873,
+          "hashMs": 2230.279217004776,
+          "gunzipMs": 205.39171600341797,
+          "utf8Ms": 99.10359406471252,
+          "mergeMs": 396.7459759712219,
+          "graphMs": 83.06128883361816,
+          "totalMs": 4340.150273799896,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 200000,
+          "run": 3,
+          "files": 8,
+          "bytes": 430705,
+          "downloadMs": 204.4266426563263,
+          "decodeMs": 2764.408594608307,
+          "hashMs": 2381.183358669281,
+          "gunzipMs": 207.038672208786,
+          "utf8Ms": 109.00589942932129,
+          "mergeMs": 427.53335881233215,
+          "graphMs": 79.83550810813904,
+          "totalMs": 4624.545429944992,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        }
+      ],
+      "memorySamples": [
+        {
+          "at": "2026-09-30T13:36:58.093Z",
+          "phase": "before",
+          "pssKiB": 415558,
+          "rssKiB": 527984
+        },
+        {
+          "at": "2026-09-30T13:36:58.403Z",
+          "phase": "during",
+          "pssKiB": 415725,
+          "rssKiB": 528152
+        },
+        {
+          "at": "2026-09-30T13:36:58.978Z",
+          "phase": "during",
+          "pssKiB": 422393,
+          "rssKiB": 534820
+        },
+        {
+          "at": "2026-09-30T13:36:59.556Z",
+          "phase": "during",
+          "pssKiB": 423733,
+          "rssKiB": 536128
+        },
+        {
+          "at": "2026-09-30T13:37:00.117Z",
+          "phase": "during",
+          "pssKiB": 427577,
+          "rssKiB": 539976
+        },
+        {
+          "at": "2026-09-30T13:37:00.676Z",
+          "phase": "during",
+          "pssKiB": 426128,
+          "rssKiB": 538528
+        },
+        {
+          "at": "2026-09-30T13:37:01.236Z",
+          "phase": "during",
+          "pssKiB": 449913,
+          "rssKiB": 562312
+        },
+        {
+          "at": "2026-09-30T13:37:01.802Z",
+          "phase": "during",
+          "pssKiB": 445321,
+          "rssKiB": 557720
+        },
+        {
+          "at": "2026-09-30T13:37:02.363Z",
+          "phase": "during",
+          "pssKiB": 427657,
+          "rssKiB": 540056
+        },
+        {
+          "at": "2026-09-30T13:37:02.938Z",
+          "phase": "during",
+          "pssKiB": 430669,
+          "rssKiB": 543068
+        },
+        {
+          "at": "2026-09-30T13:37:03.516Z",
+          "phase": "during",
+          "pssKiB": 433069,
+          "rssKiB": 545472
+        },
+        {
+          "at": "2026-09-30T13:37:04.092Z",
+          "phase": "during",
+          "pssKiB": 433300,
+          "rssKiB": 545704
+        },
+        {
+          "at": "2026-09-30T13:37:04.653Z",
+          "phase": "during",
+          "pssKiB": 454545,
+          "rssKiB": 566948
+        },
+        {
+          "at": "2026-09-30T13:37:05.241Z",
+          "phase": "during",
+          "pssKiB": 447277,
+          "rssKiB": 559680
+        },
+        {
+          "at": "2026-09-30T13:37:05.834Z",
+          "phase": "during",
+          "pssKiB": 422173,
+          "rssKiB": 534576
+        },
+        {
+          "at": "2026-09-30T13:37:06.420Z",
+          "phase": "during",
+          "pssKiB": 427740,
+          "rssKiB": 540144
+        },
+        {
+          "at": "2026-09-30T13:37:07.026Z",
+          "phase": "during",
+          "pssKiB": 431025,
+          "rssKiB": 543428
+        },
+        {
+          "at": "2026-09-30T13:37:07.618Z",
+          "phase": "during",
+          "pssKiB": 432945,
+          "rssKiB": 545348
+        },
+        {
+          "at": "2026-09-30T13:37:08.206Z",
+          "phase": "during",
+          "pssKiB": 429197,
+          "rssKiB": 541604
+        },
+        {
+          "at": "2026-09-30T13:37:08.797Z",
+          "phase": "during",
+          "pssKiB": 428484,
+          "rssKiB": 540892
+        },
+        {
+          "at": "2026-09-30T13:37:09.390Z",
+          "phase": "during",
+          "pssKiB": 448181,
+          "rssKiB": 560588
+        },
+        {
+          "at": "2026-09-30T13:37:09.995Z",
+          "phase": "during",
+          "pssKiB": 446181,
+          "rssKiB": 558588
+        },
+        {
+          "at": "2026-09-30T13:37:10.611Z",
+          "phase": "during",
+          "pssKiB": 423465,
+          "rssKiB": 535872
+        },
+        {
+          "at": "2026-09-30T13:37:11.199Z",
+          "phase": "during",
+          "pssKiB": 426181,
+          "rssKiB": 538588
+        },
+        {
+          "at": "2026-09-30T13:37:11.793Z",
+          "phase": "during",
+          "pssKiB": 429137,
+          "rssKiB": 541548
+        },
+        {
+          "at": "2026-09-30T13:37:12.401Z",
+          "phase": "during",
+          "pssKiB": 429877,
+          "rssKiB": 542248
+        },
+        {
+          "at": "2026-09-30T13:37:13.016Z",
+          "phase": "during",
+          "pssKiB": 449730,
+          "rssKiB": 562100
+        },
+        {
+          "at": "2026-09-30T13:37:13.607Z",
+          "phase": "during",
+          "pssKiB": 441685,
+          "rssKiB": 554056
+        },
+        {
+          "at": "2026-09-30T13:37:14.200Z",
+          "phase": "during",
+          "pssKiB": 429470,
+          "rssKiB": 541840
+        },
+        {
+          "at": "2026-09-30T13:37:14.789Z",
+          "phase": "during",
+          "pssKiB": 431406,
+          "rssKiB": 543796
+        },
+        {
+          "at": "2026-09-30T13:37:15.394Z",
+          "phase": "during",
+          "pssKiB": 432457,
+          "rssKiB": 544848
+        },
+        {
+          "at": "2026-09-30T13:37:15.983Z",
+          "phase": "during",
+          "pssKiB": 448158,
+          "rssKiB": 560548
+        },
+        {
+          "at": "2026-09-30T13:37:16.576Z",
+          "phase": "during",
+          "pssKiB": 437713,
+          "rssKiB": 550104
+        },
+        {
+          "at": "2026-09-30T13:37:17.177Z",
+          "phase": "during",
+          "pssKiB": 426713,
+          "rssKiB": 539104
+        },
+        {
+          "at": "2026-09-30T13:37:17.767Z",
+          "phase": "during",
+          "pssKiB": 426485,
+          "rssKiB": 538876
+        },
+        {
+          "at": "2026-09-30T13:37:18.359Z",
+          "phase": "during",
+          "pssKiB": 428961,
+          "rssKiB": 541356
+        },
+        {
+          "at": "2026-09-30T13:37:18.963Z",
+          "phase": "during",
+          "pssKiB": 446441,
+          "rssKiB": 558836
+        },
+        {
+          "at": "2026-09-30T13:37:19.570Z",
+          "phase": "during",
+          "pssKiB": 438014,
+          "rssKiB": 550408
+        },
+        {
+          "at": "2026-09-30T13:37:20.204Z",
+          "phase": "during",
+          "pssKiB": 424174,
+          "rssKiB": 536568
+        },
+        {
+          "at": "2026-09-30T13:37:20.811Z",
+          "phase": "during",
+          "pssKiB": 427849,
+          "rssKiB": 540244
+        },
+        {
+          "at": "2026-09-30T13:37:21.396Z",
+          "phase": "during",
+          "pssKiB": 432946,
+          "rssKiB": 545340
+        },
+        {
+          "at": "2026-09-30T13:37:22.003Z",
+          "phase": "during",
+          "pssKiB": 426681,
+          "rssKiB": 539076
+        },
+        {
+          "at": "2026-09-30T13:37:22.592Z",
+          "phase": "during",
+          "pssKiB": 428749,
+          "rssKiB": 541148
+        },
+        {
+          "at": "2026-09-30T13:37:23.178Z",
+          "phase": "during",
+          "pssKiB": 429378,
+          "rssKiB": 541776
+        },
+        {
+          "at": "2026-09-30T13:37:23.801Z",
+          "phase": "during",
+          "pssKiB": 451782,
+          "rssKiB": 564180
+        },
+        {
+          "at": "2026-09-30T13:37:24.411Z",
+          "phase": "during",
+          "pssKiB": 440522,
+          "rssKiB": 552920
+        },
+        {
+          "at": "2026-09-30T13:37:25.015Z",
+          "phase": "during",
+          "pssKiB": 425917,
+          "rssKiB": 538316
+        },
+        {
+          "at": "2026-09-30T13:37:25.605Z",
+          "phase": "during",
+          "pssKiB": 429573,
+          "rssKiB": 541972
+        },
+        {
+          "at": "2026-09-30T13:37:26.177Z",
+          "phase": "during",
+          "pssKiB": 426733,
+          "rssKiB": 539132
+        },
+        {
+          "at": "2026-09-30T13:37:26.752Z",
+          "phase": "during",
+          "pssKiB": 428725,
+          "rssKiB": 541124
+        },
+        {
+          "at": "2026-09-30T13:37:27.374Z",
+          "phase": "during",
+          "pssKiB": 426662,
+          "rssKiB": 539060
+        },
+        {
+          "at": "2026-09-30T13:37:27.982Z",
+          "phase": "during",
+          "pssKiB": 440117,
+          "rssKiB": 552516
+        },
+        {
+          "at": "2026-09-30T13:37:28.602Z",
+          "phase": "during",
+          "pssKiB": 438358,
+          "rssKiB": 550756
+        },
+        {
+          "at": "2026-09-30T13:37:29.209Z",
+          "phase": "during",
+          "pssKiB": 418122,
+          "rssKiB": 530520
+        },
+        {
+          "at": "2026-09-30T13:37:29.832Z",
+          "phase": "during",
+          "pssKiB": 422947,
+          "rssKiB": 535364
+        },
+        {
+          "at": "2026-09-30T13:37:30.425Z",
+          "phase": "during",
+          "pssKiB": 425180,
+          "rssKiB": 537596
+        },
+        {
+          "at": "2026-09-30T13:37:31.013Z",
+          "phase": "during",
+          "pssKiB": 422435,
+          "rssKiB": 534852
+        },
+        {
+          "at": "2026-09-30T13:37:31.622Z",
+          "phase": "during",
+          "pssKiB": 428152,
+          "rssKiB": 540568
+        },
+        {
+          "at": "2026-09-30T13:37:32.214Z",
+          "phase": "during",
+          "pssKiB": 440300,
+          "rssKiB": 552716
+        },
+        {
+          "at": "2026-09-30T13:37:32.835Z",
+          "phase": "during",
+          "pssKiB": 445383,
+          "rssKiB": 557800
+        },
+        {
+          "at": "2026-09-30T13:37:33.444Z",
+          "phase": "during",
+          "pssKiB": 440934,
+          "rssKiB": 553352
+        },
+        {
+          "at": "2026-09-30T13:37:34.052Z",
+          "phase": "after",
+          "pssKiB": 418655,
+          "rssKiB": 531072
+        }
+      ]
+    },
+    {
+      "gridStepE7": 400000,
+      "begin": "2026-09-30T13:37:53.705Z",
+      "finishedAt": "2026-09-30T13:38:52.048Z",
+      "metadata": {
+        "gridStepE7": 400000,
+        "hermes": true,
+        "developmentJavaScript": false
+      },
+      "records": [
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 400000,
+          "run": 1,
+          "files": 4,
+          "bytes": 668019,
+          "downloadMs": 247.60128784179688,
+          "decodeMs": 2699.762419939041,
+          "hashMs": 2303.6353511810303,
+          "gunzipMs": 216.91781210899353,
+          "utf8Ms": 112.87007808685303,
+          "mergeMs": 465.235976934433,
+          "graphMs": 71.04031181335449,
+          "totalMs": 4334.027850866318,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 400000,
+          "run": 2,
+          "files": 4,
+          "bytes": 668019,
+          "downloadMs": 124.19777393341064,
+          "decodeMs": 4027.1342170238495,
+          "hashMs": 3486.0196487903595,
+          "gunzipMs": 289.6829686164856,
+          "utf8Ms": 152.6750771999359,
+          "mergeMs": 625.3539850711823,
+          "graphMs": 136.68437480926514,
+          "totalMs": 6029.974570035934,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "seoul-gangnam",
+          "gridStepE7": 400000,
+          "run": 3,
+          "files": 4,
+          "bytes": 668019,
+          "downloadMs": 130.5114860534668,
+          "decodeMs": 4108.8218729496,
+          "hashMs": 3530.691719055176,
+          "gunzipMs": 314.8274610042572,
+          "utf8Ms": 160.32753896713257,
+          "mergeMs": 628.0691409111023,
+          "graphMs": 199.86410188674927,
+          "totalMs": 6344.989686965942,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "nodes": 13614,
+          "edges": 15363,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 400000,
+          "run": 1,
+          "files": 2,
+          "bytes": 375152,
+          "downloadMs": 138.99347615242004,
+          "decodeMs": 2544.5976951122284,
+          "hashMs": 2200.9239830970764,
+          "gunzipMs": 194.1177351474762,
+          "utf8Ms": 92.197265625,
+          "mergeMs": 362.7216410636902,
+          "graphMs": 60.42226505279541,
+          "totalMs": 3886.3767960071564,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 400000,
+          "run": 2,
+          "files": 2,
+          "bytes": 375152,
+          "downloadMs": 65.70917987823486,
+          "decodeMs": 2398.435742855072,
+          "hashMs": 2057.5083594322205,
+          "gunzipMs": 176.10679602622986,
+          "utf8Ms": 97.20117282867432,
+          "mergeMs": 441.956405878067,
+          "graphMs": 71.37749981880188,
+          "totalMs": 3889.763086080551,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "busan-cityhall",
+          "gridStepE7": 400000,
+          "run": 3,
+          "files": 2,
+          "bytes": 375152,
+          "downloadMs": 87.91148400306702,
+          "decodeMs": 2809.679140806198,
+          "hashMs": 2424.2024219036102,
+          "gunzipMs": 205.79214811325073,
+          "utf8Ms": 107.29456996917725,
+          "mergeMs": 449.61785197257996,
+          "graphMs": 72.96867203712463,
+          "totalMs": 4340.378085851669,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "nodes": 9181,
+          "edges": 9972,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 400000,
+          "run": 1,
+          "files": 4,
+          "bytes": 800517,
+          "downloadMs": 213.7578899860382,
+          "decodeMs": 5999.414686918259,
+          "hashMs": 5104.370820045471,
+          "gunzipMs": 452.03664088249207,
+          "utf8Ms": 293.7024211883545,
+          "mergeMs": 860.3189070224762,
+          "graphMs": 114.13386678695679,
+          "totalMs": 8372.972031116486,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 400000,
+          "run": 2,
+          "files": 4,
+          "bytes": 800517,
+          "downloadMs": 144.18531131744385,
+          "decodeMs": 6166.44570183754,
+          "hashMs": 5298.271914482117,
+          "gunzipMs": 467.3099989891052,
+          "utf8Ms": 241.4623830318451,
+          "mergeMs": 966.3073828220367,
+          "graphMs": 200.50753903388977,
+          "totalMs": 8756.369609117508,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        },
+        {
+          "sample": "boundary-guro-gwangmyeong",
+          "gridStepE7": 400000,
+          "run": 3,
+          "files": 4,
+          "bytes": 800517,
+          "downloadMs": 138.99535012245178,
+          "decodeMs": 5937.03617310524,
+          "hashMs": 5111.350469827652,
+          "gunzipMs": 439.7735161781311,
+          "utf8Ms": 237.95085883140564,
+          "mergeMs": 1024.5035541057587,
+          "graphMs": 100.3998429775238,
+          "totalMs": 8438.899140834808,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "nodes": 11189,
+          "edges": 12384,
+          "inputEqual": true
+        }
+      ],
+      "memorySamples": [
+        {
+          "at": "2026-09-30T13:37:53.707Z",
+          "phase": "before",
+          "pssKiB": 419150,
+          "rssKiB": 531420
+        },
+        {
+          "at": "2026-09-30T13:37:53.995Z",
+          "phase": "during",
+          "pssKiB": 423917,
+          "rssKiB": 536196
+        },
+        {
+          "at": "2026-09-30T13:37:54.553Z",
+          "phase": "during",
+          "pssKiB": 424422,
+          "rssKiB": 536700
+        },
+        {
+          "at": "2026-09-30T13:37:55.131Z",
+          "phase": "during",
+          "pssKiB": 431009,
+          "rssKiB": 543288
+        },
+        {
+          "at": "2026-09-30T13:37:55.719Z",
+          "phase": "during",
+          "pssKiB": 434874,
+          "rssKiB": 547152
+        },
+        {
+          "at": "2026-09-30T13:37:56.283Z",
+          "phase": "during",
+          "pssKiB": 431789,
+          "rssKiB": 544068
+        },
+        {
+          "at": "2026-09-30T13:37:56.842Z",
+          "phase": "during",
+          "pssKiB": 425346,
+          "rssKiB": 537624
+        },
+        {
+          "at": "2026-09-30T13:37:57.422Z",
+          "phase": "during",
+          "pssKiB": 451430,
+          "rssKiB": 563708
+        },
+        {
+          "at": "2026-09-30T13:37:57.996Z",
+          "phase": "during",
+          "pssKiB": 454546,
+          "rssKiB": 566824
+        },
+        {
+          "at": "2026-09-30T13:37:58.573Z",
+          "phase": "during",
+          "pssKiB": 435662,
+          "rssKiB": 547940
+        },
+        {
+          "at": "2026-09-30T13:37:59.145Z",
+          "phase": "during",
+          "pssKiB": 436948,
+          "rssKiB": 549164
+        },
+        {
+          "at": "2026-09-30T13:37:59.736Z",
+          "phase": "during",
+          "pssKiB": 445785,
+          "rssKiB": 558000
+        },
+        {
+          "at": "2026-09-30T13:38:00.330Z",
+          "phase": "during",
+          "pssKiB": 432828,
+          "rssKiB": 545044
+        },
+        {
+          "at": "2026-09-30T13:38:00.916Z",
+          "phase": "during",
+          "pssKiB": 432808,
+          "rssKiB": 545024
+        },
+        {
+          "at": "2026-09-30T13:38:01.518Z",
+          "phase": "during",
+          "pssKiB": 441704,
+          "rssKiB": 553924
+        },
+        {
+          "at": "2026-09-30T13:38:02.112Z",
+          "phase": "during",
+          "pssKiB": 436421,
+          "rssKiB": 548640
+        },
+        {
+          "at": "2026-09-30T13:38:02.713Z",
+          "phase": "during",
+          "pssKiB": 452085,
+          "rssKiB": 564304
+        },
+        {
+          "at": "2026-09-30T13:38:03.367Z",
+          "phase": "during",
+          "pssKiB": 466721,
+          "rssKiB": 578940
+        },
+        {
+          "at": "2026-09-30T13:38:03.974Z",
+          "phase": "during",
+          "pssKiB": 457361,
+          "rssKiB": 569580
+        },
+        {
+          "at": "2026-09-30T13:38:04.563Z",
+          "phase": "during",
+          "pssKiB": 433284,
+          "rssKiB": 545504
+        },
+        {
+          "at": "2026-09-30T13:38:05.150Z",
+          "phase": "during",
+          "pssKiB": 439732,
+          "rssKiB": 551952
+        },
+        {
+          "at": "2026-09-30T13:38:05.742Z",
+          "phase": "during",
+          "pssKiB": 435701,
+          "rssKiB": 547920
+        },
+        {
+          "at": "2026-09-30T13:38:06.316Z",
+          "phase": "during",
+          "pssKiB": 440193,
+          "rssKiB": 552412
+        },
+        {
+          "at": "2026-09-30T13:38:06.905Z",
+          "phase": "during",
+          "pssKiB": 430804,
+          "rssKiB": 543024
+        },
+        {
+          "at": "2026-09-30T13:38:07.493Z",
+          "phase": "during",
+          "pssKiB": 436532,
+          "rssKiB": 548752
+        },
+        {
+          "at": "2026-09-30T13:38:08.086Z",
+          "phase": "during",
+          "pssKiB": 431713,
+          "rssKiB": 543932
+        },
+        {
+          "at": "2026-09-30T13:38:08.676Z",
+          "phase": "during",
+          "pssKiB": 442389,
+          "rssKiB": 554608
+        },
+        {
+          "at": "2026-09-30T13:38:09.284Z",
+          "phase": "during",
+          "pssKiB": 472764,
+          "rssKiB": 584984
+        },
+        {
+          "at": "2026-09-30T13:38:09.905Z",
+          "phase": "during",
+          "pssKiB": 457180,
+          "rssKiB": 569400
+        },
+        {
+          "at": "2026-09-30T13:38:10.528Z",
+          "phase": "during",
+          "pssKiB": 436773,
+          "rssKiB": 548992
+        },
+        {
+          "at": "2026-09-30T13:38:11.134Z",
+          "phase": "during",
+          "pssKiB": 436040,
+          "rssKiB": 548260
+        },
+        {
+          "at": "2026-09-30T13:38:11.753Z",
+          "phase": "during",
+          "pssKiB": 429917,
+          "rssKiB": 542136
+        },
+        {
+          "at": "2026-09-30T13:38:12.358Z",
+          "phase": "during",
+          "pssKiB": 438936,
+          "rssKiB": 551156
+        },
+        {
+          "at": "2026-09-30T13:38:12.948Z",
+          "phase": "during",
+          "pssKiB": 432004,
+          "rssKiB": 544224
+        },
+        {
+          "at": "2026-09-30T13:38:13.552Z",
+          "phase": "during",
+          "pssKiB": 448361,
+          "rssKiB": 560580
+        },
+        {
+          "at": "2026-09-30T13:38:14.170Z",
+          "phase": "during",
+          "pssKiB": 450961,
+          "rssKiB": 563180
+        },
+        {
+          "at": "2026-09-30T13:38:14.773Z",
+          "phase": "during",
+          "pssKiB": 451705,
+          "rssKiB": 563924
+        },
+        {
+          "at": "2026-09-30T13:38:15.352Z",
+          "phase": "during",
+          "pssKiB": 430573,
+          "rssKiB": 542792
+        },
+        {
+          "at": "2026-09-30T13:38:15.961Z",
+          "phase": "during",
+          "pssKiB": 438068,
+          "rssKiB": 550288
+        },
+        {
+          "at": "2026-09-30T13:38:16.549Z",
+          "phase": "during",
+          "pssKiB": 431308,
+          "rssKiB": 543528
+        },
+        {
+          "at": "2026-09-30T13:38:17.140Z",
+          "phase": "during",
+          "pssKiB": 438689,
+          "rssKiB": 550908
+        },
+        {
+          "at": "2026-09-30T13:38:17.776Z",
+          "phase": "during",
+          "pssKiB": 452673,
+          "rssKiB": 564892
+        },
+        {
+          "at": "2026-09-30T13:38:18.386Z",
+          "phase": "during",
+          "pssKiB": 443785,
+          "rssKiB": 556004
+        },
+        {
+          "at": "2026-09-30T13:38:18.988Z",
+          "phase": "during",
+          "pssKiB": 429589,
+          "rssKiB": 541812
+        },
+        {
+          "at": "2026-09-30T13:38:19.607Z",
+          "phase": "during",
+          "pssKiB": 423441,
+          "rssKiB": 535664
+        },
+        {
+          "at": "2026-09-30T13:38:20.247Z",
+          "phase": "during",
+          "pssKiB": 437968,
+          "rssKiB": 550192
+        },
+        {
+          "at": "2026-09-30T13:38:20.865Z",
+          "phase": "during",
+          "pssKiB": 431380,
+          "rssKiB": 543604
+        },
+        {
+          "at": "2026-09-30T13:38:21.488Z",
+          "phase": "during",
+          "pssKiB": 433783,
+          "rssKiB": 545984
+        },
+        {
+          "at": "2026-09-30T13:38:22.110Z",
+          "phase": "during",
+          "pssKiB": 448167,
+          "rssKiB": 560368
+        },
+        {
+          "at": "2026-09-30T13:38:22.715Z",
+          "phase": "during",
+          "pssKiB": 439430,
+          "rssKiB": 551632
+        },
+        {
+          "at": "2026-09-30T13:38:23.322Z",
+          "phase": "during",
+          "pssKiB": 424386,
+          "rssKiB": 536588
+        },
+        {
+          "at": "2026-09-30T13:38:23.931Z",
+          "phase": "during",
+          "pssKiB": 433642,
+          "rssKiB": 545860
+        },
+        {
+          "at": "2026-09-30T13:38:24.536Z",
+          "phase": "during",
+          "pssKiB": 426023,
+          "rssKiB": 538240
+        },
+        {
+          "at": "2026-09-30T13:38:25.154Z",
+          "phase": "during",
+          "pssKiB": 426010,
+          "rssKiB": 538228
+        },
+        {
+          "at": "2026-09-30T13:38:25.758Z",
+          "phase": "during",
+          "pssKiB": 432755,
+          "rssKiB": 544972
+        },
+        {
+          "at": "2026-09-30T13:38:26.349Z",
+          "phase": "during",
+          "pssKiB": 426455,
+          "rssKiB": 538672
+        },
+        {
+          "at": "2026-09-30T13:38:26.956Z",
+          "phase": "during",
+          "pssKiB": 423975,
+          "rssKiB": 536192
+        },
+        {
+          "at": "2026-09-30T13:38:27.562Z",
+          "phase": "during",
+          "pssKiB": 428491,
+          "rssKiB": 540708
+        },
+        {
+          "at": "2026-09-30T13:38:28.165Z",
+          "phase": "during",
+          "pssKiB": 425771,
+          "rssKiB": 537988
+        },
+        {
+          "at": "2026-09-30T13:38:28.787Z",
+          "phase": "during",
+          "pssKiB": 425786,
+          "rssKiB": 538004
+        },
+        {
+          "at": "2026-09-30T13:38:29.393Z",
+          "phase": "during",
+          "pssKiB": 456710,
+          "rssKiB": 568928
+        },
+        {
+          "at": "2026-09-30T13:38:30.043Z",
+          "phase": "during",
+          "pssKiB": 461999,
+          "rssKiB": 574216
+        },
+        {
+          "at": "2026-09-30T13:38:30.659Z",
+          "phase": "during",
+          "pssKiB": 448507,
+          "rssKiB": 560724
+        },
+        {
+          "at": "2026-09-30T13:38:31.281Z",
+          "phase": "during",
+          "pssKiB": 439038,
+          "rssKiB": 551256
+        },
+        {
+          "at": "2026-09-30T13:38:31.920Z",
+          "phase": "during",
+          "pssKiB": 431131,
+          "rssKiB": 543348
+        },
+        {
+          "at": "2026-09-30T13:38:32.539Z",
+          "phase": "during",
+          "pssKiB": 438723,
+          "rssKiB": 550940
+        },
+        {
+          "at": "2026-09-30T13:38:33.161Z",
+          "phase": "during",
+          "pssKiB": 430067,
+          "rssKiB": 542284
+        },
+        {
+          "at": "2026-09-30T13:38:33.769Z",
+          "phase": "during",
+          "pssKiB": 427835,
+          "rssKiB": 540052
+        },
+        {
+          "at": "2026-09-30T13:38:34.391Z",
+          "phase": "during",
+          "pssKiB": 438943,
+          "rssKiB": 551160
+        },
+        {
+          "at": "2026-09-30T13:38:35.010Z",
+          "phase": "during",
+          "pssKiB": 432259,
+          "rssKiB": 544476
+        },
+        {
+          "at": "2026-09-30T13:38:35.633Z",
+          "phase": "during",
+          "pssKiB": 443778,
+          "rssKiB": 555996
+        },
+        {
+          "at": "2026-09-30T13:38:36.238Z",
+          "phase": "during",
+          "pssKiB": 435995,
+          "rssKiB": 548212
+        },
+        {
+          "at": "2026-09-30T13:38:36.846Z",
+          "phase": "during",
+          "pssKiB": 436019,
+          "rssKiB": 548236
+        },
+        {
+          "at": "2026-09-30T13:38:37.449Z",
+          "phase": "during",
+          "pssKiB": 436791,
+          "rssKiB": 549008
+        },
+        {
+          "at": "2026-09-30T13:38:38.072Z",
+          "phase": "during",
+          "pssKiB": 443275,
+          "rssKiB": 555492
+        },
+        {
+          "at": "2026-09-30T13:38:38.741Z",
+          "phase": "during",
+          "pssKiB": 459453,
+          "rssKiB": 571672
+        },
+        {
+          "at": "2026-09-30T13:38:39.359Z",
+          "phase": "during",
+          "pssKiB": 450677,
+          "rssKiB": 562896
+        },
+        {
+          "at": "2026-09-30T13:38:39.985Z",
+          "phase": "during",
+          "pssKiB": 446869,
+          "rssKiB": 559092
+        },
+        {
+          "at": "2026-09-30T13:38:40.625Z",
+          "phase": "during",
+          "pssKiB": 430690,
+          "rssKiB": 542912
+        },
+        {
+          "at": "2026-09-30T13:38:41.243Z",
+          "phase": "during",
+          "pssKiB": 444810,
+          "rssKiB": 557032
+        },
+        {
+          "at": "2026-09-30T13:38:41.832Z",
+          "phase": "during",
+          "pssKiB": 437169,
+          "rssKiB": 549392
+        },
+        {
+          "at": "2026-09-30T13:38:42.422Z",
+          "phase": "during",
+          "pssKiB": 438714,
+          "rssKiB": 550936
+        },
+        {
+          "at": "2026-09-30T13:38:43.026Z",
+          "phase": "during",
+          "pssKiB": 440778,
+          "rssKiB": 553000
+        },
+        {
+          "at": "2026-09-30T13:38:43.629Z",
+          "phase": "during",
+          "pssKiB": 434137,
+          "rssKiB": 546360
+        },
+        {
+          "at": "2026-09-30T13:38:44.253Z",
+          "phase": "during",
+          "pssKiB": 443881,
+          "rssKiB": 556104
+        },
+        {
+          "at": "2026-09-30T13:38:44.875Z",
+          "phase": "during",
+          "pssKiB": 435961,
+          "rssKiB": 548184
+        },
+        {
+          "at": "2026-09-30T13:38:45.480Z",
+          "phase": "during",
+          "pssKiB": 435962,
+          "rssKiB": 548184
+        },
+        {
+          "at": "2026-09-30T13:38:46.102Z",
+          "phase": "during",
+          "pssKiB": 440749,
+          "rssKiB": 552972
+        },
+        {
+          "at": "2026-09-30T13:38:46.770Z",
+          "phase": "during",
+          "pssKiB": 507246,
+          "rssKiB": 619468
+        },
+        {
+          "at": "2026-09-30T13:38:47.473Z",
+          "phase": "during",
+          "pssKiB": 459337,
+          "rssKiB": 571560
+        },
+        {
+          "at": "2026-09-30T13:38:48.091Z",
+          "phase": "during",
+          "pssKiB": 457338,
+          "rssKiB": 569560
+        },
+        {
+          "at": "2026-09-30T13:38:48.709Z",
+          "phase": "after",
+          "pssKiB": 448102,
+          "rssKiB": 560328
+        }
+      ]
+    }
+  ],
+  "decision": {
+    "gridStepE7": 200000,
+    "encoding": "gzip level 6 JSON",
+    "schemaVersion": 1,
+    "coverage": "samples",
+    "status": "selected for 4-2 sample deployment",
+    "reason": "All 27 input checks passed. 0.02 uses 6–9 files versus 20–30 for 0.01; avoids the larger transfer/processing cost of 0.04. 0.01 was faster for the boundary sample, so 0.02 is not claimed fastest everywhere."
+  },
+  "restoration": {
+    "originalApkSha256": "d98437c15854221331b07b754b4797ccfa0947e03ab7df49bb8bb7202de78b6a",
+    "restoredApkSha256": "d98437c15854221331b07b754b4797ccfa0947e03ab7df49bb8bb7202de78b6a",
+    "restoredAt": "2026-09-30 22:40:33 +09:00",
+    "preservedFields": [
+      "appId",
+      "firstInstallTime",
+      "dataDir",
+      "ceDataInode"
+    ],
+    "debuggable": false,
+    "standaloneHomeConfirmed": true,
+    "addedReversePortsRemoved": [
+      8081,
+      8766
+    ],
+    "serversClosed": [
+      {
+        "port": 8081,
+        "closed": true,
+        "error": "ECONNREFUSED"
+      },
+      {
+        "port": 8766,
+        "closed": true,
+        "error": "ECONNREFUSED"
+      }
+    ]
+  },
+  "limitations": [
+    "One physical phone, debug native shell + production JS, USB charging and sequential order without randomized repeats; not a release-app or low-memory-device performance guarantee.",
+    "Total includes benchmark-only merged-input SHA-256 and yield scheduling, excludes manifest/case-list retrieval and route search. decode includes hash/gunzip/UTF-8/JSON/schema checks; phase medians must not be added.",
+    "PSS/RSS include the whole app and native runtime. Snapshots cover each full interval but can miss instantaneous peaks, are not JS heap or road-only memory, and sampling overhead is not isolated.",
+    "Phone verifies full merged-input SHA-256 and graph node/edge counts; PC previously verified every graph link and all route candidates.",
+    "Only three public samples and radius 2km. No national coverage, operational CDN/network benchmark, permanent cache integration, maximum file-size stress, low-end-device or outdoor tests.",
+    "Application identity and data-directory inode were preserved by update installs; private database bytes were not extracted or compared."
+  ],
+  "localEvidenceDirectory": ".cache/road-phone-qa/",
+  "evidenceSha256": {
+    "cancel-after.xml": "db88b3d5eee747cbadbde533d48935ebe66a985075540cc5cc8cf8e060bd8e03",
+    "cancel-before.xml": "9d101e9b72c339aeb66d0bc2ad89bc7892b9f5f7808ed6b0afc2a8a586b01397",
+    "cancel-busy.xml": "313e490c0aa6c4eda29a6fd9562f83a6f6153ed91221a0e96ea17a542ec26ef9",
+    "cancel-logcat.txt": "2441bbcadf769fbde8c517e8de809af567b1c16a4c20d07f224a96b81392a114",
+    "cancel-settled.png": "22f66286c61d6bfe69c172c71a00630bdb57e93993204e3666adf02e89ccea48",
+    "cancel-settled.xml": "db88b3d5eee747cbadbde533d48935ebe66a985075540cc5cc8cf8e060bd8e03",
+    "cancel.json": "67ab2862f8543a8407052fc0f020b3871b6630db21f26596ad9dba47d8f77209",
+    "control.mjs": "bb4ba1e98efb1b638df11b79318246268065fa8c8bd6b951a54c363e4463128c",
+    "grid-100000-before.xml": "e6f4fe5d4d6d20bf27feb4abe227123a0496188da057e536fa048774f0ae473f",
+    "grid-100000-complete.png": "b4b8a4df521dd0d36c1b36973e3de13b3d2bf7178888439cd2a57790d19016bb",
+    "grid-100000-complete.xml": "904df23b155cac1a51d2c5a9030e6dbcc865e4b03e732eb7fa66907880eea793",
+    "grid-100000-logcat.txt": "7db2f660bd21cc6e57199a8a671a8e5952557afe5839312893b88f3945123546",
+    "grid-100000-meminfo.txt": "a0c1666c655557f0a7f714f8f2eccf7d53b0ad32cfee1a1d06ee7d9f1a505f14",
+    "grid-100000.json": "3246c9eece72a6dc3420087a1b14bcf03fcd12cc24b102f1ee1481063398e153",
+    "grid-200000-before.xml": "904df23b155cac1a51d2c5a9030e6dbcc865e4b03e732eb7fa66907880eea793",
+    "grid-200000-complete.png": "9d5d6a1fbd37dff3362205596d9fd486a65e2cfd3d13cea7cee065f538e42aba",
+    "grid-200000-complete.xml": "f6c4d142fb8850fb2e235f85d3fb46798862e34a628b2da365c05357d2453089",
+    "grid-200000-logcat.txt": "3d6dd4bb25558ab08a33dc835381763f1730cb945544b37f4ae8a0458eb60b7f",
+    "grid-200000-meminfo.txt": "5c5f7d987c86deac6f6da9074c01cc65bded0ad69710ab5abb3dc02e557afb59",
+    "grid-200000.json": "e690115477d328a4d6c08e322331bd5cd78360fecd3b5d2165f3c4fbe79039c2",
+    "grid-400000-before.xml": "f6c4d142fb8850fb2e235f85d3fb46798862e34a628b2da365c05357d2453089",
+    "grid-400000-complete.png": "de28b545661d67ce7557e0e9d2326c6f284bbb436167aa6c0ca31cf577016a49",
+    "grid-400000-complete.xml": "9d101e9b72c339aeb66d0bc2ad89bc7892b9f5f7808ed6b0afc2a8a586b01397",
+    "grid-400000-logcat.txt": "6bd7204468e577d744ba14dc6d4e5511c0fd3ef9e20182cb9fec820ae7ead778",
+    "grid-400000-meminfo.txt": "159aa0c4c2354ada668a56de5d29caa66c92a8ac4005d108c1bfd1f87d5cb2e6",
+    "grid-400000.json": "13c738a88864c48e239905266e2935f3ea102ca8b42b8dc155bdd437a5924f55",
+    "grid-first.xml": "901e8592c9eb5322b4895ec18bbbf822ee7b4fa03d2f4e9f688d30e3c10ca1b2",
+    "report.mjs": "dde7d34ab9dcb456939679b8ddc1dc67984c77094232f890add4b6eac6ffdc32",
+    "restored-home.png": "f586a5a648998498fcc0d539b08f24346f3c9431cf0342d27af3ac71c19b668f",
+    "restored-home.xml": "0b1eb34f58bb9d0b5f7c4729891b4986ff1e1fe9ed830c12abcd3950b0f60a0f",
+    "server-cleanup.json": "4c860e8e5d64919f092933c6fa5e22ca34cdc363e9d93cd7ade0620652540a5b"
+  }
+}

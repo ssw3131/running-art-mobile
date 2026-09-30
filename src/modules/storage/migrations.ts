@@ -3,7 +3,7 @@ import { StorageError, type StorageDatabase } from './types.ts';
 export const DATABASE_NAME = 'running-art.db';
 
 // Append new migrations; never rewrite an already released migration.
-// This is a test-only entity, not the future route/run data model.
+// Migration 1 is the original test-only entity; migration 2 adds local courses.
 export const migrations: readonly string[] = [
   `CREATE TABLE storage_test_notes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -11,6 +11,19 @@ export const migrations: readonly string[] = [
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
   );`,
+  `CREATE TABLE saved_courses (
+    id TEXT PRIMARY KEY NOT NULL CHECK(length(id)=32),
+    name TEXT NOT NULL CHECK(length(trim(name)) BETWEEN 1 AND 80),
+    source TEXT NOT NULL CHECK(source IN ('osm','synthetic')),
+    shape TEXT NOT NULL,
+    target_km REAL NOT NULL CHECK(target_km>0 AND target_km<=1000),
+    length_km REAL NOT NULL CHECK(length_km>0 AND length_km<=1000),
+    score REAL NOT NULL CHECK(score>=0 AND score<=100),
+    snapshot_json TEXT NOT NULL CHECK(length(snapshot_json) BETWEEN 1 AND 2097152),
+    snapshot_hash TEXT NOT NULL UNIQUE CHECK(length(snapshot_hash)=64),
+    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX saved_courses_created ON saved_courses(created_at DESC,id DESC);`,
 ];
 
 export const SCHEMA_VERSION = migrations.length;

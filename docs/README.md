@@ -2,7 +2,7 @@
 
 처음 참여할 때는 **목표 → 현재 상태 → 개발 환경 → 구현 구조 → 계획** 순서로 읽습니다. 명령은 별도 설명이 없으면 프로젝트 루트에서 실행합니다.
 
-**실제 서버 배포·휴대폰 테스트는 보류하고 4-3 영구 캐시 모듈·로컬 검증을 완료**했습니다. 일반 코스 계산의 공급 전환은 후속이며 다음 권장 작업은 코스의 기기 저장·목록·다시 열기입니다. [캐시 사용법](development/road-cache.md)·[검증 결과](quality/road-cache-verification.md), 전체 순서는 [로드맵](planning/roadmap.md), 최신 상태는 [인수인계](handoff/status.md)를 기준으로 확인합니다.
+**로컬 코스 저장·목록·상세·이름 변경·삭제와 PC·에뮬레이터·휴대폰 검증을 완료**했습니다. 다음 권장 작업은 GPX 내보내기이며 서버 배포는 보류합니다. [코스 저장 사용법](development/saved-courses.md)·[검증](quality/saved-courses-verification.md), 전체 순서는 [로드맵](planning/roadmap.md), 최신 상태는 [인수인계](handoff/status.md)를 기준으로 확인합니다.
 
 개발 환경은 [Android 개발 환경 설정과 실행](development/android-studio.md)을 중심 안내로 사용합니다. 확정 구성, 새 PC 최초 설정, 매일 실행, 정상 확인을 한 문서에서 볼 수 있습니다.
 
@@ -17,6 +17,7 @@
 | 개발 | [Codex 사용법](development/codex.md) | 지침·스킬·자동 기록 |
 | 개발 | [지도·현재 위치 테스트](development/map-location.md) | MapTiler 키·권한·실패 처리·확인 방법 |
 | 개발 | [SQLite 저장소 테스트](development/storage.md) | DB 위치·테스트 메모·마이그레이션·실행 방법 |
+| 개발 | [저장한 코스](development/saved-courses.md) | 계산 후보의 기기 저장·목록·경로 복원·이름 변경·삭제 |
 | 개발 | [코스 계산 테스트](development/route-engine.md) | v0.2 계산·지도·취소·기준 결과 재현 |
 | 개발 | [지도 중심 기준 코스 조회](development/route-center.md) | 현재 위치·지도 이동·주변 도로 API·메모리 캐시·시간 표시 |
 | 개발 | [코스 계산 성능·웹 비교](development/route-engine-performance.md) | 최적화 전략·원본 보존·PC 벤치마크·실기기 측정 구분 |
@@ -30,10 +31,11 @@
 | 검증 | [환경 검증 기록](quality/setup-verification.md) | 실제 통과·미검증 사항 |
 | 검증 | [지도·위치 검증 기록](quality/map-location-verification.md) | 자동 검사·Android 빌드·기기 결과 |
 | 검증 | [저장소 검증 기록](quality/storage-verification.md) | 실제 SQLite 테스트·Android CRUD·프로세스 재시작 복원 |
+| 검증 | [로컬 코스 저장 검증](quality/saved-courses-verification.md) | SQLite 업그레이드·25개 후보 대조·에뮬레이터 및 휴대폰 독립 실행/오프라인 복원/삭제 |
 | 검증 | [코스 계산 검증](quality/route-engine-verification.md) | 원본 회귀·Android 결과·시간·메모리·응답성 |
 | 검증 | [지도 중심 조회 검증](quality/route-center-verification.md) | 중심 선택·주변 도로·취소·시간 표시·설치용 APK |
 | 검증 | [도로 재시도 서버 단일화](quality/road-retry-verification.md) | 단일 API 호출·서버 공급자 전환·취소·시간 제한·운영 반영 상태 |
-| 검증 | [4-1 도로 표본 검증](quality/road-samples-verification.md) | 연결·전체 결과·파일 크기·PC 전송, 실제 휴대폰 미완료 구분 |
+| 검증 | [4-1 도로 표본 검증](quality/road-samples-verification.md) | PC 연결·전체 결과, 휴대폰 27회·메모리·형식 결정과 운영 CDN 미검증 구분 |
 | 검증 | [4-2 도로 배포 준비 검증](quality/road-deployment-verification.md) | 로컬 S3·HTTP 검증, 실제 표본 대조, 실환경 배포 미실행 구분 |
 | 검증 | [4-3 영구 도로 캐시 검증](quality/road-cache-verification.md) | 실제 SQLite 실패·재시작·실제 표본 오프라인 대조, 네이티브 검증은 후속 |
 | 검증 | [Studio Gradle 복구](quality/gradle-recovery.md) | 사용자 Path·JDK·SDK 복구와 GUI 실행 결과 |

@@ -2,17 +2,19 @@
 
 사용자가 선택하거나 직접 그린 도형을 닮은 **실제 보행 도로 코스**를 찾고, 달린 궤적과 기록을 남기는 모바일 앱입니다. Android를 먼저 개발·배포하고 이후 iOS로 확장합니다.
 
-**서버 준비·휴대폰 연결 테스트를 보류하고 4-3의 영구 도로 캐시를 먼저 구현했습니다.** 별도 SQLite에 검증된 지역 파일을 저장하며 손상 복구·취소·만료·용량 정리를 처리합니다. 실제 세 지역 표본을 저장한 뒤 새 PC 프로세스에서 네트워크 없이 전체 도로 입력·그래프가 같은지 확인했습니다. 일반 코스 계산의 공급 전환과 실제 기기 확인은 후속입니다. 다음 권장 작업은 **계산한 코스의 기기 저장·목록·다시 열기**입니다. [캐시 사용법](docs/development/road-cache.md) · [캐시 검증](docs/quality/road-cache-verification.md) · [준비된 배포 절차](docs/development/road-deployment.md) · [전체 로드맵](docs/planning/roadmap.md)
+**4-1 도로 표본의 휴대폰 검증을 완료했습니다.** SM-S942N에서 세 격자·세 지역 각 3회(27회)의 전체 입력 해시·그래프 수를 비교하고 전체 구간 메모리 220개·취소를 확인했습니다. 0.02도·gzip level 6를 표본 배포 형식으로 채택했습니다. **다음 서버 작업은 4-2 전용 R2 버킷·HTTPS 도메인 준비와 실제 표본 배포**입니다. 이번에 실제 배포·일반 앱 공급 전환은 하지 않았습니다. [표본·휴대폰 검증](docs/quality/road-samples-verification.md) · [배포 절차](docs/development/road-deployment.md)
+
+**계산한 코스의 기기 저장·목록·다시 열기·이름 변경·삭제를 구현했습니다.** 재계산 없이 경로를 복원하며 기본 경로 표시는 인터넷·GPS 없이 동작합니다. 자동 검사 119개·타입·린트·Android 번들과 에뮬레이터·실제 휴대폰의 저장·강제 종료 후 복원·삭제를 확인했습니다. SM-S942N에는 최신 독립 실행 APK를 업데이트했고 기존 메모 보존·네트워크 없는 복원을 확인했습니다. 이번 표본 측정 뒤 원래 설치본으로 복원·독립 실행을 확인했습니다. 서버와 독립적인 앱 후속은 **저장 코스의 GPX 내보내기**입니다. [코스 저장 사용법](docs/development/saved-courses.md) · [검증 결과](docs/quality/saved-courses-verification.md) · [전체 로드맵](docs/planning/roadmap.md)
 
 **2026-09-30 서버 방향 정리:** 두 웹 테스트 프로젝트는 알고리즘·기능 참고로만 사용하고 모바일의 서버·도로 공급·데이터·배포를 독립시킵니다. 로그인·동기화·코스 공유·커뮤니티를 서비스 범위에 포함하고, 초기 사용자 제공은 무료이며 유료화·횟수 제한은 후속 계획으로만 둡니다. [독립 서버 전략](docs/planning/server-strategy.md)에 구성과 전환 순서를 정리했습니다. **현재 코드·설치 APK의 기존 도로 API 연결은 아직 교체하지 않았습니다.** 새 파일 형식은 별도의 로컬 검증 화면에서만 사용합니다.
 
 **현재는 핵심 기능 테스트용 앱을 개발하고 있습니다.** 실제 서비스 기획·디자인은 이후 전달받아 반영합니다. 지도·전경 위치·SQLite 저장 기반과 **v0.2 코스 계산**을 구현했습니다. 홈의 **코스 계산 테스트 → 주변 OSM**에서 현재 위치나 지도 이동으로 중심을 정하고 주변 도로로 계산합니다. 결과에 **도로 조회·코스 계산·전체 시간**을 표시하며, 지도 이동 후에도 완료된 경로는 재탐색 전까지 유지합니다. 현재 소스는 앱의 도로 API 호출을 1회로 제한하고 Overpass 공급자 전환을 기존 서버로 단일화했습니다. 앱 전체 제한은 65초, 수정 서버는 공급자당 25초·전체 55초입니다. **9월 30일 00:49 KST에 최신 APK를 휴대폰에 업데이트하고 독립 실행을 확인했습니다. 기존 Sites 접근 오류로 서버는 아직 이전 코드이며, 서버의 새 시간 제한·검증 정책은 미반영입니다.** [지도 중심 조회와 메모리 캐시](docs/development/route-center.md), [결과를 보존하는 성능 개선](docs/development/route-engine-performance.md), [전환 전 재시도 검증 이력](docs/quality/road-retry-verification.md)을 참고하세요. 이 과거 이력의 서버 복구·배포 항목을 현재 다음 작업으로 재개하지 않습니다. [설치용 테스트 APK](docs/development/android-test-apk.md)는 PC 개발 서버 없이 실행합니다.
 
-최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [코스 계산](docs/development/route-engine.md)·[지도·현재 위치](docs/development/map-location.md)·[SQLite 저장소](docs/development/storage.md)를 참고하세요. 주변 도로 API 조회·메모리 캐시와 별도 영구 캐시 검증 화면을 구현했습니다. 일반 계산에 영구 캐시 연결, 러닝 추적, 실제 코스·러닝 기록 저장은 후속 단계입니다. 지도 중심 변경은 에뮬레이터와 이전 휴대폰 설치본에서 확인했지만 이번 캐시 화면은 아직 기기에 설치·검증하지 않았습니다. 실제 휴대폰 GPS 기준 조회·계산 검증과 CI/CD 실행도 보류합니다.
+최신 검증 상태는 [현재 상태](docs/handoff/status.md), 사용법은 [코스 저장](docs/development/saved-courses.md)·[코스 계산](docs/development/route-engine.md)·[지도·현재 위치](docs/development/map-location.md)·[SQLite 저장소](docs/development/storage.md)를 참고하세요. 별도 영구 도로 캐시와 로컬 코스 저장을 구현했습니다. 일반 계산의 새 도로 공급 연결, 러닝 추적·기록, 회원·동기화는 후속입니다. 후속 요청으로 휴대폰 설치본을 최신 독립 실행 APK로 업데이트했습니다. GitHub 공개 APK는 이전 버전을 유지합니다. CI/CD 실행 보류도 유지합니다.
 
 ## 휴대폰 테스트 APK 다운로드
 
-**2026-09-30 수정 APK:** 로컬 `build/install/running-art-0.1.0-20260930.apk`. 앱 직접 Overpass 재시도 제거·API 1회 호출·65초 제한을 포함합니다. SM-S942N에 기존 데이터를 유지해 업데이트했고 개발 서버 없는 실행·지도 표시·설치본 해시 일치를 확인했습니다. 서버 코드는 아직 운영 미반영입니다. 아래 GitHub 다운로드는 이전 2026-09-27 버전입니다.
+**2026-09-30 코스 저장 APK:** 로컬 `build/install/running-art-0.1.0-20260930-courses.apk`(95,595,419바이트). 코스 저장·목록·상세·이름 변경·삭제를 포함합니다. 22:09:04 KST에 SM-S942N에 기존 데이터를 유지해 업데이트하고 PC 없이 실행·네트워크 없는 복원·설치본 해시 일치를 확인했습니다. 일반 코스 계산의 도로 공급은 아직 기존 API를 사용합니다. 아래 GitHub 다운로드는 이전 2026-09-27 버전입니다.
 
 [APK 바로 다운로드](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-test.20260927/running-art-0.1.0-20260927.apk) · [테스트 릴리스·설치 안내·SHA-256](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-test.20260927)
 
