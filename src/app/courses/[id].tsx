@@ -6,6 +6,8 @@ import { getStorage } from '@/modules/storage/database';
 import { COURSE_NAME_MAX, CourseError, courseErrorMessage, courseShapes, savedCourseOverlay, type SavedCourse } from '@/modules/courses/model';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
+import { shareCourseGpx } from '@/modules/courses/share-gpx';
+import { exportErrorMessage } from '@/modules/courses/export';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const emptyRoads = { type: 'FeatureCollection' as const, features: [] };
@@ -15,6 +17,7 @@ export default function CourseScreen() {
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [canDelete, setCanDelete] = useState(false), [background, setBackground] = useState(false);
   const generation = useRef(0), inFlight = useRef(false);
+  const exportController = useRef<AbortController | null>(null);
   const overlay = useMemo(() => course ? savedCourseOverlay(course.snapshot) : null, [course]);
   const supported = Platform.OS !== 'web';
   const refresh = useCallback(async () => {
@@ -31,7 +34,7 @@ export default function CourseScreen() {
   }, [id]);
   useFocusEffect(useCallback(() => {
     if (supported) void refresh();
-    return () => { generation.current++; };
+    return () => { generation.current++; exportController.current?.abort(); };
   }, [refresh, supported]));
   async function rename() {
     if (inFlight.current || !course) return;
@@ -56,6 +59,23 @@ export default function CourseScreen() {
     } catch (cause) { if (request === generation.current) setError(courseErrorMessage(cause)); }
     finally { inFlight.current = false; if (request === generation.current) setBusy(false); }
   }
+  async function exportGpx() {
+    if (inFlight.current || !course) return;
+    inFlight.current = true; const request = generation.current;
+    const controller = new AbortController(); exportController.current = controller;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const result = await shareCourseGpx(id, controller.signal);
+      if (request === generation.current && result === 'closed') {
+        setNotice('공유 창을 닫았어요. 파일 저장 여부는 선택한 앱에서 확인해 주세요.');
+      }
+    } catch (cause) {
+      if (request === generation.current) setError(exportErrorMessage(cause));
+    } finally {
+      inFlight.current = false; exportController.current = null;
+      if (request === generation.current) setBusy(false);
+    }
+  }
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
     <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       {!supported && <Text>저장한 코스는 Android 앱에서 확인해 주세요.</Text>}
@@ -79,6 +99,10 @@ export default function CourseScreen() {
         {course.source === 'osm' && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {})}><Text style={styles.small}>© OpenStreetMap contributors · ODbL</Text></Pressable>}
         <Text style={styles.small}>계산 기준 {course.snapshot.origin.lat.toFixed(5)}, {course.snapshot.origin.lng.toFixed(5)}</Text>
         <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')} · 점수는 후보 비교용이며 일치율이 아니에요.</Text>
+        <Pressable testID="course-export-gpx" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void exportGpx()}>
+          <Text>GPX 내보내기</Text>
+        </Pressable>
+        <Text style={styles.small}>저장된 이름과 경로를 GPX 파일로 공유해요. 실제 러닝 기록은 포함하지 않아요. 파일에 출발 위치와 전체 경로가 들어가요.</Text>
         <TextInput testID="course-rename-input" accessibilityLabel="코스 이름 변경" style={styles.input} value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} />
         <Pressable testID="course-rename" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void rename()}><Text>이름 변경 저장</Text></Pressable>
       </>}

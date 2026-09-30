@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-10-01T00:45:58+09:00",
+  "environment": {
+    "avd": "RunningArt_API_36",
+    "androidApi": 36,
+    "abi": "x86_64",
+    "apkVariant": "release",
+    "metroRequired": false,
+    "wifiBeforeAndAfter": false,
+    "mobileDataBeforeAndAfter": false,
+    "physicalPhoneConnected": false
+  },
+  "apk": {
+    "path": "build/install/running-art-0.1.0-20261001-gpx.apk",
+    "bytes": 95659943,
+    "sha256": "14331b789dcd6b2e67bb47d2e114499d65fe5ad5f6d58c37966f767366e34c97",
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ]
+  },
+  "checks": {
+    "chooserSingleFileAfterRepeatedTap": true,
+    "cancelNoticeDoesNotClaimSaved": true,
+    "retryAfterCancel": true,
+    "renameThenForceStopReopenAndExport": true,
+    "localRecipientReadContentUri": true,
+    "baselineDatabaseRestoredAfterDeletingOwnTestCourse": true,
+    "baselineSavedCourseCount": 0,
+    "baselineNoteCount": 0,
+    "dataDirectoryInodePreserved": 361851,
+    "uidPreserved": 10216,
+    "receiverUninstalled": true
+  },
+  "transfers": [
+    {
+      "name": "running-art-하트-5-40km-91bc3e06.gpx",
+      "mimeType": "application/gpx+xml",
+      "bytes": 10143,
+      "sha256": "3e257481656e54e0f0f112e253b16bd1002279076ec5475bd5e0697becc14dc0",
+      "points": 151,
+      "entireRouteEqualsSaved": true,
+      "schemaValid": true,
+      "databaseUnchanged": true
+    },
+    {
+      "name": "running-art-하트-5-40km_GPX_QA-91bc3e06.gpx",
+      "mimeType": "application/gpx+xml",
+      "bytes": 10157,
+      "sha256": "0278a0b2a6066648be4de45d53091a3127c3bb4ff303fe060cddaa7dc1c96233",
+      "points": 151,
+      "entireRouteEqualsSaved": true,
+      "schemaValid": true,
+      "databaseUnchanged": true
+    }
+  ],
+  "limitations": [
+    "실제 휴대폰 및 타사 지도·피트니스 앱의 가져오기는 미검증",
+    "네이티브 파일 전달은 합성 코스 151점으로 검증; OSM 기준 코스는 자동 검사로 검증",
+    "저장 공간 부족·공유 오류·화면 이탈은 주입한 서비스로 자동 검사; OS 수준 실패 유발은 미검증",
+    "Expo doctor 20/21: 기존 expo, expo-constants, expo-router 패치 갱신 안내"
+  ]
+}

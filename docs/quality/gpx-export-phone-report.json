@@ -1,0 +1,78 @@
+{
+  "recordedAt": "2026-10-01T01:07:45+09:00",
+  "device": {
+    "model": "SM-S942N",
+    "android": "16",
+    "sdk": 36
+  },
+  "installedAt": "2026-10-01 00:56:22 +09:00",
+  "apk": {
+    "path": "build/install/running-art-0.1.0-20261001-gpx.apk",
+    "bytes": 95659943,
+    "installedApkSha256": "14331b789dcd6b2e67bb47d2e114499d65fe5ad5f6d58c37966f767366e34c97",
+    "firstInstallTimePreserved": true,
+    "dataDirectoryPreserved": true,
+    "uidPreserved": true,
+    "metroReverseEmpty": true
+  },
+  "checks": {
+    "existingCoursePreservedInUi": true,
+    "existingCourseCountBeforeAndAfter": 1,
+    "existingNotePreservedInUi": true,
+    "existingNoteCountBeforeAndAfter": 1,
+    "cancelThenRetry": true,
+    "offlineAfterForceStop": true,
+    "renamedTitleExported": true,
+    "localContentUriReceived": true,
+    "networkSettingsRestored": true,
+    "ownQaCourseDeleted": true,
+    "receiverUninstalled": true,
+    "finalColdLaunch": true
+  },
+  "offline": {
+    "startedAt": "2026-10-01T01:03:58.767513+09:00",
+    "finishedAt": "2026-10-01T01:04:35.876026+09:00",
+    "original": {
+      "wifi": "1",
+      "data": "1"
+    },
+    "offline": {
+      "wifi": "0",
+      "data": "0"
+    },
+    "activeDefaultNetwork": "Active default network: none",
+    "restored": {
+      "wifi": "1",
+      "data": "1"
+    },
+    "points": 151,
+    "exactBaselineCoordinates": true
+  },
+  "transfers": [
+    {
+      "source": "osm",
+      "bytes": 16569,
+      "points": 309,
+      "sha256": "b1a50b30a6a2c233ad6a21eb51be3507ef2d486c79bc60d0192dfb30e5cd6637",
+      "mimeType": "application/gpx+xml",
+      "schemaValid": true,
+      "entireBaselineCoordinatesEqual": null
+    },
+    {
+      "source": "synthetic",
+      "bytes": 10169,
+      "points": 151,
+      "sha256": "6d8c64517648c899cd58933ae9e64097413e58d7bc50b4bd0d27ba8e6d758919",
+      "mimeType": "application/gpx+xml",
+      "schemaValid": true,
+      "entireBaselineCoordinatesEqual": true
+    }
+  ],
+  "localEvidenceDirectory": ".cache/phone-gpx-qa/",
+  "limitations": [
+    "휴대폰 release APK의 개인 SQLite를 직접 추출하지 않았다. 기존 코스·메모 보존은 ID·이름·요약·수정 시각의 UI 비교이다.",
+    "실제 OSM 코스는 파일 파싱·출처·형식 확인이며 원본 SQLite 전체 좌표와의 직접 대조는 아니다. 고정 합성 코스 151점은 전체 기준 좌표와 정확히 대조했다.",
+    "타사 지도·피트니스 앱·클라우드 저장소의 가져오기, iOS, OS 수준 공간 부족·프로세스 종료 도중 공유는 미검증.",
+    "실제 GPS·새 도로 조회·배경 지도·영구 도로 캐시·운영 R2/CDN은 이번 검사 범위 밖이다."
+  ]
+}

@@ -2,13 +2,15 @@
 
 2026-09-30 결정에 따라 기존 두 테스트 프로젝트와 서버·도로 공급·데이터·배포를 독립시킵니다. 아래 현재 구현에는 기존 도로 API 연결이 남아 있습니다. 목표 구성과 전환 순서는 [독립 서버 전략](../planning/server-strategy.md)에 있으며 실제 서버 구축·앱 전환은 아직 미착수입니다. 로그인·동기화·공유·커뮤니티는 예정 범위이고 유료화·생성 횟수 제한은 후속 계획으로만 둡니다.
 
-현재 **4-1 독립 표본 가공·PC 비교를 완료했고 실제 휴대폰 처리 비용 측정이 남았습니다.** `scripts/road-data/`가 새 PBF를 고정·가공·비교하고 `road-data/file-format.ts`가 격자 선택·검증·ID 병합을 담당합니다. `road-file-lab`는 별도 로컬 측정 화면입니다. 4-2 실제 서버 구축·배포와 4-3 일반 계산의 공급 전환은 후속이며 영구 캐시의 선행 구현은 아래와 같습니다. [표본 구조](../development/road-samples.md)
+현재 **4-1 독립 표본 가공·PC 비교와 후속 휴대폰 처리 비용 측정을 완료했습니다.** `scripts/road-data/`가 새 PBF를 고정·가공·비교하고 `road-data/file-format.ts`가 격자 선택·검증·ID 병합을 담당합니다. `road-file-lab`는 별도 로컬 측정 화면입니다. 4-2 실제 서버 구축·배포와 4-3 일반 계산의 공급 전환은 후속이며 영구 캐시의 선행 구현은 아래와 같습니다. [표본 구조](../development/road-samples.md)
 
 4-2의 **배포 준비·로컬 검증**도 완료했습니다. `scripts/road-data/deployment.mjs`는 검증된 불변 묶음, `publish.mjs`는 업로드·HTTP 검사·조건부 전환, `r2-store.mjs`는 공식 S3 SDK 연결, `deploy.mjs`는 CLI, `rehearse.mjs`는 실제 표본의 로컬 통합 검증을 담당합니다. 설정 예시는 `infra/road-data/r2.example.json`입니다. SDK는 개발 도구에만 포함하며 앱 공급 연결은 바뀌지 않았습니다. [배포 계약과 사용법](../development/road-deployment.md)
 
 후속 사용자 결정으로 실제 서버 배포·휴대폰 테스트를 보류하고 **4-3 영구 캐시**를 먼저 구현했습니다. `persistent-cache.ts`가 별도 SQLite 스키마·전체 검증 후 저장·현재 버전·만료·용량 정리를 담당하고, `cache-database.ts`가 Expo SQLite 전용 연결을 공유합니다. `road-cache-lab.tsx`와 `features/road-cache-lab/source.ts`는 고정 loopback 표본을 사용하는 별도 검증 화면입니다. PC 실제 SQLite와 모바일 codec으로 재시작·오프라인 입력/그래프 대조를 완료했으며 일반 계산의 기존 API·메모리 캐시는 유지합니다. [캐시 계약](../development/road-cache.md)
 
 5단계 로컬 코스 저장도 구현했습니다. `modules/courses/`는 검증된 경로 스냅샷·중복·목록·상세·이름 변경·삭제를 담당하고, 기존 사용자 DB에 버전 2를 추가합니다. `features/courses/SaveCoursePanel.tsx`가 완료한 후보를 저장하고 `app/courses/`에서 재계산 없이 복원합니다. 기본 경로 표시는 배경 지도·네트워크·GPS를 사용하지 않습니다. [저장 구조와 사용법](../development/saved-courses.md)
+
+후속 GPX 내보내기는 `modules/courses/gpx.ts`의 순수 변환, `export.ts`의 읽기·취소·중복·오류 처리, `share-gpx.ts`의 Expo 파일·공유 연결로 나눕니다. 상세 화면에서 저장된 이름·경로를 다시 읽으며 DB 스키마나 내용을 바꾸지 않습니다. [GPX 사용법](../development/gpx-export.md)
 
 ## 현재와 예정 구조
 
@@ -47,7 +49,7 @@ OSM 식별자·연결 관계를 보존한 보행 그래프
        ↓
 앱 내부 계산: 도형 배치 → 실제 도로 연결 → 점수·후보 선정
        ↓
-지도 좌표 변환 → 후보 비교·선택 → 기기 코스 저장·목록·상세
+지도 좌표 변환 → 후보 비교·선택 → 기기 코스 저장·목록·상세 → GPX 파일 공유
 ```
 
 지도 스타일·타일은 MapTiler에서 MapLibre로 공급합니다. 보행 그래프는 현재 기존 웹의 도로 데이터 API에서 받은 OSM 자료로 구성하며 실제 경로 계산은 기기 내부에서 합니다. 서울 도심은 저장 표본, 공급자 저장 범위 밖은 Overpass 조회 경로입니다. 배경 지도와 계산용 도로 데이터는 별개입니다.
