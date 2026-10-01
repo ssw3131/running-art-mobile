@@ -61,6 +61,32 @@ test('offline never calls transport; partial coverage and separate source are re
   assert.equal((await cache.status()).files, 1);
 });
 
+test('a newly published region is discovered even while the saved manifest is fresh', async t => {
+  const { cache } = await fixture(t), data = dataset();
+  const previous = Buffer.from(JSON.stringify({ ...data.manifest, files: data.manifest.files.slice(0, 1) }));
+  await cache.load(request(data, { downloadManifest: async () => previous }));
+  const added = await cache.load(request(data, { mode: 'prefer-cache', bounds: box(6351) }));
+  assert.equal(data.manifests(), 1);
+  assert.equal(added.downloaded, 1);
+  assert.equal(added.elements[0].id, 6351);
+  const forbidden = async () => { throw new Error('network called'); };
+  const offline = await cache.load(request(data, { mode: 'offline', bounds: box(6351), downloadManifest: forbidden, downloadTile: forbidden }));
+  assert.deepEqual(offline.elements, added.elements);
+});
+
+test('failed discovery of a new region preserves the old offline region and reports the download error', async t => {
+  const { cache } = await fixture(t), data = dataset();
+  const previous = Buffer.from(JSON.stringify({ ...data.manifest, files: data.manifest.files.slice(0, 1) }));
+  const original = await cache.load(request(data, { downloadManifest: async () => previous }));
+  const before = await cache.status();
+  const failed = async () => { throw new Error('new region download failed'); };
+  await assert.rejects(cache.load(request(data, { mode: 'prefer-cache', bounds: box(6351), downloadManifest: failed })), /new region download failed/);
+  assert.deepEqual(await cache.status(), before);
+  const offline = await cache.load(request(data, { mode: 'offline', downloadManifest: failed, downloadTile: failed }));
+  assert.deepEqual(offline.elements, original.elements);
+  assert.equal(offline.manifestHash, original.manifestHash);
+});
+
 test('tile and manifest corruption are rejected offline and repaired by validated input', async t => {
   const { cache, db } = await fixture(t), data = dataset();
   await cache.load(request(data));

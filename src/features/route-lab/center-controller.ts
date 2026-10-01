@@ -23,6 +23,10 @@ export function createCenterController(provider: LocationProvider, initial: Orig
       update({ cameraTarget: undefined, ...(state.location.kind === 'loading' ? { location: { kind: 'idle' as const } } : {}) });
     },
     move(center: Origin) { update({ center: { ...center } }); },
+    choose(center: Origin) {
+      cancel();
+      update({ center: { ...center }, location: { kind: 'idle' }, cameraTarget: { center: { ...center }, revision: ++revision } });
+    },
     async locate(askPermission = true) {
       cancel();
       const controller = new AbortController();

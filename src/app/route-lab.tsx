@@ -8,7 +8,9 @@ import { calculateMobileRoute } from '@/features/route-lab/scheduler';
 import { createCenterController, type CenterState } from '@/features/route-lab/center-controller';
 import { createLabSession, type LabCalculation } from '@/features/route-lab/session';
 import { expoLocationProvider } from '@/modules/location/expo-provider';
-import { createRoadLoader } from '@/modules/road-data/client';
+import type { RoadMode } from '@/modules/road-data/client';
+import { roadSamples } from '@/modules/road-data/channel';
+import { loadMobileRoads } from '@/modules/road-data/mobile-loader';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import { SHAPES } from '@/modules/route-engine/engine';
@@ -18,9 +20,7 @@ import { compareReference } from '@/modules/route-engine/verification';
 import SaveCoursePanel from '@/features/courses/SaveCoursePanel';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
-const loadRoads = createRoadLoader({ endpoint: process.env.EXPO_PUBLIC_ROAD_DATA_URL,
-  onAttempt: (event) => console.info('ROAD_DATA_ATTEMPT', JSON.stringify(event)),
-});
+const roadModes = [{ id: 'prefer-cache', label: '저장 자료 우선' }, { id: 'refresh', label: '새 버전 확인' }, { id: 'offline', label: '오프라인' }] as const;
 type State = { kind: 'idle' | 'running' | 'cancelled' | 'error' | 'done'; message: string };
 type Completed = LabCalculation & { comparison: string; maxTimerLagMs: number; timerTicks: number };
 const time = (ms: number) => `${(ms / 1000).toFixed(2)}초`;
@@ -46,7 +46,9 @@ export default function RouteLabScreen() {
   const [selected, setSelected] = useState(0);
   const [taps, setTaps] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  const jobs = useMemo(() => createLabSession(loadRoads, calculateMobileRoute), []);
+  const jobs = useMemo(() => createLabSession(loadMobileRoads, calculateMobileRoute), []);
+  const [roadMode, setRoadMode] = useState<RoadMode>('prefer-cache');
+  const [fixedCenter, setFixedCenter] = useState(false);
   const [validCenter, setValidCenter] = useState(true);
   const [centerState, setCenterState] = useState<CenterState>({ center: datasets.seoul.input.origin, position: null, location: { kind: 'idle' } });
   const center = useMemo(() => createCenterController(expoLocationProvider, datasets.seoul.input.origin, (value) => {
@@ -95,7 +97,7 @@ export default function RouteLabScreen() {
     if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
   };
   const start = () => {
-    if (!dataset.synthetic && (!mapReady || mapMoving || !validCenter || centerState.location.kind === 'loading')) return;
+    if (!dataset.synthetic && ((!mapReady && !fixedCenter) || mapMoving || !validCenter || centerState.location.kind === 'loading')) return;
     cancel(); setCompleted(null); setSelected(0); setTaps(0); setSeconds(0);
     running.current = true;
     setState({ kind: 'running', message: dataset.synthetic ? '도로 데이터를 준비하고 있어요.' : '지도 중심 주변의 도로를 조회하고 있어요.' });
@@ -110,7 +112,7 @@ export default function RouteLabScreen() {
       lastTick = now; timerTicks++;
       if (timerTicks % 5 === 0) setSeconds((now - started) / 1000);
     }, 50);
-    void jobs.start({ input, liveRoads: !dataset.synthetic }, {
+    void jobs.start({ input, liveRoads: !dataset.synthetic, roadMode }, {
       progress: (progress) => {
         const now = performance.now();
         if (progress.phase !== lastPhase || now - lastProgress >= 120) {
@@ -125,13 +127,14 @@ export default function RouteLabScreen() {
         setCompleted({ ...value, comparison, maxTimerLagMs, timerTicks });
         setSeconds(value.timing.totalMs / 1000);
         setState({ kind: 'done', message: value.result.candidates.length ? `${value.result.candidates.length}개 코스를 찾았어요.` : '조건에 맞는 코스가 없어요. 도형이나 거리를 바꿔 보세요.' });
-        console.info('ROUTE_LAB_METRICS', JSON.stringify({ dataset: datasetId, shape, targetKm, ...value.metrics, timing: value.timing, cached: value.cached, maxTimerLagMs, timerTicks, reference: expected ? mismatch ?? 'match' : 'unavailable', candidates: value.result.candidates.length, scores: value.result.candidates.map((c) => c.score.raw) }));
+        console.info('ROUTE_LAB_METRICS', JSON.stringify({ dataset: datasetId, shape, targetKm, ...value.metrics, timing: value.timing, cached: value.cached, roadCache: value.roadCache, maxTimerLagMs, timerTicks, reference: expected ? mismatch ?? 'match' : 'unavailable', candidates: value.result.candidates.length, scores: value.result.candidates.map((c) => c.score.raw) }));
       },
       error: (error) => { stopTimer(); running.current = false; setState({ kind: 'error', message: error.message }); },
     });
   };
 
   const locate = () => {
+    setFixedCenter(false);
     changeSearch();
     const location = centerState.location;
     if (location.kind === 'denied' && !location.canAskAgain) {
@@ -142,13 +145,13 @@ export default function RouteLabScreen() {
       void Linking.sendIntent('android.settings.LOCATION_SOURCE_SETTINGS').catch(() => setState({ kind: 'error', message: '기기 설정에서 위치 기능을 켜 주세요.' }));
     } else void center.locate();
   };
-  const cannotCalculate = !dataset.synthetic && (!mapReady || mapMoving || !validCenter || centerState.location.kind === 'loading');
+  const cannotCalculate = !dataset.synthetic && ((!mapReady && !fixedCenter) || mapMoving || !validCenter || centerState.location.kind === 'loading');
 
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
     <View style={styles.map}>
       {dataset.synthetic || styleUrl ? <MapSurface key={datasetId} styleUrl={styleUrl ?? ''} position={dataset.synthetic ? null : centerState.position} origin={dataset.synthetic ? dataset.input.origin : centerState.center} syntheticRoads={roads} routeOverlay={overlay} centerSelection={dataset.synthetic ? undefined : {
         target: centerState.cameraTarget,
-        onMoveStart: () => { changeSearch(); center.beginMove(); setMapMoving(true); },
+        onMoveStart: () => { changeSearch(); setFixedCenter(false); center.beginMove(); setMapMoving(true); },
         onMoveEnd: (origin) => { setValidCenter(!!origin); if (origin) center.move(origin); setMapMoving(false); },
         onReady: setMapReady,
       }} /> : <View style={styles.placeholder}><Text>지도를 연결하면 화면 중심으로 코스를 계산할 수 있어요.</Text></View>}
@@ -169,6 +172,13 @@ export default function RouteLabScreen() {
       <Text style={styles.title}>코스 계산 테스트</Text>
       <View style={styles.row}>{(Object.keys(datasets) as DatasetId[]).map((id) => <Pressable key={id} testID={`dataset-${id}`} accessibilityRole="button" accessibilityState={{ selected: datasetId === id }} style={[styles.chip, datasetId === id && styles.chipSelected]} onPress={() => { reset(); if (id !== datasetId) { setMapReady(false); setMapMoving(false); } setDatasetId(id); setTargetKm(datasets[id].input.options.targetKm); }}><Text style={datasetId === id ? styles.chipTextSelected : styles.chipText}>{datasets[id].name}</Text></Pressable>)}</View>
       <Text style={styles.description}>{dataset.description}</Text>
+      {!dataset.synthetic && <>
+        <View style={styles.wrap}>{roadSamples.map(sample => <Pressable key={sample.id} testID={`sample-${sample.id}`} accessibilityRole="button" style={styles.chip}
+          onPress={() => { changeSearch(); center.choose(sample.origin); setFixedCenter(true); setValidCenter(true); setMapMoving(false); }}><Text style={styles.chipText}>{sample.label}</Text></Pressable>)}</View>
+        <View style={styles.wrap}>{roadModes.map(mode => <Pressable key={mode.id} testID={`road-mode-${mode.id}`} accessibilityRole="button" accessibilityState={{ selected: roadMode === mode.id }}
+          style={[styles.chip, roadMode === mode.id && styles.chipSelected]} onPress={() => { changeSearch(); setRoadMode(mode.id); }}><Text style={roadMode === mode.id ? styles.chipTextSelected : styles.chipText}>{mode.label}</Text></Pressable>)}</View>
+        <Text style={styles.small}>처음에는 인터넷으로 도로를 받습니다. 저장한 도로는 앱을 다시 열어도 사용할 수 있어요. 오프라인에서 지도가 안 뜨면 위 표본 위치를 선택해 계산하세요. 배경 지도는 별도 연결이 필요해요.</Text>
+      </>}
       {!dataset.synthetic && <Text testID={`route-location-${centerState.location.kind}`} style={styles.small}>{locationMessage(centerState)}</Text>}
       <Text style={styles.label}>도형</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>{SHAPES.map((item) => <Pressable key={item.id} testID={`shape-${item.id}`} accessibilityRole="button" accessibilityState={{ selected: shape === item.id }} style={[styles.chip, shape === item.id && styles.chipSelected]} onPress={() => { changeSearch(); setShape(item.id as ShapeId); }}><Text style={shape === item.id ? styles.chipTextSelected : styles.chipText}>{item.name}</Text></Pressable>)}</ScrollView>
@@ -219,6 +229,7 @@ const styles = StyleSheet.create({
   logo: { width: 60, height: 16 }, panel: { flex: 1 }, content: { padding: 18, gap: 12, paddingBottom: 32 },
   title: { fontSize: 22, fontWeight: '700', color: '#183C32' }, label: { color: '#183C32', fontWeight: '600' },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingVertical: 10, paddingHorizontal: 13, borderRadius: 20, backgroundColor: '#E8EDE7' },
   chipSelected: { backgroundColor: '#183C32' }, chipText: { color: '#183C32', fontWeight: '600' }, chipTextSelected: { color: '#FFFFFF', fontWeight: '600' },
   description: { color: '#57675F', fontSize: 14, lineHeight: 21 }, small: { color: '#57675F', fontSize: 12, lineHeight: 18 },

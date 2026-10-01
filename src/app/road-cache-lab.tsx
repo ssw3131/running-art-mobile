@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { getRoadCache } from '@/modules/road-data/cache-database';
-import { roadBounds } from '@/modules/road-data/client';
+import { loadMobileRoads } from '@/modules/road-data/mobile-loader';
 import type { RoadCacheRequest } from '@/modules/road-data/persistent-cache';
-import { cacheLabSamples, createCacheLabDownloads, ROAD_CACHE_LAB_SOURCE } from '@/features/road-cache-lab/source';
-import { mobileScheduler } from '@/features/route-lab/scheduler';
+import { roadSamples as cacheLabSamples } from '@/modules/road-data/channel';
 
 export default function RoadCacheLabScreen() {
   const [index, setIndex] = useState(0), [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState('처음에는 PC 로컬 표본을 받아 저장하세요. 저장 후에는 연결 없이 읽을 수 있어요.');
+  const [status, setStatus] = useState('처음에는 R2 도로 표본을 받아 저장하세요. 일반 코스 계산과 같은 저장 자료를 사용합니다.');
   const [usage, setUsage] = useState(''), [details, setDetails] = useState('');
   const [clearing, setClearing] = useState(false);
   const controller = useRef<AbortController | null>(null), mounted = useRef(true);
@@ -27,10 +26,9 @@ export default function RoadCacheLabScreen() {
     const current = new AbortController(); controller.current = current;
     setBusy(true); setDetails(''); setStatus(mode === 'offline' ? '저장 자료 확인 중…' : '자료를 확인하고 저장하는 중…');
     try {
-      const sample = cacheLabSamples[index], cache = await getRoadCache();
-      const result = await cache.load({ source: ROAD_CACHE_LAB_SOURCE, bounds: roadBounds(sample.origin, 2000),
-        signal: current.signal, mode, ...(mode === 'offline' ? {} : createCacheLabDownloads()),
-        yieldToHost: mobileScheduler.yieldToHost });
+      const sample = cacheLabSamples[index];
+      const data = await loadMobileRoads(sample.origin, 2000, current.signal, mode);
+      const result = { ...data.cache!, elements: data.elements };
       if (!mounted.current || current.signal.aborted) return;
       setStatus(`${sample.label} · ${mode === 'offline' ? '네트워크 없이 저장 자료 읽기 완료' : '조회·저장 완료'}`);
       setDetails(`${result.files}개 파일 · 저장 자료 재사용 ${result.reused}개 · 새로 받음 ${result.downloaded}개\n도로 ${result.elements.length.toLocaleString()}개\n${result.stale ? '오래된 저장 자료' : '유효 기간 내 자료'}${result.updateFailed ? ' · 갱신 실패로 저장 자료 사용' : ''}\n자료 버전: ${result.release}`);
@@ -50,7 +48,7 @@ export default function RoadCacheLabScreen() {
   }
   return <ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>영구 도로 캐시 검증</Text>
-    <Text>서울·부산·경계 표본을 기기에 저장합니다. 앱을 종료한 뒤 다시 열어 저장 자료 읽기를 확인하세요. 현재 위치는 사용하지 않습니다.</Text>
+    <Text>서울·부산·구로/광명·판교로228번길 17 표본을 기기에 저장합니다. 앱을 종료한 뒤 다시 열어 저장 자료 읽기를 확인하세요. 현재 위치는 사용하지 않습니다.</Text>
     {!supported && <Text>이 검증은 Android 앱에서 실행해 주세요.</Text>}
     <View style={styles.row}>{cacheLabSamples.map((sample, i) => <Pressable key={sample.id} accessibilityRole="button" disabled={busy}
       onPress={() => setIndex(i)} style={[styles.option, index === i && styles.selected]}><Text>{sample.label}</Text></Pressable>)}</View>
@@ -62,7 +60,7 @@ export default function RoadCacheLabScreen() {
       onPress={() => Alert.alert('도로 캐시 비우기', '저장한 도로 표본을 삭제합니다. 테스트 메모와 다른 기록은 유지됩니다.', [
         { text: '취소', style: 'cancel' }, { text: '비우기', style: 'destructive', onPress: () => void clear() },
       ])}><Text>도로 캐시 비우기</Text></Pressable>
-    <Text>처음 받기는 PC 로컬 표본 서버와 연결이 필요합니다. 배경 지도 오프라인 표시와 일반 코스 계산의 공급 전환은 후속입니다.</Text>
+    <Text>처음 받기는 인터넷 연결이 필요합니다. 현재 R2 개발용 주소로 네 표본 지역만 제공합니다. 배경 지도 오프라인 표시는 별도 기능입니다.</Text>
   </ScrollView>;
 }
 const styles = StyleSheet.create({ content: { padding: 24, gap: 18, backgroundColor: '#F6F5F0' },

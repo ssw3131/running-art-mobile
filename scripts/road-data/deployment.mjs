@@ -93,17 +93,27 @@ export function validateConfig(config) {
   assert.equal(config.schemaVersion, 1, '배포 설정 버전 오류');
   assert.match(config.accountId ?? '', /^[a-f0-9]{32}$/, '전용 Cloudflare accountId 필요');
   assert.match(config.bucket ?? '', /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/, '전용 R2 bucket 필요');
+  const publicUrlMode = config.publicUrlMode === undefined ? 'custom-domain' : config.publicUrlMode;
+  assert.ok(['custom-domain', 'r2-dev'].includes(publicUrlMode), 'publicUrlMode는 custom-domain 또는 r2-dev여야 합니다.');
   const url = new URL(config.publicBaseUrl);
   assert.ok(url.protocol === 'https:' && !url.username && !url.password && !url.port &&
     url.pathname === '/' && !url.search && !url.hash && url.hostname.includes('.') &&
-    !url.hostname.endsWith('.r2.dev') && !url.hostname.endsWith('.r2.cloudflarestorage.com') &&
-    !url.hostname.endsWith('.invalid'), '버킷에 연결된 전용 HTTPS 도메인을 지정하세요.');
-  return { accountId: config.accountId, bucket: config.bucket, publicBaseUrl: url.origin };
+    !url.hostname.endsWith('.invalid'), '경로·인증 정보·포트 없는 버킷 루트 HTTPS 주소를 지정하세요.');
+  const hostname = url.hostname.replace(/\.$/, '');
+  assert.ok(hostname !== 'r2.cloudflarestorage.com' && !hostname.endsWith('.r2.cloudflarestorage.com') &&
+    hostname !== 'invalid' && !hostname.endsWith('.invalid'), 'S3 API endpoint나 예시 주소는 공개 다운로드 주소가 아닙니다.');
+  if (publicUrlMode === 'r2-dev') {
+    assert.match(url.hostname, /^pub-[a-z0-9]{1,59}\.r2\.dev$/, '개발용 모드에는 Cloudflare가 제공한 https://pub-….r2.dev 주소가 필요합니다.');
+  } else {
+    assert.ok(hostname !== 'r2.dev' && !hostname.endsWith('.r2.dev'), 'r2.dev는 publicUrlMode: r2-dev로 명시한 개발용 배포에서만 허용합니다.');
+  }
+  return { accountId: config.accountId, bucket: config.bucket, publicBaseUrl: url.origin, publicUrlMode };
 }
 
 export function deploymentPlan(bundle, config) {
   return { mode: 'plan', coverage: 'samples', provisional: true, configured: Boolean(config),
     bucket: config?.bucket ?? null, publicBaseUrl: config?.publicBaseUrl ?? null,
+    publicUrlMode: config?.publicUrlMode ?? null, developmentOnly: config?.publicUrlMode === 'r2-dev',
     bundle: bundle.directory, releaseId: bundle.id, objects: bundle.objects.length,
     bytes: bundle.objects.reduce((n, file) => n + file.body.length, 0),
     immutablePrefix: `${PREFIX}/releases/${bundle.id}`, currentKey: CURRENT_KEY,

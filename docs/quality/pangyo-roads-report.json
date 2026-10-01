@@ -1,0 +1,632 @@
+{
+  "recordedAt": "2026-10-01T14:50:03.771Z",
+  "sample": {
+    "id": "pangyo-228-17",
+    "label": "판교로228번길 17 · 판교세븐벤처밸리2",
+    "origin": {
+      "lat": 37.400805,
+      "lng": 127.101494
+    }
+  },
+  "radiusMeters": 2000,
+  "source": {
+    "url": "https://download.geofabrik.de/asia/south-korea-260929.osm.pbf",
+    "file": "south-korea-260929.osm.pbf",
+    "bytes": 288242629,
+    "sha256": "9d436449e16fcf78866eb50caec91fca5067e494a6914130f869332297a8cd5a",
+    "md5": "7775afecd9ccbf3285ace3f1fa2ec7f4",
+    "dataTimestamp": "2026-09-29T20:22:51Z",
+    "replicationSequence": "4447",
+    "attribution": "© OpenStreetMap contributors; extract by Geofabrik",
+    "license": "ODbL-1.0",
+    "licenseUrl": "https://www.openstreetmap.org/copyright"
+  },
+  "locationEvidence": {
+    "address": "https://cullinanholdings.co.kr/company/map.php",
+    "coordinates": "https://jusoga.com/b/4113510900106330000000001/",
+    "representativeBuildingCoordinate": true,
+    "entranceLocationVerified": false
+  },
+  "tests": {
+    "automatic": 135,
+    "typecheck": true,
+    "lint": true,
+    "fullInputGraphAndSearchComparisons": 12,
+    "oldRegionInputsAndSearchResultsUnchanged": 3,
+    "oldTileBytesUnchanged": 23
+  },
+  "pangyoComparisons": [
+    {
+      "sample": "pangyo-228-17",
+      "gridStepE7": 100000,
+      "files": 24,
+      "packedBytes": 348163,
+      "decodedBytes": 1899531,
+      "duplicatedWays": 368,
+      "wayOccurrences": 3822,
+      "uniqueDownloadedWays": 3425,
+      "queryWays": 2433,
+      "nodes": 12205,
+      "edges": 12966,
+      "weakComponents": 49,
+      "largestWeakComponent": 10488,
+      "directedLinks": 25932,
+      "decodeMs": 34.1304999999993,
+      "mergeMs": 26.356300000003102,
+      "buildGraphMs": 32.80400000000009,
+      "searchMs": 4427.275699999998,
+      "candidates": 5,
+      "resultSha256": "e124d29a81993af3f672fdc09cc5d2acdb723549a68f8ffdaa66b7c4e5aa856f",
+      "unsplitGraphMs": 32.979199999997945,
+      "unsplitSearchMs": 1987.6242999999995,
+      "inputEqual": true,
+      "graphEqual": true,
+      "resultEqual": true
+    },
+    {
+      "sample": "pangyo-228-17",
+      "gridStepE7": 200000,
+      "files": 8,
+      "packedBytes": 367602,
+      "decodedBytes": 2038532,
+      "duplicatedWays": 196,
+      "wayOccurrences": 4330,
+      "uniqueDownloadedWays": 4131,
+      "queryWays": 2433,
+      "nodes": 12205,
+      "edges": 12966,
+      "weakComponents": 49,
+      "largestWeakComponent": 10488,
+      "directedLinks": 25932,
+      "decodeMs": 45.379000000000815,
+      "mergeMs": 67.28689999999915,
+      "buildGraphMs": 89.20960000000196,
+      "searchMs": 2176.799899999998,
+      "candidates": 5,
+      "resultSha256": "e124d29a81993af3f672fdc09cc5d2acdb723549a68f8ffdaa66b7c4e5aa856f",
+      "unsplitGraphMs": 32.979199999997945,
+      "unsplitSearchMs": 1987.6242999999995,
+      "inputEqual": true,
+      "graphEqual": true,
+      "resultEqual": true
+    },
+    {
+      "sample": "pangyo-228-17",
+      "gridStepE7": 400000,
+      "files": 6,
+      "packedBytes": 801337,
+      "decodedBytes": 4378753,
+      "duplicatedWays": 238,
+      "wayOccurrences": 9015,
+      "uniqueDownloadedWays": 8776,
+      "queryWays": 2433,
+      "nodes": 12205,
+      "edges": 12966,
+      "weakComponents": 49,
+      "largestWeakComponent": 10488,
+      "directedLinks": 25932,
+      "decodeMs": 48.173399999999674,
+      "mergeMs": 66.23199999999633,
+      "buildGraphMs": 41.27889999999752,
+      "searchMs": 1814.1293000000005,
+      "candidates": 5,
+      "resultSha256": "e124d29a81993af3f672fdc09cc5d2acdb723549a68f8ffdaa66b7c4e5aa856f",
+      "unsplitGraphMs": 32.979199999997945,
+      "unsplitSearchMs": 1987.6242999999995,
+      "inputEqual": true,
+      "graphEqual": true,
+      "resultEqual": true
+    }
+  ],
+  "deployment": {
+    "releaseId": "kr-20260929-9d436449e16f-roads-v1-g200000-bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+    "publicBaseUrl": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+    "immutableObjects": 33,
+    "immutableBytes": 1577130,
+    "oldReleasePreserved": true,
+    "upload": {
+      "command": "upload",
+      "publicUrlMode": "r2-dev",
+      "developmentOnly": true,
+      "uploaded": 33,
+      "reused": 0,
+      "currentChanged": false
+    },
+    "promotion": {
+      "command": "promote",
+      "publicUrlMode": "r2-dev",
+      "developmentOnly": true,
+      "previousSha256": "bee3509d90ace81ff74f9604554b8c77ca9896a61cfc37f05fb232f66dea320d",
+      "currentSha256": "9b9c7ff96788f7b26505aacdea81dae48334d651b1c3dc4e14b4253a6f06fa84",
+      "verifiedObjects": 33,
+      "currentChanged": true
+    },
+    "currentTiles": 31
+  },
+  "liveR2": {
+    "recordedAt": "2026-10-01T14:41:44.781Z",
+    "runtime": "v24.21.0",
+    "environment": "windows-node-sqlite-live-r2-mobile-codecs",
+    "otherOriginsBlocked": true,
+    "offline": false,
+    "requests": 33,
+    "samples": [
+      {
+        "id": "seoul-gangnam",
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+        "files": 9,
+        "reused": 0,
+        "downloaded": 9,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790865699383,
+        "ways": 3454,
+        "nodes": 13614,
+        "edges": 15363,
+        "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+        "inputEqual": true,
+        "graphEqual": true
+      },
+      {
+        "id": "busan-cityhall",
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+        "files": 6,
+        "reused": 0,
+        "downloaded": 6,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790865699383,
+        "ways": 2008,
+        "nodes": 9181,
+        "edges": 9972,
+        "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+        "inputEqual": true,
+        "graphEqual": true
+      },
+      {
+        "id": "boundary-guro-gwangmyeong",
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+        "files": 8,
+        "reused": 0,
+        "downloaded": 8,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790865699383,
+        "ways": 2929,
+        "nodes": 11189,
+        "edges": 12384,
+        "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+        "inputEqual": true,
+        "graphEqual": true
+      },
+      {
+        "id": "pangyo-228-17",
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+        "files": 8,
+        "reused": 0,
+        "downloaded": 8,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790865699383,
+        "ways": 2433,
+        "nodes": 12205,
+        "edges": 12966,
+        "inputSha256": "f142f151086cc13fa522f1e396ec073298cc3fbe7ac3577420dbb19987854d00",
+        "inputEqual": true,
+        "graphEqual": true
+      }
+    ],
+    "usage": {
+      "bytes": 1576398,
+      "maxBytes": 67108864,
+      "datasets": 1,
+      "files": 31
+    },
+    "events": [
+      {
+        "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+        "mode": "prefer-cache",
+        "elapsedMs": 2386,
+        "outcome": "success",
+        "requests": 11,
+        "cache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383
+        }
+      },
+      {
+        "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+        "mode": "prefer-cache",
+        "elapsedMs": 963,
+        "outcome": "success",
+        "requests": 6,
+        "cache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 6,
+          "reused": 0,
+          "downloaded": 6,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383
+        }
+      },
+      {
+        "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+        "mode": "prefer-cache",
+        "elapsedMs": 1263,
+        "outcome": "success",
+        "requests": 8,
+        "cache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 0,
+          "downloaded": 8,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383
+        }
+      },
+      {
+        "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+        "mode": "prefer-cache",
+        "elapsedMs": 1054,
+        "outcome": "success",
+        "requests": 8,
+        "cache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 0,
+          "downloaded": 8,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383
+        }
+      }
+    ],
+    "offlineProcess": {
+      "recordedAt": "2026-10-01T14:41:45.859Z",
+      "runtime": "v24.21.0",
+      "environment": "windows-node-sqlite-live-r2-mobile-codecs",
+      "otherOriginsBlocked": true,
+      "offline": true,
+      "requests": 0,
+      "samples": [
+        {
+          "id": "seoul-gangnam",
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383,
+          "ways": 3454,
+          "nodes": 13614,
+          "edges": 15363,
+          "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+          "inputEqual": true,
+          "graphEqual": true
+        },
+        {
+          "id": "busan-cityhall",
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 6,
+          "reused": 6,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383,
+          "ways": 2008,
+          "nodes": 9181,
+          "edges": 9972,
+          "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+          "inputEqual": true,
+          "graphEqual": true
+        },
+        {
+          "id": "boundary-guro-gwangmyeong",
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 8,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383,
+          "ways": 2929,
+          "nodes": 11189,
+          "edges": 12384,
+          "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+          "inputEqual": true,
+          "graphEqual": true
+        },
+        {
+          "id": "pangyo-228-17",
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 8,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865699383,
+          "ways": 2433,
+          "nodes": 12205,
+          "edges": 12966,
+          "inputSha256": "f142f151086cc13fa522f1e396ec073298cc3fbe7ac3577420dbb19987854d00",
+          "inputEqual": true,
+          "graphEqual": true
+        }
+      ],
+      "usage": {
+        "bytes": 1576398,
+        "maxBytes": 67108864,
+        "datasets": 1,
+        "files": 31
+      },
+      "events": [
+        {
+          "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+          "mode": "offline",
+          "elapsedMs": 176,
+          "outcome": "success",
+          "requests": 0,
+          "cache": {
+            "release": "kr-20260929-9d436449e16f-roads-v1",
+            "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+            "files": 9,
+            "reused": 9,
+            "downloaded": 0,
+            "stale": false,
+            "updateFailed": false,
+            "checkedAt": 1790865699383
+          }
+        },
+        {
+          "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+          "mode": "offline",
+          "elapsedMs": 59,
+          "outcome": "success",
+          "requests": 0,
+          "cache": {
+            "release": "kr-20260929-9d436449e16f-roads-v1",
+            "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+            "files": 6,
+            "reused": 6,
+            "downloaded": 0,
+            "stale": false,
+            "updateFailed": false,
+            "checkedAt": 1790865699383
+          }
+        },
+        {
+          "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+          "mode": "offline",
+          "elapsedMs": 86,
+          "outcome": "success",
+          "requests": 0,
+          "cache": {
+            "release": "kr-20260929-9d436449e16f-roads-v1",
+            "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+            "files": 8,
+            "reused": 8,
+            "downloaded": 0,
+            "stale": false,
+            "updateFailed": false,
+            "checkedAt": 1790865699383
+          }
+        },
+        {
+          "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+          "mode": "offline",
+          "elapsedMs": 75,
+          "outcome": "success",
+          "requests": 0,
+          "cache": {
+            "release": "kr-20260929-9d436449e16f-roads-v1",
+            "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+            "files": 8,
+            "reused": 8,
+            "downloaded": 0,
+            "stale": false,
+            "updateFailed": false,
+            "checkedAt": 1790865699383
+          }
+        }
+      ]
+    }
+  },
+  "phone": {
+    "model": "SM-S942N",
+    "android": 16,
+    "installedAt": "2026-10-01T23:41:32+09:00",
+    "apk": {
+      "sha256": "86568bbd6775e1ab08d9f752e589571f6e00c6a8ae0317e0661b40c802ac5328",
+      "file": "build/install/running-art-0.1.0-20261001-pangyo.apk",
+      "bytes": 95662219
+    },
+    "installedHashMatches": true,
+    "preexistingCacheFiles": 23,
+    "finalCachedFilesIncludingPriorVersion": 54,
+    "finalStorageDisplayMiB": 2.65,
+    "oldManifestAutomaticallyRefreshedForNewRegion": true,
+    "online": {
+      "attempt": {
+        "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+        "mode": "prefer-cache",
+        "elapsedMs": 3095,
+        "outcome": "success",
+        "requests": 10,
+        "cache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 0,
+          "downloaded": 8,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865759815
+        }
+      },
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 3,
+        "elapsedMs": 8611.325546979904,
+        "computeMs": 8364.314552307129,
+        "maxSliceMs": 14.17828106880188,
+        "yields": 1005,
+        "nodes": 12205,
+        "edges": 12966,
+        "routing": {
+          "pathRequests": 119160,
+          "pathCacheHits": 94630,
+          "pathSearches": 17642,
+          "pathVisits": 1310601,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 199794
+        },
+        "timing": {
+          "roadMs": 3095.1329679489136,
+          "calculationMs": 8611.36445403099,
+          "totalMs": 11706.497421979904
+        },
+        "cached": false,
+        "roadCache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 0,
+          "downloaded": 8,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865759815
+        },
+        "maxTimerLagMs": 178.16976499557495,
+        "timerTicks": 187,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          65.86575686934422,
+          65.69579424358712,
+          63.887794515150496,
+          63.60597542745794,
+          63.490984632624546
+        ]
+      }
+    },
+    "offline": {
+      "attempt": {
+        "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+        "mode": "offline",
+        "elapsedMs": 1050,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 8,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865759815
+        }
+      },
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 3,
+        "elapsedMs": 8595.753319978714,
+        "computeMs": 8353.606681108475,
+        "maxSliceMs": 15.539804935455322,
+        "yields": 1003,
+        "nodes": 12205,
+        "edges": 12966,
+        "routing": {
+          "pathRequests": 119160,
+          "pathCacheHits": 94630,
+          "pathSearches": 17642,
+          "pathVisits": 1310601,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 199794
+        },
+        "timing": {
+          "roadMs": 1052.4897649288177,
+          "calculationMs": 8595.80140709877,
+          "totalMs": 9648.291172027588
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260929-9d436449e16f-roads-v1",
+          "manifestHash": "bcea6f05eb7d9dd7803e9c5dece829d7bc505d076d974835338a31f6daf42141",
+          "files": 8,
+          "reused": 8,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790865759815
+        },
+        "maxTimerLagMs": 116.34281182289124,
+        "timerTicks": 152,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          65.86575686934422,
+          65.69579424358712,
+          63.887794515150496,
+          63.60597542745794,
+          63.490984632624546
+        ]
+      }
+    },
+    "network": {
+      "startedAt": "2026-10-01T23:43:53.5785402+09:00",
+      "original": {
+        "data": "1",
+        "wifi": "1"
+      },
+      "offline": {
+        "data": "0",
+        "wifi": "0"
+      },
+      "defaultNetwork": "Active default network: none",
+      "offlineCalculated": true,
+      "restored": {
+        "data": "1",
+        "wifi": "1"
+      },
+      "finishedAt": "2026-10-01T23:44:36.0783697+09:00"
+    },
+    "preservation": {
+      "savedCourses": 1,
+      "savedNotes": 1,
+      "exactScreenTextsAndItemIdsMatch": true,
+      "firstInstallTimeAndDataDirectoryUnchanged": true
+    }
+  },
+  "limitations": [
+    "표본 중심은 건물 대표 위치이며 특정 출입구를 지정하지 않았다.",
+    "실제 달리기·현장 통행 가능성을 검증한 것은 아니다.",
+    "개발용 r2.dev와 네 지역 표본이며 전국 공급·운영 CDN·부하 검증은 아니다.",
+    "새 목록으로 바뀌면 기존 지역 파일도 그 목록 기준으로 다시 받아야 할 수 있다. 이번 휴대폰에서는 세 기존 지역도 새 목록으로 저장했다.",
+    "배경 지도 완전 오프라인 저장은 별도다. 휴대폰 성능은 한 기기 단일 관측값이다.",
+    "기존 코스·메모 보존은 UI 내용과 ID 비교이며 개인 DB 전체 파일 대조는 아니다."
+  ],
+  "localEvidenceDirectory": ".cache/pangyo-qa/"
+}

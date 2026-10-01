@@ -1,10 +1,14 @@
 # 휴대폰 독립 실행 테스트 APK
 
+**최신 판교 추가 APK:** 2026-10-01 23:41:32 KST에 `build/install/running-art-0.1.0-20261001-pangyo.apk`(95,662,219바이트)를 SM-S942N에 업데이트했다. 판교로228번길 17 선택·기존 목록 자동 갱신·재시작 후 완전 오프라인 계산·기존 코스/메모 보존과 설치본 해시를 확인했다. [검증과 SHA-256](../quality/pangyo-roads-verification.md).
+
+**2026-10-01 22:56 R2 연결 APK:** `build/install/running-art-0.1.0-20261001-r2.apk`(95,662,059바이트, arm64·x86_64)를 SM-S942N에 업데이트했습니다. 일반 계산을 R2 표본·영구 캐시로 전환했고 첫 수신·취소/재시도·강제 종료 후 완전 오프라인 계산을 확인했습니다. 기존 코스 1개·메모 1개와 최초 설치 시각·데이터 경로를 보존했습니다. [휴대폰 보고서와 해시](../quality/road-cache-phone-report.json)·[사용법](route-center.md). 이전 APK와 GitHub 공개 파일은 유지합니다.
+
 **2026-10-01 GPX APK·휴대폰 검증 완료:** `build/install/running-art-0.1.0-20261001-gpx.apk`(95,659,943바이트, arm64·x86_64)에 저장 코스의 GPX 내보내기를 추가했다. API 36에서 PC·인터넷 없이 공유 취소·재시도·실제 파일 수신·이름 변경 후 재공유를 확인했다. 같은 폴더에 `.apk.sha256`·`INSTALL-gpx-20261001-ko.txt`가 있다. **후속 요청으로 00:56:22 KST에 SM-S942N에도 업데이트했다.** 기존 코스 1개·메모 1개 보존, PC 없이 실행, 완전 오프라인 재실행·공유 취소/재시도와 실제 GPX 수신을 확인했다. 설치본 해시가 같다. [휴대폰 결과](../quality/gpx-export-phone-report.json). [사용법](gpx-export.md)·[검증과 해시](../quality/gpx-export-verification.md)를 참고한다. 이전 APK·GitHub 공개 파일은 유지한다.
 
-**2026-09-30 22:09 최신 설치본:** `build/install/running-art-0.1.0-20260930-courses.apk`를 SM-S942N(Android 16)에 업데이트했다. 코스 저장·목록·상세·이름 변경·삭제가 포함된다. 기존 서명·데이터 경로·최초 설치 시각을 유지했으며 이전 앱의 테스트 메모도 보존됐다. PC 개발 서버 없이 실행·같은 코스 중복 방지·이름 변경·네트워크 완전 해제 후 강제 종료와 복원·삭제 취소/완료를 확인했다. [이번 검증](../quality/saved-courses-verification.md)과 [휴대폰 결과·SHA-256](../quality/saved-courses-phone-report.json)을 참고한다.
+**2026-09-30 22:09 당시 설치본:** `build/install/running-art-0.1.0-20260930-courses.apk`를 SM-S942N(Android 16)에 업데이트했다. 코스 저장·목록·상세·이름 변경·삭제가 포함된다. 기존 서명·데이터 경로·최초 설치 시각을 유지했으며 이전 앱의 테스트 메모도 보존됐다. PC 개발 서버 없이 실행·같은 코스 중복 방지·이름 변경·네트워크 완전 해제 후 강제 종료와 복원·삭제 취소/완료를 확인했다. [이번 검증](../quality/saved-courses-verification.md)과 [휴대폰 결과·SHA-256](../quality/saved-courses-phone-report.json)을 참고한다.
 
-이 코스 저장 APK는 **95,595,419바이트**, arm64·x86_64 공용이다. 같은 폴더의 `.apk.sha256`, `INSTALL-courses-20260930-ko.txt`와 함께 로컬에 보관한다. 이전 설치 파일·GitHub 공개 APK는 유지한다. 일반 코스 계산의 도로 공급은 아직 기존 API이며 실제 서버 구축·배포는 재개하지 않았다.
+이 코스 저장 APK는 **95,595,419바이트**, arm64·x86_64 공용이다. 같은 폴더의 `.apk.sha256`, `INSTALL-courses-20260930-ko.txt`와 함께 로컬에 보관한다. 이전 설치 파일·GitHub 공개 APK는 유지한다. 당시 코스 저장 APK의 공급은 기존 API였으며 현재 R2 APK와 구분한다.
 
 **2026-09-30 00:49 이전 설치본:** 사용자 후속 요청으로 `build/install/running-art-0.1.0-20260930.apk`를 빌드해 00:49:45 KST에 SM-S942N에 업데이트했다. 앱의 API 1회 호출·65초 제한을 포함한다. 기존 데이터 경로·최초 설치 시각·서명을 유지했고 설치본 해시 일치·개발 서버 없는 새 실행·지도 화면 표시를 확인했다. 서버는 아직 이전 코드이므로 새 서버 시간 제한·본문 검증은 운영 미반영이다. [재시도 검증과 설치 해시](../quality/road-retry-verification.md)를 참고한다.
 
@@ -60,6 +64,6 @@ adb -s SERIAL install -r android/app/build/outputs/apk/release/app-release.apk
 3. 계산 중 ‘화면 반응 확인’·취소·재시작을 확인한다. 성능은 같은 입력에서 여러 번 측정하고 개발용 APK 결과와 구분한다.
 4. 지도·현재 위치·저장소는 각각 권한·네트워크·저장 동작을 따로 확인한다. 코스 계산 성공만으로 전체 기능 검증을 완료했다고 보지 않는다.
 
-계산 코드는 APK 내부에 있다. 서울 OSM에서는 지도 타일과 새 위치의 도로 조회에 인터넷 연결이 필요하다. [지도 중심 기준 조회](route-center.md)는 메모리 캐시를 사용하며, 영구 도로 캐시 모듈과 로컬 코스 저장은 별도로 구현했다. 일반 계산의 영구 도로 공급 연결과 러닝 추적은 후속 범위다. 최신 코스 저장 APK에서 후보를 저장한 뒤 홈의 저장 목록·상세·이름 변경·삭제를 사용할 수 있다.
+계산 코드는 APK 내부에 있다. R2 APK는 저장한 도로 표본으로 PC·인터넷 없이 계산한다. 배경 지도 오프라인 제공은 별도이며 [표본 선택·공급 모드](route-center.md)를 따른다. 저장 코스 목록·상세·이름 변경·삭제·GPX도 그대로 사용할 수 있다.
 
 코드를 고쳐도 설치한 독립 실행 APK가 자동으로 바뀌지 않는다. 새 APK를 빌드해 업데이트해야 한다. 다시 개발 클라이언트를 쓰려면 같은 테스트 서명의 개발 APK를 업데이트 설치한 뒤 Metro를 시작한다. 최신 결과는 [현재 상태](../handoff/status.md)·[지도 중심 검증](../quality/route-center-verification.md), 이전 휴대폰 고정 표본 검증은 [당시 실행 기록](../history/executed-plans/2026-09-27-1758-standalone-android-test.md)에 있다.

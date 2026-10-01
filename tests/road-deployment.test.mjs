@@ -230,10 +230,53 @@ test('stream and redirect safeguards reject oversized or redirected responses', 
 test('deployment config requires independent HTTPS origin and explicit credentials', () => {
   const valid = { schemaVersion: 1, accountId: 'a'.repeat(32), bucket: 'sample-bucket', publicBaseUrl: 'https://roads.example.com' };
   assert.equal(validateConfig(valid).publicBaseUrl, valid.publicBaseUrl);
-  for (const publicBaseUrl of ['http://roads.example.com', 'https://pub-1.r2.dev', 'https://roads.example.com/path', 'https://user:pass@roads.example.com']) {
+  assert.equal(validateConfig(valid).publicUrlMode, 'custom-domain');
+  for (const publicBaseUrl of ['http://roads.example.com', 'https://pub-1.r2.dev', 'https://r2.dev',
+    'https://pub-1.r2.dev.', 'https://r2.cloudflarestorage.com', 'https://a.r2.cloudflarestorage.com.',
+    'https://roads.invalid.', 'https://roads.example.com/path', 'https://user:pass@roads.example.com']) {
     assert.throws(() => validateConfig({ ...valid, publicBaseUrl }));
   }
   assert.throws(() => createR2Store(valid, {}), /ROAD_R2_ACCESS_KEY_ID/);
+});
+
+test('development URL requires explicit mode and preserves HTTPS origin restrictions', () => {
+  const valid = { schemaVersion: 1, accountId: 'a'.repeat(32), bucket: 'sample-bucket',
+    publicBaseUrl: 'https://pub-test.r2.dev', publicUrlMode: 'r2-dev' };
+  assert.equal(validateConfig(valid).publicBaseUrl, valid.publicBaseUrl);
+  assert.equal(validateConfig(valid).publicUrlMode, 'r2-dev');
+  for (const publicUrlMode of [undefined, 'custom-domain', null, true, 'development']) {
+    assert.throws(() => validateConfig({ ...valid, publicUrlMode }));
+  }
+  for (const publicBaseUrl of ['http://pub-test.r2.dev', 'https://r2.dev', 'https://example.r2.dev',
+    'https://pub-test.r2.dev.evil.example', 'https://pub-test.r2.dev.', 'https://roads.example.com',
+    'https://pub-test.r2.dev:8080', 'https://pub-test.r2.dev/path', 'https://pub-test.r2.dev?key=a',
+    'https://pub-test.r2.dev#fragment', 'https://user:secret@pub-test.r2.dev',
+    'https://account.r2.cloudflarestorage.com']) {
+    assert.throws(() => validateConfig({ ...valid, publicBaseUrl }));
+  }
+});
+
+test('CLI development dry run is labelled and refuses an implicit r2.dev target before upload', t => {
+  const { bundle, directory } = fixture(t);
+  const filename = path.join(directory, 'r2-dev.json');
+  const config = { schemaVersion: 1, accountId: 'a'.repeat(32), bucket: 'sample-bucket',
+    publicBaseUrl: 'https://pub-test.r2.dev', publicUrlMode: 'r2-dev' };
+  fs.writeFileSync(filename, jsonBytes(config));
+  const args = ['scripts/road-data/deploy.mjs', 'upload', '--bundle', bundle.directory, '--config', filename];
+  const env = { ...process.env, ROAD_R2_ACCESS_KEY_ID: '', ROAD_R2_SECRET_ACCESS_KEY: '' };
+  const result = spawnSync(process.execPath, args, { encoding: 'utf8', env });
+  assert.equal(result.status, 0, result.stderr);
+  const plan = JSON.parse(result.stdout);
+  assert.equal(plan.mode, 'plan');
+  assert.equal(plan.developmentOnly, true);
+  assert.equal(plan.publicUrlMode, 'r2-dev');
+  assert.equal(plan.publicBaseUrl, config.publicBaseUrl);
+  delete config.publicUrlMode;
+  fs.writeFileSync(filename, jsonBytes(config));
+  const refused = spawnSync(process.execPath, [...args, '--apply'], { encoding: 'utf8', env });
+  assert.equal(refused.status, 1);
+  assert.match(refused.stderr, /r2.dev는 publicUrlMode/);
+  assert.doesNotMatch(refused.stderr, /ROAD_R2_ACCESS_KEY_ID/);
 });
 
 test('CLI upload without apply produces plan without network credentials', t => {

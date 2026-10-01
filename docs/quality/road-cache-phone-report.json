@@ -1,0 +1,358 @@
+{
+  "recordedAt": "2026-10-01T14:09:55.479Z",
+  "device": {
+    "model": "SM-S942N",
+    "android": "16",
+    "sdk": 36
+  },
+  "installedAt": "2026-10-01T22:56:49+09:00",
+  "apk": {
+    "path": "build/install/running-art-0.1.0-20261001-r2.apk",
+    "bytes": 95662059,
+    "sha256": "3d65c2644cee75c4389194eabaa8ec38e43250661a7f2736580778e538c42cdd",
+    "bundle": {
+      "newR2Url": true,
+      "oldApiUrl": false,
+      "oldApiVariable": false
+    }
+  },
+  "checks": {
+    "emptyCacheFirstDownload": true,
+    "nativeExpoStreamingAndSQLite": true,
+    "allThreeRegionsSaved": true,
+    "cachedFiles": 23,
+    "storageDisplayMiB": 1.15,
+    "cancellationAndRetry": true,
+    "forceStopThenOfflineCalculation": true,
+    "offlineGraphCountsAndScoresMatchOnline": true,
+    "uncachedRegionRejected": true,
+    "networkSettingsRestored": true,
+    "screenStaySettingRestored": true
+  },
+  "preservation": {
+    "savedCourses": 1,
+    "notes": 1,
+    "courseUiUnchanged": true,
+    "noteUiUnchanged": true,
+    "firstInstallTimePreserved": true,
+    "dataDirectoryPreserved": true,
+    "installedSha256": "3d65c2644cee75c4389194eabaa8ec38e43250661a7f2736580778e538c42cdd",
+    "networkWifi": "1",
+    "networkData": "1"
+  },
+  "network": {
+    "startedAt": "2026-10-01T23:03:55.5451976+09:00",
+    "original": {
+      "wifi": "1",
+      "data": "1"
+    },
+    "offline": {
+      "wifi": "0",
+      "data": "0"
+    },
+    "defaultNetwork": "Active default network: none",
+    "missingRegionRejected": true,
+    "offlineCalculated": true,
+    "restored": {
+      "wifi": "1",
+      "data": "1"
+    },
+    "finishedAt": "2026-10-01T23:04:52.5806482+09:00"
+  },
+  "firstOnlineCalculation": {
+    "dataset": "seoul",
+    "shape": "heart",
+    "targetKm": 3,
+    "elapsedMs": 14412.185898065567,
+    "computeMs": 14046.976036071777,
+    "maxSliceMs": 11.866172075271606,
+    "yields": 1686,
+    "nodes": 13614,
+    "edges": 15363,
+    "routing": {
+      "pathRequests": 143881,
+      "pathCacheHits": 76777,
+      "pathSearches": 62569,
+      "pathVisits": 3938607,
+      "maxCachedPaths": 8192,
+      "maxCachedNodes": 133837
+    },
+    "timing": {
+      "roadMs": 3527.6153910160065,
+      "calculationMs": 14412.217148065567,
+      "totalMs": 17939.832539081573
+    },
+    "cached": false,
+    "roadCache": {
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+      "files": 9,
+      "reused": 0,
+      "downloaded": 9,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 1790863117110
+    },
+    "maxTimerLagMs": 139.96882796287537,
+    "timerTicks": 283,
+    "reference": "unavailable",
+    "candidates": 5,
+    "scores": [
+      78.14125866036666,
+      77.1270406116397,
+      76.9826309032336,
+      74.9211717487459,
+      74.79968221739675
+    ]
+  },
+  "offlineCalculation": {
+    "dataset": "seoul",
+    "shape": "heart",
+    "targetKm": 3,
+    "elapsedMs": 14065.518514871597,
+    "computeMs": 13698.613954782486,
+    "maxSliceMs": 13.712069988250732,
+    "yields": 1651,
+    "nodes": 13614,
+    "edges": 15363,
+    "routing": {
+      "pathRequests": 143881,
+      "pathCacheHits": 76777,
+      "pathSearches": 62569,
+      "pathVisits": 3938607,
+      "maxCachedPaths": 8192,
+      "maxCachedNodes": 133837
+    },
+    "timing": {
+      "roadMs": 1291.3976950645447,
+      "calculationMs": 14065.55386710167,
+      "totalMs": 15356.951562166214
+    },
+    "cached": true,
+    "roadCache": {
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+      "files": 9,
+      "reused": 9,
+      "downloaded": 0,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 1790863117110
+    },
+    "maxTimerLagMs": 127.88519501686096,
+    "timerTicks": 240,
+    "reference": "unavailable",
+    "candidates": 5,
+    "scores": [
+      78.14125866036666,
+      77.1270406116397,
+      76.9826309032336,
+      74.9211717487459,
+      74.79968221739675
+    ]
+  },
+  "attempts": [
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 3527,
+      "outcome": "success",
+      "requests": 11,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 9,
+        "reused": 0,
+        "downloaded": 9,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 1241,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 9,
+        "reused": 9,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 1206,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 9,
+        "reused": 9,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 1518,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 9,
+        "reused": 9,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 1258,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 9,
+        "reused": 9,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 1417,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 9,
+        "reused": 9,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "offline",
+      "elapsedMs": 34,
+      "outcome": "failed",
+      "requests": 0
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "offline",
+      "elapsedMs": 1291,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 9,
+        "reused": 9,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 2033,
+      "outcome": "success",
+      "requests": 6,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 6,
+        "reused": 0,
+        "downloaded": 6,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "prefer-cache",
+      "elapsedMs": 2389,
+      "outcome": "success",
+      "requests": 8,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 8,
+        "reused": 0,
+        "downloaded": 8,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "offline",
+      "elapsedMs": 1136,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 8,
+        "reused": 8,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    },
+    {
+      "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+      "mode": "offline",
+      "elapsedMs": 711,
+      "outcome": "success",
+      "requests": 0,
+      "cache": {
+        "release": "kr-20260929-9d436449e16f-roads-v1",
+        "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+        "files": 6,
+        "reused": 6,
+        "downloaded": 0,
+        "stale": false,
+        "updateFailed": false,
+        "checkedAt": 1790863117110
+      }
+    }
+  ],
+  "localEvidenceDirectory": ".cache/phone-r2-qa/",
+  "limitations": [
+    "세 표본 지역의 개발용 R2 검증이며 전국 자료·운영 CDN·부하/장기 안정성은 미검증이다.",
+    "실제 휴대폰 공간 부족·LRU 용량 초과·7일 경과·파일 손상은 강제로 만들지 않았다. 해당 실패 조건은 실제 SQLite 자동 검사에서 주입했다.",
+    "기존 코스·메모 보존은 ID·이름·요약 UI 비교이며 release 앱 개인 DB 전체를 직접 추출하지 않았다.",
+    "배경 지도는 별도 네트워크 서비스이며 완전 오프라인 지도 저장 기능은 구현하지 않았다.",
+    "사용자가 다른 앱으로 전환한 화면은 검증 이미지에서 제외했다. 오프라인 성공은 계산 완료 UI와 프로세스 재실행·네트워크 상태·진단 로그로 확인했다."
+  ]
+}

@@ -19,7 +19,7 @@ type Dataset = { source: string; hash: string; manifest: Uint8Array; checked_at:
 export type RoadCacheRequest = {
   source: string; bounds: Bounds; signal: AbortSignal; mode: 'offline' | 'prefer-cache' | 'refresh';
   downloadManifest?: (signal: AbortSignal) => Promise<Uint8Array>;
-  downloadTile?: (manifest: RoadManifest, file: RoadFile, signal: AbortSignal) => Promise<Uint8Array>;
+  downloadTile?: (manifest: RoadManifest, file: RoadFile, signal: AbortSignal, manifestHash: string) => Promise<Uint8Array>;
   yieldToHost?: () => Promise<void>;
 };
 export type RoadCacheResult = {
@@ -125,7 +125,7 @@ export function createRoadCache(db: StorageDatabase, codecs: RoadCodecs, options
       if (!tile) {
         if (!allowDownload || !request.downloadTile) throw new RoadCacheError(row ? 'corrupt' : 'missing', row
           ? '저장된 도로 파일이 손상됐어요. 연결 후 다시 받아 주세요.' : '이 지역의 저장된 도로가 부족해요. 먼저 자료를 받아 주세요.');
-        const payload = new Uint8Array(await request.downloadTile(manifest, file, signal));
+        const payload = new Uint8Array(await request.downloadTile(manifest, file, signal, hash));
         checkRoadCacheSignal(signal);
         tile = decodeRoadTile(payload, manifest, file, codecs);
         downloaded.push({ file, bytes: payload });
@@ -170,10 +170,18 @@ export function createRoadCache(db: StorageDatabase, codecs: RoadCodecs, options
         if (!['offline', 'prefer-cache', 'refresh'].includes(request.mode)) throw new Error('Invalid road cache mode');
         const saved = await db.getFirstAsync<Dataset>(`SELECT d.* FROM road_cache_datasets d JOIN road_cache_current c
           ON c.source=d.source AND c.hash=d.hash WHERE d.source=?`, request.source);
-        let validSaved = false;
-        if (saved) { try { parseManifest(saved.manifest, saved.hash); validSaved = true; } catch {} }
+        let validSaved = false, savedCoversRequest = false;
+        if (saved) {
+          try {
+            const manifest = parseManifest(saved.manifest, saved.hash);
+            validSaved = true;
+            selectRoadFiles(manifest, request.bounds);
+            savedCoversRequest = true;
+          } catch {}
+        }
         const age = saved ? now() - saved.checked_at : Infinity;
-        const fresh = validSaved && age >= 0 && age < maxAgeMs;
+        // New regions may be published before the saved manifest expires.
+        const fresh = savedCoversRequest && age >= 0 && age < maxAgeMs;
         if (request.mode === 'offline') {
           if (!validSaved || !saved) throw new RoadCacheError(saved ? 'corrupt' : 'missing', '사용할 수 있는 저장 도로 목록이 없어요. 먼저 자료를 받아 주세요.');
           return materialize(request, saved.manifest, saved.checked_at, false);
@@ -186,7 +194,7 @@ export function createRoadCache(db: StorageDatabase, codecs: RoadCodecs, options
           return await materialize(request, manifestBytes, now(), true);
         } catch (error) {
           checkRoadCacheSignal(request.signal);
-          if (request.mode !== 'prefer-cache' || !validSaved || !saved ||
+          if (request.mode !== 'prefer-cache' || !savedCoversRequest || !saved ||
             (error instanceof RoadCacheError && ['storage', 'capacity'].includes(error.code))) throw error;
           // Expired data is usable only if the entire saved query still verifies.
           const fallback = await materialize(request, saved.manifest, saved.checked_at, false);

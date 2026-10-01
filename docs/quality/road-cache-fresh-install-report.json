@@ -1,0 +1,84 @@
+{
+  "recordedAt": "2026-10-01T14:18:18.610Z",
+  "environment": "new-Android-36-x86_64-AVD",
+  "freshInstall": true,
+  "emptyCache": true,
+  "sample": "busan-cityhall",
+  "request": {
+    "provider": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+    "mode": "prefer-cache",
+    "elapsedMs": 5128,
+    "outcome": "success",
+    "requests": 8,
+    "cache": {
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+      "files": 6,
+      "reused": 0,
+      "downloaded": 6,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 1790864191277
+    }
+  },
+  "calculation": {
+    "dataset": "seoul",
+    "shape": "heart",
+    "targetKm": 3,
+    "elapsedMs": 18821.185200000007,
+    "computeMs": 17329.708700000483,
+    "maxSliceMs": 15.869700000039302,
+    "yields": 2014,
+    "nodes": 9181,
+    "edges": 9972,
+    "routing": {
+      "pathRequests": 145053,
+      "pathCacheHits": 95287,
+      "pathSearches": 43240,
+      "pathVisits": 1392770,
+      "maxCachedPaths": 8192,
+      "maxCachedNodes": 94422
+    },
+    "timing": {
+      "roadMs": 5128.424400000018,
+      "calculationMs": 18821.272799999977,
+      "totalMs": 23949.697199999995
+    },
+    "cached": false,
+    "roadCache": {
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+      "files": 6,
+      "reused": 0,
+      "downloaded": 6,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 1790864191277
+    },
+    "maxTimerLagMs": 376.4967999999644,
+    "timerTicks": 359,
+    "reference": "unavailable",
+    "candidates": 5,
+    "scores": [
+      72.43090060426411,
+      72.18521216089229,
+      71.36206121520095,
+      70.86029336068782,
+      70.66083068481092
+    ]
+  },
+  "apk": {
+    "path": "build/install/running-art-0.1.0-20261001-r2.apk",
+    "bytes": 95662059,
+    "sha256": "3d65c2644cee75c4389194eabaa8ec38e43250661a7f2736580778e538c42cdd",
+    "bundle": {
+      "newR2Url": true,
+      "oldApiUrl": false,
+      "oldApiVariable": false
+    }
+  },
+  "localEvidenceDirectory": ".cache/phone-r2-qa/fresh/",
+  "limitations": [
+    "별도 초기 상태 에뮬레이터의 최초 설치 확인이며 실제 저사양 기기 성능 측정은 아니다. 기존 공급자 거절은 PC 전송기 검사, 실제 APK에서는 기존 API 주소 제거를 확인했다."
+  ]
+}

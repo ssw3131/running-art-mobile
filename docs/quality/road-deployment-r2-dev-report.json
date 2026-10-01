@@ -1,0 +1,183 @@
+{
+  "recordedAt": "2026-10-01T13:28:57.7743242+00:00",
+  "environment": "cloudflare-r2-public-development-url",
+  "bucket": "running-art",
+  "publicBaseUrl": "https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev",
+  "publicUrlMode": "r2-dev",
+  "developmentOnly": true,
+  "realR2Verified": true,
+  "publicHttpVerified": true,
+  "realCdnVerified": false,
+  "phoneTested": false,
+  "generalAppSupplySwitched": false,
+  "releaseId": "kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6",
+  "immutableObjects": 25,
+  "immutableBytes": 1206038,
+  "pointerBytes": 733,
+  "upload": {
+    "currentChanged": false,
+    "uploaded": 25,
+    "reused": 0
+  },
+  "publicVerification": {
+    "publicUrlMode": "r2-dev",
+    "developmentOnly": true,
+    "objects": 25,
+    "bytes": 1206038,
+    "records": [
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1873_6350.json.gz",
+        "bytes": 26219,
+        "sha256": "59ffe245687dffd43a9e210c44da7e83557b78e30c973d3e031d4b072359b8c3"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1873_6351.json.gz",
+        "bytes": 52520,
+        "sha256": "bbb3095807a0c7022852ff03c464e9f8045099d99acfe9fd97d3267e19c047ef"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1873_6352.json.gz",
+        "bytes": 42177,
+        "sha256": "894317e8ed016f4c19448b1f8221356ae38cea8a4b8cbad8e597d23b14339b3c"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1874_6350.json.gz",
+        "bytes": 53460,
+        "sha256": "71f3209fada643881fe710c192afaf4fb89baf1e25b73f4622bf1f0fdef47bc0"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1874_6351.json.gz",
+        "bytes": 76632,
+        "sha256": "82f703c4d773730f2e267e2a53f7cd0864118616fbc8e9496587fe0ddb4ef539"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1874_6352.json.gz",
+        "bytes": 46677,
+        "sha256": "35cb21ea540ddd3e3f054e126bec142ee3b1604ecf8da69af32356ab4ee24666"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1875_6350.json.gz",
+        "bytes": 58427,
+        "sha256": "69de40c24ce550ee21b33ce4c2c47cc85483271cefb45f2a1e73317c530b52dc"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1875_6351.json.gz",
+        "bytes": 67848,
+        "sha256": "5f81f4fe42c8b7e7874688394057e575c858e20e642e31b7e449bc16c5146a09"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1875_6352.json.gz",
+        "bytes": 52791,
+        "sha256": "c8731b473c9693f7583faf8b477ac0274c84e691ff72bf2edba34f45b531e8dc"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1758_6452.json.gz",
+        "bytes": 64312,
+        "sha256": "0c0b75bfa1ede59e732231b0d279b3319bbdad3cd1b8b5d3f6affd51e3d948f3"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1758_6453.json.gz",
+        "bytes": 55478,
+        "sha256": "3ca2b7f3870391dc945769f63c7a8e02d6f73f0ee06219c1ba754657098ab776"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1758_6454.json.gz",
+        "bytes": 39557,
+        "sha256": "db9157bafcbfeefeec3c519fbf17d9822a6d02318bcd0c59c37ab1c640e507c3"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1759_6452.json.gz",
+        "bytes": 36015,
+        "sha256": "1c13c75d48fa2a3b39e458a2e7bf4093940b2932d7e2b8011919368db6abd902"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1759_6453.json.gz",
+        "bytes": 40572,
+        "sha256": "a29cef756209c934bdcf4eb1418dc48d6ee0365a26750d424b373b71ac57da4b"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1759_6454.json.gz",
+        "bytes": 51124,
+        "sha256": "b250c58708c0c83f0c58046700b4280e0a39f9505344213f428d510e691d2892"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1873_6342.json.gz",
+        "bytes": 41045,
+        "sha256": "4627f4b502fed7b1dd6a4c6b637bae560dffe12c3b99161417b7acfe8c1624cb"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1873_6343.json.gz",
+        "bytes": 55517,
+        "sha256": "84d0eafe541fcc9ede3b25a360738503e54b851822bd6051cef7e2b375760a0e"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1873_6344.json.gz",
+        "bytes": 35338,
+        "sha256": "226f06de3aa308c7f8550723c230bc3e33219824690773343f8012263091301e"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1873_6345.json.gz",
+        "bytes": 67133,
+        "sha256": "bbc75b2dd976f2a66385ac20b55460a65f8b38ad3a6863e0b58449c4f49cb631"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1874_6342.json.gz",
+        "bytes": 50916,
+        "sha256": "56ae861e74171e158a2e1b3236ecb98f6f8dea621987a99527b3faf4d2031080"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1874_6343.json.gz",
+        "bytes": 46324,
+        "sha256": "6dbef33bc801ea2b3d4e4a46ae129311e2d80bc6e48df0e4d6e094bd0df8dbfc"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1874_6344.json.gz",
+        "bytes": 70095,
+        "sha256": "57e7961a564f2f1cc52cc3877317ea5238dc386d032a45a43d648504ca7187ce"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/tiles/1874_6345.json.gz",
+        "bytes": 64337,
+        "sha256": "e08f20570ecce06a2c43351c65a4b086f21eedd97b93ef295de6c421f1ee20d1"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/ATTRIBUTION.txt",
+        "bytes": 732,
+        "sha256": "aadc871155080ef5c4c6a18ea6c073752e8af3025b8330c6af9e485a33a5d21f"
+      },
+      {
+        "key": "roads/samples/v1/releases/kr-20260929-9d436449e16f-roads-v1-g200000-e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6/manifest.json",
+        "bytes": 10792,
+        "sha256": "e6d644c8e375896ee88729e3407e99d309fcdf53ea1a9f2e75b7ded879e705b6"
+      }
+    ]
+  },
+  "promotion": {
+    "command": "promote",
+    "publicUrlMode": "r2-dev",
+    "developmentOnly": true,
+    "previousSha256": "absent",
+    "currentSha256": "bee3509d90ace81ff74f9604554b8c77ca9896a61cfc37f05fb232f66dea320d",
+    "verifiedObjects": 25,
+    "currentChanged": true
+  },
+  "repeatedUpload": {
+    "command": "upload",
+    "publicUrlMode": "r2-dev",
+    "developmentOnly": true,
+    "uploaded": 0,
+    "reused": 25,
+    "currentChanged": false
+  },
+  "liveRollback": {
+    "verified": false,
+    "reason": "First deployment: no previous release. Recovery is covered by local S3/HTTP tests only."
+  },
+  "credential": {
+    "bucket": "running-art",
+    "permission": "Object Read & Write",
+    "kind": "user-api-token",
+    "expiresOn": "2026-10-08",
+    "storage": "Windows user DPAPI in Git-ignored local cache"
+  }
+}

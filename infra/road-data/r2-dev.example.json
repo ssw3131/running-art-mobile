@@ -2,6 +2,6 @@
   "schemaVersion": 1,
   "accountId": "",
   "bucket": "",
-  "publicUrlMode": "custom-domain",
+  "publicUrlMode": "r2-dev",
   "publicBaseUrl": ""
 }

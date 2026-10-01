@@ -4,9 +4,9 @@
 
 Running Art 운영에 추천한 Cloudflare R2·Supabase·MapTiler의 역할, AWS와의 비교, 향후 서버 이전 가능성, 미리 준비할 계정을 정리한다. 서버 서비스를 처음 사용하는 프로젝트 소유자가 준비 순서를 확인하기 위한 안내다.
 
-**현재 바로 필요한 준비는 Cloudflare 계정과 R2 사용 설정, 도로 파일을 배포할 도메인이다.** MapTiler·GitHub는 기존 계정 접근을 확인하고, Supabase는 미리 가입해둘 수 있다. 스토어·메일·소셜 로그인 계정은 해당 기능을 구현하거나 출시할 때 준비한다.
+**2026-10-01 Cloudflare·Supabase 가입 보고 후 사용자가 R2 버킷을 생성했다.** `running-art` 버킷(APAC·Standard)에 개발용 공개 주소를 연결하고 최초 표본 25개와 현재 버전 포인터를 배포·검증했고, 후속으로 판교를 포함한 33개 객체로 확장했다. 후속 사용자 결정으로 도메인 구매는 미루고 개발용 `r2.dev` 주소와 버킷 한정 업로드 접근 설정으로 먼저 검증한다. 배포 도구의 개발용 모드·로컬 검사·실제 S3/공개 HTTP 검사는 완료했으며 4-3 앱 연결·휴대폰 캐시 검증도 완료했다. 다음 데이터 작업은 4-4 전국 공급·갱신 운영이다. 결제 수단 세부 정보는 열람하지 않았고 Supabase 프로젝트 생성 여부는 미확인이다. 스토어·메일·소셜 로그인 계정은 해당 기능을 구현하거나 출시할 때 준비한다.
 
-이 문서는 대화에서 설명한 내용을 보존한 안내다. 이번 대화에서 가입·결제·클라우드 구축·업로드를 실행하지 않았다. 최신 구현 상태는 [현재 상태](../handoff/status.md), 서버 방향은 [독립 서버 전략](server-strategy.md), 개발 순서는 [로드맵](roadmap.md)을 우선한다. 요금과 가입 조건은 실제 신청 시 다시 확인한다.
+이 문서는 대화에서 설명한 내용을 보존한 안내다. 계정 가입·버킷 생성은 사용자가 완료했다. 이후 사용자 확인을 받아 버킷 한정 키를 발급하고 개발용 표본을 업로드·검증했다. 결제·도메인 구매는 실행하지 않았다. 최신 구현 상태는 [현재 상태](../handoff/status.md), 서버 방향은 [독립 서버 전략](server-strategy.md), 개발 순서는 [로드맵](roadmap.md)을 우선한다. 요금과 가입 조건은 실제 신청 시 다시 확인한다.
 
 **2026-10-01 후속 결정:** 사용자가 계정 가입 전에 가능한 작업을 먼저 요청해 GPX 내보내기를 구현·에뮬레이터 검증했다. 아래 가입 준비는 서버 작업을 재개할 때의 안내이며 현재 앱 작업의 선행 조건이 아니다. [GPX 사용법](../development/gpx-export.md)
 
@@ -17,7 +17,7 @@ Running Art 운영에 추천한 Cloudflare R2·Supabase·MapTiler의 역할, AWS
 - **4-3 영구 캐시 일부 완료:** 캐시 모듈과 PC 검증은 완료했고 일반 계산의 새 공급 연결·휴대폰 캐시 검증은 남아 있다.
 - **로컬 코스 저장 완료:** 저장·목록·다시 열기·이름 변경·삭제와 휴대폰 독립 실행·오프라인 복원을 확인했다. 서버와 독립적인 앱 후속은 저장 코스의 GPX 내보내기다.
 
-서버 작업을 재개하면 **전용 버킷·도메인 준비 → 표본 배포와 버전 전환·복구 검증 → 앱 공급 전환·휴대폰 캐시 검증 → 전국 공급 확대** 순서로 진행한다. 현재 코드와 설치 APK의 일반 계산은 아직 기존 도로 API를 사용한다. [실제 배포 절차](../development/road-deployment.md)를 따른다.
+서버 작업을 재개하면 **전용 버킷·도메인 준비 → 표본 배포와 버전 전환·복구 검증 → 앱 공급 전환·휴대폰 캐시 검증 → 전국 공급 확대** 순서로 진행한다. 대화 당시에는 기존 API를 사용했으며 현재 코드·설치 APK는 R2 표본으로 전환했다. [실제 배포 절차](../development/road-deployment.md)를 따른다.
 
 ## 각 서비스가 맡는 역할
 
@@ -92,13 +92,13 @@ AWS의 Amplify도 로그인·데이터·파일 저장·서버 함수 구성을 �
 
 | 대상 | 지금 할 일 | 이어서 설정할 일 |
 | --- | --- | --- |
-| [Cloudflare](https://dash.cloudflare.com/) | 가입 또는 로그인, 이메일 인증, R2 사용 활성화·결제 설정 | 모바일 전용 버킷, 공개 HTTPS 주소, 배포용 접근 설정. R2 무료 제공량 초과 시 사용량 과금 |
-| 서비스용 도메인 | 기존 보유 도메인 확인 또는 이름을 정해 구매 | R2와 같은 Cloudflare 계정에 도메인을 등록하고 도로용 하위 주소 연결. `roads.example.com`은 형식 예시 |
+| [Cloudflare](https://dash.cloudflare.com/) | 가입·R2 사용 활성화·사용자 생성 `running-art` 버킷 확인(2026-10-01 브라우저). 결제 수단 세부 정보는 미열람 | 개발용 공개 URL·버킷 한정 키·실제 표본 배포 검증 완료. 다음은 앱 연결. R2 무료 제공량 초과 시 사용량 과금 |
+| 서비스용 도메인 | 보유 도메인 없음. 2026-10-01 사용자 결정으로 구매를 운영 단계로 연기 | 운영 시 R2와 같은 Cloudflare 계정에 도메인을 등록하고 도로용 하위 주소 연결. `roads.example.com`은 형식 예시 |
 | [MapTiler](https://cloud.maptiler.com/) | 앱에 연결된 키를 관리하는 기존 계정에 로그인 가능한지 확인 | 모바일 전용 키, 사용량과 운영 요금제 확인 |
-| [Supabase](https://supabase.com/dashboard) | 미리 가입만 해둬도 됨 | 회원 기능 구현 시 모바일 전용 프로젝트·지역·요금제 결정. 지금 도로 배포의 선행 조건은 아님 |
+| [Supabase](https://supabase.com/dashboard) | 가입 완료(2026-10-01 사용자 보고). 프로젝트 생성 여부는 미확인 | 회원 기능 구현 시 모바일 전용 프로젝트·지역·요금제 결정. 지금 도로 배포의 선행 조건은 아님 |
 | [GitHub](https://github.com/) | 기존 모바일 저장소 계정의 접근 확인 | 현재 소스·APK 관리에 사용. 기존 공개 이력이 있으므로 신규 가입 필요 여부부터 확인 |
 
-R2는 대시보드의 `Storage & databases → R2 → Overview`에서 사용 설정을 시작한다. 사용자 도메인을 연결하려면 해당 도메인이 R2 버킷과 같은 Cloudflare 계정에 등록되어 있어야 한다. 개발용 `r2.dev` 주소는 사용량 제한이 있으며 현재 프로젝트의 정식 배포 도구는 사용자 도메인을 요구한다. [R2 시작 안내](https://developers.cloudflare.com/r2/get-started/) · [도메인 연결](https://developers.cloudflare.com/r2/buckets/public-buckets/) · [MapTiler 키 관리](https://docs.maptiler.com/guides/credentials/api-key/)
+R2는 대시보드의 `Storage & databases → R2 → Overview`에서 사용 설정을 시작한다. 사용자 도메인을 연결하려면 해당 도메인이 R2 버킷과 같은 Cloudflare 계정에 등록되어 있어야 한다. 개발용 `r2.dev` 주소는 요청량 제한·Cloudflare 캐시 미지원이며 테스트에 사용한다. 배포 도구에서 `publicUrlMode: "r2-dev"`를 명시하면 허용하고 기본 운영 모드는 사용자 도메인을 요구한다. [R2 시작 안내](https://developers.cloudflare.com/r2/get-started/) · [도메인 연결](https://developers.cloudflare.com/r2/buckets/public-buckets/) · [배포 설정](../development/road-deployment.md) · [MapTiler 키 관리](https://docs.maptiler.com/guides/credentials/api-key/)
 
 ### 기능 구현이나 출시 때 준비할 계정
 

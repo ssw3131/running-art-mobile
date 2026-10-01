@@ -1,155 +1,21 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createRoadLoader, roadBounds, DEFAULT_ROAD_DATA_URL } from '../src/modules/road-data/client.ts';
+import { roadBounds } from '../src/modules/road-data/client.ts';
 import { createLabSession } from '../src/features/route-lab/session.ts';
 import { createCenterController } from '../src/features/route-lab/center-controller.ts';
 import { centerFromMap } from '../src/modules/map/coordinates.ts';
 
-const singleProvider = createRoadLoader;
+
 
 const origin = { lat: 37.57162, lng: 126.9764 };
 const way = { type: 'way', id: 41, nodes: [123, 456], geometry: [{ lat: 37.571, lon: 126.976 }, { lat: 37.572, lon: 126.976 }], tags: { highway: 'footway' } };
-const response = (data = { elements: [way], sourceLabel: 'OSM sample' }, area = '37.54,126.94,37.60,127.00') => new Response(JSON.stringify(data), { headers: { 'X-Road-Area': area } });
-const signal = () => new AbortController().signal;
 const tick = () => new Promise((resolve) => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise((r) => { resolve = r; }); return { promise, resolve }; };
 const input = () => ({ origin: { ...origin }, options: { version: '0.2', shape: 'heart', targetKm: 5, radiusKm: 2 }, elements: [way] });
 
-test('road query uses the selected latitude/longitude and keeps OSM IDs and full way geometry', async () => {
-  let requested;
-  const load = singleProvider({ fetcher: async (url) => { requested = new URL(url); return response(); } });
-  const result = await load(origin, 2000, signal());
-  assert.equal(requested.searchParams.get('lat'), '37.57162');
-  assert.equal(requested.searchParams.get('lng'), '126.9764');
-  assert.equal(requested.searchParams.get('radius'), '2000');
-  assert.deepEqual(result.elements, [way]);
-  assert.equal(result.cached, false);
-});
-
-test('cache reuse requires the whole requested circle, expires, and cannot fall back to a different region', async () => {
-  let requests = 0, now = 1000;
-  const load = singleProvider({ now: () => now, fetcher: async () => { requests++; return response(); } });
-  await load(origin, 2000, signal());
-  assert.equal((await load({ ...origin, lng: origin.lng + .0001 }, 2000, signal())).cached, true);
-  assert.equal(requests, 1);
-  await assert.rejects(load({ ...origin, lng: 127.10 }, 2000, signal()), /모두 포함/);
-  assert.equal(requests, 2);
-  now += 15 * 60000;
-  assert.equal((await load(origin, 2000, signal())).cached, false);
-  assert.equal(requests, 3);
-});
-
-test('a different area downloads independently and an aborted late response never enters the cache', async () => {
-  let requests = 0;
-  const pending = deferred();
-  const load = singleProvider({ fetcher: async (_url, options) => {
-    requests++;
-    if (requests === 1) { await pending.promise; assert.equal(options.signal.aborted, true); }
-    return response();
-  } });
-  const controller = new AbortController();
-  const first = load(origin, 2000, controller.signal);
-  controller.abort(); pending.resolve();
-  await assert.rejects(first, /취소/);
-  assert.equal((await load(origin, 2000, signal())).cached, false);
-  assert.equal(requests, 2);
-  const elsewhere = singleProvider({ fetcher: async () => response({ elements: [way] }, '37.54,127.08,37.60,127.16') });
-  assert.equal((await elsewhere({ ...origin, lng: 127.12 }, 2000, signal())).cached, false);
-});
-
-test('partial, malformed, out-of-coverage and rate-limited data fail explicitly', async () => {
-  for (const makeResponse of [
-    () => response({ elements: [way], remark: 'runtime error: timeout' }),
-    () => response({ elements: [null] }),
-    () => response({ elements: [{ ...way, nodes: [123] }] }),
-    () => response({ error: 'no data' }),
-    () => response({ elements: [way] }, '37.57,126.97,37.58,126.98'),
-    () => new Response('too many requests', { status: 429 }),
-  ]) {
-    await assert.rejects(singleProvider({ fetcher: async () => makeResponse() })(origin, 2000, signal()));
-  }
+test('road bounds reject unsupported inputs', () => {
   assert.throws(() => roadBounds({ lat: NaN, lng: 127 }, 2000));
   assert.throws(() => roadBounds({ lat: 0, lng: 180 }, 2000));
-});
-
-test('road timeout aborts network work and returns a retryable error', async () => {
-  const load = singleProvider({ timeoutMs: 5, fetcher: (_url, options) => new Promise((_resolve, reject) => {
-    options.signal.addEventListener('abort', () => reject(new Error('abort')), { once: true });
-  }) });
-  await assert.rejects(load(origin, 2000, signal()), /시간이 초과/);
-});
-
-test('default and custom endpoints each make one GET and one diagnostic event; cache hits make none', async () => {
-  for (const endpoint of [undefined, 'https://roads.example.test/api']) {
-    const calls = [], events = [];
-    const load = createRoadLoader({ endpoint, onAttempt: (event) => events.push(event), fetcher: async (url, init) => {
-      calls.push(url);
-      const actual = new URL(url), expected = new URL(endpoint ?? DEFAULT_ROAD_DATA_URL);
-      assert.equal(actual.origin + actual.pathname, expected.origin + expected.pathname);
-      assert.equal(actual.searchParams.get('dataset'), '20260920');
-      assert.equal(init.method ?? 'GET', 'GET');
-      assert.equal(init.body, undefined);
-      return response();
-    } });
-    assert.deepEqual((await load(origin, 2000, signal())).elements, [way]);
-    assert.equal((await load(origin, 2000, signal())).cached, true);
-    assert.equal(calls.length, 1); assert.equal(events.length, 1);
-    assert.equal(events[0].outcome, 'success'); assert.equal(events[0].status, 200);
-  }
-});
-
-test('HTTP errors, network failures and incomplete data never trigger client retries or populate cache', async () => {
-  for (const fail of [
-    ...[400, 406, 429, 502, 503, 504].map((status) => () => new Response('', { status })),
-    () => { throw new TypeError('network'); },
-    () => new Response('{'),
-    () => response({ elements: [way], remark: 'runtime error: timeout' }),
-    () => response(null),
-  ]) {
-    let calls = 0;
-    const events = [];
-    const load = createRoadLoader({ onAttempt: (e) => events.push(e), fetcher: async () => ++calls === 1 ? fail() : response() });
-    await assert.rejects(load(origin, 2000, signal()));
-    assert.equal(calls, 1); assert.equal(events.length, 1); assert.equal(events[0].outcome, 'failed');
-    assert.equal((await load(origin, 2000, signal())).cached, false);
-    assert.equal(calls, 2);
-  }
-});
-
-test('a stalled response body times out, aborts transport and permits a later explicit retry', async () => {
-  let calls = 0, transport;
-  const load = createRoadLoader({ timeoutMs: 10, fetcher: async (_url, init) => {
-    if (++calls === 1) { transport = init.signal; return { ok: true, text: () => new Promise(() => {}) }; }
-    return response();
-  } });
-  await assert.rejects(load(origin, 2000, signal()), /시간이 초과/);
-  assert.equal(calls, 1); assert.equal(transport.aborted, true);
-  assert.equal((await load(origin, 2000, signal())).cached, false); assert.equal(calls, 2);
-});
-
-test('cancelling the API call prevents a late response from entering the cache', async () => {
-  const pending = deferred(); let calls = 0, transport;
-  const load = createRoadLoader({ fetcher: async (_url, init) => {
-    if (++calls === 1) { transport = init.signal; await pending.promise; }
-    return response();
-  } });
-  const controller = new AbortController(), job = load(origin, 2000, controller.signal);
-  controller.abort(); await assert.rejects(job, /취소/);
-  assert.equal(calls, 1); assert.equal(transport.aborted, true);
-  pending.resolve(); await tick();
-  assert.equal((await load(origin, 2000, signal())).cached, false); assert.equal(calls, 2);
-});
-
-test('default deadline waits for server failover beyond 25 seconds and ends at 65 seconds', async (t) => {
-  t.mock.timers.enable({ apis: ['setTimeout'] });
-  let calls = 0, transport;
-  const load = createRoadLoader({ fetcher: async (_url, init) => { calls++; transport = init.signal; return new Promise(() => {}); } });
-  const job = load(origin, 2000, signal());
-  const rejected = assert.rejects(job, /시간이 초과/);
-  t.mock.timers.tick(25001); assert.equal(transport.aborted, false);
-  t.mock.timers.tick(39998); assert.equal(transport.aborted, false);
-  t.mock.timers.tick(1); await rejected;
-  assert.equal(transport.aborted, true); assert.equal(calls, 1);
 });
 
 test('session snapshots the selected center, passes matching roads, and separates lookup/calculation/total wall times', async () => {
