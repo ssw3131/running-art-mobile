@@ -1,0 +1,750 @@
+{
+  "recordedAt": "2026-10-02T21:23:46.042326+09:00",
+  "device": {
+    "model": "SM-S942N",
+    "android": "16",
+    "runtime": "release Hermes",
+    "connection": "USB; charging"
+  },
+  "method": {
+    "input": "heart 5 km; grid 4577 nodes/5060 edges; Seoul Gangnam national road cache 13614 nodes/15363 edges",
+    "order": [
+      "before1",
+      "after1",
+      "after2",
+      "before2",
+      "before3",
+      "after3"
+    ],
+    "process": "new app process for each run; existing DB/cache retained with adb install -r",
+    "comparison": "elapsedMs includes graph/search/yields; road loading excluded from main comparison",
+    "exclusions": "initial old grid 3 runs, initial road download/warm-up, cancellation/restart excluded; preserved separately locally",
+    "limitations": "One device, three paired observations per case; uncontrolled CPU frequency/background load and USB charging. Battery temperature is not CPU temperature. No claim of statistical significance or low-end device performance."
+  },
+  "apkSha256": {
+    "before": "1ea274cf6082f487ba8f654216f6ed5869d6e53be7f28fe00c378e83d3600260",
+    "after": "a84158c2c762843d3e8ac6eac08e5e227e7673d55200c346199e0edec3d526f7"
+  },
+  "cases": {
+    "grid": {
+      "runs": {
+        "before": [
+          {
+            "dataset": "grid",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 4129.086250066757,
+            "computeMs": 4043.372542619705,
+            "maxSliceMs": 12.888749837875366,
+            "yields": 485,
+            "nodes": 4577,
+            "edges": 5060,
+            "routing": {
+              "pathRequests": 123833,
+              "pathCacheHits": 105920,
+              "pathSearches": 7461,
+              "pathVisits": 171725,
+              "maxCachedPaths": 7461,
+              "maxCachedNodes": 87126
+            },
+            "timing": {
+              "roadMs": 0.026406049728393555,
+              "calculationMs": 4129.169492006302,
+              "totalMs": 4129.19589805603
+            },
+            "cached": false,
+            "maxTimerLagMs": 19.934921979904175,
+            "timerTicks": 69,
+            "reference": "match",
+            "candidates": 5,
+            "scores": [
+              93.7614648828351,
+              93.29160711051844,
+              93.29160711051844,
+              93.29160711045134,
+              93.29160711045134
+            ],
+            "conditions": {
+              "level": "70",
+              "temperature": "340",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:07:03.555500+00:00"
+          },
+          {
+            "dataset": "grid",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 6634.205039024353,
+            "computeMs": 6421.326800107956,
+            "maxSliceMs": 14.943983793258667,
+            "yields": 735,
+            "nodes": 4577,
+            "edges": 5060,
+            "routing": {
+              "pathRequests": 123833,
+              "pathCacheHits": 105920,
+              "pathSearches": 7461,
+              "pathVisits": 171725,
+              "maxCachedPaths": 7461,
+              "maxCachedNodes": 87126
+            },
+            "timing": {
+              "roadMs": 0.009882926940917969,
+              "calculationMs": 6634.256171941757,
+              "totalMs": 6634.266054868698
+            },
+            "cached": false,
+            "maxTimerLagMs": 25.014297008514404,
+            "timerTicks": 108,
+            "reference": "match",
+            "candidates": 5,
+            "scores": [
+              93.7614648828351,
+              93.29160711051844,
+              93.29160711051844,
+              93.29160711045134,
+              93.29160711045134
+            ],
+            "conditions": {
+              "level": "72",
+              "temperature": "359",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:12:17.922159+00:00"
+          },
+          {
+            "dataset": "grid",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 6992.843554973602,
+            "computeMs": 6765.95344376564,
+            "maxSliceMs": 13.807890892028809,
+            "yields": 768,
+            "nodes": 4577,
+            "edges": 5060,
+            "routing": {
+              "pathRequests": 123833,
+              "pathCacheHits": 105920,
+              "pathSearches": 7461,
+              "pathVisits": 171725,
+              "maxCachedPaths": 7461,
+              "maxCachedNodes": 87126
+            },
+            "timing": {
+              "roadMs": 0.014024019241333008,
+              "calculationMs": 6992.912656068802,
+              "totalMs": 6992.926680088043
+            },
+            "cached": false,
+            "maxTimerLagMs": 24.507812023162842,
+            "timerTicks": 115,
+            "reference": "match",
+            "candidates": 5,
+            "scores": [
+              93.7614648828351,
+              93.29160711051844,
+              93.29160711051844,
+              93.29160711045134,
+              93.29160711045134
+            ],
+            "conditions": {
+              "level": "73",
+              "temperature": "360",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:13:54.104458+00:00"
+          }
+        ],
+        "after": [
+          {
+            "dataset": "grid",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 3706.335508108139,
+            "computeMs": 3628.234013080597,
+            "maxSliceMs": 11.174297094345093,
+            "yields": 428,
+            "nodes": 4577,
+            "edges": 5060,
+            "routing": {
+              "pathRequests": 123833,
+              "pathCacheHits": 105920,
+              "pathSearches": 7461,
+              "pathVisits": 171725,
+              "maxCachedPaths": 7461,
+              "maxCachedNodes": 87126
+            },
+            "timing": {
+              "roadMs": 0.012460947036743164,
+              "calculationMs": 3706.394140958786,
+              "totalMs": 3706.4066019058228
+            },
+            "cached": false,
+            "maxTimerLagMs": 23.626914024353027,
+            "timerTicks": 62,
+            "reference": "match",
+            "candidates": 5,
+            "scores": [
+              93.7614648828351,
+              93.29160711051844,
+              93.29160711051844,
+              93.29160711045134,
+              93.29160711045134
+            ],
+            "conditions": {
+              "level": "71",
+              "temperature": "346",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:09:18.821039+00:00"
+          },
+          {
+            "dataset": "grid",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 4214.889648914337,
+            "computeMs": 4111.059411525726,
+            "maxSliceMs": 13.556132078170776,
+            "yields": 484,
+            "nodes": 4577,
+            "edges": 5060,
+            "routing": {
+              "pathRequests": 123833,
+              "pathCacheHits": 105920,
+              "pathSearches": 7461,
+              "pathVisits": 171725,
+              "maxCachedPaths": 7461,
+              "maxCachedNodes": 87126
+            },
+            "timing": {
+              "roadMs": 0.011796951293945312,
+              "calculationMs": 4214.950078010559,
+              "totalMs": 4214.961874961853
+            },
+            "cached": false,
+            "maxTimerLagMs": 25.34820294380188,
+            "timerTicks": 71,
+            "reference": "match",
+            "candidates": 5,
+            "scores": [
+              93.7614648828351,
+              93.29160711051844,
+              93.29160711051844,
+              93.29160711045134,
+              93.29160711045134
+            ],
+            "conditions": {
+              "level": "72",
+              "temperature": "354",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:10:49.223527+00:00"
+          },
+          {
+            "dataset": "grid",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 6396.714725971222,
+            "computeMs": 6179.484162807465,
+            "maxSliceMs": 19.213515043258667,
+            "yields": 715,
+            "nodes": 4577,
+            "edges": 5060,
+            "routing": {
+              "pathRequests": 123833,
+              "pathCacheHits": 105920,
+              "pathSearches": 7461,
+              "pathVisits": 171725,
+              "maxCachedPaths": 7461,
+              "maxCachedNodes": 87126
+            },
+            "timing": {
+              "roadMs": 0.007421970367431641,
+              "calculationMs": 6396.754570007324,
+              "totalMs": 6396.761991977692
+            },
+            "cached": false,
+            "maxTimerLagMs": 24.36144495010376,
+            "timerTicks": 105,
+            "reference": "match",
+            "candidates": 5,
+            "scores": [
+              93.7614648828351,
+              93.29160711051844,
+              93.29160711051844,
+              93.29160711045134,
+              93.29160711045134
+            ],
+            "conditions": {
+              "level": "73",
+              "temperature": "361",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:15:27.598533+00:00"
+          }
+        ]
+      },
+      "beforeMedianMs": 6634.205039024353,
+      "afterMedianMs": 4214.889648914337,
+      "medianReductionPercent": 36.467299034004654,
+      "pairedReductionPercent": [
+        10.238360653081136,
+        36.467299034004654,
+        8.524841494250058
+      ],
+      "pairedMedianReductionPercent": 10.238360653081136,
+      "fasterPairs": 3,
+      "beforeTotalMedianMs": 6634.266054868698,
+      "afterTotalMedianMs": 4214.961874961853
+    },
+    "road": {
+      "runs": {
+        "before": [
+          {
+            "dataset": "seoul",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 19218.27601504326,
+            "computeMs": 18621.68754720688,
+            "maxSliceMs": 12.551562070846558,
+            "yields": 2258,
+            "nodes": 13614,
+            "edges": 15363,
+            "routing": {
+              "pathRequests": 147074,
+              "pathCacheHits": 33738,
+              "pathSearches": 112509,
+              "pathVisits": 8028589,
+              "maxCachedPaths": 8192,
+              "maxCachedNodes": 156435
+            },
+            "timing": {
+              "roadMs": 1585.4020700454712,
+              "calculationMs": 19218.30769610405,
+              "totalMs": 20803.70976614952
+            },
+            "cached": true,
+            "roadCache": {
+              "release": "kr-20260930-c8cb96030306-roads-v1",
+              "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+              "files": 9,
+              "reused": 9,
+              "downloaded": 0,
+              "stale": false,
+              "updateFailed": false,
+              "checkedAt": 1790938315197
+            },
+            "maxTimerLagMs": 329.3882038593292,
+            "timerTicks": 328,
+            "reference": "unavailable",
+            "candidates": 5,
+            "scores": [
+              83.57432504779673,
+              83.46385054507746,
+              82.98465200464246,
+              82.83311276745955,
+              82.68173701096887
+            ],
+            "conditions": {
+              "level": "71",
+              "temperature": "344",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:07:58.385136+00:00"
+          },
+          {
+            "dataset": "seoul",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 24255.864335775375,
+            "computeMs": 23302.775956630707,
+            "maxSliceMs": 14.08761715888977,
+            "yields": 2821,
+            "nodes": 13614,
+            "edges": 15363,
+            "routing": {
+              "pathRequests": 147074,
+              "pathCacheHits": 33738,
+              "pathSearches": 112509,
+              "pathVisits": 8028589,
+              "maxCachedPaths": 8192,
+              "maxCachedNodes": 156435
+            },
+            "timing": {
+              "roadMs": 1941.1622648239136,
+              "calculationMs": 24255.902618169785,
+              "totalMs": 26197.064882993698
+            },
+            "cached": true,
+            "roadCache": {
+              "release": "kr-20260930-c8cb96030306-roads-v1",
+              "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+              "files": 9,
+              "reused": 9,
+              "downloaded": 0,
+              "stale": false,
+              "updateFailed": false,
+              "checkedAt": 1790938315197
+            },
+            "maxTimerLagMs": 390.16601610183716,
+            "timerTicks": 410,
+            "reference": "unavailable",
+            "candidates": 5,
+            "scores": [
+              83.57432504779673,
+              83.46385054507746,
+              82.98465200464246,
+              82.83311276745955,
+              82.68173701096887
+            ],
+            "conditions": {
+              "level": "73",
+              "temperature": "357",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:13:19.608797+00:00"
+          },
+          {
+            "dataset": "seoul",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 25455.04953098297,
+            "computeMs": 24499.150773763657,
+            "maxSliceMs": 15.499375104904175,
+            "yields": 2954,
+            "nodes": 13614,
+            "edges": 15363,
+            "routing": {
+              "pathRequests": 147074,
+              "pathCacheHits": 33738,
+              "pathSearches": 112509,
+              "pathVisits": 8028589,
+              "maxCachedPaths": 8192,
+              "maxCachedNodes": 156435
+            },
+            "timing": {
+              "roadMs": 2150.7132420539856,
+              "calculationMs": 25455.082149028778,
+              "totalMs": 27605.795391082764
+            },
+            "cached": true,
+            "roadCache": {
+              "release": "kr-20260930-c8cb96030306-roads-v1",
+              "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+              "files": 9,
+              "reused": 9,
+              "downloaded": 0,
+              "stale": false,
+              "updateFailed": false,
+              "checkedAt": 1790938315197
+            },
+            "maxTimerLagMs": 445.1053900718689,
+            "timerTicks": 433,
+            "reference": "unavailable",
+            "candidates": 5,
+            "scores": [
+              83.57432504779673,
+              83.46385054507746,
+              82.98465200464246,
+              82.83311276745955,
+              82.68173701096887
+            ],
+            "conditions": {
+              "level": "73",
+              "temperature": "361",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:14:49.175251+00:00"
+          }
+        ],
+        "after": [
+          {
+            "dataset": "seoul",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 20629.05710887909,
+            "computeMs": 19951.222584724426,
+            "maxSliceMs": 16.098711013793945,
+            "yields": 2407,
+            "nodes": 13614,
+            "edges": 15363,
+            "routing": {
+              "pathRequests": 147074,
+              "pathCacheHits": 33738,
+              "pathSearches": 112509,
+              "pathVisits": 8028589,
+              "maxCachedPaths": 8192,
+              "maxCachedNodes": 156435
+            },
+            "timing": {
+              "roadMs": 1558.5020320415497,
+              "calculationMs": 20629.094960927963,
+              "totalMs": 22187.596992969513
+            },
+            "cached": true,
+            "roadCache": {
+              "release": "kr-20260930-c8cb96030306-roads-v1",
+              "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+              "files": 9,
+              "reused": 9,
+              "downloaded": 0,
+              "stale": false,
+              "updateFailed": false,
+              "checkedAt": 1790938315197
+            },
+            "maxTimerLagMs": 313.6399610042572,
+            "timerTicks": 348,
+            "reference": "unavailable",
+            "candidates": 5,
+            "scores": [
+              83.57432504779673,
+              83.46385054507746,
+              82.98465200464246,
+              82.83311276745955,
+              82.68173701096887
+            ],
+            "conditions": {
+              "level": "72",
+              "temperature": "350",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:10:14.424446+00:00"
+          },
+          {
+            "dataset": "seoul",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 20822.49484395981,
+            "computeMs": 20111.432863473892,
+            "maxSliceMs": 15.023046970367432,
+            "yields": 2431,
+            "nodes": 13614,
+            "edges": 15363,
+            "routing": {
+              "pathRequests": 147074,
+              "pathCacheHits": 33738,
+              "pathSearches": 112509,
+              "pathVisits": 8028589,
+              "maxCachedPaths": 8192,
+              "maxCachedNodes": 156435
+            },
+            "timing": {
+              "roadMs": 1655.4108979701996,
+              "calculationMs": 20822.53218793869,
+              "totalMs": 22477.94308590889
+            },
+            "cached": true,
+            "roadCache": {
+              "release": "kr-20260930-c8cb96030306-roads-v1",
+              "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+              "files": 9,
+              "reused": 9,
+              "downloaded": 0,
+              "stale": false,
+              "updateFailed": false,
+              "checkedAt": 1790938315197
+            },
+            "maxTimerLagMs": 337.41101598739624,
+            "timerTicks": 353,
+            "reference": "unavailable",
+            "candidates": 5,
+            "scores": [
+              83.57432504779673,
+              83.46385054507746,
+              82.98465200464246,
+              82.83311276745955,
+              82.68173701096887
+            ],
+            "conditions": {
+              "level": "72",
+              "temperature": "355",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:11:45.074583+00:00"
+          },
+          {
+            "dataset": "seoul",
+            "shape": "heart",
+            "targetKm": 5,
+            "elapsedMs": 25900.985116958618,
+            "computeMs": 24844.21219277382,
+            "maxSliceMs": 16.493398904800415,
+            "yields": 2997,
+            "nodes": 13614,
+            "edges": 15363,
+            "routing": {
+              "pathRequests": 147074,
+              "pathCacheHits": 33738,
+              "pathSearches": 112509,
+              "pathVisits": 8028589,
+              "maxCachedPaths": 8192,
+              "maxCachedNodes": 156435
+            },
+            "timing": {
+              "roadMs": 2171.475312948227,
+              "calculationMs": 25901.024296998978,
+              "totalMs": 28072.499609947205
+            },
+            "cached": true,
+            "roadCache": {
+              "release": "kr-20260930-c8cb96030306-roads-v1",
+              "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+              "files": 9,
+              "reused": 9,
+              "downloaded": 0,
+              "stale": false,
+              "updateFailed": false,
+              "checkedAt": 1790938315197
+            },
+            "maxTimerLagMs": 442.3565227985382,
+            "timerTicks": 437,
+            "reference": "unavailable",
+            "candidates": 5,
+            "scores": [
+              83.57432504779673,
+              83.46385054507746,
+              82.98465200464246,
+              82.83311276745955,
+              82.68173701096887
+            ],
+            "conditions": {
+              "level": "73",
+              "temperature": "361",
+              "USB powered": "true"
+            },
+            "recordedAt": "2026-10-02T12:16:29.404864+00:00"
+          }
+        ]
+      },
+      "beforeMedianMs": 24255.864335775375,
+      "afterMedianMs": 20822.49484395981,
+      "medianReductionPercent": 14.154801677183004,
+      "pairedReductionPercent": [
+        -7.340830638146367,
+        14.154801677183004,
+        -1.7518551100553559
+      ],
+      "pairedMedianReductionPercent": -1.7518551100553559,
+      "fasterPairs": 1,
+      "beforeTotalMedianMs": 26197.064882993698,
+      "afterTotalMedianMs": 22477.94308590889
+    }
+  },
+  "gps": {
+    "records": [
+      {
+        "record": 1,
+        "status": "completed",
+        "activeMs": 567137,
+        "wallMs": 567137,
+        "distanceM": 502.78636962318615,
+        "pointCount": 143,
+        "rejectedCount": 1,
+        "segments": 1,
+        "firstFixDelayMs": 3185,
+        "lastFixToEndMs": 7135,
+        "reportedAccuracyM": {
+          "min": 3,
+          "median": 3.259000062942505,
+          "p95": 4.638000011444092,
+          "max": 8.928000450134277
+        },
+        "savedPointGapMs": {
+          "median": 3985,
+          "max": 13907
+        },
+        "maxCountedSpeedMps": 6.0680375830475635,
+        "recomputedDistanceM": 502.78636962318615,
+        "distanceDifferenceM": 0,
+        "uncountedSegmentBridgeM": 0,
+        "breaks": []
+      },
+      {
+        "record": 2,
+        "status": "completed",
+        "activeMs": 279221,
+        "wallMs": 300429,
+        "distanceM": 221.09675499329109,
+        "pointCount": 66,
+        "rejectedCount": 0,
+        "segments": 2,
+        "firstFixDelayMs": 1678,
+        "lastFixToEndMs": 5421,
+        "reportedAccuracyM": {
+          "min": 3,
+          "median": 3.1010000705718994,
+          "p95": 4.572000026702881,
+          "max": 31.209999084472656
+        },
+        "savedPointGapMs": {
+          "median": 4000,
+          "max": 21578
+        },
+        "maxCountedSpeedMps": 1.8210287065004644,
+        "recomputedDistanceM": 221.09675499329109,
+        "distanceDifferenceM": 0,
+        "uncountedSegmentBridgeM": 13.20282514203389,
+        "breaks": [
+          {
+            "fromSequence": 65,
+            "toSequence": 66,
+            "gapMs": 21578,
+            "straightDistanceM": 13.20282514203389
+          }
+        ]
+      }
+    ],
+    "checks": "point count, sequence, time order, coordinate/accuracy bounds, segment time/speed limits, stored distance recomputation",
+    "limits": "Only retained fixes are available. Cannot identify each rejection cause, true travelled distance, lock-screen state or app-specific battery usage from these records."
+  },
+  "verification": {
+    "summary": "최종 성능 APK 설치본 SHA-256이 일치하고 최초 설치 시각·앱 데이터 경로를 유지했다. 야외 러닝 2건·좌표 209개·기존 저장 코스 1개·메모 1개의 모든 저장 필드가 검사 전과 바이트 단위로 같다. 계산 중 화면 반응 버튼 1회·취소·같은 실제 도로 재계산을 통과했다. 기존 저장 코스에서 30배 재생·일시정지 유지·처음부터·앱 복귀 시 일시정지·100% 도착 자동 종료를 확인했다. 기록 검사에 사용한 동일 서명의 읽기 전용 계측 앱은 제거했다. 폰의 네트워크 설정은 바꾸지 않았다.",
+    "installedApkSha256": "a84158c2c762843d3e8ac6eac08e5e227e7673d55200c346199e0edec3d526f7",
+    "metadata": {
+      "versionName": "0.1.0",
+      "firstInstallTime": "2026-09-27 16:29:39",
+      "lastUpdateTime": "2026-10-02 21:15:08",
+      "dataDir": "/data/user/0/com.runningart.mobile.dev"
+    },
+    "tables": {
+      "running_sessions": 2,
+      "running_points": 209,
+      "saved_courses": 1,
+      "storage_test_notes": 1
+    },
+    "snapshotSha256": "bcf422a48aecb8ea907bc70089f387d9e1854c3c6093f45d55a7d9df3dae3e64",
+    "recordsByteIdentical": true,
+    "cancelledAndResponseCount1": true,
+    "restartElapsedMs": 22074.460820913315,
+    "simulation": {
+      "initial": {
+        "simulation-status": "재생 준비",
+        "simulation-progress": "이동 0.00 / 5.60km · 0.0%"
+      },
+      "playing": {
+        "simulation-status": "재생 중",
+        "simulation-progress": "이동 0.31 / 5.60km · 5.6%"
+      },
+      "paused": {
+        "simulation-status": "일시정지",
+        "simulation-progress": "이동 0.37 / 5.60km · 6.6%"
+      },
+      "reset": {
+        "simulation-status": "재생 준비",
+        "simulation-progress": "이동 0.00 / 5.60km · 0.0%"
+      },
+      "backgroundReturn": {
+        "simulation-status": "일시정지",
+        "simulation-progress": "이동 0.13 / 5.60km · 2.4%"
+      },
+      "final": {
+        "simulation-status": "도착했어요",
+        "simulation-progress": "이동 5.60 / 5.60km · 100.0%"
+      },
+      "existingCourseUsed": true,
+      "networkDisabled": false
+    },
+    "qaHelperRemoved": true
+  }
+}

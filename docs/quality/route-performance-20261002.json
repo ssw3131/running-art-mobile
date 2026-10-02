@@ -1,0 +1,1848 @@
+{
+  "recordedAt": "2026-10-02T20:08:46+09:00",
+  "baselineCommit": "74493f1",
+  "node": {
+    "recordedAt": "2026-10-02T10:45:59.562Z",
+    "runtime": "v24.21.0",
+    "platform": "win32",
+    "architecture": "x64",
+    "cpu": "AMD Ryzen 7 5800H with Radeon Graphics         ",
+    "method": "Alternating baseline/current order, one full calculation per fresh process; no profiler; source/output hashes and every routing diagnostic checked. Node is not Android/Hermes.",
+    "sourceSha256": {
+      "baseline": "9aeea90e1cb800f75272b439fb7c4a0c667c84803f952237111541e295026276",
+      "current": "511d1eabfa5ea24d5d727b6ccc48a314de3736c9949784207717c703b984a707"
+    },
+    "runsPerEngine": 5,
+    "cases": [
+      {
+        "caseId": "seoul-heart-5km-v02",
+        "baselineMedianMs": 4172.393300000001,
+        "currentMedianMs": 3935.0041,
+        "reductionPercent": 5.689521167623401,
+        "records": {
+          "baseline": [
+            {
+              "run": 1,
+              "graphMs": 80.76989999999999,
+              "searchMs": 4182.155299999999,
+              "elapsedMs": 4262.9252,
+              "phasesMs": {
+                "search-start": 45.1464,
+                "placement": 333.86480000000006,
+                "기본 경로 탐색": 1895.4541,
+                "refine": 328.8271,
+                "크기·위치 추가 탐색": 1267.0457000000001,
+                "우수 후보 미세 조정": 311.8171999999995
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 2,
+              "graphMs": 78.5832,
+              "searchMs": 4083.8632000000002,
+              "elapsedMs": 4162.446400000001,
+              "phasesMs": {
+                "search-start": 43.75739999999999,
+                "placement": 313.92539999999997,
+                "기본 경로 탐색": 1845.6791,
+                "refine": 311.10210000000006,
+                "크기·위치 추가 탐색": 1257.5697,
+                "우수 후보 미세 조정": 311.8295000000003
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 3,
+              "graphMs": 78.78750000000001,
+              "searchMs": 4093.6058000000003,
+              "elapsedMs": 4172.393300000001,
+              "phasesMs": {
+                "search-start": 43.36249999999998,
+                "placement": 311.5851,
+                "기본 경로 탐색": 1858.8184999999999,
+                "refine": 319.87699999999995,
+                "크기·위치 추가 탐색": 1254.469,
+                "우수 후보 미세 조정": 305.49370000000044
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 4,
+              "graphMs": 81.3322,
+              "searchMs": 4080.3617999999997,
+              "elapsedMs": 4161.6939999999995,
+              "phasesMs": {
+                "search-start": 43.102300000000014,
+                "placement": 308.82460000000003,
+                "기본 경로 탐색": 1864.7619999999997,
+                "refine": 316.2917000000002,
+                "크기·위치 추가 탐색": 1243.2536,
+                "우수 후보 미세 조정": 304.1275999999998
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 5,
+              "graphMs": 77.54059999999998,
+              "searchMs": 4104.6886,
+              "elapsedMs": 4182.229200000001,
+              "phasesMs": {
+                "search-start": 42.94420000000002,
+                "placement": 311.56579999999997,
+                "기본 경로 탐색": 1872.8754999999999,
+                "refine": 313.1894000000002,
+                "크기·위치 추가 탐색": 1255.9959,
+                "우수 후보 미세 조정": 308.11780000000044
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            }
+          ],
+          "current": [
+            {
+              "run": 1,
+              "graphMs": 76.60730000000001,
+              "searchMs": 3858.3968,
+              "elapsedMs": 3935.0041,
+              "phasesMs": {
+                "search-start": 43.03649999999999,
+                "placement": 306.0005,
+                "기본 경로 탐색": 1724.5711000000001,
+                "refine": 313.5254,
+                "크기·위치 추가 탐색": 1180.9186,
+                "우수 후보 미세 조정": 290.3447000000001
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 2,
+              "graphMs": 80.30239999999999,
+              "searchMs": 4017.0465,
+              "elapsedMs": 4097.3489,
+              "phasesMs": {
+                "search-start": 42.71890000000002,
+                "placement": 316.50879999999995,
+                "기본 경로 탐색": 1825.6715000000002,
+                "refine": 320.09670000000006,
+                "크기·위치 추가 탐색": 1224.7466999999997,
+                "우수 후보 미세 조정": 287.3038999999999
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 3,
+              "graphMs": 80.53310000000002,
+              "searchMs": 3834.4536999999996,
+              "elapsedMs": 3914.9867999999997,
+              "phasesMs": {
+                "search-start": 43.39269999999999,
+                "placement": 305.69090000000006,
+                "기본 경로 탐색": 1726.8377,
+                "refine": 309.4386999999997,
+                "크기·위치 추가 탐색": 1160.3518,
+                "우수 후보 미세 조정": 288.7419
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 4,
+              "graphMs": 79.1395,
+              "searchMs": 3837.4344,
+              "elapsedMs": 3916.5739,
+              "phasesMs": {
+                "search-start": 43.634600000000006,
+                "placement": 306.0105,
+                "기본 경로 탐색": 1733.0679999999998,
+                "refine": 303.69180000000006,
+                "크기·위치 추가 탐색": 1163.9839000000002,
+                "우수 후보 미세 조정": 287.0455999999999
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            },
+            {
+              "run": 5,
+              "graphMs": 78.1147,
+              "searchMs": 4066.8082000000004,
+              "elapsedMs": 4144.9229000000005,
+              "phasesMs": {
+                "search-start": 47.52029999999999,
+                "placement": 306.62299999999993,
+                "기본 경로 탐색": 1853.9310999999998,
+                "refine": 342.9227000000001,
+                "크기·위치 추가 탐색": 1215.9627,
+                "우수 후보 미세 조정": 299.8484000000003
+              },
+              "diagnostics": {
+                "pathRequests": 131670,
+                "pathCacheHits": 26515,
+                "pathSearches": 104595,
+                "pathVisits": 11420836,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 205438
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "955a70a2ead477338056d0f48b3453f28cfec1f74cf8c77f5d88d5193c9fcc22"
+            }
+          ]
+        }
+      },
+      {
+        "caseId": "seoul-heart-v02",
+        "baselineMedianMs": 2840.5986,
+        "currentMedianMs": 2740.5431000000003,
+        "reductionPercent": 3.5223385662444318,
+        "records": {
+          "baseline": [
+            {
+              "run": 1,
+              "graphMs": 76.7825,
+              "searchMs": 2756.4071,
+              "elapsedMs": 2833.1896,
+              "phasesMs": {
+                "search-start": 59.08990000000003,
+                "placement": 566.6648,
+                "기본 경로 탐색": 997.7054999999999,
+                "refine": 256.33209999999985,
+                "크기·위치 추가 탐색": 626.6682000000001,
+                "우수 후보 미세 조정": 249.94660000000022
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 2,
+              "graphMs": 77.3832,
+              "searchMs": 2983.5766,
+              "elapsedMs": 3060.9598,
+              "phasesMs": {
+                "search-start": 58.1662,
+                "placement": 563.8331000000001,
+                "기본 경로 탐색": 1077.2642999999998,
+                "refine": 316.7972,
+                "크기·위치 추가 탐색": 711.3751000000002,
+                "우수 후보 미세 조정": 256.1406999999999
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 3,
+              "graphMs": 75.79100000000001,
+              "searchMs": 2747.8864000000003,
+              "elapsedMs": 2823.6774,
+              "phasesMs": {
+                "search-start": 58.20429999999999,
+                "placement": 564.0279,
+                "기본 경로 탐색": 995.8550999999999,
+                "refine": 259.3607000000002,
+                "크기·위치 추가 탐색": 621.7541000000001,
+                "우수 후보 미세 조정": 248.6842999999999
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 4,
+              "graphMs": 78.6657,
+              "searchMs": 2886.9648,
+              "elapsedMs": 2965.6305,
+              "phasesMs": {
+                "search-start": 58.908799999999985,
+                "placement": 588.5691,
+                "기본 경로 탐색": 1069.5886999999998,
+                "refine": 257.9198000000001,
+                "크기·위치 추가 탐색": 658.8939,
+                "우수 후보 미세 조정": 253.08449999999993
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 5,
+              "graphMs": 78.4626,
+              "searchMs": 2762.136,
+              "elapsedMs": 2840.5986,
+              "phasesMs": {
+                "search-start": 58.33940000000001,
+                "placement": 577.8595,
+                "기본 경로 탐색": 992.8855,
+                "refine": 259.12390000000005,
+                "크기·위치 추가 탐색": 623.3402000000001,
+                "우수 후보 미세 조정": 250.58749999999964
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            }
+          ],
+          "current": [
+            {
+              "run": 1,
+              "graphMs": 76.17490000000001,
+              "searchMs": 2644.6836,
+              "elapsedMs": 2720.8585,
+              "phasesMs": {
+                "search-start": 57.0951,
+                "placement": 560.7744,
+                "기본 경로 탐색": 924.4385000000001,
+                "refine": 259.4069999999999,
+                "크기·위치 추가 탐색": 590.9118999999998,
+                "우수 후보 미세 조정": 252.0567000000001
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 2,
+              "graphMs": 74.85229999999999,
+              "searchMs": 2665.6908000000003,
+              "elapsedMs": 2740.5431000000003,
+              "phasesMs": {
+                "search-start": 58.35000000000002,
+                "placement": 560.4284,
+                "기본 경로 탐색": 949.133,
+                "refine": 254.52769999999987,
+                "크기·위치 추가 탐색": 590.9944,
+                "우수 후보 미세 조정": 252.2573000000002
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 3,
+              "graphMs": 76.3743,
+              "searchMs": 2681.1440000000002,
+              "elapsedMs": 2757.5183,
+              "phasesMs": {
+                "search-start": 60.46369999999999,
+                "placement": 561.0399,
+                "기본 경로 탐색": 937.3969000000001,
+                "refine": 259.7174,
+                "크기·위치 추가 탐색": 596.5920999999998,
+                "우수 후보 미세 조정": 265.9340000000002
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 4,
+              "graphMs": 78.86650000000002,
+              "searchMs": 2668.3008999999997,
+              "elapsedMs": 2747.1674,
+              "phasesMs": {
+                "search-start": 57.508699999999976,
+                "placement": 563.5668000000001,
+                "기본 경로 탐색": 933.4989999999999,
+                "refine": 255.51639999999998,
+                "크기·위치 추가 탐색": 591.2764000000002,
+                "우수 후보 미세 조정": 266.93359999999984
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            },
+            {
+              "run": 5,
+              "graphMs": 77.79140000000001,
+              "searchMs": 2658.4598,
+              "elapsedMs": 2736.2512,
+              "phasesMs": {
+                "search-start": 58.16889999999998,
+                "placement": 566.0054,
+                "기본 경로 탐색": 940.8702999999999,
+                "refine": 257.2024000000001,
+                "크기·위치 추가 탐색": 586.3437999999999,
+                "우수 후보 미세 조정": 249.86900000000014
+              },
+              "diagnostics": {
+                "pathRequests": 147178,
+                "pathCacheHits": 70840,
+                "pathSearches": 71848,
+                "pathVisits": 4250481,
+                "maxCachedPaths": 8192,
+                "maxCachedNodes": 150961
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "09a12962dccddd5f7c4319868425ac6b383453325d45d4ab342e92646774cad3"
+            }
+          ]
+        }
+      },
+      {
+        "caseId": "seoul-diamond-v02",
+        "baselineMedianMs": 2740.8534,
+        "currentMedianMs": 2538.0507000000002,
+        "reductionPercent": 7.399253823644846,
+        "records": {
+          "baseline": [
+            {
+              "run": 1,
+              "graphMs": 89.317,
+              "searchMs": 2651.5364,
+              "elapsedMs": 2740.8534,
+              "phasesMs": {
+                "search-start": 59.88289999999998,
+                "placement": 531.1238000000001,
+                "기본 경로 탐색": 998.4492,
+                "refine": 261.7252000000001,
+                "크기·위치 추가 탐색": 639.3804999999998,
+                "우수 후보 미세 조정": 160.97479999999996
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 2,
+              "graphMs": 79.6428,
+              "searchMs": 2604.3278,
+              "elapsedMs": 2683.9705999999996,
+              "phasesMs": {
+                "search-start": 56.2441,
+                "placement": 529.2776,
+                "기본 경로 탐색": 975.1,
+                "refine": 253.57439999999997,
+                "크기·위치 추가 탐색": 621.4387000000002,
+                "우수 후보 미세 조정": 168.69299999999976
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 3,
+              "graphMs": 81.869,
+              "searchMs": 2633.6515,
+              "elapsedMs": 2715.5204999999996,
+              "phasesMs": {
+                "search-start": 57.8878,
+                "placement": 538.2734,
+                "기본 경로 탐색": 966.6012999999999,
+                "refine": 257.48310000000015,
+                "크기·위치 추가 탐색": 647.7181,
+                "우수 후보 미세 조정": 165.6877999999997
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 4,
+              "graphMs": 76.3997,
+              "searchMs": 2668.9046,
+              "elapsedMs": 2745.3043,
+              "phasesMs": {
+                "search-start": 58.18600000000001,
+                "placement": 533.4095,
+                "기본 경로 탐색": 971.1884,
+                "refine": 259.30050000000006,
+                "크기·위치 추가 탐색": 667.999,
+                "우수 후보 미세 조정": 178.82119999999986
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 5,
+              "graphMs": 81.9116,
+              "searchMs": 2708.4646000000002,
+              "elapsedMs": 2790.3762,
+              "phasesMs": {
+                "search-start": 59.481899999999996,
+                "placement": 557.8155999999999,
+                "기본 경로 탐색": 1044.7750999999998,
+                "refine": 256.4196000000002,
+                "크기·위치 추가 탐색": 628.1028000000001,
+                "우수 후보 미세 조정": 161.8696
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            }
+          ],
+          "current": [
+            {
+              "run": 1,
+              "graphMs": 76.98109999999998,
+              "searchMs": 2433.0226,
+              "elapsedMs": 2510.0036999999998,
+              "phasesMs": {
+                "search-start": 56.306700000000006,
+                "placement": 520.4489,
+                "기본 경로 탐색": 864.4619,
+                "refine": 261.701,
+                "크기·위치 추가 탐색": 574.6173000000001,
+                "우수 후보 미세 조정": 155.48679999999968
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 2,
+              "graphMs": 78.49439999999998,
+              "searchMs": 2462.1850000000004,
+              "elapsedMs": 2540.6794,
+              "phasesMs": {
+                "search-start": 56.27800000000002,
+                "placement": 521.832,
+                "기본 경로 탐색": 876.8763,
+                "refine": 263.00250000000005,
+                "크기·위치 추가 탐색": 590.2529999999999,
+                "우수 후보 미세 조정": 153.94320000000016
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 3,
+              "graphMs": 77.36229999999999,
+              "searchMs": 2460.6884,
+              "elapsedMs": 2538.0507000000002,
+              "phasesMs": {
+                "search-start": 56.85040000000001,
+                "placement": 522.9559,
+                "기본 경로 탐색": 885.6896,
+                "refine": 252.51059999999984,
+                "크기·위치 추가 탐색": 587.1047000000001,
+                "우수 후보 미세 조정": 155.57720000000018
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 4,
+              "graphMs": 76.5081,
+              "searchMs": 2446.7955,
+              "elapsedMs": 2523.3036,
+              "phasesMs": {
+                "search-start": 56.718999999999994,
+                "placement": 518.701,
+                "기본 경로 탐색": 885.3795,
+                "refine": 253.55649999999991,
+                "크기·위치 추가 탐색": 574.9914000000001,
+                "우수 후보 미세 조정": 157.44810000000007
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            },
+            {
+              "run": 5,
+              "graphMs": 78.2584,
+              "searchMs": 2496.2074,
+              "elapsedMs": 2574.4658,
+              "phasesMs": {
+                "search-start": 59.1619,
+                "placement": 544.9762000000001,
+                "기본 경로 탐색": 875.2404999999999,
+                "refine": 271.73990000000003,
+                "크기·위치 추가 탐색": 585.9577999999999,
+                "우수 후보 미세 조정": 159.13110000000006
+              },
+              "diagnostics": {
+                "pathRequests": 19155,
+                "pathCacheHits": 6505,
+                "pathSearches": 12498,
+                "pathVisits": 5909491,
+                "maxCachedPaths": 5124,
+                "maxCachedNodes": 262144
+              },
+              "nodes": 21627,
+              "edges": 23132,
+              "resultSha256": "886a121f2782d1a9a41b68580065d2aa06c41f6ca61b8f559d490b6da68864d3"
+            }
+          ]
+        }
+      },
+      {
+        "caseId": "grid-heart-v02",
+        "baselineMedianMs": 1105.5158000000001,
+        "currentMedianMs": 1027.0030000000002,
+        "reductionPercent": 7.101915684968041,
+        "records": {
+          "baseline": [
+            {
+              "run": 1,
+              "graphMs": 12.894599999999997,
+              "searchMs": 1090.8441,
+              "elapsedMs": 1103.7387,
+              "phasesMs": {
+                "search-start": 30.137299999999996,
+                "placement": 167.5469,
+                "기본 경로 탐색": 386.89059999999995,
+                "refine": 108.84320000000002,
+                "크기·위치 추가 탐색": 259.6500000000001,
+                "우수 후보 미세 조정": 137.77610000000004
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 2,
+              "graphMs": 12.017300000000006,
+              "searchMs": 1099.286,
+              "elapsedMs": 1111.3033,
+              "phasesMs": {
+                "search-start": 30.047299999999993,
+                "placement": 168.91180000000003,
+                "기본 경로 탐색": 387.17299999999994,
+                "refine": 105.3316000000001,
+                "크기·위치 추가 탐색": 255.62490000000003,
+                "우수 후보 미세 조정": 152.19740000000002
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 3,
+              "graphMs": 13.141300000000001,
+              "searchMs": 1103.7945,
+              "elapsedMs": 1116.9358,
+              "phasesMs": {
+                "search-start": 32.103300000000004,
+                "placement": 171.8049,
+                "기본 경로 탐색": 387.9254,
+                "refine": 105.06689999999992,
+                "크기·위치 추가 탐색": 264.50110000000006,
+                "우수 후보 미세 조정": 142.39290000000005
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 4,
+              "graphMs": 12.311899999999994,
+              "searchMs": 1078.9506999999999,
+              "elapsedMs": 1091.2626,
+              "phasesMs": {
+                "search-start": 30.701400000000007,
+                "placement": 167.27870000000001,
+                "기본 경로 탐색": 379.75960000000003,
+                "refine": 103.64779999999996,
+                "크기·위치 추가 탐색": 254.6975,
+                "우수 후보 미세 조정": 142.86569999999995
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 5,
+              "graphMs": 12.953099999999992,
+              "searchMs": 1092.5627000000002,
+              "elapsedMs": 1105.5158000000001,
+              "phasesMs": {
+                "search-start": 29.772400000000005,
+                "placement": 168.89800000000002,
+                "기본 경로 탐색": 389.60979999999995,
+                "refine": 101.47300000000007,
+                "크기·위치 추가 탐색": 263.9167,
+                "우수 후보 미세 조정": 138.89280000000008
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            }
+          ],
+          "current": [
+            {
+              "run": 1,
+              "graphMs": 12.807700000000011,
+              "searchMs": 1014.1953000000001,
+              "elapsedMs": 1027.0030000000002,
+              "phasesMs": {
+                "search-start": 30.1789,
+                "placement": 151.65120000000002,
+                "기본 경로 탐색": 362.1178,
+                "refine": 96.95399999999995,
+                "크기·위치 추가 탐색": 243.53480000000002,
+                "우수 후보 미세 조정": 129.75860000000011
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 2,
+              "graphMs": 13.270200000000003,
+              "searchMs": 1021.5791999999999,
+              "elapsedMs": 1034.8493999999998,
+              "phasesMs": {
+                "search-start": 35.682500000000005,
+                "placement": 159.4373,
+                "기본 경로 탐색": 359.0676,
+                "refine": 105.70489999999995,
+                "크기·위치 추가 탐색": 227.58890000000008,
+                "우수 후보 미세 조정": 134.09799999999984
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 3,
+              "graphMs": 13.259500000000003,
+              "searchMs": 1018.9136,
+              "elapsedMs": 1032.1731,
+              "phasesMs": {
+                "search-start": 30.531400000000005,
+                "placement": 151.49490000000003,
+                "기본 경로 탐색": 360.9644,
+                "refine": 99.96499999999992,
+                "크기·위치 추가 탐색": 234.7418,
+                "우수 후보 미세 조정": 141.21609999999998
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 4,
+              "graphMs": 12.733900000000006,
+              "searchMs": 990.696,
+              "elapsedMs": 1003.4299,
+              "phasesMs": {
+                "search-start": 29.08529999999999,
+                "placement": 148.93509999999998,
+                "기본 경로 탐색": 365.04870000000005,
+                "refine": 98.97289999999998,
+                "크기·위치 추가 탐색": 224.14480000000003,
+                "우수 후보 미세 조정": 124.50919999999996
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            },
+            {
+              "run": 5,
+              "graphMs": 12.389300000000006,
+              "searchMs": 1001.3667999999999,
+              "elapsedMs": 1013.7561,
+              "phasesMs": {
+                "search-start": 30.048699999999997,
+                "placement": 148.56279999999998,
+                "기본 경로 탐색": 364.5902,
+                "refine": 99.84370000000001,
+                "크기·위치 추가 탐색": 231.23559999999998,
+                "우수 후보 미세 조정": 127.08579999999995
+              },
+              "diagnostics": {
+                "pathRequests": 123833,
+                "pathCacheHits": 105920,
+                "pathSearches": 7461,
+                "pathVisits": 171725,
+                "maxCachedPaths": 7461,
+                "maxCachedNodes": 87126
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "28eab5d426b285bfb0739e2bf06ddd9e656be8150a529fb5c7189da5ad878fd7"
+            }
+          ]
+        }
+      },
+      {
+        "caseId": "grid-heart-v01",
+        "baselineMedianMs": 600.9838,
+        "currentMedianMs": 554.5296,
+        "reductionPercent": 7.729692547453027,
+        "records": {
+          "baseline": [
+            {
+              "run": 1,
+              "graphMs": 12.72720000000001,
+              "searchMs": 588.2565999999999,
+              "elapsedMs": 600.9838,
+              "phasesMs": {
+                "search-start": 29.61229999999999,
+                "placement": 169.65160000000003,
+                "기본 경로 탐색": 388.99269999999996
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 2,
+              "graphMs": 11.833299999999994,
+              "searchMs": 591.8519,
+              "elapsedMs": 603.6852,
+              "phasesMs": {
+                "search-start": 30.195300000000003,
+                "placement": 171.6247,
+                "기본 경로 탐색": 390.0319
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 3,
+              "graphMs": 13.129899999999992,
+              "searchMs": 586.3846,
+              "elapsedMs": 599.5145,
+              "phasesMs": {
+                "search-start": 30.9448,
+                "placement": 172.5849,
+                "기본 경로 탐색": 382.8549
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 4,
+              "graphMs": 12.167100000000005,
+              "searchMs": 581.2819,
+              "elapsedMs": 593.449,
+              "phasesMs": {
+                "search-start": 31.866,
+                "placement": 168.8879,
+                "기본 경로 탐색": 380.52799999999996
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 5,
+              "graphMs": 13.373000000000005,
+              "searchMs": 587.6361999999999,
+              "elapsedMs": 601.0092,
+              "phasesMs": {
+                "search-start": 30.540599999999998,
+                "placement": 168.52230000000003,
+                "기본 경로 탐색": 388.57329999999996
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            }
+          ],
+          "current": [
+            {
+              "run": 1,
+              "graphMs": 12.414899999999989,
+              "searchMs": 539.309,
+              "elapsedMs": 551.7239,
+              "phasesMs": {
+                "search-start": 29.58,
+                "placement": 148.33250000000004,
+                "기본 경로 탐색": 361.39649999999995
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 2,
+              "graphMs": 12.628,
+              "searchMs": 538.9235,
+              "elapsedMs": 551.5514999999999,
+              "phasesMs": {
+                "search-start": 30.64800000000001,
+                "placement": 148.4556,
+                "기본 경로 탐색": 359.81989999999996
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 3,
+              "graphMs": 12.548600000000008,
+              "searchMs": 541.981,
+              "elapsedMs": 554.5296,
+              "phasesMs": {
+                "search-start": 30.136799999999994,
+                "placement": 149.4694,
+                "기본 경로 탐색": 362.3748
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 4,
+              "graphMs": 12.9298,
+              "searchMs": 554.8342,
+              "elapsedMs": 567.764,
+              "phasesMs": {
+                "search-start": 29.891199999999998,
+                "placement": 147.57640000000004,
+                "기본 경로 탐색": 377.3666
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            },
+            {
+              "run": 5,
+              "graphMs": 12.949100000000001,
+              "searchMs": 553.3475,
+              "elapsedMs": 566.2966,
+              "phasesMs": {
+                "search-start": 30.039600000000007,
+                "placement": 149.4617,
+                "기본 경로 탐색": 373.84619999999995
+              },
+              "diagnostics": {
+                "pathRequests": 58092,
+                "pathCacheHits": 46915,
+                "pathSearches": 6125,
+                "pathVisits": 152025,
+                "maxCachedPaths": 6125,
+                "maxCachedNodes": 75819
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "0c7fa7d4f12cb384d6bb25ebcc0246929b5ec75dd4988c06cb54f236ba6b1f3b"
+            }
+          ]
+        }
+      },
+      {
+        "caseId": "grid-diamond-v02",
+        "baselineMedianMs": 856.2633,
+        "currentMedianMs": 818.7398000000001,
+        "reductionPercent": 4.382238500704149,
+        "records": {
+          "baseline": [
+            {
+              "run": 1,
+              "graphMs": 12.262100000000004,
+              "searchMs": 843.164,
+              "elapsedMs": 855.4261,
+              "phasesMs": {
+                "search-start": 36.31179999999999,
+                "placement": 287.6503,
+                "기본 경로 탐색": 230.82580000000002,
+                "refine": 93.83269999999993,
+                "크기·위치 추가 탐색": 131.39800000000002,
+                "우수 후보 미세 조정": 63.145399999999995
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 2,
+              "graphMs": 12.436300000000003,
+              "searchMs": 850.9736,
+              "elapsedMs": 863.4099,
+              "phasesMs": {
+                "search-start": 35.99379999999999,
+                "placement": 288.6128,
+                "기본 경로 탐색": 229.94459999999998,
+                "refine": 94.85860000000002,
+                "크기·위치 추가 탐색": 133.72490000000005,
+                "우수 후보 미세 조정": 67.83889999999997
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 3,
+              "graphMs": 12.767399999999995,
+              "searchMs": 843.4959,
+              "elapsedMs": 856.2633,
+              "phasesMs": {
+                "search-start": 35.7992,
+                "placement": 290.95770000000005,
+                "기본 경로 탐색": 229.18209999999993,
+                "refine": 93.05490000000009,
+                "크기·위치 추가 탐색": 129.22219999999993,
+                "우수 후보 미세 조정": 65.27980000000002
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 4,
+              "graphMs": 12.646,
+              "searchMs": 849.8533,
+              "elapsedMs": 862.4993,
+              "phasesMs": {
+                "search-start": 36.1305,
+                "placement": 295.6428,
+                "기본 경로 탐색": 230.25099999999992,
+                "refine": 94.19200000000001,
+                "크기·위치 추가 탐색": 130.01610000000005,
+                "우수 후보 미세 조정": 63.620900000000006
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 5,
+              "graphMs": 13.106799999999993,
+              "searchMs": 841.1962,
+              "elapsedMs": 854.303,
+              "phasesMs": {
+                "search-start": 37.163,
+                "placement": 290.47360000000003,
+                "기본 경로 탐색": 228.7246,
+                "refine": 92.30520000000001,
+                "크기·위치 추가 탐색": 128.57579999999996,
+                "우수 후보 미세 조정": 63.95399999999995
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            }
+          ],
+          "current": [
+            {
+              "run": 1,
+              "graphMs": 12.750399999999999,
+              "searchMs": 805.5951,
+              "elapsedMs": 818.3455,
+              "phasesMs": {
+                "search-start": 33.816500000000005,
+                "placement": 254.85320000000002,
+                "기본 경로 탐색": 228.26660000000004,
+                "refine": 93.92449999999997,
+                "크기·위치 추가 탐색": 129.36400000000003,
+                "우수 후보 미세 조정": 65.37029999999993
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 2,
+              "graphMs": 12.88300000000001,
+              "searchMs": 805.8568,
+              "elapsedMs": 818.7398000000001,
+              "phasesMs": {
+                "search-start": 36.30069999999999,
+                "placement": 250.19809999999998,
+                "기본 경로 탐색": 225.61490000000003,
+                "refine": 91.96709999999996,
+                "크기·위치 추가 탐색": 136.3592,
+                "우수 후보 미세 조정": 65.41680000000008
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 3,
+              "graphMs": 12.084900000000005,
+              "searchMs": 814.501,
+              "elapsedMs": 826.5859,
+              "phasesMs": {
+                "search-start": 34.4948,
+                "placement": 252.48019999999997,
+                "기본 경로 탐색": 235.14460000000003,
+                "refine": 92.89660000000003,
+                "크기·위치 추가 탐색": 132.7421999999999,
+                "우수 후보 미세 조정": 66.74260000000004
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 4,
+              "graphMs": 12.0689,
+              "searchMs": 805.1436,
+              "elapsedMs": 817.2125000000001,
+              "phasesMs": {
+                "search-start": 34.4581,
+                "placement": 250.49630000000002,
+                "기본 경로 탐색": 233.22159999999997,
+                "refine": 91.98149999999998,
+                "크기·위치 추가 탐색": 130.0068,
+                "우수 후보 미세 조정": 64.97930000000008
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            },
+            {
+              "run": 5,
+              "graphMs": 13.764200000000002,
+              "searchMs": 811.8336,
+              "elapsedMs": 825.5978,
+              "phasesMs": {
+                "search-start": 36.33319999999999,
+                "placement": 250.29670000000004,
+                "기본 경로 탐색": 236.79999999999995,
+                "refine": 93.49509999999998,
+                "크기·위치 추가 탐색": 132.18810000000008,
+                "우수 후보 미세 조정": 62.720500000000015
+              },
+              "diagnostics": {
+                "pathRequests": 22453,
+                "pathCacheHits": 17017,
+                "pathSearches": 4712,
+                "pathVisits": 246667,
+                "maxCachedPaths": 4712,
+                "maxCachedNodes": 87232
+              },
+              "nodes": 4577,
+              "edges": 5060,
+              "resultSha256": "7e9e351b73c021acc121a7d89162794d5587bf17a87da0bbf981f5bef3d03725"
+            }
+          ]
+        }
+      }
+    ],
+    "completedAt": "2026-10-02T10:48:08.085Z"
+  },
+  "android": {
+    "device": "RunningArt_API_36 / emulator-5556",
+    "api": 36,
+    "architecture": "x86_64",
+    "runtime": "Hermes release APK",
+    "case": "synthetic grid heart 5 km",
+    "baselineApkSha256": "1ea274cf6082f487ba8f654216f6ed5869d6e53be7f28fe00c378e83d3600260",
+    "currentApkSha256": "a84158c2c762843d3e8ac6eac08e5e227e7673d55200c346199e0edec3d526f7",
+    "baselineMedianMs": 9892.71669999999,
+    "currentMedianMs": 9509.0858,
+    "reductionPercent": 3.8779125252822566,
+    "before": [
+      {
+        "dataset": "grid",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 9803.61499999999,
+        "computeMs": 9155.235499999719,
+        "maxSliceMs": 16.070499999972526,
+        "yields": 1029,
+        "nodes": 4577,
+        "edges": 5060,
+        "routing": {
+          "pathRequests": 123833,
+          "pathCacheHits": 105920,
+          "pathSearches": 7461,
+          "pathVisits": 171725,
+          "maxCachedPaths": 7461,
+          "maxCachedNodes": 87126
+        },
+        "timing": {
+          "roadMs": 0.01579999999376014,
+          "calculationMs": 9803.68299999996,
+          "totalMs": 9803.698799999955
+        },
+        "cached": false,
+        "maxTimerLagMs": 25.399600000004284,
+        "timerTicks": 146,
+        "reference": "match",
+        "candidates": 5,
+        "scores": [
+          93.7614648828351,
+          93.29160711051844,
+          93.29160711051844,
+          93.29160711045134,
+          93.29160711045134
+        ],
+        "recordedAt": "2026-10-02T10:57:05.154761+00:00"
+      },
+      {
+        "dataset": "grid",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 10258.266599999974,
+        "computeMs": 9570.88189999963,
+        "maxSliceMs": 16.210800000000745,
+        "yields": 1079,
+        "nodes": 4577,
+        "edges": 5060,
+        "routing": {
+          "pathRequests": 123833,
+          "pathCacheHits": 105920,
+          "pathSearches": 7461,
+          "pathVisits": 171725,
+          "maxCachedPaths": 7461,
+          "maxCachedNodes": 87126
+        },
+        "timing": {
+          "roadMs": 0.015599999984260648,
+          "calculationMs": 10258.32560000004,
+          "totalMs": 10258.341200000024
+        },
+        "cached": false,
+        "maxTimerLagMs": 26.365099999995437,
+        "timerTicks": 153,
+        "reference": "match",
+        "candidates": 5,
+        "scores": [
+          93.7614648828351,
+          93.29160711051844,
+          93.29160711051844,
+          93.29160711045134,
+          93.29160711045134
+        ],
+        "recordedAt": "2026-10-02T10:57:25.290992+00:00"
+      },
+      {
+        "dataset": "grid",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 9892.71669999999,
+        "computeMs": 9262.38890000066,
+        "maxSliceMs": 15.550099999993108,
+        "yields": 1038,
+        "nodes": 4577,
+        "edges": 5060,
+        "routing": {
+          "pathRequests": 123833,
+          "pathCacheHits": 105920,
+          "pathSearches": 7461,
+          "pathVisits": 171725,
+          "maxCachedPaths": 7461,
+          "maxCachedNodes": 87126
+        },
+        "timing": {
+          "roadMs": 0.017499999958090484,
+          "calculationMs": 9892.969900000026,
+          "totalMs": 9892.987399999984
+        },
+        "cached": false,
+        "maxTimerLagMs": 30.99859999999171,
+        "timerTicks": 148,
+        "reference": "match",
+        "candidates": 5,
+        "scores": [
+          93.7614648828351,
+          93.29160711051844,
+          93.29160711051844,
+          93.29160711045134,
+          93.29160711045134
+        ],
+        "recordedAt": "2026-10-02T10:57:45.368600+00:00"
+      }
+    ],
+    "after": [
+      {
+        "dataset": "grid",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 9509.0858,
+        "computeMs": 8884.181399998488,
+        "maxSliceMs": 20.417599999927916,
+        "yields": 989,
+        "nodes": 4577,
+        "edges": 5060,
+        "routing": {
+          "pathRequests": 123833,
+          "pathCacheHits": 105920,
+          "pathSearches": 7461,
+          "pathVisits": 171725,
+          "maxCachedPaths": 7461,
+          "maxCachedNodes": 87126
+        },
+        "timing": {
+          "roadMs": 0.01919999998062849,
+          "calculationMs": 9509.136800000095,
+          "totalMs": 9509.156000000075
+        },
+        "cached": false,
+        "maxTimerLagMs": 27.73279999999795,
+        "timerTicks": 142,
+        "reference": "match",
+        "candidates": 5,
+        "scores": [
+          93.7614648828351,
+          93.29160711051844,
+          93.29160711051844,
+          93.29160711045134,
+          93.29160711045134
+        ],
+        "recordedAt": "2026-10-02T11:01:13.061004+00:00"
+      },
+      {
+        "dataset": "grid",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 9278.919300000067,
+        "computeMs": 8673.830999998492,
+        "maxSliceMs": 18.167900000000373,
+        "yields": 952,
+        "nodes": 4577,
+        "edges": 5060,
+        "routing": {
+          "pathRequests": 123833,
+          "pathCacheHits": 105920,
+          "pathSearches": 7461,
+          "pathVisits": 171725,
+          "maxCachedPaths": 7461,
+          "maxCachedNodes": 87126
+        },
+        "timing": {
+          "roadMs": 0.015499999979510903,
+          "calculationMs": 9278.967700000037,
+          "totalMs": 9278.983200000017
+        },
+        "cached": false,
+        "maxTimerLagMs": 30.02740000002086,
+        "timerTicks": 138,
+        "reference": "match",
+        "candidates": 5,
+        "scores": [
+          93.7614648828351,
+          93.29160711051844,
+          93.29160711051844,
+          93.29160711045134,
+          93.29160711045134
+        ],
+        "recordedAt": "2026-10-02T11:01:33.175430+00:00"
+      },
+      {
+        "dataset": "grid",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 9759.873399999924,
+        "computeMs": 9083.696800002712,
+        "maxSliceMs": 19.12829999998212,
+        "yields": 995,
+        "nodes": 4577,
+        "edges": 5060,
+        "routing": {
+          "pathRequests": 123833,
+          "pathCacheHits": 105920,
+          "pathSearches": 7461,
+          "pathVisits": 171725,
+          "maxCachedPaths": 7461,
+          "maxCachedNodes": 87126
+        },
+        "timing": {
+          "roadMs": 0.01659999997355044,
+          "calculationMs": 9759.924699999974,
+          "totalMs": 9759.941299999948
+        },
+        "cached": false,
+        "maxTimerLagMs": 32.46850000007544,
+        "timerTicks": 146,
+        "reference": "match",
+        "candidates": 5,
+        "scores": [
+          93.7614648828351,
+          93.29160711051844,
+          93.29160711051844,
+          93.29160711045134,
+          93.29160711045134
+        ],
+        "recordedAt": "2026-10-02T11:01:53.322935+00:00"
+      }
+    ],
+    "restart": {
+      "dataset": "grid",
+      "shape": "heart",
+      "targetKm": 5,
+      "elapsedMs": 9366.393600000069,
+      "computeMs": 8758.879400000558,
+      "maxSliceMs": 16.738200000021607,
+      "yields": 969,
+      "nodes": 4577,
+      "edges": 5060,
+      "routing": {
+        "pathRequests": 123833,
+        "pathCacheHits": 105920,
+        "pathSearches": 7461,
+        "pathVisits": 171725,
+        "maxCachedPaths": 7461,
+        "maxCachedNodes": 87126
+      },
+      "timing": {
+        "roadMs": 0.013000000035390258,
+        "calculationMs": 9366.452700000023,
+        "totalMs": 9366.465700000059
+      },
+      "cached": false,
+      "maxTimerLagMs": 28.957000000053085,
+      "timerTicks": 140,
+      "reference": "match",
+      "candidates": 5,
+      "scores": [
+        93.7614648828351,
+        93.29160711051844,
+        93.29160711051844,
+        93.29160711045134,
+        93.29160711045134
+      ],
+      "recordedAt": "2026-10-02T11:03:40.197827+00:00"
+    },
+    "liveInputAndCancelVerified": true,
+    "limits": "Three sequential fresh launches per APK; not interleaved or thermally controlled. Synthetic input only; physical phone and national-road device performance unmeasured."
+  },
+  "validation": {
+    "tests": 188,
+    "failed": 0,
+    "typecheck": "passed",
+    "lint": "passed",
+    "releaseBuild": "passed",
+    "releaseSourceMapMatches": true
+  },
+  "physicalPhone": "No install or tests performed"
+}

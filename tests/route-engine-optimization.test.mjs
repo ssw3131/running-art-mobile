@@ -69,3 +69,35 @@ test('interleaved searches on one graph own their routing state and bounded cach
   cancelled.return();
   assert.deepEqual(compact(engine.search(graph,cases[0].options)),cases[0].result);
 });
+
+test('large equal-priority and improving-cost frontiers match the original A*',()=>{
+  // More than 128 live entries exercises queue growth and stale-entry skipping.
+  const nodes=Array.from({length:260},(_,id)=>({id,x:id%2,y:0,turn:true,links:[]}));
+  const edges=[];
+  const connect=(a,b,length)=>{
+    const id=edges.length;edges.push({a,b,length,tags:{highway:'footway'}});
+    nodes[a].links.push({to:b,length,id});
+  };
+  for(let i=1;i<259;i++) {connect(0,i,100);connect(i,259,300-i);}
+  for(let i=1;i<258;i++) connect(i,i+1,0.125);
+  const graph={nodes,edges,grid:new Map(),cell:100,origin:{lat:0,lng:0}};
+  for(const start of [0,1,127,258,259]) for(const end of [0,2,128,258,259]) {
+    for(const budget of [0,99.999999999,100,100.000000001,150,500,Infinity]) {
+      assert.deepEqual(engine.shortestPath(graph,start,end,budget),original.shortestPath(graph,start,end,budget),`${start}->${end} @ ${budget}`);
+    }
+  }
+});
+
+test('deferred beam materialization preserves all templates, repeats and directed failures',()=>{
+  const graph=sampleGraph();
+  for(const shape of original.SHAPES) {
+    const target=engine.templateFor(shape.id).map(p=>({x:p.x*120,y:p.y*120}));
+    for(const budget of [0,399.999999999,400,900,1600,Infinity]) {
+      assert.deepEqual(engine.routeFromTemplate(graph,target,budget),original.routeFromTemplate(graph,target,budget),`${shape.id} @ ${budget}`);
+    }
+  }
+  const repeated=[{x:0,y:0},{x:200,y:0},{x:0,y:0},{x:0,y:200},{x:0,y:0}];
+  assert.deepEqual(engine.routeFromTemplate(graph,repeated,2500),original.routeFromTemplate(graph,repeated,2500));
+  const missing=[{x:10000,y:10000},...repeated];
+  assert.deepEqual(engine.routeFromTemplate(graph,missing,2500),original.routeFromTemplate(graph,missing,2500));
+});

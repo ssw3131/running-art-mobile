@@ -108,57 +108,53 @@ function transformPoints(points: Point[], scale: number, rotation: number, tx: n
 }
 
 
-type HeapItem = { id: number; g: number; distance: number };
 class MinHeap {
-  items: HeapItem[];
-  constructor() {
-    this.items = [];
-  }
+  private ids = new Int32Array(64);
+  private costs = new Float64Array(64);
+  private distances = new Float64Array(64);
+  length = 0;
+  id = 0;
+  g = 0;
 
-  size() {
-    return this.items.length;
-  }
+  clear() { this.length = 0; }
 
-  push(item: HeapItem) {
-    this.items.push(item);
-    this.bubbleUp(this.items.length - 1);
+  push(id: number, g: number, distance: number) {
+    if (this.length === this.ids.length) {
+      const capacity = this.length * 2;
+      const ids = new Int32Array(capacity), costs = new Float64Array(capacity), distances = new Float64Array(capacity);
+      ids.set(this.ids); costs.set(this.costs); distances.set(this.distances);
+      this.ids = ids; this.costs = costs; this.distances = distances;
+    }
+    const ids = this.ids, costs = this.costs, distances = this.distances;
+    let index = this.length++;
+    while (index > 0) {
+      const parent = Math.floor((index - 1) / 2);
+      if (distances[parent] <= distance) break;
+      ids[index] = ids[parent]; costs[index] = costs[parent]; distances[index] = distances[parent];
+      index = parent;
+    }
+    ids[index] = id; costs[index] = g; distances[index] = distance;
   }
 
   pop() {
-    const first = this.items[0];
-    const last = this.items.pop();
-    if (this.items.length && last) {
-      this.items[0] = last;
-      this.sinkDown(0);
-    }
-    return first;
-  }
-
-  bubbleUp(index: number) {
-    const items=this.items,item=items[index],distance=item.distance;
-    while (index > 0) {
-      const parent = Math.floor((index - 1) / 2);
-      if (items[parent].distance <= distance) break;
-      items[index]=items[parent];
-      index = parent;
-    }
-    items[index]=item;
-  }
-
-  sinkDown(index: number) {
-    const items=this.items,item=items[index],distance=item.distance,length=items.length;
+    const ids = this.ids, costs = this.costs, distances = this.distances;
+    this.id = ids[0]; this.g = costs[0];
+    const length = --this.length;
+    if (!length) return;
+    const id = ids[length], g = costs[length], distance = distances[length];
+    let index = 0;
     while (true) {
       const left = index * 2 + 1;
       const right = left + 1;
       let smallest = index;
       let best=distance;
-      if (left < length && items[left].distance < best) {smallest=left;best=items[left].distance;}
-      if (right < length && items[right].distance < best) smallest=right;
+      if (left < length && distances[left] < best) {smallest=left;best=distances[left];}
+      if (right < length && distances[right] < best) smallest=right;
       if (smallest === index) break;
-      items[index]=items[smallest];
+      ids[index] = ids[smallest]; costs[index] = costs[smallest]; distances[index] = distances[smallest];
       index = smallest;
     }
-    items[index]=item;
+    ids[index] = id; costs[index] = g; distances[index] = distance;
   }
 }
 
@@ -327,6 +323,7 @@ function nearestNode(graph: Graph,p: Point,limit=180,turnOnly=false,columns?: Sp
   const maxX=Math.floor((p.x+limit)/cell),minY=Math.floor((p.y-limit)/cell),maxY=Math.floor((p.y+limit)/cell);
   for(let x=Math.floor((p.x-limit)/cell);x<=maxX;x++) {
     const column=columns?.get(x);
+    if(columns && !column) continue;
     for(let y=minY;y<=maxY;y++) {
       for(const id of (columns?column?.get(y):grid.get(`${x},${y}`))??EMPTY_NODE_IDS) {
         const n=nodes[id];
@@ -352,7 +349,7 @@ function routingContext(graph: Graph, diagnostics?: SearchDiagnostics) {
   return {costs:new Float64Array(size),previous:new Int32Array(size),stamps:new Uint32Array(size),
     heuristic:new Float64Array(size),heuristicTargets:new Int32Array(size).fill(-1),
     generation:0,cache:new Map<string,number[]>(),cacheKeys:new Array<string>(MAX_CACHED_PATHS),cacheHead:0,cachedNodes:0,
-    turnColumns:undefined as SpatialColumns | undefined,diagnostics};
+    turnColumns:undefined as SpatialColumns | undefined,queue:new MinHeap(),diagnostics};
 }
 type RoutingContext = ReturnType<typeof routingContext>;
 function *shortestPathSteps(graph: Graph,start: number,end: number,maxLength=Infinity,context: RoutingContext=routingContext(graph)): Steps<number[]> {
@@ -363,12 +360,13 @@ function *shortestPathSteps(graph: Graph,start: number,end: number,maxLength=Inf
   const key=`${start}:${end}:${maxLength}`,cached=context.cache.get(key);
   if(cached) {if(diagnostics) diagnostics.pathCacheHits++;return cached;}
   if(diagnostics) diagnostics.pathSearches++;
-  const {costs,previous,stamps,heuristic,heuristicTargets}=context,queue=new MinHeap();
+  const {costs,previous,stamps,heuristic,heuristicTargets,queue}=context;
+  queue.clear();
   context.generation=(context.generation+1)>>>0;
   if(!context.generation) {stamps.fill(0);context.generation=1;}
   const generation=context.generation;
   costs[start]=0;stamps[start]=generation;
-  queue.push({id:start,g:0,distance:dist(graph.nodes[start],graph.nodes[end])});
+  queue.push(start,0,dist(graph.nodes[start],graph.nodes[end]));
   let visits=0;
   function remember(path: number[]) {
     if(diagnostics) diagnostics.pathVisits+=visits;
@@ -386,25 +384,26 @@ function *shortestPathSteps(graph: Graph,start: number,end: number,maxLength=Inf
     }
     return path;
   }
-  while(queue.size()) {
+  while(queue.length) {
     if(visits++%32===0) yield;
-    const cur=queue.pop()!;
-    if(stamps[cur.id]!==generation || cur.g!==costs[cur.id]) continue;
-    if(cur.id===end) {
+    queue.pop();
+    const currentId=queue.id,currentCost=queue.g;
+    if(stamps[currentId]!==generation || currentCost!==costs[currentId]) continue;
+    if(currentId===end) {
       const path=[end]; let id=end;
       while(id!==start) {id=previous[id];path.push(id);}
       return remember(path.reverse());
     }
-    for(const link of graph.nodes[cur.id].links) {
-      const g=cur.g+link.length;
+    for(const link of graph.nodes[currentId].links) {
+      const g=currentCost+link.length;
       if(g >= (stamps[link.to]===generation?costs[link.to]:Infinity)) continue;
       if(heuristicTargets[link.to]!==end) {
         heuristic[link.to]=dist(graph.nodes[link.to],graph.nodes[end]);heuristicTargets[link.to]=end;
       }
       const f=g+heuristic[link.to];
       if(f>maxLength) continue;
-      costs[link.to]=g;previous[link.to]=cur.id;stamps[link.to]=generation;
-      queue.push({id:link.to,g,distance:f});
+      costs[link.to]=g;previous[link.to]=currentId;stamps[link.to]=generation;
+      queue.push(link.to,g,f);
     }
   }
   return remember([]);
@@ -435,7 +434,8 @@ function *routeFromTemplateSteps(graph: Graph,target: Point[],maxLength: number,
   const samples=target, choices=samples.slice(0,-1).map(p=>nearbyTurns(graph,p,230,context.turnColumns));
   if(choices.some(c=>!c.length)) return null;
   let beam=choices[0].slice(0,3).map(n=>({ids:[n.id],length:0,cost:n.d*1.5,start:n.id,seen:new Set<string>()}));
-  const cache=new Map<string, number[]>();
+  type PathGeometry = { ids: number[]; length: number; keys: string[]; lengths: number[]; repeated: boolean[] };
+  const cache=new Map<string, PathGeometry>();
   for(let i=1;i<=choices.length;i++) {
     yield;
     const next=[];
@@ -443,22 +443,31 @@ function *routeFromTemplateSteps(graph: Graph,target: Point[],maxLength: number,
       const last=prev.ids[prev.ids.length-1];
       for(const n of i===choices.length?[{id:prev.start,d:0}]:choices[i]) {
         const key=`${last}:${n.id}`;
-        if(!cache.has(key)) cache.set(key,yield* shortestPathSteps(graph,last,n.id,Math.min(maxLength,dist(graph.nodes[last],graph.nodes[n.id])*4+400),context));
-        const path=cache.get(key)!;if(!path.length) continue;
-        let length=0,repeated=0;const seen=new Set(prev.seen);
-        for(let j=1;j<path.length;j++) {
-          const a=path[j-1],b=path[j],d=dist(graph.nodes[a],graph.nodes[b]),k=a<b?`${a}:${b}`:`${b}:${a}`;
-          length+=d;if(seen.has(k)) repeated+=d;seen.add(k);
+        let path=cache.get(key);
+        if(!path) {
+          const ids=yield* shortestPathSteps(graph,last,n.id,Math.min(maxLength,dist(graph.nodes[last],graph.nodes[n.id])*4+400),context);
+          path={ids,length:0,keys:[],lengths:[],repeated:[]};
+          const seen=new Set<string>();
+          for(let j=1;j<ids.length;j++) {
+            const a=ids[j-1],b=ids[j],d=dist(graph.nodes[a],graph.nodes[b]),k=a<b?`${a}:${b}`:`${b}:${a}`;
+            path.length+=d;path.keys.push(k);path.lengths.push(d);path.repeated.push(seen.has(k));seen.add(k);
+          }
+          cache.set(key,path);
         }
-        if(prev.length+length>maxLength) continue;
-        next.push({ids:[...prev.ids,...path.slice(1)],length:prev.length+length,cost:prev.cost+length+n.d*1.5+repeated*2,start:prev.start,seen});
+        if(!path.ids.length || prev.length+path.length>maxLength) continue;
+        let repeated=0;
+        for(let j=0;j<path.keys.length;j++) if(path.repeated[j] || prev.seen.has(path.keys[j])) repeated+=path.lengths[j];
+        next.push({prev,path,length:prev.length+path.length,cost:prev.cost+path.length+n.d*1.5+repeated*2,start:prev.start});
       }
     }
     next.sort((a,b)=>a.cost-b.cost);
     beam=[];
     for(const candidate of next) {
-      if(beam.some(b=>b.start===candidate.start && b.ids.at(-1)===candidate.ids.at(-1))) continue;
-      beam.push(candidate);if(beam.length===3) break;
+      if(beam.some(b=>b.start===candidate.start && b.ids.at(-1)===candidate.path.ids.at(-1))) continue;
+      const seen=new Set(candidate.prev.seen);
+      for(const key of candidate.path.keys) seen.add(key);
+      beam.push({ids:[...candidate.prev.ids,...candidate.path.ids.slice(1)],length:candidate.length,cost:candidate.cost,start:candidate.start,seen});
+      if(beam.length===3) break;
     }
     if(!beam.length) return null;
   }
@@ -510,6 +519,19 @@ function roadInfo(graph: Graph,ids: number[]) {
   for(let i=1;i<ids.length;i++){const link=graph.nodes[ids[i-1]].links.find(l=>l.to===ids[i]);if(!link)continue;const edge=graph.edges[link.id],tags=edge.tags||{};total+=edge.length;crowd+=edge.length*(crowdWeights[tags.highway ?? ""]??40);if(tags.highway==='steps')steps+=edge.length;}
   return {crowd:total?crowd/total:null,stepsKm:steps/1000};
 }
+// A missing snap rejects this placement regardless of its remaining samples.
+// Successful placements retain the original sample order and numeric operations.
+function placementError(graph: Graph,target: Point[],start: GraphNode,targetMeters: number,columns: SpatialColumns): number | null {
+  const samples=densify(target,33),near: GraphNode[]=[];
+  for(const sample of samples) {
+    const node=nearestNode(graph,sample,180,false,columns);
+    if(!node) return null;
+    near.push(node);
+  }
+  const approach=Math.min(...near.map(n=>dist(start,n)));
+  if(approach*2>targetMeters*0.35) return null;
+  return near.reduce((sum,n,i)=>sum+dist(n,samples[i]),0)/near.length+approach*0.10;
+}
 function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCallback=()=>{},diagnostics?: SearchDiagnostics): Steps<SearchResult> {
   if(diagnostics) Object.assign(diagnostics,{pathRequests:0,pathCacheHits:0,pathSearches:0,pathVisits:0,maxCachedPaths:0,maxCachedNodes:0});
   const routing=routingContext(graph,diagnostics);
@@ -537,11 +559,8 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     if(keys.has(key)) return; keys.add(key);checked++;
     const target=transformPoints(base,scale,rotation,tx,ty);
     if(target.some(p=>Math.hypot(p.x,p.y)>radius)) return;
-    const samples=densify(target,33),near=samples.map(p=>nearestNode(graph,p,180,false,indexes.all));
-    if(near.some(n=>!n)) return;
-    const approach=Math.min(...near.map(n=>dist(start,n!)));
-    if(approach*2>targetMeters*0.35) return;
-    const error=near.reduce((s,n,i)=>s+dist(n!,samples[i]),0)/near.length+approach*0.10;
+    const error=placementError(graph,target,start,targetMeters,indexes.all);
+    if(error===null) return;
     placements.push({target,rotation,scale,offset:point(tx,ty),error});
   }
   const step=Math.max(250,targetMeters/12),reach=Math.min(radius,targetMeters*0.7);
@@ -621,9 +640,8 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
         const p: Placement={target,rotation,scale:nextScale,offset,scaleRatio:ratio,error:0};const key=placementKey(p);
         if(evaluated.has(key)||seen.has(key))continue;seen.add(key);checked++;
         if(target.some(t=>Math.hypot(t.x,t.y)>radius))continue;
-        const samples=densify(target,33),near=samples.map(t=>nearestNode(graph,t,180,false,indexes.all));if(near.some(n=>!n))continue;
-        const approach=Math.min(...near.map(n=>dist(start,n!)));if(approach*2>targetMeters*0.35)continue;
-        p.error=near.reduce((sum,n,i)=>sum+dist(n!,samples[i]),0)/near.length+approach*0.10;
+        const error=placementError(graph,target,start,targetMeters,indexes.all);if(error===null)continue;
+        p.error=error;
         pool.push(p);
       }
       pool.sort((a,b)=>a.error-b.error);

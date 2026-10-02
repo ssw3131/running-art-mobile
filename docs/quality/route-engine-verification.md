@@ -1,5 +1,7 @@
 # v0.2 코스 계산 검증
 
+**2026-10-02 실제 휴대폰 후속 검증 완료:** SM-S942N·Android 16에서 개선 전/후 release APK를 교차 3쌍 비교했다. 합성 격자는 3쌍 모두 빨라졌지만 강남 실제 도로는 3쌍 중 2쌍에서 느려져 일관된 개선을 확인하지 못했다. 격자 전체 결과와 실제 도로 후보 점수·탐색량이 같고 입력/취소/재계산·저장 코스 재생을 통과했다. 최종 성능 APK 설치·해시와 기존 야외 기록 2건/209좌표·코스 1개·메모 1개 보존을 확인했다. GPS 거리 재합산은 정확히 일치하며 장시간 잠금·배터리·실제 이동 거리 오차는 후속이다. [전후 수치와 검증 범위](phone-performance-20261002.md). 아래 이전 시각의 설치 보류·미검증 표현은 당시 이력이며 최신 상태는 이 문단을 우선한다.
+
 검증일: 2026-09-27 (Asia/Seoul). **구현·자동 검사·Android 에뮬레이터 검증 완료. 후속으로 실제 휴대폰의 서울 하트 5km 계산·지도 표시 1회 확인. 실기기 전체 회귀·릴리스 성능은 미완료.**
 
 ## 자동 검사와 빌드
@@ -216,3 +218,10 @@ APK는 `android/app/build/outputs/apk/release/app-release.apk`, **58,479,307바�
 증거는 `.cache/standalone-qa/`의 `release-build.log`, `apk-verification.json`, `installed-package.txt`, `phone-reverse-after.txt`, `release-home.xml/png`, `release-final-metrics.log`, `release-final.xml/png`, `release-run2-tap.png`, `release-cancelled.xml/png`, `release-before-memory.txt`, `release-after-memory.txt`입니다. 복구용 기존 설치 APK도 같은 제외 경로에 보존했습니다.
 
 휴대폰에는 릴리스 APK의 마지막 결과 화면을 유지했습니다. 에뮬레이터는 기존 개발 APK·Metro 8081 상태이며 이번 arm64 APK를 설치하지 않았습니다. [독립 실행 APK 안내](../development/android-test-apk.md)에 빌드·설치·개발 APK 복귀 방법을 기록했습니다. 이번 릴리스 APK에서 GPS 권한·저장소 CRUD·야외 GPS/배터리·다른 폰·iOS·장시간 메모리까지 검증한 것은 아닙니다.
+
+
+## 2026-10-02 성능 개선 후속
+
+**2026-10-02 코스 계산 성능 후속 완료:** 같은 결과·탐색 범위를 유지하며 검색 큐 재사용·후보 복사 지연·불가능한 배치의 조기 종료를 적용했다. PC 6사례 각 전후 5회에서 중앙값 3.5~7.7% 감소(서울 하트 5km 4.172→3.935초, 5.7%). API 36 Hermes 합성 격자 5km 전후 3회는 9.893→9.509초(3.9%). 188개·타입·린트·release 빌드·에뮬레이터 결과/입력/취소/재실행 통과. 새 성능 APK는 에뮬레이터에만 설치했으며 휴대폰은 기존 러닝 APK 유지·성능 검증 후속이다.
+
+[별도 검증 기록](route-performance-20261002.md)에 전후 입력·시간·정확도·응답성과 미검증을 정리했다.
