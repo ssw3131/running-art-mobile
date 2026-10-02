@@ -1,5 +1,9 @@
 # Running Art 서버 서비스와 가입 준비 안내
 
+**2026-10-02 23:22 KST Google·Supabase 설정 완료:** 모바일 전용 Google Cloud 프로젝트 `Running Art Mobile`(`running-art-mobile`), 동의 화면 `Running Art`·외부·테스트 중·현재 계정 연락처/테스트 사용자, 기본 정보 범위 3개와 웹 OAuth 클라이언트를 저장했다. Supabase Google 제공자에 Client ID·Secret을 연결해 활성화하고 `runningart://auth/callback`을 등록했다. Google 계정 선택 화면 도달을 확인했으며 비밀 값은 파일·문서·채팅에 남기지 않았다. 앱 로그인·코드 교환·복귀·세션 유지·동기화·빌드·설치는 후속이다. [설정·후속 작업](../development/google-sign-in.md) · [실행 기록](../history/executed-plans/2026-10-02-2247-google-login.md).
+
+**2026-10-02 22:41 KST 후속:** 사용자가 Supabase 프로젝트 `running-art-mobile-dev`를 생성했다. 실제 개요에서 `Running Art / Free` 조직·서울(`ap-northeast-2`)·`Healthy`·`nano`를 확인했다. 프로젝트 URL은 `https://zymfblgzpidgfjjgrino.supabase.co`다. 생성 폼은 새 테이블 자동 공개 꺼짐·자동 RLS 켜짐으로 준비했으며 생성 후 적용 상태는 별도 확인이 필요하다. 앱 연결 키·로그인·DB/Storage 스키마·동기화는 미설정이다. 아래 가입 당시의 프로젝트 미확인 표현보다 이 최신 상태를 우선한다. [실행 기록](../history/executed-plans/2026-10-02-2229-supabase-project-setup.md).
+
 작성일과 공식 자료 확인일: 2026-09-30 (Asia/Seoul)
 
 Running Art 운영에 추천한 Cloudflare R2·Supabase·MapTiler의 역할, AWS와의 비교, 향후 서버 이전 가능성, 미리 준비할 계정을 정리한다. 서버 서비스를 처음 사용하는 프로젝트 소유자가 준비 순서를 확인하기 위한 안내다.
