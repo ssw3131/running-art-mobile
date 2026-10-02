@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-10-02T19:28:30.602+09:00",
+  "device": {
+    "model": "SM-S942N",
+    "android": "16",
+    "sdk": 36
+  },
+  "installedAt": "2026-10-02T19:26:52+09:00",
+  "apk": {
+    "path": "build/install/running-art-0.1.0-20261002-running.apk",
+    "bytes": 95764735,
+    "sha256": "1ea274cf6082f487ba8f654216f6ed5869d6e53be7f28fe00c378e83d3600260",
+    "installedHashMatches": true
+  },
+  "installation": {
+    "method": "adb install -r --no-streaming",
+    "result": "Success",
+    "firstInstallTimeBeforeAndAfter": "2026-09-27 16:29:39",
+    "dataDirBeforeAndAfter": "/data/user/0/com.runningart.mobile.dev",
+    "ceDataInodeBeforeAndAfter": 681858,
+    "deDataInodeBeforeAndAfter": 671985,
+    "uninstallOrClearData": false
+  },
+  "validation": {
+    "functionalTestsPerformed": false,
+    "appLaunchedByThisTask": false,
+    "userRequestedInstallOnly": true,
+    "userContentCompared": false,
+    "networkSettingsChanged": false
+  },
+  "remaining": [
+    "전국 도로 온라인/오프라인 계산",
+    "휴대폰 시뮬레이션",
+    "휴대폰 러닝 제어·복원·GPS·잠금·배터리",
+    "업데이트 후 기존 코스·메모 실제 화면 확인"
+  ]
+}

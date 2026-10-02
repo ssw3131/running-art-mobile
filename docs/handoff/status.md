@@ -1,10 +1,12 @@
 # 현재 상태와 인수인계
 
+**2026-10-02 19:26:52 KST 휴대폰 설치 완료:** SM-S942N에 전국 도로·코스 저장/GPX·시뮬레이션·GPS 러닝을 포함한 최신 `running-art-0.1.0-20261002-running.apk`를 기존 데이터 유지 방식으로 업데이트했다. 설치본 SHA-256 일치와 최초 설치 시각·데이터 경로/inode 유지를 확인했다. 사용자 후속 요청에 따라 앱 실행·기능 테스트는 하지 않았다. 전국 계산·시뮬레이션·러닝의 휴대폰 기능 검증은 나중에 진행한다. 아래 이전 판교 설치본 유지·설치 보류 표현은 당시 이력이다.
+
 갱신일: 2026-10-02 (Asia/Seoul)
 
-**5단계 실제 러닝 GPS 추적·기록 구현·PC·에뮬레이터 검증 완료:** 시작·일시정지·재개·종료, 거리·활동 시간·평균 페이스, 오프라인 궤적·목록·상세·삭제를 제공한다. Android Location·TaskManager의 지속 알림 서비스와 사용자 DB 버전 3을 연결했다. GPS 좌표와 요약을 수신마다 저장하며 공백을 직선으로 더하지 않는다. 새 전경/백그라운드 프로세스에서는 마지막 저장 지점으로 중단 복원하고 사용자가 재개한다. 전체 자동 검사 186개·관련 21개·타입·린트·arm64/x86_64 release 빌드와 API 36의 실제 위치 주입·잠금 중 기록·일시정지·강제 종료·오프라인 복원·GPS 꺼짐 처리를 확인했다. 실제 휴대폰 설치·야외 GPS·배터리 검증은 후속이다. [사용법](../development/running-tracking.md)·[검증](../quality/running-tracking-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1738-running-tracking.md).
+**5단계 실제 러닝 GPS 추적·기록 구현·PC·에뮬레이터 검증 완료:** 시작·일시정지·재개·종료, 거리·활동 시간·평균 페이스, 오프라인 궤적·목록·상세·삭제를 제공한다. Android Location·TaskManager의 지속 알림 서비스와 사용자 DB 버전 3을 연결했다. GPS 좌표와 요약을 수신마다 저장하며 공백을 직선으로 더하지 않는다. 새 전경/백그라운드 프로세스에서는 마지막 저장 지점으로 중단 복원하고 사용자가 재개한다. 전체 자동 검사 186개·관련 21개·타입·린트·arm64/x86_64 release 빌드와 API 36의 실제 위치 주입·잠금 중 기록·일시정지·강제 종료·오프라인 복원·GPS 꺼짐 처리를 확인했다. 최신 통합 APK의 휴대폰 설치는 완료했고 기능 실행·야외 GPS·배터리 검증은 후속이다. [사용법](../development/running-tracking.md)·[검증](../quality/running-tracking-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1738-running-tracking.md).
 
-**5단계 코스 시뮬레이션 구현·PC·에뮬레이터 검증 완료:** 저장 코스 상세에서 인터넷·GPS 없이 파란 위치 표시·재생/일시정지/처음부터·1/5/10/30배·거리/진행률·도착 자동 종료를 제공한다. 관련 검사 34개·타입·린트·arm64/x86_64 release 빌드·API 36의 오프라인 재생/앱 복귀/화면 이탈·DB 해시 보존을 확인했다. 실제 휴대폰 설치·검증은 후속이며 현재 휴대폰의 판교 APK는 유지한다. [사용법](../development/course-simulation.md)·[검증](../quality/course-simulation-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1433-course-simulation.md). 전국 도로 4-4의 최종 결과는 아래에 정리했다.
+**5단계 코스 시뮬레이션 구현·PC·에뮬레이터 검증 완료:** 저장 코스 상세에서 인터넷·GPS 없이 파란 위치 표시·재생/일시정지/처음부터·1/5/10/30배·거리/진행률·도착 자동 종료를 제공한다. 관련 검사 34개·타입·린트·arm64/x86_64 release 빌드·API 36의 오프라인 재생/앱 복귀/화면 이탈·DB 해시 보존을 확인했다. 최신 통합 APK의 휴대폰 설치는 완료했고 시뮬레이션의 휴대폰 기능 검증은 후속이다. [사용법](../development/course-simulation.md)·[검증](../quality/course-simulation-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1433-course-simulation.md). 전국 도로 4-4의 최종 결과는 아래에 정리했다.
 
 **4-4의 PC·개발용 R2 작업 완료 / 실제 휴대폰 검증 후속:** 두 날짜의 한국 OSM 원본으로 전국 26,717개 타일·192개 지역 목록을 생성하고 각각 23개 대표/경계의 전체 입력·그래프를 대조했다. 실제 R2의 첫 게시 → 새 날짜 갱신 → 이전 릴리스 복구 → 최신 복귀를 완료했으며 매 전환 전 26,911개 전체 원본/공개 객체를 검증했다. 최종 공개 자료 23개 사례와 새 프로세스의 네트워크 0회 복원을 확인했다. 일반 앱 기본 공급은 전국 채널이고 새 release APK를 준비했다. [전국 도로 안내](../development/national-roads.md)·[검증](../quality/national-roads-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1427-national-roads.md).
 
@@ -16,17 +18,19 @@
 
 [서버 서비스와 가입 준비 안내](../planning/cloud-services-and-accounts.md)에 서비스 역할·AWS 비교·Supabase 이전 가능성과 가입 준비 목록을 정리했다. **2026-10-01 사용자 생성 `running-art` R2 버킷(APAC·Standard)에 개발용 표본 배포·공개 다운로드 검증을 완료했다.** Cloudflare·Supabase 계정은 가입했으며 Supabase 프로젝트 생성 여부는 미확인이다. 도메인 구매는 사용자 결정으로 운영 단계로 미뤘다. 공개 도로 표본 배포에 이어 일반 앱 공급 전환·휴대폰 캐시 검증도 완료했다.
 
+2026-10-02 [도로 공급과 지도 비용 및 라이선스 핵심 정리](../planning/roads-maps-costs-licensing-summary.md)를 추가했다. 개발/배포 모드의 계산 시간과 R2 공급 효과, 영구 캐시의 독립적인 역할, 용량·갱신·요금·지도 교체·ODbL 조건을 구분했다. R2 결제 설정 완료는 사용자 확인 내용이며 MapTiler 계정 확인은 나중으로 미뤘다. 지도 교체·갱신 자동화는 실행하지 않았다.
+
 ## 현재 바로 다음 작업
 
-**4-4 전국 PC·개발용 R2와 실제 러닝 추적·기록의 구현·PC·에뮬레이터 검증을 완료했다.** 다음 기기 검증은 전국 공급·코스 시뮬레이션·러닝을 포함한 새 APK를 기존 데이터를 유지해 설치하고 온라인/오프라인 계산·재생·야외 GPS·잠금·배터리를 확인하는 것이다. 휴대폰 연결 검증은 기존 사용자 결정에 따라 후속이다. 다음 새 기능은 Supabase 로그인·개인 코스/러닝 기록 동기화이며 계정·정책·프로젝트를 확인한 뒤 진행한다. 회원·공유·커뮤니티와 운영 도메인/CDN은 후속이고 기존 테스트 서버 복구·유료화·CI/CD는 재개하지 않는다.
+**4-4 전국 PC·개발용 R2와 실제 러닝 추적·기록의 구현·PC·에뮬레이터 검증을 완료했다.** 최신 통합 APK의 휴대폰 설치는 19:26:52 KST에 완료했다. 다음 기기 검증은 설치된 앱의 온라인/오프라인 계산·재생·야외 GPS·잠금·배터리를 확인하는 것이다. 휴대폰 연결 검증은 기존 사용자 결정에 따라 후속이다. 다음 새 기능은 Supabase 로그인·개인 코스/러닝 기록 동기화이며 계정·정책·프로젝트를 확인한 뒤 진행한다. 회원·공유·커뮤니티와 운영 도메인/CDN은 후속이고 기존 테스트 서버 복구·유료화·CI/CD는 재개하지 않는다.
 
-현재 앱 소스와 새 APK의 일반 계산은 지도 중심 주변 2km를 전국 채널에서 조회한다. 지원 중심 사각형은 위도 [33,39), 경도 [124,132)이며 도로 내용은 고정 Geofabrik 한국 추출본 기준이다. 서울 강남·부산 시청·구로/광명·판교에 대전·제주·울릉도 바로가기를 추가했다. 휴대폰의 기존 판교 설치본은 아직 네 표본만 사용한다. 당시 판교 휴대폰 하트 3km 후보 5개·첫 계산 11.71초·재시작 후 오프라인 9.65초 결과는 [판교 검증](../quality/pangyo-roads-verification.md)에 보존하며 전국 성능의 증거로 사용하지 않는다. [일반 계산 사용법](../development/route-center.md).
+현재 앱 소스와 새 APK의 일반 계산은 지도 중심 주변 2km를 전국 채널에서 조회한다. 지원 중심 사각형은 위도 [33,39), 경도 [124,132)이며 도로 내용은 고정 Geofabrik 한국 추출본 기준이다. 서울 강남·부산 시청·구로/광명·판교에 대전·제주·울릉도 바로가기를 추가했다. 네 표본만 사용하던 이전 판교 설치본은 전국 공급을 포함한 최신 통합 APK로 교체했다. 당시 판교 휴대폰 하트 3km 후보 5개·첫 계산 11.71초·재시작 후 오프라인 9.65초 결과는 [판교 검증](../quality/pangyo-roads-verification.md)에 보존하며 전국 성능의 증거로 사용하지 않는다. [일반 계산 사용법](../development/route-center.md).
 
 새 자료는 HTTPS 포인터·불변 매니페스트·gzip 해시/크기를 확인한 뒤 별도 SQLite에 저장한다. 64 MiB·7일 기본값을 유지한다. 유효 기간 내 저장 목록에 새 지역이 없으면 최신 목록을 확인한다. 최초 세 지역 연결 당시의 133개 검사·도로 23개·서울 온라인/오프라인 측정은 [캐시 검증](../quality/road-cache-verification.md)·[당시 휴대폰 증거](../quality/road-cache-phone-report.json)에 보존한다.
 
 **개발용 공급 주소:** [현재 전국 버전](https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev/roads/national/v1/current.json) · [기존 표본 버전](https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev/roads/samples/v1/current.json). 사용자 확인 후 공개 URL 활성화를 확인했고 버킷 한정 Object Read & Write·1주일 사용자 토큰을 발급했다(2026-10-08 만료). 키는 Git 제외 로컬 파일에 Windows DPAPI로 암호화하고 실행 중 환경 변수로만 전달한다. 설정은 `.cache/road-deploy/r2-dev.json`, 전국 실행 래퍼는 `.cache/road-deploy/run-national-r2.ps1`, 기존 표본 래퍼는 `.cache/road-deploy/run-r2-dev.ps1`이다. [실제 검증 JSON](../quality/road-deployment-r2-dev-report.json)·[검증 안내](../quality/road-deployment-verification.md)·[배포 절차](../development/road-deployment.md)·[후속 실행 기록](../history/executed-plans/2026-09-30-1643-road-deployment.md)을 따른다.
 
-**현재 휴대폰 설치본:** 2026-10-01 23:41:32 KST에 업데이트한 `build/install/running-art-0.1.0-20261001-pangyo.apk`(95,662,219바이트, arm64·x86_64). 설치본 해시 일치·기존 코스 1개/메모 1개·최초 설치 시각·데이터 경로를 보존했다. 네트워크 설정은 원래대로 복구했다. 이전 버전 포함 캐시 54개·2.65MiB이며 네 지역을 새 목록 기준으로 저장했다. [판교 검증](../quality/pangyo-roads-verification.md)·[APK 안내](../development/android-test-apk.md).
+**이전 휴대폰 설치본:** 2026-10-01 23:41:32 KST에 업데이트한 `build/install/running-art-0.1.0-20261001-pangyo.apk`(95,662,219바이트, arm64·x86_64). 설치본 해시 일치·기존 코스 1개/메모 1개·최초 설치 시각·데이터 경로를 보존했다. 네트워크 설정은 원래대로 복구했다. 이전 버전 포함 캐시 54개·2.65MiB이며 네 지역을 새 목록 기준으로 저장했다. [판교 검증](../quality/pangyo-roads-verification.md)·[APK 안내](../development/android-test-apk.md).
 
 ## 5단계 GPX 내보내기 — 이번 목표 완료
 

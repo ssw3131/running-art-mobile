@@ -31,6 +31,7 @@
 | 계획 | [단계별 개발](planning/roadmap.md) | 순서와 완료 조건 |
 | 계획 | [모바일 독립 서버 전략](planning/server-strategy.md) | 테스트 프로젝트 분리, 도로 공급·회원·커뮤니티 구성, 무료 출시와 유료화 후속 범위 |
 | 계획 | [서버 서비스와 가입 준비 안내](planning/cloud-services-and-accounts.md) | Cloudflare·Supabase·MapTiler 역할, AWS 비교, 서버 이전, 지금과 출시 전 계정 준비 |
+| 계획 | [도로 공급과 지도 비용 및 라이선스 핵심 정리](planning/roads-maps-costs-licensing-summary.md) | 속도 원인·전국 도로·압축/갱신·R2 요금·지도 교체·OSM 이용 조건 |
 | 계획 | [CI/CD 자동화](planning/ci-cd-validation-plan.md) | 계획 저장, 아직 미실행 |
 | 검증 | [검증 기준](quality/strategy.md) | 변경별 확인 방법 |
 | 검증 | [환경 검증 기록](quality/setup-verification.md) | 실제 통과·미검증 사항 |
