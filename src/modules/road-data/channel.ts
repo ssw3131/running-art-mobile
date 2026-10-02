@@ -38,8 +38,7 @@ function validatePointer(value: unknown): asserts value is Pointer {
 
 // The native adapter uses expo/fetch so a body is bounded while reading, never arrayBuffer().
 // No credentials, redirects, alternate provider, or server-side route calculation.
-export function createRoadChannel(base: string, fetcher: RoadFetch, codecs: RoadCodecs,
-  onRequest?: (url: string) => void): Required<Pick<RoadCacheRequest, 'downloadManifest' | 'downloadTile'>> {
+export function createRoadHttp(base: string, fetcher: RoadFetch, onRequest?: (url: string) => void) {
   const root = roadBaseUrl(base);
   async function getBody(key: string, maxBytes: number, mime: string, signal: AbortSignal, exact: boolean) {
     checkRoadCacheSignal(signal);
@@ -85,6 +84,12 @@ export function createRoadChannel(base: string, fetcher: RoadFetch, codecs: Road
     try { return await Promise.race([interrupted, getBody(key, maxBytes, mime, signal, exact)]); }
     finally { signal.removeEventListener('abort', abort); }
   }
+  return get;
+}
+
+export function createRoadChannel(base: string, fetcher: RoadFetch, codecs: RoadCodecs,
+  onRequest?: (url: string) => void): Required<Pick<RoadCacheRequest, 'downloadManifest' | 'downloadTile'>> {
+  const get = createRoadHttp(base, fetcher, onRequest);
   return {
     async downloadManifest(signal) {
       const pointer: unknown = JSON.parse(codecs.utf8(await get(`${ROAD_PREFIX}/current.json`, 16384, 'application/json', signal)));

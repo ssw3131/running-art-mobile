@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-10-02T07:52:52.583Z",
+  "transport": "public R2 HTTPS",
+  "mode": "refresh",
+  "case": "region-corner-10km",
+  "database": "build/road-data/r2-switch-rehearsal.sqlite",
+  "requests": 123,
+  "elapsedMs": 22409.119300000002,
+  "inputSha256": "fb16da72a10df6d1c866ee375d9c24d4591c858a5f4526749d330a73b0616e12",
+  "release": "kr-20260930-c8cb96030306-roads-v1",
+  "manifestHash": "73d9be8c9529a58c99ce03cc8df5f25e84a4839e1c4d3b82aec8e87fc996a88f",
+  "files": 120,
+  "reused": 0,
+  "downloaded": 120,
+  "stale": false,
+  "updateFailed": false,
+  "checkedAt": 1790927551650,
+  "status": {
+    "bytes": 15104882,
+    "maxBytes": 67108864,
+    "datasets": 2,
+    "files": 240
+  }
+}

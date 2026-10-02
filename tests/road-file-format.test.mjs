@@ -3,13 +3,54 @@ import test from 'node:test';
 import { gzipSync } from 'node:zlib';
 import { codecs, sha256 } from '../scripts/road-data/common.mjs';
 import { coveringCells, segmentIntersectsBounds, wayIntersectsBounds, validateManifest,
-  decodeRoadTile, mergeRoadTiles } from '../src/modules/road-data/file-format.ts';
+  decodeRoadTile, mergeRoadTiles, selectRoadFiles } from '../src/modules/road-data/file-format.ts';
 
 const bounds = [37.479, 126.879, 37.481, 126.881];
 const makeWay = (id, nodes, geometry, tags = { highway: 'footway' }) => ({ type: 'way', id, nodes,
   geometry: geometry.map(([lat, lon]) => ({ lat, lon })), tags });
 const crossing = makeWay(10, [1, 2], [[37.48, 126.87], [37.48, 126.89]]);
 const connected = makeWay(11, [2, 3], [[37.48, 126.89], [37.4795, 126.8805]]);
+
+test('national coverage requires an explicit complete partition of files and empty cells', () => {
+  const { manifest } = fixture();
+  manifest.coverage = 'national';
+  manifest.coverageBounds = [37.46, 126.86, 37.5, 126.9];
+  manifest.emptyCells = [];
+  validateManifest(manifest);
+  const removed = manifest.files.pop();
+  assert.throws(() => validateManifest(manifest), /MISSING_CELL/);
+  manifest.emptyCells.push(removed.id);
+  validateManifest(manifest);
+  assert.equal(selectRoadFiles(manifest, bounds).length, 3);
+  manifest.emptyCells.push(manifest.files[0].id);
+  assert.throws(() => validateManifest(manifest), /DUPLICATE_CELL/);
+});
+
+test('national empty coverage is valid only within its verified bounds', () => {
+  const { manifest } = fixture();
+  manifest.coverage = 'national';
+  manifest.coverageBounds = [37.46, 126.86, 37.5, 126.9];
+  manifest.emptyCells = manifest.files.map(f => f.id);
+  manifest.files = [];
+  assert.deepEqual(mergeRoadTiles(manifest, [], bounds), []);
+  assert.throws(() => selectRoadFiles(manifest, [37.49, 126.88, 37.51, 126.89]), /MISSING_CELL/);
+  manifest.emptyCells.push('9999_9999');
+  assert.throws(() => validateManifest(manifest), /COVERAGE/);
+});
+
+test('national manifests reuse a previous tile only with its explicit release and exact hashes', () => {
+  const { manifest, buffers } = fixture();
+  manifest.coverage = 'national'; manifest.coverageBounds = [37.46,126.86,37.5,126.9]; manifest.emptyCells = [];
+  const oldRelease = manifest.release; manifest.release = 'updated-v2';
+  assert.throws(() => decodeRoadTile(buffers[0],manifest,manifest.files[0],codecs), /RELEASE_MISMATCH/);
+  for (const file of manifest.files) file.tileRelease = oldRelease;
+  validateManifest(manifest);
+  assert.equal(decodeRoadTile(buffers[0],manifest,manifest.files[0],codecs).release,oldRelease);
+  const corrupt = Buffer.from(buffers[0]); corrupt[20] ^= 1;
+  assert.throws(() => decodeRoadTile(corrupt,manifest,manifest.files[0],codecs), /HASH/);
+  manifest.coverage = 'samples'; delete manifest.coverageBounds; delete manifest.emptyCells;
+  assert.throws(() => validateManifest(manifest), /TILE_RELEASE/);
+});
 
 function fixture(ways = [crossing, connected]) {
   const manifest = { format: 'running-art-road-manifest', schemaVersion: 1, release: 'test-v1',

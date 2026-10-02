@@ -1,5 +1,7 @@
 # 휴대폰 독립 실행 테스트 APK
 
+**2026-10-02 전국 공급 APK 생성:** `build/install/running-art-0.1.0-20261002-national.apk`(95,680,819바이트, arm64·x86_64)의 일반 계산과 도로 캐시를 전국 채널로 전환했다. 대전·제주·울릉도 선택과 기존 저장 코스·GPX·시뮬레이션을 포함한다. 전체 자동 검사 164개·타입·린트·release 빌드와 이전 테스트 APK와의 서명 일치를 확인했다. **사용자 결정에 따라 실제 휴대폰에는 설치하지 않았다.** 현재 휴대폰 설치본은 아래 판교 APK다. 같은 폴더에 SHA-256과 `INSTALL-national-20261002-ko.txt`를 보존하며 [전국 검증](../quality/national-roads-verification.md)·[앱 결과/해시](../quality/national-roads-app-report.json)를 따른다.
+
 **2026-10-02 시뮬레이션 검증 APK 생성:** `build/install/running-art-0.1.0-20261002-simulation.apk`(95,673,331바이트, arm64·x86_64)에 저장 코스 오프라인 재생을 추가했다. API 36 에뮬레이터의 인터넷/위치 해제·속도 변경·앱 복귀·도착 자동 종료를 확인했다. **실제 휴대폰에는 설치하지 않았으며 아래 판교 APK가 현재 휴대폰 설치본이다.** 공유 작업 폴더 빌드에 포함된 다른 채팅의 전국 도로 변경은 별도 검증 대상이다. [사용법](course-simulation.md)·[검증과 SHA-256](../quality/course-simulation-verification.md). 같은 폴더에 SHA-256 파일과 `INSTALL-simulation-20261002-ko.txt`를 보존한다.
 
 **최신 판교 추가 APK:** 2026-10-01 23:41:32 KST에 `build/install/running-art-0.1.0-20261001-pangyo.apk`(95,662,219바이트)를 SM-S942N에 업데이트했다. 판교로228번길 17 선택·기존 목록 자동 갱신·재시작 후 완전 오프라인 계산·기존 코스/메모 보존과 설치본 해시를 확인했다. [검증과 SHA-256](../quality/pangyo-roads-verification.md).

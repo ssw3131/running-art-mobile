@@ -3,11 +3,11 @@ import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from '
 import { getRoadCache } from '@/modules/road-data/cache-database';
 import { loadMobileRoads } from '@/modules/road-data/mobile-loader';
 import type { RoadCacheRequest } from '@/modules/road-data/persistent-cache';
-import { roadSamples as cacheLabSamples } from '@/modules/road-data/channel';
+import { ROAD_SUPPLY, roadLocations as cacheLabSamples } from '@/modules/road-data/supply-config';
 
 export default function RoadCacheLabScreen() {
   const [index, setIndex] = useState(0), [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState('처음에는 R2 도로 표본을 받아 저장하세요. 일반 코스 계산과 같은 저장 자료를 사용합니다.');
+  const [status, setStatus] = useState('처음에는 도로 자료를 받아 저장하세요. 일반 코스 계산과 같은 저장 자료를 사용합니다.');
   const [usage, setUsage] = useState(''), [details, setDetails] = useState('');
   const [clearing, setClearing] = useState(false);
   const controller = useRef<AbortController | null>(null), mounted = useRef(true);
@@ -48,7 +48,7 @@ export default function RoadCacheLabScreen() {
   }
   return <ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>영구 도로 캐시 검증</Text>
-    <Text>서울·부산·구로/광명·판교로228번길 17 표본을 기기에 저장합니다. 앱을 종료한 뒤 다시 열어 저장 자료 읽기를 확인하세요. 현재 위치는 사용하지 않습니다.</Text>
+    <Text>선택한 위치 주변의 도로를 기기에 저장합니다. 앱을 종료한 뒤 다시 열어 저장 자료 읽기를 확인하세요. 이 검증 화면에서는 현재 위치를 사용하지 않습니다.</Text>
     {!supported && <Text>이 검증은 Android 앱에서 실행해 주세요.</Text>}
     <View style={styles.row}>{cacheLabSamples.map((sample, i) => <Pressable key={sample.id} accessibilityRole="button" disabled={busy}
       onPress={() => setIndex(i)} style={[styles.option, index === i && styles.selected]}><Text>{sample.label}</Text></Pressable>)}</View>
@@ -57,10 +57,10 @@ export default function RoadCacheLabScreen() {
     {busy && !clearing && <Pressable accessibilityRole="button" style={styles.option} onPress={() => controller.current?.abort()}><Text>취소</Text></Pressable>}
     <Text testID="road-cache-status" selectable>{status}</Text><Text selectable>{usage}</Text><Text selectable>{details}</Text>
     <Pressable accessibilityRole="button" disabled={busy || !supported} style={styles.option}
-      onPress={() => Alert.alert('도로 캐시 비우기', '저장한 도로 표본을 삭제합니다. 테스트 메모와 다른 기록은 유지됩니다.', [
+      onPress={() => Alert.alert('도로 캐시 비우기', '저장한 도로 자료를 삭제합니다. 테스트 메모와 다른 기록은 유지됩니다.', [
         { text: '취소', style: 'cancel' }, { text: '비우기', style: 'destructive', onPress: () => void clear() },
       ])}><Text>도로 캐시 비우기</Text></Pressable>
-    <Text>처음 받기는 인터넷 연결이 필요합니다. 현재 R2 개발용 주소로 네 표본 지역만 제공합니다. 배경 지도 오프라인 표시는 별도 기능입니다.</Text>
+    <Text>처음 받기는 인터넷 연결이 필요합니다. {ROAD_SUPPLY === 'national' ? '한국 OSM 자료의 도로를 제공합니다.' : '현재는 네 표본 지역만 제공합니다.'} 배경 지도 오프라인 표시는 별도 기능입니다.</Text>
   </ScrollView>;
 }
 const styles = StyleSheet.create({ content: { padding: 24, gap: 18, backgroundColor: '#F6F5F0' },

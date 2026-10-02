@@ -3,6 +3,7 @@ import gridData from '@/assets/route-lab/grid.json';
 import seoulData from '@/assets/route-lab/seoul.json';
 import baselineData from '@/assets/route-lab/baselines.json';
 import type { SearchInput, SearchOptions, SearchResult } from '@/modules/route-engine/types';
+import { roadCoverageDescription } from '@/modules/road-data/supply-config';
 
 export type DatasetId = 'grid' | 'seoul' | 'disconnected';
 const grid = gridData as SearchInput;
@@ -16,7 +17,7 @@ const disconnected: SearchInput = {
 };
 export const datasets = {
   grid: { name: '합성 격자', description: '알고리즘 비교용 가상 도로예요. 실제 달릴 길이 아닙니다.', input: grid, synthetic: true },
-  seoul: { name: '주변 OSM', description: '현재는 서울 강남·부산 시청·구로/광명·판교로228번길 17 표본 주변 2km를 지원해요. 아래 위치를 선택하거나 표본 범위 안에서 지도를 움직여 계산하세요.', input: seoul, synthetic: false },
+  seoul: { name: '주변 OSM', description: roadCoverageDescription, input: seoul, synthetic: false },
   disconnected: { name: '단절 테스트', description: '서로 연결되지 않은 짧은 가상 도로로 후보 없음 처리를 확인해요.', input: disconnected, synthetic: true },
 } satisfies Record<DatasetId, { name: string; description: string; input: SearchInput; synthetic: boolean }>;
 

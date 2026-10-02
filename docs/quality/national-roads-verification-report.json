@@ -1,0 +1,433 @@
+{
+  "recordedAt": "2026-10-02T05:54:02.915Z",
+  "source": {
+    "url": "https://download.geofabrik.de/asia/south-korea-260929.osm.pbf",
+    "file": "south-korea-260929.osm.pbf",
+    "bytes": 288242629,
+    "sha256": "9d436449e16fcf78866eb50caec91fca5067e494a6914130f869332297a8cd5a",
+    "md5": "7775afecd9ccbf3285ace3f1fa2ec7f4",
+    "dataTimestamp": "2026-09-29T20:22:51Z",
+    "replicationSequence": "4447",
+    "attribution": "© OpenStreetMap contributors; extract by Geofabrik",
+    "license": "ODbL-1.0",
+    "licenseUrl": "https://www.openstreetmap.org/copyright"
+  },
+  "extractionSha256": "fe7921a96bec24eac62174ff4f8bbeddb529bf9851d44e047d62b48445ca2201",
+  "runtime": "v24.21.0",
+  "records": [
+    {
+      "id": "seoul",
+      "origin": {
+        "lat": 37.4979,
+        "lng": 127.0276
+      },
+      "radiusMeters": 2000,
+      "region": "74_254",
+      "files": 9,
+      "inputWays": 3454,
+      "nodes": 13614,
+      "edges": 15363,
+      "packedBytes": 476751,
+      "decodedBytes": 2670697,
+      "inputSha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "busan",
+      "origin": {
+        "lat": 35.1796,
+        "lng": 129.0756
+      },
+      "radiusMeters": 2000,
+      "region": "70_258",
+      "files": 6,
+      "inputWays": 2008,
+      "nodes": 9181,
+      "edges": 9972,
+      "packedBytes": 287058,
+      "decodedBytes": 1495531,
+      "inputSha256": "ecc348a92952ecace4e7a41e7e75064e63667b62c3c34e00adfea4e640b00099",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "incheon",
+      "origin": {
+        "lat": 37.4563,
+        "lng": 126.7052
+      },
+      "radiusMeters": 2000,
+      "region": "74_253",
+      "files": 9,
+      "inputWays": 2482,
+      "nodes": 11785,
+      "edges": 13177,
+      "packedBytes": 394865,
+      "decodedBytes": 2176691,
+      "inputSha256": "27a031250103d279620c12fc2f7c6f758dc18c0a9eacdaa053fc57ba26ebccf1",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "daegu",
+      "origin": {
+        "lat": 35.8714,
+        "lng": 128.6014
+      },
+      "radiusMeters": 2000,
+      "region": "71_257",
+      "files": 12,
+      "inputWays": 3149,
+      "nodes": 12144,
+      "edges": 13702,
+      "packedBytes": 669762,
+      "decodedBytes": 3683237,
+      "inputSha256": "82f7aa995de667316dfbed9d5649e69fd68f42767231bd161c944a7919e2bc50",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "daejeon",
+      "origin": {
+        "lat": 36.3504,
+        "lng": 127.3845
+      },
+      "radiusMeters": 2000,
+      "region": "72_254",
+      "files": 9,
+      "inputWays": 5836,
+      "nodes": 18492,
+      "edges": 21056,
+      "packedBytes": 639341,
+      "decodedBytes": 3839914,
+      "inputSha256": "42c651230b043d9655cd1d600099202cef9c1d3033505097df6727d944ab654c",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "gwangju",
+      "origin": {
+        "lat": 35.1595,
+        "lng": 126.8526
+      },
+      "radiusMeters": 2000,
+      "region": "70_253",
+      "files": 6,
+      "inputWays": 2076,
+      "nodes": 9735,
+      "edges": 10449,
+      "packedBytes": 291020,
+      "decodedBytes": 1566405,
+      "inputSha256": "929e1a3c5a408037d0cd4c47611e37eec24a4216dd11bef0f76ba06dc5203f8f",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "ulsan",
+      "origin": {
+        "lat": 35.5384,
+        "lng": 129.3114
+      },
+      "radiusMeters": 2000,
+      "region": "71_258",
+      "files": 6,
+      "inputWays": 2407,
+      "nodes": 11981,
+      "edges": 13334,
+      "packedBytes": 289325,
+      "decodedBytes": 1584271,
+      "inputSha256": "3a5ca770f9d6992077eea8235390e3dc5699f4a602f02ee9c53b4e0df261d1fc",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "sejong",
+      "origin": {
+        "lat": 36.48,
+        "lng": 127.289
+      },
+      "radiusMeters": 2000,
+      "region": "72_254",
+      "files": 6,
+      "inputWays": 2140,
+      "nodes": 13834,
+      "edges": 15028,
+      "packedBytes": 359092,
+      "decodedBytes": 1903128,
+      "inputSha256": "f4c68a6bd8eb022830047bec79f36456ad794f3070da193cd0562e72c07bcc0a",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "suwon",
+      "origin": {
+        "lat": 37.2636,
+        "lng": 127.0286
+      },
+      "radiusMeters": 2000,
+      "region": "74_254",
+      "files": 9,
+      "inputWays": 3285,
+      "nodes": 13287,
+      "edges": 14974,
+      "packedBytes": 517768,
+      "decodedBytes": 2916324,
+      "inputSha256": "c7469ca5dc018f5161ed5bcdba67c4d582c60ff82d53c9214dcf9245f00d10ae",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "chuncheon",
+      "origin": {
+        "lat": 37.8813,
+        "lng": 127.73
+      },
+      "radiusMeters": 2000,
+      "region": "75_255",
+      "files": 6,
+      "inputWays": 1805,
+      "nodes": 8328,
+      "edges": 9238,
+      "packedBytes": 196750,
+      "decodedBytes": 1066795,
+      "inputSha256": "904a63feafeb2b94867382ee02a0cfe5462da85e030bb771a049e64f32e7edf6",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "cheongju",
+      "origin": {
+        "lat": 36.6424,
+        "lng": 127.489
+      },
+      "radiusMeters": 2000,
+      "region": "73_254",
+      "files": 9,
+      "inputWays": 3427,
+      "nodes": 12273,
+      "edges": 13642,
+      "packedBytes": 502861,
+      "decodedBytes": 2834192,
+      "inputSha256": "d4fb5de4d7b5040f1824f56b9bddcbcb3770d1c9cc3d68564feaeeecaf5b08b4",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "hongseong",
+      "origin": {
+        "lat": 36.6013,
+        "lng": 126.6608
+      },
+      "radiusMeters": 2000,
+      "region": "73_253",
+      "files": 8,
+      "inputWays": 1202,
+      "nodes": 8768,
+      "edges": 9326,
+      "packedBytes": 237346,
+      "decodedBytes": 1228851,
+      "inputSha256": "8aaf90d7859c7c43abf038a0d482a3f4a432c5572b8d35d8256ef392bd70f51f",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "jeonju",
+      "origin": {
+        "lat": 35.8242,
+        "lng": 127.148
+      },
+      "radiusMeters": 2000,
+      "region": "71_254",
+      "files": 9,
+      "inputWays": 4058,
+      "nodes": 15403,
+      "edges": 17301,
+      "packedBytes": 613130,
+      "decodedBytes": 3404085,
+      "inputSha256": "e2e8310be58422eacf65abc085c29e9b593407d1a426ab5101a341c87633495c",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "muan",
+      "origin": {
+        "lat": 34.9905,
+        "lng": 126.4817
+      },
+      "radiusMeters": 2000,
+      "region": "69_252",
+      "files": 12,
+      "inputWays": 495,
+      "nodes": 4025,
+      "edges": 4161,
+      "packedBytes": 205144,
+      "decodedBytes": 1024757,
+      "inputSha256": "34be1ceb29b4cc102c88824602c51a8a10250d9d26da061b76051fc16d4ee68f",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "andong",
+      "origin": {
+        "lat": 36.5684,
+        "lng": 128.7294
+      },
+      "radiusMeters": 2000,
+      "region": "73_257",
+      "files": 9,
+      "inputWays": 927,
+      "nodes": 6043,
+      "edges": 6667,
+      "packedBytes": 174975,
+      "decodedBytes": 898576,
+      "inputSha256": "be6f9336a3c101c1a1acdce7db8396a83e4e8d80436204f3598eb4f1dc973ea1",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "changwon",
+      "origin": {
+        "lat": 35.2281,
+        "lng": 128.6811
+      },
+      "radiusMeters": 2000,
+      "region": "70_257",
+      "files": 12,
+      "inputWays": 2454,
+      "nodes": 11767,
+      "edges": 13106,
+      "packedBytes": 453120,
+      "decodedBytes": 2490474,
+      "inputSha256": "bdf540404290c9d530df7ef99cdfda92835fa3528f97807cadda09fde1b512d4",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "jeju",
+      "origin": {
+        "lat": 33.4996,
+        "lng": 126.5312
+      },
+      "radiusMeters": 2000,
+      "region": "66_253",
+      "files": 6,
+      "inputWays": 4276,
+      "nodes": 17064,
+      "edges": 19016,
+      "packedBytes": 369658,
+      "decodedBytes": 2148652,
+      "inputSha256": "345eddc205e46bed06c628b4e820ad91b8b6b863849704e784b3f73fbe8dfecb",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "seogwipo",
+      "origin": {
+        "lat": 33.2541,
+        "lng": 126.5601
+      },
+      "radiusMeters": 2000,
+      "region": "66_253",
+      "files": 12,
+      "inputWays": 1068,
+      "nodes": 7097,
+      "edges": 7730,
+      "packedBytes": 211418,
+      "decodedBytes": 1064747,
+      "inputSha256": "bb4b5d3cb3410d92cc866728c1d6858b8656915a3f5d2b88355b7de61561b0e7",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "ulleung",
+      "origin": {
+        "lat": 37.4845,
+        "lng": 130.9057
+      },
+      "radiusMeters": 2000,
+      "region": "74_261",
+      "files": 6,
+      "inputWays": 317,
+      "nodes": 3711,
+      "edges": 3779,
+      "packedBytes": 90722,
+      "decodedBytes": 436302,
+      "inputSha256": "d17120e34c517f6215bedd3477b499ff98200d3da7e01e01068bcd49fe8087f4",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "guro-boundary",
+      "origin": {
+        "lat": 37.48,
+        "lng": 126.88
+      },
+      "radiusMeters": 2000,
+      "region": "74_253",
+      "files": 8,
+      "inputWays": 2929,
+      "nodes": 11189,
+      "edges": 12384,
+      "packedBytes": 430705,
+      "decodedBytes": 2389883,
+      "inputSha256": "750579f17b9121aa166d87894582c47cd654e4156e0ef6e46e0745421d373ae5",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "region-corner",
+      "origin": {
+        "lat": 37.5,
+        "lng": 127
+      },
+      "radiusMeters": 2000,
+      "region": "75_254",
+      "files": 8,
+      "inputWays": 2617,
+      "nodes": 10371,
+      "edges": 11490,
+      "packedBytes": 413977,
+      "decodedBytes": 2316742,
+      "inputSha256": "255baf8af9264866a2a9fed9a7df32b5787870e69eb2cb1aa13e255db41b60a9",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "pangyo",
+      "origin": {
+        "lat": 37.400805,
+        "lng": 127.101494
+      },
+      "radiusMeters": 2000,
+      "region": "74_254",
+      "files": 8,
+      "inputWays": 2433,
+      "nodes": 12205,
+      "edges": 12966,
+      "packedBytes": 367602,
+      "decodedBytes": 2038532,
+      "inputSha256": "f142f151086cc13fa522f1e396ec073298cc3fbe7ac3577420dbb19987854d00",
+      "inputEqual": true,
+      "graphEqual": true
+    },
+    {
+      "id": "region-corner-10km",
+      "origin": {
+        "lat": 37.5,
+        "lng": 127
+      },
+      "radiusMeters": 10000,
+      "region": "75_254",
+      "files": 120,
+      "inputWays": 68431,
+      "nodes": 300546,
+      "edges": 330450,
+      "packedBytes": 7045698,
+      "decodedBytes": 38729671,
+      "inputSha256": "9192a24e5606c2c73d8500e515ef5486c0998d2955070c0a63bb5d9b02d4d81f",
+      "inputEqual": true,
+      "graphEqual": true
+    }
+  ]
+}

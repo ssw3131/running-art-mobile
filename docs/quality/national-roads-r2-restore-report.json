@@ -1,0 +1,9 @@
+{
+  "recordedAt": "2026-10-02T08:27:07.112Z",
+  "command": "promote",
+  "developmentOnly": true,
+  "previousSha256": "86f0ffc8256fdb6fa8de778a972a3d9aae8433b8fce3b139f04cb52775b15e0b",
+  "currentSha256": "1d17bab38ebcdacd1ca4a86f8483e28d47b272374b6c46972dc687d5b829be34",
+  "verifiedObjects": 26911,
+  "currentChanged": true
+}

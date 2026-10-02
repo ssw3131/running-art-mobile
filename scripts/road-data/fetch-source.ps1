@@ -1,6 +1,6 @@
-param([string]$Destination = '.cache/road-data/raw')
+param([string]$Destination = '.cache/road-data/raw', [string]$SourceLock = (Join-Path $PSScriptRoot 'source-lock.json'))
 $ErrorActionPreference = 'Stop'
-$source = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'source-lock.json') -Raw | ConvertFrom-Json
+$source = Get-Content -LiteralPath $SourceLock -Raw | ConvertFrom-Json
 New-Item -ItemType Directory -Force -Path $Destination | Out-Null
 $file = Join-Path $Destination $source.file
 if (-not (Test-Path -LiteralPath $file)) {

@@ -9,7 +9,7 @@ import { createCenterController, type CenterState } from '@/features/route-lab/c
 import { createLabSession, type LabCalculation } from '@/features/route-lab/session';
 import { expoLocationProvider } from '@/modules/location/expo-provider';
 import type { RoadMode } from '@/modules/road-data/client';
-import { roadSamples } from '@/modules/road-data/channel';
+import { roadLocations as roadSamples } from '@/modules/road-data/supply-config';
 import { loadMobileRoads } from '@/modules/road-data/mobile-loader';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
@@ -177,7 +177,7 @@ export default function RouteLabScreen() {
           onPress={() => { changeSearch(); center.choose(sample.origin); setFixedCenter(true); setValidCenter(true); setMapMoving(false); }}><Text style={styles.chipText}>{sample.label}</Text></Pressable>)}</View>
         <View style={styles.wrap}>{roadModes.map(mode => <Pressable key={mode.id} testID={`road-mode-${mode.id}`} accessibilityRole="button" accessibilityState={{ selected: roadMode === mode.id }}
           style={[styles.chip, roadMode === mode.id && styles.chipSelected]} onPress={() => { changeSearch(); setRoadMode(mode.id); }}><Text style={roadMode === mode.id ? styles.chipTextSelected : styles.chipText}>{mode.label}</Text></Pressable>)}</View>
-        <Text style={styles.small}>처음에는 인터넷으로 도로를 받습니다. 저장한 도로는 앱을 다시 열어도 사용할 수 있어요. 오프라인에서 지도가 안 뜨면 위 표본 위치를 선택해 계산하세요. 배경 지도는 별도 연결이 필요해요.</Text>
+        <Text style={styles.small}>처음에는 인터넷으로 도로를 받습니다. 저장한 도로는 앱을 다시 열어도 사용할 수 있어요. 오프라인에서는 미리 저장한 위치를 선택해 계산하세요. 배경 지도는 별도 연결이 필요해요.</Text>
       </>}
       {!dataset.synthetic && <Text testID={`route-location-${centerState.location.kind}`} style={styles.small}>{locationMessage(centerState)}</Text>}
       <Text style={styles.label}>도형</Text>

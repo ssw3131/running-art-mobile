@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-10-02T17:08:56.2622749+09:00",
+  "mode": "public",
+  "sourceRelease": "kr-20260930-c8cb96030306-roads-v1",
+  "database": "build/road-data/national-260930/cache-public.sqlite",
+  "completedCases": 22,
+  "completedRadiusMeters": 2000,
+  "failedCase": "region-corner-10km",
+  "failedRadiusMeters": 10000,
+  "deadlineMs": 120000,
+  "error": "도로 조회 시간이 초과됐어요. 다시 시도해 주세요.",
+  "concurrentBulkVerification": true,
+  "successfulReportWritten": false,
+  "nextAction": "Resume using the preserved validated cache after bulk publishing verification completes",
+  "evidence": "Sequential production-loader assertions and captured executor output, session 33278"
+}

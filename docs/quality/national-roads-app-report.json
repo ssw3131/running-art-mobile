@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-02T16:27:48.2873729+09:00",
+  "apk": "build/install/running-art-0.1.0-20261002-national.apk",
+  "bytes": 95680819,
+  "sha256": "ccbd72d36627e3b501de8978fedaaad5ca8b90dd3fe1c063f3f5b6bed5ae35c3",
+  "package": "com.runningart.mobile.dev",
+  "abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "embeddedBundleBytes": 4190192,
+  "sameSigningCertificateAsSimulation": true,
+  "signingCertificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "roadSupply": "national",
+  "checks": {
+    "failures": 0,
+    "tests": 164,
+    "releaseBuild": "passed",
+    "lint": "passed",
+    "typecheck": "passed"
+  },
+  "phoneInstalled": false,
+  "phoneTested": false,
+  "finalChecks": {
+    "recordedAt": "2026-10-02T08:28:35.345Z",
+    "tests": 165,
+    "failures": 0,
+    "typecheck": "passed",
+    "lint": "passed",
+    "appCodeChangedSinceApk": false
+  }
+}

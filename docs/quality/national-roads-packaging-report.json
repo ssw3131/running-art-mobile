@@ -1,0 +1,26 @@
+{
+  "source": {
+    "url": "https://download.geofabrik.de/asia/south-korea-260929.osm.pbf",
+    "file": "south-korea-260929.osm.pbf",
+    "bytes": 288242629,
+    "sha256": "9d436449e16fcf78866eb50caec91fca5067e494a6914130f869332297a8cd5a",
+    "md5": "7775afecd9ccbf3285ace3f1fa2ec7f4",
+    "dataTimestamp": "2026-09-29T20:22:51Z",
+    "replicationSequence": "4447",
+    "attribution": "© OpenStreetMap contributors; extract by Geofabrik",
+    "license": "ODbL-1.0",
+    "licenseUrl": "https://www.openstreetmap.org/copyright"
+  },
+  "extractionSha256": "fe7921a96bec24eac62174ff4f8bbeddb529bf9851d44e047d62b48445ca2201",
+  "scannedWays": 1816595,
+  "runnableWays": 1662978,
+  "files": 26717,
+  "gzipBytes": 336612606,
+  "decodedBytes": 1686685661,
+  "largestGzipBytes": 171307,
+  "largestDecodedBytes": 1035475,
+  "indexMs": 253824.31540000002,
+  "totalMs": 439374.4282,
+  "maxRssKiB": 342148,
+  "nodeVersion": "v24.21.0"
+}

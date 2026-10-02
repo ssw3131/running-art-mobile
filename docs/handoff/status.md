@@ -2,19 +2,27 @@
 
 갱신일: 2026-10-02 (Asia/Seoul)
 
-**5단계 코스 시뮬레이션 구현·PC·에뮬레이터 검증 완료:** 저장 코스 상세에서 인터넷·GPS 없이 파란 위치 표시·재생/일시정지/처음부터·1/5/10/30배·거리/진행률·도착 자동 종료를 제공한다. 관련 검사 34개·타입·린트·arm64/x86_64 release 빌드·API 36의 오프라인 재생/앱 복귀/화면 이탈·DB 해시 보존을 확인했다. 실제 휴대폰 설치·검증은 후속이며 현재 휴대폰의 판교 APK는 유지한다. [사용법](../development/course-simulation.md)·[검증](../quality/course-simulation-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1433-course-simulation.md). 전국 도로 4-4는 다른 채팅에서 병렬 진행하며 아래 상태를 유지한다.
+**5단계 코스 시뮬레이션 구현·PC·에뮬레이터 검증 완료:** 저장 코스 상세에서 인터넷·GPS 없이 파란 위치 표시·재생/일시정지/처음부터·1/5/10/30배·거리/진행률·도착 자동 종료를 제공한다. 관련 검사 34개·타입·린트·arm64/x86_64 release 빌드·API 36의 오프라인 재생/앱 복귀/화면 이탈·DB 해시 보존을 확인했다. 실제 휴대폰 설치·검증은 후속이며 현재 휴대폰의 판교 APK는 유지한다. [사용법](../development/course-simulation.md)·[검증](../quality/course-simulation-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1433-course-simulation.md). 전국 도로 4-4의 최종 결과는 아래에 정리했다.
+
+**4-4의 PC·개발용 R2 작업 완료 / 실제 휴대폰 검증 후속:** 두 날짜의 한국 OSM 원본으로 전국 26,717개 타일·192개 지역 목록을 생성하고 각각 23개 대표/경계의 전체 입력·그래프를 대조했다. 실제 R2의 첫 게시 → 새 날짜 갱신 → 이전 릴리스 복구 → 최신 복귀를 완료했으며 매 전환 전 26,911개 전체 원본/공개 객체를 검증했다. 최종 공개 자료 23개 사례와 새 프로세스의 네트워크 0회 복원을 확인했다. 일반 앱 기본 공급은 전국 채널이고 새 release APK를 준비했다. [전국 도로 안내](../development/national-roads.md)·[검증](../quality/national-roads-verification.md)·[실행 기록](../history/executed-plans/2026-10-02-1427-national-roads.md).
+
+2026-10-02 사용자 결정: 4-4 실제 휴대폰 연결 테스트는 나중에 진행한다. 지금은 전국 가공·배포·갱신/복구·PC 검증을 수행하며 휴대폰 항목은 미검증 후속으로 유지한다.
+
+4-4 측정: 2026-09-29 원본은 highway 1,816,595개·보행 가능 way 1,662,978개·gzip 336,612,606바이트다. 2026-09-30 원본은 highway 1,817,116개·보행 가능 way 1,663,412개이며 같은 타일 26,600개를 재사용하고 117개를 갱신했다. 두 날짜 보관 참조 합집합은 약 370.6MiB다. 도로 관련 Node 62개·Python 5개·타입·린트·Android Hermes 내보내기를 통과했다. [용량 보고서](../quality/national-roads-storage-plan.json)·[날짜 갱신 리허설](../quality/national-roads-update-rehearsal-report.json).
+
+4-4 최종 상태: 공개 포인터는 `kr-20260930-c8cb96030306-roads-v1`이다. 전체 자동 검사 165개·타입·린트 통과, arm64/x86_64 release APK 빌드·기존 서명 일치를 확인했다. `build/install/running-art-0.1.0-20261002-national.apk`는 95,680,819바이트다. 휴대폰 설치·전국 계산/성능 검증은 사용자 결정으로 수행하지 않았다. 운영 도메인/CDN·실제 청구 비용·저사양 기기 확인도 후속이다.
 
 [서버 서비스와 가입 준비 안내](../planning/cloud-services-and-accounts.md)에 서비스 역할·AWS 비교·Supabase 이전 가능성과 가입 준비 목록을 정리했다. **2026-10-01 사용자 생성 `running-art` R2 버킷(APAC·Standard)에 개발용 표본 배포·공개 다운로드 검증을 완료했다.** Cloudflare·Supabase 계정은 가입했으며 Supabase 프로젝트 생성 여부는 미확인이다. 도메인 구매는 사용자 결정으로 운영 단계로 미뤘다. 공개 도로 표본 배포에 이어 일반 앱 공급 전환·휴대폰 캐시 검증도 완료했다.
 
 ## 현재 바로 다음 작업
 
-**4-1 표본 검증·4-2 개발용 R2 실제 배포·4-3 표본 범위의 일반 앱 연결과 휴대폰 캐시 검증을 완료했다.** 2026-10-01 일반 코스 계산을 R2 개발용 표본과 SQLite 영구 캐시에 연결했고 기존 API·대체 호출을 제거했다. SM-S942N에서 빈 캐시 수신·취소/재시도·앱 강제 종료 후 완전 오프라인 계산과 기존 코스 1개·메모 1개 보존을 확인했다. 다음 데이터 작업은 **4-4 전국 공급 범위·갱신/복구·용량 운영**이며 서버 독립 앱 기능인 **코스 시뮬레이션은 구현·PC·에뮬레이터 검증 완료, 실제 휴대폰 검증 후속**이다. 도메인 구매·운영 CDN·실제 이전 릴리스 복구·회원/동기화·커뮤니티는 후속이다. 기존 테스트 서버 복구·유료화·CI/CD는 재개하지 않는다.
+**4-1~4-3 표본 검증에 이어 4-4의 전국 공급·갱신/복구·용량 운영을 PC와 개발용 R2에서 완료했다.** 다음 기기 검증은 전국 APK와 코스 시뮬레이션을 기존 데이터를 유지해 설치하고 온라인/오프라인 계산·재생을 확인하는 것이며, 사용자가 나중에 진행하기로 했다. 그 밖의 다음 기능 선택 범위는 실제 러닝 추적/기록 또는 Supabase 로그인·개인 자료 동기화다. 회원·공유·커뮤니티와 운영 도메인/CDN은 후속이고 기존 테스트 서버 복구·유료화·CI/CD는 재개하지 않는다.
 
-현재 일반 계산은 네 표본(서울 강남·부산 시청·구로/광명·판교로228번길 17)을 지원한다. 판교 중심은 37.400805, 127.101494, 반경 2km다. 새 버전의 타일 31개·전체 입력/그래프를 R2와 별도 오프라인 프로세스에서 대조했다. 판교 휴대폰 하트 3km 후보 5개, 첫 계산 11.71초·재시작 후 오프라인 9.65초를 확인했다. **자동 검사 135개·타입·린트 통과.** 단일 기기 관측값이며 성능 보장은 아니다. [판교 검증](../quality/pangyo-roads-verification.md)·[일반 계산 사용법](../development/route-center.md).
+현재 앱 소스와 새 APK의 일반 계산은 지도 중심 주변 2km를 전국 채널에서 조회한다. 지원 중심 사각형은 위도 [33,39), 경도 [124,132)이며 도로 내용은 고정 Geofabrik 한국 추출본 기준이다. 서울 강남·부산 시청·구로/광명·판교에 대전·제주·울릉도 바로가기를 추가했다. 휴대폰의 기존 판교 설치본은 아직 네 표본만 사용한다. 당시 판교 휴대폰 하트 3km 후보 5개·첫 계산 11.71초·재시작 후 오프라인 9.65초 결과는 [판교 검증](../quality/pangyo-roads-verification.md)에 보존하며 전국 성능의 증거로 사용하지 않는다. [일반 계산 사용법](../development/route-center.md).
 
 새 자료는 HTTPS 포인터·불변 매니페스트·gzip 해시/크기를 확인한 뒤 별도 SQLite에 저장한다. 64 MiB·7일 기본값을 유지한다. 유효 기간 내 저장 목록에 새 지역이 없으면 최신 목록을 확인한다. 최초 세 지역 연결 당시의 133개 검사·도로 23개·서울 온라인/오프라인 측정은 [캐시 검증](../quality/road-cache-verification.md)·[당시 휴대폰 증거](../quality/road-cache-phone-report.json)에 보존한다.
 
-**개발용 공급 주소:** [현재 표본 버전](https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev/roads/samples/v1/current.json). 사용자 확인 후 공개 URL 활성화를 확인했고 버킷 한정 Object Read & Write·1주일 사용자 토큰을 발급했다(2026-10-08 만료). 키는 Git 제외 로컬 파일에 Windows DPAPI로 암호화하고 실행 중 환경 변수로만 전달한다. 설정은 `.cache/road-deploy/r2-dev.json`, 로컬 실행 래퍼는 `.cache/road-deploy/run-r2-dev.ps1`이다. [실제 검증 JSON](../quality/road-deployment-r2-dev-report.json)·[검증 안내](../quality/road-deployment-verification.md)·[배포 절차](../development/road-deployment.md)·[후속 실행 기록](../history/executed-plans/2026-09-30-1643-road-deployment.md)을 따른다.
+**개발용 공급 주소:** [현재 전국 버전](https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev/roads/national/v1/current.json) · [기존 표본 버전](https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev/roads/samples/v1/current.json). 사용자 확인 후 공개 URL 활성화를 확인했고 버킷 한정 Object Read & Write·1주일 사용자 토큰을 발급했다(2026-10-08 만료). 키는 Git 제외 로컬 파일에 Windows DPAPI로 암호화하고 실행 중 환경 변수로만 전달한다. 설정은 `.cache/road-deploy/r2-dev.json`, 전국 실행 래퍼는 `.cache/road-deploy/run-national-r2.ps1`, 기존 표본 래퍼는 `.cache/road-deploy/run-r2-dev.ps1`이다. [실제 검증 JSON](../quality/road-deployment-r2-dev-report.json)·[검증 안내](../quality/road-deployment-verification.md)·[배포 절차](../development/road-deployment.md)·[후속 실행 기록](../history/executed-plans/2026-09-30-1643-road-deployment.md)을 따른다.
 
 **현재 휴대폰 설치본:** 2026-10-01 23:41:32 KST에 업데이트한 `build/install/running-art-0.1.0-20261001-pangyo.apk`(95,662,219바이트, arm64·x86_64). 설치본 해시 일치·기존 코스 1개/메모 1개·최초 설치 시각·데이터 경로를 보존했다. 네트워크 설정은 원래대로 복구했다. 이전 버전 포함 캐시 54개·2.65MiB이며 네 지역을 새 목록 기준으로 저장했다. [판교 검증](../quality/pangyo-roads-verification.md)·[APK 안내](../development/android-test-apk.md).
 

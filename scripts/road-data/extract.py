@@ -40,11 +40,13 @@ def intersects(a, b, box):
 
 
 class Extract(osmium.SimpleHandler):
-    def __init__(self, regions):
+    def __init__(self, regions, stream=None):
         super().__init__()
         self.regions = regions
         self.elements = []
         self.highways = 0
+        self.stream = stream
+        self.extracted = 0
 
     def way(self, way):
         if not way.tags.get("highway") or len(way.nodes) < 2:
@@ -54,23 +56,31 @@ class Extract(osmium.SimpleHandler):
         coordinates = [(node.lat, node.lon) for node in way.nodes]
         extent = [min(p[0] for p in coordinates), min(p[1] for p in coordinates),
                   max(p[0] for p in coordinates), max(p[1] for p in coordinates)]
-        regions = [r for r in self.regions if extent[0] <= r[2] and extent[2] >= r[0]
+        regions = [r for r in (self.regions or []) if extent[0] <= r[2] and extent[2] >= r[0]
                    and extent[1] <= r[3] and extent[3] >= r[1]]
-        if not regions or not any(intersects(a, b, r) for r in regions
-                                  for a, b in zip(coordinates, coordinates[1:])):
+        if self.regions is not None and (not regions or not any(intersects(a, b, r) for r in regions
+                                  for a, b in zip(coordinates, coordinates[1:]))):
             return
-        self.elements.append({"type": "way", "id": way.id,
+        element = {"type": "way", "id": way.id,
                               "nodes": [node.ref for node in way.nodes],
                               "geometry": [{"lat": p[0], "lon": p[1]} for p in coordinates],
-                              "tags": dict(way.tags)})
+                              "tags": dict(way.tags)}
+        self.extracted += 1
+        if self.stream:
+            self.stream.write(json.dumps(element, ensure_ascii=False, separators=(",", ":")) + "\n")
+        else:
+            self.elements.append(element)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-dir", default=".cache/road-data/raw")
+    parser.add_argument("--source-lock", default=str(HERE / "source-lock.json"))
     parser.add_argument("--output", default=".cache/road-data/extracted.json")
+    parser.add_argument("--national", action="store_true", help="Extract all highway ways in the pinned Korean source")
+    parser.add_argument("--jsonl", action="store_true", help="Stream metadata then one highway per line, avoiding a national in-memory list")
     args = parser.parse_args()
-    source = json.loads((HERE / "source-lock.json").read_text(encoding="utf-8"))
+    source = json.loads(Path(args.source_lock).read_text(encoding="utf-8"))
     samples = json.loads((HERE / "samples.json").read_text(encoding="utf-8"))
     path = Path(args.source_dir) / source["file"]
     if path.stat().st_size != source["bytes"]:
@@ -91,16 +101,35 @@ def main():
                             (math.floor(box[2] / size) + 1) * size,
                             (math.floor(box[3] / size) + 1) * size])
     started = time.perf_counter()
-    handler = Extract(regions)
-    handler.apply_file(str(path), locations=True, idx="sparse_mem_array")
-    handler.elements.sort(key=lambda e: e["id"])
-    result = {"source": source, "regions": regions, "elements": handler.elements}
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    print(json.dumps({"output": str(output), "highwayWaysScanned": handler.highways,
-                      "extractedWays": len(handler.elements),
-                      "elapsedSeconds": round(time.perf_counter() - started, 3)}), flush=True)
+    selected = None if args.national else regions
+    metadata = {"source": source, "regions": selected}
+    if args.jsonl:
+        temporary = output.with_suffix(output.suffix + ".partial")
+        with temporary.open("w", encoding="utf-8", newline="\n") as stream:
+            stream.write(json.dumps(metadata, ensure_ascii=False, separators=(",", ":")) + "\n")
+            handler = Extract(selected, stream)
+            handler.apply_file(str(path), locations=True, idx="sparse_mem_array")
+        temporary.replace(output)
+    else:
+        handler = Extract(selected)
+        handler.apply_file(str(path), locations=True, idx="sparse_mem_array")
+        handler.elements.sort(key=lambda e: e["id"])
+        output.write_text(json.dumps({**metadata, "elements": handler.elements}, ensure_ascii=False,
+                                    separators=(",", ":")), encoding="utf-8")
+    with output.open("rb") as stream:
+        output_hash = hashlib.file_digest(stream, "sha256").hexdigest()
+    report = {"output": str(output), "source": source, "national": args.national,
+              "jsonl": args.jsonl, "outputBytes": output.stat().st_size,
+              "outputSha256": output_hash, "highwayWaysScanned": handler.highways,
+              "extractedWays": handler.extracted,
+              "elapsedSeconds": round(time.perf_counter() - started, 3)}
+    report_path = output.with_suffix(output.suffix + ".report.json")
+    report_temp = report_path.with_suffix(report_path.suffix + ".partial")
+    report_temp.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_temp.replace(report_path)
+    print(json.dumps(report), flush=True)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,8 @@ import type { RoadFetch } from './channel.ts';
 import { checkRoadCacheSignal, RoadCacheError } from './persistent-cache.ts';
 import type { RoadCache, RoadCacheRequest, RoadCacheResult } from './persistent-cache.ts';
 import { mobileRoadCodecs } from './mobile-codecs.ts';
+import { createNationalChannel } from './national-channel.ts';
+import { NATIONAL_PREFIX, nationalRegionId } from './national-format.ts';
 
 type Bounds = [number, number, number, number]; // south, west, north, east
 export type RoadMode = RoadCacheRequest['mode'];
@@ -27,14 +29,19 @@ export type RoadAttempt = { provider: string; mode: RoadMode; elapsedMs: number;
   requests: number; cache?: Omit<RoadCacheResult, 'elements'> };
 type RoadLoaderOptions = {
   getCache: () => Promise<RoadCache>; fetcher: RoadFetch; baseUrl?: string; timeoutMs?: number;
+  supply?: 'samples' | 'national';
   yieldToHost?: () => Promise<void>; onAttempt?: (event: RoadAttempt) => void;
 };
 export function createRoadLoader({ getCache, fetcher, baseUrl = DEFAULT_ROAD_BASE_URL, timeoutMs = 65000,
-  yieldToHost, onAttempt }: RoadLoaderOptions): RoadLoader {
-  const root = roadBaseUrl(baseUrl), source = `${root}/${ROAD_PREFIX}/current.json`;
+  yieldToHost, onAttempt, supply = 'samples' }: RoadLoaderOptions): RoadLoader {
+  const root = roadBaseUrl(baseUrl);
   return async (origin, radius, signal, mode = 'prefer-cache') => {
     checkRoadCacheSignal(signal);
     const bounds = roadBounds(origin, radius), started = performance.now();
+    let regionId: string | undefined;
+    try { if (supply === 'national') regionId = nationalRegionId(origin); }
+    catch { throw new Error('한국 도로 자료의 지원 범위를 벗어났어요. 지도를 이동해 주세요.'); }
+    const source = regionId ? `${root}/${NATIONAL_PREFIX}/current.json#${regionId}` : `${root}/${ROAD_PREFIX}/current.json`;
     const controller = new AbortController();
     let requests = 0, timedOut = false;
     let rejectInterrupted!: (error: Error) => void;
@@ -51,7 +58,9 @@ export function createRoadLoader({ getCache, fetcher, baseUrl = DEFAULT_ROAD_BAS
         const cache = await getCache();
         checkRoadCacheSignal(controller.signal);
         return cache.load({ source, bounds, signal: controller.signal, mode, yieldToHost,
-          ...(mode === 'offline' ? {} : createRoadChannel(root, fetcher, mobileRoadCodecs, () => { requests++; })) });
+          ...(mode === 'offline' ? {} : regionId
+            ? createNationalChannel(root, regionId, fetcher, mobileRoadCodecs, () => { requests++; })
+            : createRoadChannel(root, fetcher, mobileRoadCodecs, () => { requests++; })) });
       })()]);
       checkRoadCacheSignal(controller.signal);
       const { elements, ...cache } = result;
@@ -65,7 +74,8 @@ export function createRoadLoader({ getCache, fetcher, baseUrl = DEFAULT_ROAD_BAS
       if (timedOut) throw new Error('도로 조회 시간이 초과됐어요. 다시 시도해 주세요.');
       if (error instanceof RoadCacheError) throw error;
       if (error instanceof Error && error.message === 'ROAD_FILE_MISSING_CELL') {
-        throw new Error('아직 도로 자료가 없는 지역이에요. 서울 강남·부산 시청·구로/광명 표본 중심을 선택해 주세요.');
+        throw new Error(supply === 'national' ? '선택한 범위의 도로 목록이 부족해요. 연결 후 다시 받아 주세요.'
+          : '아직 도로 자료가 없는 지역이에요. 서울 강남·부산 시청·구로/광명·판교 표본 중심을 선택해 주세요.');
       }
       if (error instanceof SyntaxError || (error instanceof Error && error.message.startsWith('ROAD_FILE_'))) {
         throw new Error('도로 자료 검증에 실패했어요. 연결 후 다시 받아 주세요.');

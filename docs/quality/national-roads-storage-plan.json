@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-10-02T06:23:32.451Z",
+  "mode": "read-only",
+  "releases": [
+    {
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "sourceTimestamp": "2026-09-29T20:22:51Z",
+      "newObjects": 26910,
+      "newBytes": 359496716,
+      "sharedObjects": 0
+    },
+    {
+      "release": "kr-20260930-c8cb96030306-roads-v1",
+      "sourceTimestamp": "2026-09-30T20:22:42Z",
+      "newObjects": 310,
+      "newBytes": 29150550,
+      "sharedObjects": 26600
+    }
+  ],
+  "retainedObjects": 27220,
+  "retainedBytes": 388647266,
+  "candidateUnreferencedObjects": 0,
+  "candidateUnreferencedBytes": 0,
+  "excludes": "Small attribution notices, current pointer, bucket metadata and other prefixes",
+  "deletionAuthorized": false,
+  "notes": "Unreferenced candidates are not safe to delete solely on this report. Confirm last served time, cache retention window and rollback needs."
+}

@@ -8,10 +8,12 @@ export type RoadWay = Omit<OsmElement, 'type' | 'nodes' | 'geometry' | 'tags'> &
 export type RoadFile = {
   id: string; bounds: Bounds; path: string; encoding: 'gzip'; bytes: number; sha256: string;
   decodedBytes: number; decodedSha256: string; ways: number;
+  tileRelease?: string; // National manifests may explicitly reuse identical older tile bytes.
 };
 export type RoadManifest = {
   format: 'running-art-road-manifest'; schemaVersion: 1; release: string;
-  coverage: 'samples'; coordinateOrder: 'lat,lon'; gridStepE7: number;
+  coverage: 'samples' | 'national'; coverageBounds?: Bounds; emptyCells?: string[];
+  coordinateOrder: 'lat,lon'; gridStepE7: number;
   source: { sha256: string; dataTimestamp: string; url: string; license: 'ODbL-1.0'; attribution: string };
   files: RoadFile[];
 };
@@ -78,42 +80,81 @@ export function validateManifest(value: unknown): asserts value is RoadManifest 
   requireValid(object(value), 'MANIFEST');
   requireValid(value.format === 'running-art-road-manifest' && value.schemaVersion === 1, 'VERSION');
   requireValid(typeof value.release === 'string' && releasePattern.test(value.release), 'RELEASE');
-  requireValid(value.coverage === 'samples' && value.coordinateOrder === 'lat,lon', 'COORDINATES');
+  requireValid(['samples', 'national'].includes(value.coverage as string) && value.coordinateOrder === 'lat,lon', 'COORDINATES');
   requireValid([100000, 200000, 400000].includes(value.gridStepE7 as number), 'GRID');
+  if (value.coverage === 'national') {
+    validateBounds(value.coverageBounds);
+    requireValid(value.gridStepE7 === 200000, 'GRID');
+    const box = value.coverageBounds;
+    requireValid(box.every(n => Math.abs(n * 50 - Math.round(n * 50)) < 1e-8) &&
+      (box[2] - box[0]) <= 1 && (box[3] - box[1]) <= 1, 'COVERAGE');
+  } else requireValid(value.coverageBounds === undefined && value.emptyCells === undefined, 'COVERAGE');
   requireValid(object(value.source) && typeof value.source.sha256 === 'string' && hashPattern.test(value.source.sha256) &&
     typeof value.source.dataTimestamp === 'string' && Number.isFinite(Date.parse(value.source.dataTimestamp)) &&
     typeof value.source.url === 'string' && value.source.url.startsWith('https://') &&
     value.source.license === 'ODbL-1.0' && typeof value.source.attribution === 'string', 'SOURCE');
-  requireValid(Array.isArray(value.files) && value.files.length > 0 && value.files.length <= 10000, 'FILES');
+  requireValid(Array.isArray(value.files) && (value.files.length > 0 || value.coverage === 'national') && value.files.length <= 10000, 'FILES');
   const seen = new Set();
   for (const file of value.files) {
     requireValid(object(file) && typeof file.id === 'string' && /^-?\d+_-?\d+$/.test(file.id), 'CELL');
     requireValid(!seen.has(file.id), 'DUPLICATE_CELL'); seen.add(file.id);
     const [row, col] = file.id.split('_').map(Number);
     validateBounds(file.bounds);
+    if (value.coverage === 'national') {
+      const box = value.coverageBounds as Bounds;
+      requireValid(file.bounds[0] >= box[0] && file.bounds[1] >= box[1] &&
+        file.bounds[2] <= box[2] && file.bounds[3] <= box[3], 'COVERAGE');
+    }
     requireValid(JSON.stringify(file.bounds) === JSON.stringify(cellBounds(row, col, value.gridStepE7 as number)), 'CELL_BOUNDS');
     requireValid(file.path === `tiles/${file.id}.json.gz` && file.encoding === 'gzip', 'PATH');
     requireValid(integer(file.bytes, 1, MAX_PACKED) && integer(file.decodedBytes, 1, MAX_DECODED) &&
       integer(file.ways, 0, 100000), 'SIZE');
     requireValid(typeof file.sha256 === 'string' && hashPattern.test(file.sha256) &&
       typeof file.decodedSha256 === 'string' && hashPattern.test(file.decodedSha256), 'HASH');
+    requireValid(file.tileRelease === undefined || (value.coverage === 'national' &&
+      typeof file.tileRelease === 'string' && releasePattern.test(file.tileRelease)), 'TILE_RELEASE');
+  }
+  if (value.coverage === 'national') {
+    const box = value.coverageBounds as Bounds;
+    requireValid(Array.isArray(value.emptyCells) && value.emptyCells.length <= 2500, 'EMPTY_CELLS');
+    for (const id of value.emptyCells) {
+      requireValid(typeof id === 'string' && !seen.has(id), 'DUPLICATE_CELL');
+      seen.add(id);
+    }
+    let count = 0;
+    for (let row = Math.round(box[0] * 50); row < Math.round(box[2] * 50); row++) {
+      for (let col = Math.round(box[1] * 50); col < Math.round(box[3] * 50); col++) {
+        requireValid(seen.has(`${row}_${col}`), 'MISSING_CELL');
+        count++;
+      }
+    }
+    requireValid(seen.size === count, 'COVERAGE');
   }
 }
 
 export function selectRoadFiles(manifest: RoadManifest, bounds: Bounds): RoadFile[] {
   validateManifest(manifest);
+  validateBounds(bounds);
+  if (manifest.coverage === 'national') {
+    const box = manifest.coverageBounds!;
+    requireValid(bounds[0] >= box[0] && bounds[1] >= box[1] && bounds[2] < box[2] && bounds[3] < box[3], 'MISSING_CELL');
+  }
   const byId = new Map(manifest.files.map(file => [file.id, file]));
-  return coveringCells(bounds, manifest.gridStepE7).map(cell => {
+  const empty = new Set(manifest.emptyCells ?? []);
+  return coveringCells(bounds, manifest.gridStepE7).flatMap(cell => {
     const file = byId.get(cell.id);
+    // An authenticated, explicit empty-cell declaration is required. A missing
+    // entry must never silently turn incomplete generation into empty roads.
+    if (!file && empty.has(cell.id)) return [];
     requireValid(file, 'MISSING_CELL');
-    return file;
+    return [file];
   });
 }
 
 export function validateRoadTile(value: unknown, manifest: RoadManifest, file: RoadFile): asserts value is RoadTile {
   requireValid(object(value), 'TILE');
   requireValid(value.format === 'running-art-road-tile' && value.schemaVersion === manifest.schemaVersion, 'VERSION');
-  requireValid(value.release === manifest.release, 'RELEASE_MISMATCH');
+  requireValid(value.release === (file.tileRelease ?? manifest.release), 'RELEASE_MISMATCH');
   requireValid(value.id === file.id && JSON.stringify(value.bounds) === JSON.stringify(file.bounds), 'CELL_MISMATCH');
   requireValid(value.coordinateOrder === 'lat,lon', 'COORDINATES');
   requireValid(Array.isArray(value.elements) && value.elements.length === file.ways, 'WAY_COUNT');

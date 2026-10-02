@@ -1,0 +1,106 @@
+{
+  "recordedAt": "2026-10-02T06:20:53.421Z",
+  "transport": "local files through production channel/cache",
+  "oldSource": "9d436449e16fcf78866eb50caec91fca5067e494a6914130f869332297a8cd5a",
+  "newSource": "c8cb96030306bf6277bab5909b28bd499417e59e76b7a64bda11b9d1f4378f13",
+  "changedTile": "1878_6347",
+  "records": [
+    {
+      "label": "initial-old",
+      "requests": 123,
+      "inputSha256": "9192a24e5606c2c73d8500e515ef5486c0998d2955070c0a63bb5d9b02d4d81f",
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "950701c075e6e80ee9f234c52fd6c0c2fbb912e93edf93b141049d8c4bb9a023",
+      "files": 120,
+      "reused": 0,
+      "downloaded": 120,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 1000
+    },
+    {
+      "label": "failed-update-falls-back",
+      "requests": 103,
+      "inputSha256": "9192a24e5606c2c73d8500e515ef5486c0998d2955070c0a63bb5d9b02d4d81f",
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "950701c075e6e80ee9f234c52fd6c0c2fbb912e93edf93b141049d8c4bb9a023",
+      "files": 120,
+      "reused": 120,
+      "downloaded": 0,
+      "stale": true,
+      "updateFailed": true,
+      "checkedAt": 1000
+    },
+    {
+      "label": "offline-after-failure",
+      "requests": 0,
+      "inputSha256": "9192a24e5606c2c73d8500e515ef5486c0998d2955070c0a63bb5d9b02d4d81f",
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "950701c075e6e80ee9f234c52fd6c0c2fbb912e93edf93b141049d8c4bb9a023",
+      "files": 120,
+      "reused": 120,
+      "downloaded": 0,
+      "stale": true,
+      "updateFailed": false,
+      "checkedAt": 1000
+    },
+    {
+      "label": "successful-new",
+      "requests": 123,
+      "inputSha256": "fb16da72a10df6d1c866ee375d9c24d4591c858a5f4526749d330a73b0616e12",
+      "release": "kr-20260930-c8cb96030306-roads-v1",
+      "manifestHash": "73d9be8c9529a58c99ce03cc8df5f25e84a4839e1c4d3b82aec8e87fc996a88f",
+      "files": 120,
+      "reused": 0,
+      "downloaded": 120,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 3000
+    },
+    {
+      "label": "rollback-old",
+      "requests": 3,
+      "inputSha256": "9192a24e5606c2c73d8500e515ef5486c0998d2955070c0a63bb5d9b02d4d81f",
+      "release": "kr-20260929-9d436449e16f-roads-v1",
+      "manifestHash": "950701c075e6e80ee9f234c52fd6c0c2fbb912e93edf93b141049d8c4bb9a023",
+      "files": 120,
+      "reused": 120,
+      "downloaded": 0,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 4000
+    },
+    {
+      "label": "restore-new",
+      "requests": 3,
+      "inputSha256": "fb16da72a10df6d1c866ee375d9c24d4591c858a5f4526749d330a73b0616e12",
+      "release": "kr-20260930-c8cb96030306-roads-v1",
+      "manifestHash": "73d9be8c9529a58c99ce03cc8df5f25e84a4839e1c4d3b82aec8e87fc996a88f",
+      "files": 120,
+      "reused": 120,
+      "downloaded": 0,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 5000
+    },
+    {
+      "label": "final-offline",
+      "requests": 0,
+      "inputSha256": "fb16da72a10df6d1c866ee375d9c24d4591c858a5f4526749d330a73b0616e12",
+      "release": "kr-20260930-c8cb96030306-roads-v1",
+      "manifestHash": "73d9be8c9529a58c99ce03cc8df5f25e84a4839e1c4d3b82aec8e87fc996a88f",
+      "files": 120,
+      "reused": 120,
+      "downloaded": 0,
+      "stale": false,
+      "updateFailed": false,
+      "checkedAt": 5000
+    }
+  ],
+  "status": {
+    "bytes": 15104882,
+    "maxBytes": 67108864,
+    "datasets": 2,
+    "files": 240
+  }
+}
