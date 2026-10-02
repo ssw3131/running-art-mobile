@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.runningart.hermesprobe">
+  <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36" />
+  <application android:label="Running Art profiler" android:debuggable="true" />
+  <instrumentation android:name="com.runningart.hermesprobe.ProfileInstrumentation" android:targetPackage="com.runningart.mobile.dev" />
+</manifest>

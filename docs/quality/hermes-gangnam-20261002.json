@@ -1,0 +1,4141 @@
+{
+  "recordedAt": "2026-10-02T14:12:03.079Z",
+  "device": "SM-S942N / Android 16 / release Hermes",
+  "method": "Same cached Gangnam roads. Profiling run and preliminary 3 km sequence excluded from 5 km comparison. Timed runs sample CPU/thermal state through adb, without Hermes sampling. Telemetry itself can add overhead; frequencies are snapshots, not average clocks.",
+  "cpuTicksPerSecond": 100,
+  "input": {
+    "origin": {
+      "lat": 37.4979,
+      "lng": 127.0276
+    },
+    "shape": "heart",
+    "targetKm": 5,
+    "radiusKm": 2,
+    "nodes": 13614,
+    "edges": 15363,
+    "release": "kr-20260930-c8cb96030306-roads-v1",
+    "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+    "files": 9,
+    "downloaded": 0,
+    "fullInputFileSha256": "c1e6511d7a2df606446c837ec35f0678db679ef8ccdbb4e3d9553a3667893427",
+    "elementsArraySha256": "9258ec47bf29173776f888e94524cc156a79c233f68ff080095f452e4efcfd8b"
+  },
+  "apk": {
+    "baseline": {
+      "path": "build/install/running-art-0.1.0-20261002-performance.apk",
+      "sha256": "a84158c2c762843d3e8ac6eac08e5e227e7673d55200c346199e0edec3d526f7"
+    },
+    "arrayHeap": {
+      "sha256": "640740db75f95fdd409684cfeda43c309f2c209551f6fc6f373113475a042dc0",
+      "kept": false
+    },
+    "indexed": {
+      "sha256": "efc83e4fa44aaf8543488945f9f3037d8e28f7422c85e3c226c39e0bf6d29d27",
+      "kept": false
+    }
+  },
+  "correctness": {
+    "phoneChecks": "All 5 km runs: identical five unrounded candidate scores and routing diagnostics; full route coordinates not exported by phone metrics.",
+    "routing": {
+      "pathRequests": 147074,
+      "pathCacheHits": 33738,
+      "pathSearches": 112509,
+      "pathVisits": 8028589,
+      "maxCachedPaths": 8192,
+      "maxCachedNodes": 156435
+    },
+    "scores": [
+      83.57432504779673,
+      83.46385054507746,
+      82.98465200464246,
+      82.83311276745955,
+      82.68173701096887
+    ],
+    "pcFullResultSha256": "ef05b665709cf9df5a53d83d8efa76e45f27f6c6ac6640ec830d7bcacb547c05",
+    "pcFullResultEqualBothExperiments": true,
+    "finalEngineDiffEmpty": true
+  },
+  "profile": {
+    "traceSha256": "adc73c7946a96261855535d20ac0664c460a7cc4b8ed408200f44cc116d75bb2",
+    "sourceMapSha256": "8211a25e9f83253c220f75bf7ed5e104d8f553e3b0efed668bf1691d3646d32f",
+    "method": "Counts of samples with an engine ancestor; approximate proportions, not exact function durations. Profiled runs are excluded from wall-time comparisons.",
+    "totalSamples": 5743,
+    "engineSamples": 1830,
+    "gcSamplesUnderEngine": 29,
+    "self": [
+      {
+        "name": "shortestPathSteps",
+        "samples": 466,
+        "percent": 25.46448087431694
+      },
+      {
+        "name": "nearestNode",
+        "samples": 329,
+        "percent": 17.97814207650273
+      },
+      {
+        "name": "pop",
+        "samples": 254,
+        "percent": 13.879781420765028
+      },
+      {
+        "name": "push",
+        "samples": 210,
+        "percent": 11.475409836065573
+      },
+      {
+        "name": "routeFromTemplateSteps",
+        "samples": 102,
+        "percent": 5.573770491803279
+      },
+      {
+        "name": "dist",
+        "samples": 64,
+        "percent": 3.4972677595628414
+      },
+      {
+        "name": "[Native] mathHypot",
+        "samples": 52,
+        "percent": 2.841530054644809
+      },
+      {
+        "name": "[Native] arrayPrototypeSort",
+        "samples": 38,
+        "percent": 2.0765027322404372
+      },
+      {
+        "name": "[Native] stringPrototypeConcat",
+        "samples": 30,
+        "percent": 1.639344262295082
+      },
+      {
+        "name": "[GC Young Gen]",
+        "samples": 29,
+        "percent": 1.5846994535519126
+      },
+      {
+        "name": "[Native] mapPrototypeSet",
+        "samples": 21,
+        "percent": 1.1475409836065573
+      },
+      {
+        "name": "[Native] setConstructor",
+        "samples": 20,
+        "percent": 1.092896174863388
+      },
+      {
+        "name": "[Native] mapPrototypeGet",
+        "samples": 19,
+        "percent": 1.0382513661202186
+      },
+      {
+        "name": "[Native] runContextFunc1Arg",
+        "samples": 16,
+        "percent": 0.8743169398907104
+      },
+      {
+        "name": "c",
+        "samples": 16,
+        "percent": 0.8743169398907104
+      },
+      {
+        "name": "pb",
+        "samples": 14,
+        "percent": 0.7650273224043715
+      },
+      {
+        "name": "(anonymous)",
+        "samples": 13,
+        "percent": 0.7103825136612022
+      },
+      {
+        "name": "[Native] arrayPrototypeFind",
+        "samples": 13,
+        "percent": 0.7103825136612022
+      },
+      {
+        "name": "value",
+        "samples": 10,
+        "percent": 0.546448087431694
+      },
+      {
+        "name": "[Native] arrayPrototypePush",
+        "samples": 9,
+        "percent": 0.4918032786885246
+      },
+      {
+        "name": "nearbyTurns",
+        "samples": 9,
+        "percent": 0.4918032786885246
+      },
+      {
+        "name": "searchSteps",
+        "samples": 8,
+        "percent": 0.4371584699453552
+      },
+      {
+        "name": "[Native] setPrototypeAdd",
+        "samples": 7,
+        "percent": 0.3825136612021858
+      },
+      {
+        "name": "[Native] setPrototypeHas",
+        "samples": 7,
+        "percent": 0.3825136612021858
+      },
+      {
+        "name": "evaluate",
+        "samples": 7,
+        "percent": 0.3825136612021858
+      },
+      {
+        "name": "[Native] arrayPrototypeForEach",
+        "samples": 6,
+        "percent": 0.32786885245901637
+      },
+      {
+        "name": "[Native] generatorPrototypeResume",
+        "samples": 6,
+        "percent": 0.32786885245901637
+      },
+      {
+        "name": "densify",
+        "samples": 5,
+        "percent": 0.273224043715847
+      },
+      {
+        "name": "edgeUsage",
+        "samples": 5,
+        "percent": 0.273224043715847
+      },
+      {
+        "name": "routeBatch",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "remember",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "[Native] arrayPrototypeSlice",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "[Native] mathMin",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "[Native] arrayPrototypeMap",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "buildGraphSteps",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "_loop3",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "[Native] hermesBuiltinArraySpread",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "[Native] typedArrayPrototypeLength",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "scoreCandidate",
+        "samples": 2,
+        "percent": 0.1092896174863388
+      },
+      {
+        "name": "[Native] arrayPrototypeFill",
+        "samples": 2,
+        "percent": 0.1092896174863388
+      },
+      {
+        "name": "runnable",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "[Native] arrayPrototypeEvery",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "nodes",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "t",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "[Native] mapPrototypeSizeGetter",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "placementError",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "n",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "[Native] setIteratorPrototypeNext",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "roadInfo",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      }
+    ],
+    "inclusive": [
+      {
+        "name": "[Native] generatorPrototypeResume",
+        "samples": 1830,
+        "percent": 100
+      },
+      {
+        "name": "?anon_0_drain",
+        "samples": 1830,
+        "percent": 100
+      },
+      {
+        "name": "(anonymous)",
+        "samples": 1830,
+        "percent": 100
+      },
+      {
+        "name": "step",
+        "samples": 1830,
+        "percent": 100
+      },
+      {
+        "name": "tryCallOne",
+        "samples": 1830,
+        "percent": 100
+      },
+      {
+        "name": "[root]",
+        "samples": 1830,
+        "percent": 100
+      },
+      {
+        "name": "searchSteps",
+        "samples": 1825,
+        "percent": 99.72677595628416
+      },
+      {
+        "name": "routeBatch",
+        "samples": 1428,
+        "percent": 78.0327868852459
+      },
+      {
+        "name": "evaluate",
+        "samples": 1424,
+        "percent": 77.81420765027322
+      },
+      {
+        "name": "routeFromTemplateSteps",
+        "samples": 1310,
+        "percent": 71.5846994535519
+      },
+      {
+        "name": "shortestPathSteps",
+        "samples": 1052,
+        "percent": 57.486338797814206
+      },
+      {
+        "name": "placementError",
+        "samples": 382,
+        "percent": 20.87431693989071
+      },
+      {
+        "name": "nearestNode",
+        "samples": 364,
+        "percent": 19.89071038251366
+      },
+      {
+        "name": "variants",
+        "samples": 260,
+        "percent": 14.207650273224044
+      },
+      {
+        "name": "pop",
+        "samples": 259,
+        "percent": 14.153005464480874
+      },
+      {
+        "name": "push",
+        "samples": 220,
+        "percent": 12.021857923497267
+      },
+      {
+        "name": "add",
+        "samples": 127,
+        "percent": 6.939890710382514
+      },
+      {
+        "name": "dist",
+        "samples": 102,
+        "percent": 5.573770491803279
+      },
+      {
+        "name": "[Native] arrayPrototypeMap",
+        "samples": 69,
+        "percent": 3.7704918032786887
+      },
+      {
+        "name": "scoreCandidate",
+        "samples": 68,
+        "percent": 3.7158469945355193
+      },
+      {
+        "name": "nearbyTurns",
+        "samples": 62,
+        "percent": 3.387978142076503
+      },
+      {
+        "name": "[Native] mathHypot",
+        "samples": 52,
+        "percent": 2.841530054644809
+      },
+      {
+        "name": "[Native] arrayPrototypeSort",
+        "samples": 51,
+        "percent": 2.7868852459016393
+      },
+      {
+        "name": "[Native] stringPrototypeConcat",
+        "samples": 37,
+        "percent": 2.021857923497268
+      },
+      {
+        "name": "[GC Young Gen]",
+        "samples": 29,
+        "percent": 1.5846994535519126
+      },
+      {
+        "name": "densify",
+        "samples": 28,
+        "percent": 1.530054644808743
+      },
+      {
+        "name": "_loop3",
+        "samples": 27,
+        "percent": 1.4754098360655739
+      },
+      {
+        "name": "[Native] arrayPrototypeForEach",
+        "samples": 25,
+        "percent": 1.366120218579235
+      },
+      {
+        "name": "[Native] setConstructor",
+        "samples": 24,
+        "percent": 1.3114754098360655
+      },
+      {
+        "name": "[Native] arrayPrototypeFind",
+        "samples": 23,
+        "percent": 1.2568306010928962
+      },
+      {
+        "name": "remember",
+        "samples": 23,
+        "percent": 1.2568306010928962
+      },
+      {
+        "name": "[Native] mapPrototypeSet",
+        "samples": 22,
+        "percent": 1.2021857923497268
+      },
+      {
+        "name": "c",
+        "samples": 21,
+        "percent": 1.1475409836065573
+      },
+      {
+        "name": "edgeUsage",
+        "samples": 20,
+        "percent": 1.092896174863388
+      },
+      {
+        "name": "[Native] mapPrototypeGet",
+        "samples": 19,
+        "percent": 1.0382513661202186
+      },
+      {
+        "name": "[Native] runContextFunc1Arg",
+        "samples": 16,
+        "percent": 0.8743169398907104
+      },
+      {
+        "name": "pb",
+        "samples": 14,
+        "percent": 0.7650273224043715
+      },
+      {
+        "name": "[Native] arrayPrototypePush",
+        "samples": 12,
+        "percent": 0.6557377049180327
+      },
+      {
+        "name": "value",
+        "samples": 10,
+        "percent": 0.546448087431694
+      },
+      {
+        "name": "[Native] setPrototypeAdd",
+        "samples": 9,
+        "percent": 0.4918032786885246
+      },
+      {
+        "name": "angleSeries",
+        "samples": 7,
+        "percent": 0.3825136612021858
+      },
+      {
+        "name": "[Native] setPrototypeHas",
+        "samples": 7,
+        "percent": 0.3825136612021858
+      },
+      {
+        "name": "buildGraphSteps",
+        "samples": 5,
+        "percent": 0.273224043715847
+      },
+      {
+        "name": "_loop2",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "[Native] arrayPrototypeSlice",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "[Native] hermesBuiltinArraySpread",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "[Native] mathMin",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "[Native] arrayPrototypeReduce",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "[Native] typedArrayPrototypeLength",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "[Native] arrayPrototypeEvery",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "[Native] arrayPrototypeFill",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "[Native] arrayFrom",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "[Native] arrayPrototypeSome",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "runnable",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "edge",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "tryCallTwo",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "Promise",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "spawn",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "drain",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "?anon_2_calculateRoute",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "nodes",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "pathLength",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "t",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "transformPoints",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "[Native] mapPrototypeSizeGetter",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "n",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "[Native] setIteratorPrototypeNext",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "roadInfo",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      }
+    ],
+    "engineLines": [
+      {
+        "name": "355:0",
+        "samples": 466,
+        "percent": 25.46448087431694
+      },
+      {
+        "name": "320:0",
+        "samples": 329,
+        "percent": 17.97814207650273
+      },
+      {
+        "name": "139:2",
+        "samples": 254,
+        "percent": 13.879781420765028
+      },
+      {
+        "name": "121:2",
+        "samples": 210,
+        "percent": 11.475409836065573
+      },
+      {
+        "name": "432:0",
+        "samples": 102,
+        "percent": 5.573770491803279
+      },
+      {
+        "name": "10:0",
+        "samples": 64,
+        "percent": 3.4972677595628414
+      },
+      {
+        "name": "182:2",
+        "samples": 16,
+        "percent": 0.8743169398907104
+      },
+      {
+        "name": "172:15",
+        "samples": 14,
+        "percent": 0.7650273224043715
+      },
+      {
+        "name": "94:33",
+        "samples": 10,
+        "percent": 0.546448087431694
+      },
+      {
+        "name": "411:0",
+        "samples": 9,
+        "percent": 0.4918032786885246
+      },
+      {
+        "name": "535:0",
+        "samples": 8,
+        "percent": 0.4371584699453552
+      },
+      {
+        "name": "585:2",
+        "samples": 7,
+        "percent": 0.3825136612021858
+      },
+      {
+        "name": "423:11",
+        "samples": 6,
+        "percent": 0.32786885245901637
+      },
+      {
+        "name": "82:0",
+        "samples": 5,
+        "percent": 0.273224043715847
+      },
+      {
+        "name": "476:0",
+        "samples": 5,
+        "percent": 0.273224043715847
+      },
+      {
+        "name": "610:2",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "371:2",
+        "samples": 4,
+        "percent": 0.2185792349726776
+      },
+      {
+        "name": "247:0",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "533:21",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "464:12",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "589:57",
+        "samples": 3,
+        "percent": 0.16393442622950818
+      },
+      {
+        "name": "485:0",
+        "samples": 2,
+        "percent": 0.1092896174863388
+      },
+      {
+        "name": "238:0",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "463:14",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "426:30",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "642:23",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "524:0",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "531:38",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      },
+      {
+        "name": "516:0",
+        "samples": 1,
+        "percent": 0.0546448087431694
+      }
+    ]
+  },
+  "experiments": {
+    "arrayHeap": {
+      "pairs": [
+        {
+          "pair": 1,
+          "beforeMs": 21879.91824197769,
+          "afterMs": 21463.754415035248,
+          "reductionPercent": 1.9020355667692268
+        },
+        {
+          "pair": 2,
+          "beforeMs": 22729.908945083618,
+          "afterMs": 25541.66042995453,
+          "reductionPercent": -12.370271661290928
+        }
+      ],
+      "conclusion": "Mixed: not adopted."
+    },
+    "indexedLoops": {
+      "pairs": [
+        {
+          "pair": 1,
+          "beforeMs": 21350.673944950104,
+          "afterMs": 27065.45761704445,
+          "reductionPercent": -26.766291719077163
+        },
+        {
+          "pair": 2,
+          "beforeMs": 21583.417149066925,
+          "afterMs": 26991.721914052963,
+          "reductionPercent": -25.0576853870419
+        },
+        {
+          "pair": 3,
+          "beforeMs": 27975.6760160923,
+          "afterMs": 28165.665781021118,
+          "reductionPercent": -0.6791248398055902
+        }
+      ],
+      "conclusion": "Slower in all three observed pairs: not adopted."
+    }
+  },
+  "preliminary3KmNote": "The first three measurements retained the default 3 km. They are a separate same-process observation, never compared against 5 km timings. The harness subsequently asserted targetKm, routing and scores.",
+  "finalVerification": {
+    "installedApkSha256": "a84158c2c762843d3e8ac6eac08e5e227e7673d55200c346199e0edec3d526f7",
+    "installedApkHashMatches": true,
+    "firstInstallTime": "2026-09-27 16:29:39",
+    "lastUpdateTime": "2026-10-02 22:59:22",
+    "timezone": "Asia/Seoul",
+    "engineAndRunnerRestored": true,
+    "userRecordsByteIdentical": true,
+    "userTableCounts": {
+      "saved_courses": 1,
+      "storage_test_notes": 1,
+      "running_sessions": 2,
+      "running_points": 209
+    },
+    "temporaryProbeRemoved": true,
+    "appLaunchStatus": "ok"
+  },
+  "validation": {
+    "engineTests": 31,
+    "allTests": 188,
+    "typecheck": "passed",
+    "lint": "passed",
+    "experimentReleaseBuilds": "passed arm64-v8a,x86_64",
+    "helperBuild": "passed",
+    "noAdditionalAppPerformancePatch": true
+  },
+  "runs": [
+    {
+      "name": "baseline-cold-1",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "preliminary-3km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 3,
+        "elapsedMs": 14534.416758060455,
+        "computeMs": 14097.322417020798,
+        "maxSliceMs": 12.073789119720459,
+        "yields": 1690,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 143881,
+          "pathCacheHits": 76777,
+          "pathSearches": 62569,
+          "pathVisits": 3938607,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 133837
+        },
+        "timing": {
+          "roadMs": 1606.115977048874,
+          "calculationMs": 14534.438789129257,
+          "totalMs": 16140.554766178131
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 328.7285940647125,
+        "timerTicks": 255,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          78.14125866036666,
+          77.1270406116397,
+          76.9826309032336,
+          74.9211717487459,
+          74.79968221739675
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:33:20.568Z",
+        "batteryC": 32.6,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 38,
+          "BAT": 32.6,
+          "CP": 35.9,
+          "PA": 37.3,
+          "SKIN": 35,
+          "SUBBAT": 0,
+          "USB": 31.8
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          1056000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:33:39.009Z",
+        "batteryC": 32.9,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.9,
+          "BAT": 33.2,
+          "CP": 38.4,
+          "PA": 40.8,
+          "SKIN": 36.6,
+          "SUBBAT": 0,
+          "USB": 32
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          2016000,
+          2208000,
+          768000
+        ]
+      },
+      "samples": [],
+      "jsCpuRatioBetweenRunningSamples": null
+    },
+    {
+      "name": "baseline-warm-2",
+      "freshProcess": false,
+      "profiled": false,
+      "group": "preliminary-3km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 3,
+        "elapsedMs": 17658.5153131485,
+        "computeMs": 17037.290328741074,
+        "maxSliceMs": 15.468827962875366,
+        "yields": 2021,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 143881,
+          "pathCacheHits": 76777,
+          "pathSearches": 62569,
+          "pathVisits": 3938607,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 133837
+        },
+        "timing": {
+          "roadMs": 2451.0504298210144,
+          "calculationMs": 17658.539258003235,
+          "totalMs": 20109.58968782425
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 520.2057418823242,
+        "timerTicks": 312,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          78.14125866036666,
+          77.1270406116397,
+          76.9826309032336,
+          74.9211717487459,
+          74.79968221739675
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:33:39.272Z",
+        "batteryC": 33.3,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.9,
+          "BAT": 33.2,
+          "CP": 38.4,
+          "PA": 40.8,
+          "SKIN": 36.6,
+          "SUBBAT": 0,
+          "USB": 32
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          2208000,
+          2304000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:34:01.091Z",
+        "batteryC": 33.7,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.3,
+          "BAT": 33.7,
+          "CP": 38.6,
+          "PA": 40.7,
+          "SKIN": 36.9,
+          "SUBBAT": 0,
+          "USB": 32.1
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          1728000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [],
+      "jsCpuRatioBetweenRunningSamples": null
+    },
+    {
+      "name": "baseline-warm-3",
+      "freshProcess": false,
+      "profiled": false,
+      "group": "preliminary-3km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 3,
+        "elapsedMs": 17581.73132801056,
+        "computeMs": 17000.62292265892,
+        "maxSliceMs": 13.368007898330688,
+        "yields": 2023,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 143881,
+          "pathCacheHits": 76777,
+          "pathSearches": 62569,
+          "pathVisits": 3938607,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 133837
+        },
+        "timing": {
+          "roadMs": 2562.322266101837,
+          "calculationMs": 17581.756757974625,
+          "totalMs": 20144.07902407646
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 583.9353909492493,
+        "timerTicks": 312,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          78.14125866036666,
+          77.1270406116397,
+          76.9826309032336,
+          74.9211717487459,
+          74.79968221739675
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:34:01.418Z",
+        "batteryC": 33.7,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.3,
+          "BAT": 33.7,
+          "CP": 38.6,
+          "PA": 40.7,
+          "SKIN": 36.9,
+          "SUBBAT": 0,
+          "USB": 32.1
+        },
+        "cpuPolicyKhz": [
+          1248000,
+          1248000,
+          1344000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:34:24.081Z",
+        "batteryC": 34,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.8,
+          "BAT": 34,
+          "CP": 38.6,
+          "PA": 40.7,
+          "SKIN": 37.2,
+          "SUBBAT": 0,
+          "USB": 32.1
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [],
+      "jsCpuRatioBetweenRunningSamples": null
+    },
+    {
+      "name": "profile-baseline",
+      "freshProcess": false,
+      "profiled": true,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 20561.774024009705,
+        "computeMs": 19814.992352962494,
+        "maxSliceMs": 14.239882946014404,
+        "yields": 2403,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1645.2995309829712,
+          "calculationMs": 20561.800274133682,
+          "totalMs": 22207.099805116653
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 329.15019488334656,
+        "timerTicks": 349,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:35:31.029Z",
+        "batteryC": 33.7,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 36.3,
+          "BAT": 33.7,
+          "CP": 35.6,
+          "PA": 35.9,
+          "SKIN": 35.5,
+          "SUBBAT": 0,
+          "USB": 32.4
+        },
+        "cpuPolicyKhz": [
+          2016000,
+          1248000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:35:55.284Z",
+        "batteryC": 34.2,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 41.8,
+          "BAT": 34.3,
+          "CP": 38.7,
+          "PA": 40.8,
+          "SKIN": 37.2,
+          "SUBBAT": 0,
+          "USB": 32.6
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [],
+      "jsCpuRatioBetweenRunningSamples": null
+    },
+    {
+      "name": "baseline-restarted-warm",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 19717.34988284111,
+        "computeMs": 19038.687449216843,
+        "maxSliceMs": 12.54964804649353,
+        "yields": 2310,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1604.7330069541931,
+          "calculationMs": 19717.381172180176,
+          "totalMs": 21322.11417913437
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 326.1359758377075,
+        "timerTicks": 337,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:36:51.098Z",
+        "batteryC": 34.4,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 39.2,
+          "BAT": 34.4,
+          "CP": 37.6,
+          "PA": 38.7,
+          "SKIN": 36.7,
+          "SUBBAT": 0,
+          "USB": 32.9
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          768000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:37:14.403Z",
+        "batteryC": 35,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 43.9,
+          "BAT": 35,
+          "CP": 39.6,
+          "PA": 41.9,
+          "SKIN": 38,
+          "SUBBAT": 0,
+          "USB": 33
+        },
+        "cpuPolicyKhz": [
+          2016000,
+          1920000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [],
+      "jsCpuRatioBetweenRunningSamples": null
+    },
+    {
+      "name": "paired-before-1",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 21879.91824197769,
+        "computeMs": 21057.39206314087,
+        "maxSliceMs": 13.575624942779541,
+        "yields": 2546,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1612.9965629577637,
+          "calculationMs": 21879.949609041214,
+          "totalMs": 23492.946171998978
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 324.0294919013977,
+        "timerTicks": 367,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:41:35.978Z",
+        "batteryC": 33.9,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 38.6,
+          "BAT": 33.9,
+          "CP": 36.2,
+          "PA": 37.6,
+          "SKIN": 35.6,
+          "SUBBAT": 0,
+          "USB": 33.2
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:42:01.808Z",
+        "batteryC": 34.5,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.6,
+          "BAT": 34.5,
+          "CP": 38.4,
+          "PA": 40,
+          "SKIN": 36.7,
+          "SUBBAT": 0,
+          "USB": 33.4
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          1248000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:41:38.128Z",
+          "state": "R",
+          "cpuTicks": 137,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1152000,
+            1344000,
+            672000,
+            3801000
+          ],
+          "lastCpuPolicyKhz": 3801000
+        },
+        {
+          "at": "2026-10-02T13:41:41.543Z",
+          "state": "R",
+          "cpuTicks": 470,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            400000,
+            2304000,
+            1536000,
+            2976000
+          ],
+          "lastCpuPolicyKhz": 2976000
+        },
+        {
+          "at": "2026-10-02T13:41:45.009Z",
+          "state": "R",
+          "cpuTicks": 810,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            672000,
+            2208000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:41:48.674Z",
+          "state": "R",
+          "cpuTicks": 1167,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            2208000,
+            2208000,
+            2208000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 2208000
+        },
+        {
+          "at": "2026-10-02T13:41:52.314Z",
+          "state": "R",
+          "cpuTicks": 1527,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            672000,
+            2304000,
+            2016000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T13:41:56.007Z",
+          "state": "R",
+          "cpuTicks": 1884,
+          "lastCpu": 8,
+          "policyFrequenciesKhz": [
+            2304000,
+            2304000,
+            2304000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 2304000
+        },
+        {
+          "at": "2026-10-02T13:41:59.622Z",
+          "state": "R",
+          "cpuTicks": 2240,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1536000,
+            1728000,
+            2208000,
+            2208000
+          ],
+          "lastCpuPolicyKhz": 2208000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9784125802549549
+    },
+    {
+      "name": "paired-after-1",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 21463.754415035248,
+        "computeMs": 20703.295697927475,
+        "maxSliceMs": 13.166484117507935,
+        "yields": 2507,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1824.2958209514618,
+          "calculationMs": 21463.78140592575,
+          "totalMs": 23288.077226877213
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 396.2112500667572,
+        "timerTicks": 368,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:43:17.280Z",
+        "batteryC": 34.5,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 40.1,
+          "BAT": 34.6,
+          "CP": 38.4,
+          "PA": 39.4,
+          "SKIN": 36.9,
+          "SUBBAT": 0,
+          "USB": 33.2
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:43:42.729Z",
+        "batteryC": 35,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 43.1,
+          "BAT": 35.2,
+          "CP": 39.4,
+          "PA": 41.4,
+          "SKIN": 37.7,
+          "SUBBAT": 0,
+          "USB": 33.3
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          1248000,
+          1248000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:43:19.348Z",
+          "state": "R",
+          "cpuTicks": 139,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            672000,
+            2208000,
+            3264000
+          ],
+          "lastCpuPolicyKhz": 3264000
+        },
+        {
+          "at": "2026-10-02T13:43:22.687Z",
+          "state": "R",
+          "cpuTicks": 463,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            2764000,
+            864000,
+            2976000
+          ],
+          "lastCpuPolicyKhz": 2976000
+        },
+        {
+          "at": "2026-10-02T13:43:26.104Z",
+          "state": "R",
+          "cpuTicks": 797,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            768000,
+            1344000,
+            2688000,
+            2400000
+          ],
+          "lastCpuPolicyKhz": 2400000
+        },
+        {
+          "at": "2026-10-02T13:43:29.711Z",
+          "state": "R",
+          "cpuTicks": 1151,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            1536000,
+            1632000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:43:33.327Z",
+          "state": "R",
+          "cpuTicks": 1508,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1344000,
+            672000,
+            2208000,
+            2208000
+          ],
+          "lastCpuPolicyKhz": 2208000
+        },
+        {
+          "at": "2026-10-02T13:43:36.894Z",
+          "state": "R",
+          "cpuTicks": 1857,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            1344000,
+            1248000,
+            2016000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T13:43:40.481Z",
+          "state": "R",
+          "cpuTicks": 2209,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            1248000,
+            672000,
+            2304000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 2304000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9795107178346661
+    },
+    {
+      "name": "paired-after-2",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 25541.66042995453,
+        "computeMs": 24517.17979669571,
+        "maxSliceMs": 14.269882917404175,
+        "yields": 2957,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 2667.81703209877,
+          "calculationMs": 25541.693125009537,
+          "totalMs": 28209.510157108307
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 503.9342179298401,
+        "timerTicks": 442,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:43:53.372Z",
+        "batteryC": 35.2,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 41,
+          "BAT": 35.4,
+          "CP": 39.3,
+          "PA": 40.5,
+          "SKIN": 37.9,
+          "SUBBAT": 0,
+          "USB": 33.4
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:44:24.219Z",
+        "batteryC": 35.6,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.1,
+          "BAT": 35.7,
+          "CP": 39.5,
+          "PA": 41,
+          "SKIN": 38,
+          "SUBBAT": 0,
+          "USB": 33.5
+        },
+        "cpuPolicyKhz": [
+          2016000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:43:55.572Z",
+          "state": "R",
+          "cpuTicks": 138,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            672000,
+            2592000,
+            2304000
+          ],
+          "lastCpuPolicyKhz": 2304000
+        },
+        {
+          "at": "2026-10-02T13:43:59.124Z",
+          "state": "R",
+          "cpuTicks": 482,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            1728000,
+            2496000,
+            2496000
+          ],
+          "lastCpuPolicyKhz": 2496000
+        },
+        {
+          "at": "2026-10-02T13:44:02.689Z",
+          "state": "R",
+          "cpuTicks": 833,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            1920000,
+            2304000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 1248000
+        },
+        {
+          "at": "2026-10-02T13:44:06.366Z",
+          "state": "R",
+          "cpuTicks": 1194,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            2208000,
+            672000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:44:10.105Z",
+          "state": "R",
+          "cpuTicks": 1561,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            1344000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:44:13.855Z",
+          "state": "R",
+          "cpuTicks": 1931,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2112000,
+            1920000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T13:44:17.741Z",
+          "state": "R",
+          "cpuTicks": 2315,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            672000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:44:21.748Z",
+          "state": "R",
+          "cpuTicks": 2710,
+          "lastCpu": 8,
+          "policyFrequenciesKhz": [
+            1248000,
+            672000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9825794621026895
+    },
+    {
+      "name": "paired-before-2",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 22729.908945083618,
+        "computeMs": 21890.580705165863,
+        "maxSliceMs": 14.527539014816284,
+        "yields": 2647,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1884.6512501239777,
+          "calculationMs": 22729.960546970367,
+          "totalMs": 24614.611797094345
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 381.84933495521545,
+        "timerTicks": 384,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:46:07.568Z",
+        "batteryC": 35.2,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 39.8,
+          "BAT": 35.3,
+          "CP": 38.4,
+          "PA": 39.4,
+          "SKIN": 37.3,
+          "SUBBAT": 0,
+          "USB": 33.5
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:46:34.385Z",
+        "batteryC": 35.7,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 43,
+          "BAT": 35.8,
+          "CP": 39.5,
+          "PA": 41.4,
+          "SKIN": 38.2,
+          "SUBBAT": 0,
+          "USB": 33.6
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          1824000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:46:09.662Z",
+          "state": "R",
+          "cpuTicks": 141,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            672000,
+            3168000,
+            3072000
+          ],
+          "lastCpuPolicyKhz": 3072000
+        },
+        {
+          "at": "2026-10-02T13:46:13.130Z",
+          "state": "R",
+          "cpuTicks": 479,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2208000,
+            1920000,
+            2784000,
+            2592000
+          ],
+          "lastCpuPolicyKhz": 2592000
+        },
+        {
+          "at": "2026-10-02T13:46:16.681Z",
+          "state": "R",
+          "cpuTicks": 826,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            2208000,
+            768000,
+            2304000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 2304000
+        },
+        {
+          "at": "2026-10-02T13:46:20.363Z",
+          "state": "R",
+          "cpuTicks": 1189,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2208000,
+            672000,
+            2208000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:46:24.813Z",
+          "state": "R",
+          "cpuTicks": 1633,
+          "lastCpu": 4,
+          "policyFrequenciesKhz": [
+            2112000,
+            2112000,
+            672000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 2112000
+        },
+        {
+          "at": "2026-10-02T13:46:30.160Z",
+          "state": "R",
+          "cpuTicks": 2157,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            1344000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9835105863986731
+    },
+    {
+      "name": "indexed-before-1",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 21350.673944950104,
+        "computeMs": 20614.07904648781,
+        "maxSliceMs": 14.316483974456787,
+        "yields": 2492,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1740.3408200740814,
+          "calculationMs": 21350.707655906677,
+          "totalMs": 23091.04847598076
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 367.09449195861816,
+        "timerTicks": 363,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:51:09.567Z",
+        "batteryC": 34.8,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 38.4,
+          "BAT": 34.8,
+          "CP": 37.4,
+          "PA": 38.1,
+          "SKIN": 36.5,
+          "SUBBAT": 0,
+          "USB": 33.4
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          1920000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:51:34.460Z",
+        "batteryC": 35.2,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 43.3,
+          "BAT": 35.4,
+          "CP": 39.4,
+          "PA": 41.2,
+          "SKIN": 37.8,
+          "SUBBAT": 0,
+          "USB": 33.4
+        },
+        "cpuPolicyKhz": [
+          2016000,
+          2112000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:51:11.708Z",
+          "state": "R",
+          "cpuTicks": 142,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            960000,
+            2304000,
+            1632000,
+            3360000
+          ],
+          "lastCpuPolicyKhz": 3360000
+        },
+        {
+          "at": "2026-10-02T13:51:15.142Z",
+          "state": "R",
+          "cpuTicks": 476,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            2764000,
+            1056000,
+            3168000
+          ],
+          "lastCpuPolicyKhz": 3168000
+        },
+        {
+          "at": "2026-10-02T13:51:18.622Z",
+          "state": "R",
+          "cpuTicks": 818,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            768000,
+            2496000,
+            2208000
+          ],
+          "lastCpuPolicyKhz": 2208000
+        },
+        {
+          "at": "2026-10-02T13:51:22.223Z",
+          "state": "R",
+          "cpuTicks": 1172,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            1920000,
+            1344000,
+            2208000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 2208000
+        },
+        {
+          "at": "2026-10-02T13:51:25.905Z",
+          "state": "R",
+          "cpuTicks": 1537,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1152000,
+            672000,
+            2208000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:51:29.636Z",
+          "state": "R",
+          "cpuTicks": 1903,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            2208000,
+            2208000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:51:33.351Z",
+          "state": "R",
+          "cpuTicks": 2269,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            2112000,
+            672000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9827657903248164
+    },
+    {
+      "name": "indexed-after-1",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 27065.45761704445,
+        "computeMs": 25897.869874238968,
+        "maxSliceMs": 14.070312023162842,
+        "yields": 3100,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 2716.8149218559265,
+          "calculationMs": 27065.507929086685,
+          "totalMs": 29782.32285094261
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 570.974219083786,
+        "timerTicks": 466,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:52:01.185Z",
+        "batteryC": 35.5,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 40.8,
+          "BAT": 35.7,
+          "CP": 39.4,
+          "PA": 40.5,
+          "SKIN": 37.9,
+          "SUBBAT": 0,
+          "USB": 33.5
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          1728000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:52:33.296Z",
+        "batteryC": 35.9,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42,
+          "BAT": 36,
+          "CP": 39.5,
+          "PA": 41,
+          "SKIN": 38.1,
+          "SUBBAT": 0,
+          "USB": 33.5
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          1344000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:52:03.348Z",
+          "state": "R",
+          "cpuTicks": 139,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            2304000,
+            1536000,
+            2016000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T13:52:06.914Z",
+          "state": "R",
+          "cpuTicks": 485,
+          "lastCpu": 2,
+          "policyFrequenciesKhz": [
+            2304000,
+            672000,
+            672000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 2304000
+        },
+        {
+          "at": "2026-10-02T13:52:10.579Z",
+          "state": "R",
+          "cpuTicks": 846,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2208000,
+            1248000,
+            1824000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:52:14.242Z",
+          "state": "R",
+          "cpuTicks": 1206,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            768000,
+            672000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:52:18.024Z",
+          "state": "R",
+          "cpuTicks": 1573,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1440000,
+            672000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:52:21.869Z",
+          "state": "R",
+          "cpuTicks": 1953,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            1248000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:52:25.806Z",
+          "state": "R",
+          "cpuTicks": 2341,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1632000,
+            672000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:52:29.629Z",
+          "state": "R",
+          "cpuTicks": 2715,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1632000,
+            2016000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9801757923975496
+    },
+    {
+      "name": "indexed-after-2",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 26991.721914052963,
+        "computeMs": 25927.139341831207,
+        "maxSliceMs": 13.486249923706055,
+        "yields": 3113,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 3325.0455470085144,
+          "calculationMs": 26991.773750066757,
+          "totalMs": 30316.81929707527
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 682.404492855072,
+        "timerTicks": 474,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:52:44.072Z",
+        "batteryC": 36,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 41.5,
+          "BAT": 36.1,
+          "CP": 39.8,
+          "PA": 40.7,
+          "SKIN": 38.3,
+          "SUBBAT": 0,
+          "USB": 33.5
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:53:17.245Z",
+        "batteryC": 36.3,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.7,
+          "BAT": 36.2,
+          "CP": 39.8,
+          "PA": 41.3,
+          "SKIN": 38.4,
+          "SUBBAT": 0,
+          "USB": 33.6
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:52:46.354Z",
+          "state": "R",
+          "cpuTicks": 144,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            768000,
+            1152000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:52:50.135Z",
+          "state": "R",
+          "cpuTicks": 508,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            1824000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:52:53.912Z",
+          "state": "R",
+          "cpuTicks": 880,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            1824000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:52:57.730Z",
+          "state": "R",
+          "cpuTicks": 1256,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2016000,
+            672000,
+            672000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:53:01.632Z",
+          "state": "R",
+          "cpuTicks": 1639,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            960000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:53:05.549Z",
+          "state": "R",
+          "cpuTicks": 2026,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            1728000,
+            1248000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:53:09.475Z",
+          "state": "R",
+          "cpuTicks": 2413,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            672000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:53:13.385Z",
+          "state": "R",
+          "cpuTicks": 2798,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            1824000,
+            1248000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.981835670156487
+    },
+    {
+      "name": "indexed-before-2",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 21583.417149066925,
+        "computeMs": 20831.995827913284,
+        "maxSliceMs": 13.007382869720459,
+        "yields": 2518,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1845.4276168346405,
+          "calculationMs": 21583.482069969177,
+          "totalMs": 23428.909686803818
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 390.9282810688019,
+        "timerTicks": 367,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:56:24.979Z",
+        "batteryC": 35.1,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 39.5,
+          "BAT": 35.3,
+          "CP": 38.2,
+          "PA": 39.1,
+          "SKIN": 37.1,
+          "SUBBAT": 0,
+          "USB": 33.6
+        },
+        "cpuPolicyKhz": [
+          2208000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:56:50.901Z",
+        "batteryC": 35.7,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 43.6,
+          "BAT": 35.8,
+          "CP": 39.5,
+          "PA": 41.5,
+          "SKIN": 38,
+          "SUBBAT": 0,
+          "USB": 33.6
+        },
+        "cpuPolicyKhz": [
+          2112000,
+          1920000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:56:27.064Z",
+          "state": "R",
+          "cpuTicks": 142,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            1632000,
+            3072000,
+            3072000
+          ],
+          "lastCpuPolicyKhz": 3072000
+        },
+        {
+          "at": "2026-10-02T13:56:30.495Z",
+          "state": "R",
+          "cpuTicks": 475,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2016000,
+            672000,
+            2592000,
+            2784000
+          ],
+          "lastCpuPolicyKhz": 2784000
+        },
+        {
+          "at": "2026-10-02T13:56:33.925Z",
+          "state": "R",
+          "cpuTicks": 813,
+          "lastCpu": 8,
+          "policyFrequenciesKhz": [
+            1248000,
+            1248000,
+            2496000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 2496000
+        },
+        {
+          "at": "2026-10-02T13:56:37.514Z",
+          "state": "R",
+          "cpuTicks": 1167,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            1248000,
+            1920000,
+            2112000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 2112000
+        },
+        {
+          "at": "2026-10-02T13:56:41.189Z",
+          "state": "R",
+          "cpuTicks": 1530,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            672000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T13:56:44.901Z",
+          "state": "R",
+          "cpuTicks": 1894,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2112000,
+            1536000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T13:56:48.599Z",
+          "state": "R",
+          "cpuTicks": 2258,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2304000,
+            1248000,
+            1152000,
+            2016000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9825864871140004
+    },
+    {
+      "name": "indexed-before-3",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 27975.6760160923,
+        "computeMs": 26762.48045706749,
+        "maxSliceMs": 16.420391082763672,
+        "yields": 3208,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 3409.4150002002716,
+          "calculationMs": 27975.731444835663,
+          "totalMs": 31385.146445035934
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 681.2162499427795,
+        "timerTicks": 495,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:57:01.650Z",
+        "batteryC": 35.9,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 40.9,
+          "BAT": 36,
+          "CP": 39.5,
+          "PA": 40.4,
+          "SKIN": 38.1,
+          "SUBBAT": 0,
+          "USB": 33.7
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:57:35.387Z",
+        "batteryC": 36.2,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.9,
+          "BAT": 36.1,
+          "CP": 39.5,
+          "PA": 40.8,
+          "SKIN": 38.1,
+          "SUBBAT": 0,
+          "USB": 33.9
+        },
+        "cpuPolicyKhz": [
+          2016000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:57:03.888Z",
+          "state": "R",
+          "cpuTicks": 141,
+          "lastCpu": 7,
+          "policyFrequenciesKhz": [
+            1440000,
+            1920000,
+            2016000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T13:57:07.625Z",
+          "state": "R",
+          "cpuTicks": 499,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            1440000,
+            2304000,
+            2016000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T13:57:11.294Z",
+          "state": "R",
+          "cpuTicks": 861,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1920000,
+            1056000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T13:57:15.039Z",
+          "state": "R",
+          "cpuTicks": 1227,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            1632000,
+            1440000,
+            672000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 672000
+        },
+        {
+          "at": "2026-10-02T13:57:18.734Z",
+          "state": "R",
+          "cpuTicks": 1590,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1728000,
+            2208000,
+            672000,
+            1920000
+          ],
+          "lastCpuPolicyKhz": 1920000
+        },
+        {
+          "at": "2026-10-02T13:57:22.601Z",
+          "state": "R",
+          "cpuTicks": 1971,
+          "lastCpu": 2,
+          "policyFrequenciesKhz": [
+            400000,
+            1344000,
+            1824000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 400000
+        },
+        {
+          "at": "2026-10-02T13:57:26.417Z",
+          "state": "R",
+          "cpuTicks": 2338,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1056000,
+            672000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:57:30.326Z",
+          "state": "R",
+          "cpuTicks": 2724,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1536000,
+            1824000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:57:34.228Z",
+          "state": "R",
+          "cpuTicks": 3107,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1728000,
+            2016000,
+            1248000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.977587343441002
+    },
+    {
+      "name": "indexed-after-3",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 28165.665781021118,
+        "computeMs": 27013.952862024307,
+        "maxSliceMs": 13.705039978027344,
+        "yields": 3233,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 3412.5539071559906,
+          "calculationMs": 28165.71136689186,
+          "totalMs": 31578.26527404785
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 623.6574609279633,
+        "timerTicks": 495,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:58:02.651Z",
+        "batteryC": 36.2,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 41.3,
+          "BAT": 36.2,
+          "CP": 39.9,
+          "PA": 40.1,
+          "SKIN": 37.9,
+          "SUBBAT": 0,
+          "USB": 34.1
+        },
+        "cpuPolicyKhz": [
+          1056000,
+          1152000,
+          1440000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T13:58:37.021Z",
+        "batteryC": 36.6,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.6,
+          "BAT": 36.6,
+          "CP": 40.3,
+          "PA": 41.7,
+          "SKIN": 38.9,
+          "SUBBAT": 0,
+          "USB": 33.9
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          1824000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:58:04.771Z",
+          "state": "R",
+          "cpuTicks": 143,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            672000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T13:58:08.591Z",
+          "state": "R",
+          "cpuTicks": 512,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            1248000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:58:12.519Z",
+          "state": "R",
+          "cpuTicks": 900,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            672000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:58:16.390Z",
+          "state": "R",
+          "cpuTicks": 1281,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            768000,
+            1824000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:58:20.293Z",
+          "state": "R",
+          "cpuTicks": 1663,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1632000,
+            1536000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T13:58:24.056Z",
+          "state": "R",
+          "cpuTicks": 2034,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            864000,
+            1248000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:58:27.955Z",
+          "state": "R",
+          "cpuTicks": 2417,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            864000,
+            960000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:58:31.886Z",
+          "state": "R",
+          "cpuTicks": 2802,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            1440000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:58:35.715Z",
+          "state": "S",
+          "cpuTicks": 3146,
+          "lastCpu": 1,
+          "policyFrequenciesKhz": [
+            1248000,
+            768000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1248000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9806380232343721
+    },
+    {
+      "name": "sustained-1",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 28038.178750038147,
+        "computeMs": 26852.820674419403,
+        "maxSliceMs": 13.948632955551147,
+        "yields": 3209,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 3025.581093788147,
+          "calculationMs": 28038.217539072037,
+          "totalMs": 31063.798632860184
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 576.3809368610382,
+        "timerTicks": 484,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T13:59:34.404Z",
+        "batteryC": 36.2,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 40.8,
+          "BAT": 36.3,
+          "CP": 39.3,
+          "PA": 40.3,
+          "SKIN": 38.2,
+          "SUBBAT": 0,
+          "USB": 33.9
+        },
+        "cpuPolicyKhz": [
+          1056000,
+          960000,
+          2208000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T14:00:08.244Z",
+        "batteryC": 36.6,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.4,
+          "BAT": 36.6,
+          "CP": 39.9,
+          "PA": 41.2,
+          "SKIN": 38.5,
+          "SUBBAT": 0,
+          "USB": 34
+        },
+        "cpuPolicyKhz": [
+          1440000,
+          1824000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T13:59:36.573Z",
+          "state": "R",
+          "cpuTicks": 140,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            1056000,
+            2304000,
+            2016000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T13:59:40.202Z",
+          "state": "R",
+          "cpuTicks": 493,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            2304000,
+            864000,
+            2016000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T13:59:43.908Z",
+          "state": "R",
+          "cpuTicks": 858,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            2016000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:59:47.692Z",
+          "state": "R",
+          "cpuTicks": 1231,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1632000,
+            1824000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:59:51.553Z",
+          "state": "R",
+          "cpuTicks": 1610,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1632000,
+            672000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T13:59:55.442Z",
+          "state": "R",
+          "cpuTicks": 1991,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            1056000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T13:59:59.273Z",
+          "state": "R",
+          "cpuTicks": 2369,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            576000,
+            1344000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:00:03.141Z",
+          "state": "S",
+          "cpuTicks": 2747,
+          "lastCpu": 0,
+          "policyFrequenciesKhz": [
+            1824000,
+            1824000,
+            1248000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T14:00:06.988Z",
+          "state": "S",
+          "cpuTicks": 3094,
+          "lastCpu": 1,
+          "policyFrequenciesKhz": [
+            1824000,
+            1248000,
+            1824000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9819383259911895
+    },
+    {
+      "name": "steady-1",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 24309.354766130447,
+        "computeMs": 23333.03512954712,
+        "maxSliceMs": 15.768047094345093,
+        "yields": 2811,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 1697.9941020011902,
+          "calculationMs": 24309.395547151566,
+          "totalMs": 26007.389649152756
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 354.93031311035156,
+        "timerTicks": 403,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T14:02:25.130Z",
+        "batteryC": 36,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 39.4,
+          "BAT": 36,
+          "CP": 38.3,
+          "PA": 39,
+          "SKIN": 37.5,
+          "SUBBAT": 0,
+          "USB": 34
+        },
+        "cpuPolicyKhz": [
+          1248000,
+          2208000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T14:02:54.010Z",
+        "batteryC": 36.5,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.5,
+          "BAT": 36.6,
+          "CP": 40,
+          "PA": 41.3,
+          "SKIN": 38.5,
+          "SUBBAT": 0,
+          "USB": 34.1
+        },
+        "cpuPolicyKhz": [
+          1248000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T14:02:27.168Z",
+          "state": "R",
+          "cpuTicks": 139,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            768000,
+            1632000,
+            3072000,
+            3456000
+          ],
+          "lastCpuPolicyKhz": 3456000
+        },
+        {
+          "at": "2026-10-02T14:02:30.560Z",
+          "state": "R",
+          "cpuTicks": 468,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            960000,
+            672000,
+            1440000,
+            2688000
+          ],
+          "lastCpuPolicyKhz": 2688000
+        },
+        {
+          "at": "2026-10-02T14:02:34.049Z",
+          "state": "R",
+          "cpuTicks": 810,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            768000,
+            672000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T14:02:37.761Z",
+          "state": "R",
+          "cpuTicks": 1169,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            2016000,
+            672000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T14:02:41.421Z",
+          "state": "R",
+          "cpuTicks": 1529,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            2112000,
+            1728000,
+            2112000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 2112000
+        },
+        {
+          "at": "2026-10-02T14:02:45.142Z",
+          "state": "R",
+          "cpuTicks": 1896,
+          "lastCpu": 6,
+          "policyFrequenciesKhz": [
+            2112000,
+            1536000,
+            672000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 672000
+        },
+        {
+          "at": "2026-10-02T14:02:48.910Z",
+          "state": "R",
+          "cpuTicks": 2267,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1152000,
+            672000,
+            2112000,
+            1824000
+          ],
+          "lastCpuPolicyKhz": 1824000
+        },
+        {
+          "at": "2026-10-02T14:02:52.790Z",
+          "state": "S",
+          "cpuTicks": 2590,
+          "lastCpu": 2,
+          "policyFrequenciesKhz": [
+            2016000,
+            1728000,
+            672000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.978750804893754
+    },
+    {
+      "name": "steady-2",
+      "freshProcess": false,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 28137.25832080841,
+        "computeMs": 27062.35251569748,
+        "maxSliceMs": 13.173711061477661,
+        "yields": 3240,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 3268.4063279628754,
+          "calculationMs": 28137.297461032867,
+          "totalMs": 31405.703788995743
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 659.3191020488739,
+        "timerTicks": 488,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T14:02:54.662Z",
+        "batteryC": 36.5,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 41.5,
+          "BAT": 36.6,
+          "CP": 39.9,
+          "PA": 41,
+          "SKIN": 38.5,
+          "SUBBAT": 0,
+          "USB": 34.1
+        },
+        "cpuPolicyKhz": [
+          1248000,
+          672000,
+          1824000,
+          1632000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T14:03:29.241Z",
+        "batteryC": 36.7,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.6,
+          "BAT": 36.7,
+          "CP": 40,
+          "PA": 41.5,
+          "SKIN": 38.7,
+          "SUBBAT": 0,
+          "USB": 34.1
+        },
+        "cpuPolicyKhz": [
+          2016000,
+          672000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T14:02:57.092Z",
+          "state": "R",
+          "cpuTicks": 2693,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            1728000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T14:03:00.833Z",
+          "state": "R",
+          "cpuTicks": 3056,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            960000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:04.657Z",
+          "state": "R",
+          "cpuTicks": 3432,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            1248000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:08.613Z",
+          "state": "R",
+          "cpuTicks": 3821,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1152000,
+            1248000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:12.434Z",
+          "state": "R",
+          "cpuTicks": 4194,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1248000,
+            1824000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:16.396Z",
+          "state": "R",
+          "cpuTicks": 4584,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1344000,
+            672000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:20.333Z",
+          "state": "R",
+          "cpuTicks": 4972,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            1440000,
+            1248000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:24.286Z",
+          "state": "R",
+          "cpuTicks": 5360,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            768000,
+            1440000,
+            2016000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T14:03:28.164Z",
+          "state": "S",
+          "cpuTicks": 5676,
+          "lastCpu": 1,
+          "policyFrequenciesKhz": [
+            2016000,
+            1536000,
+            672000,
+            768000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9807310436125616
+    },
+    {
+      "name": "steady-restarted",
+      "freshProcess": true,
+      "profiled": false,
+      "group": "gangnam-5km",
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 27856.08390688896,
+        "computeMs": 26748.297968149185,
+        "maxSliceMs": 14.05679702758789,
+        "yields": 3211,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 147074,
+          "pathCacheHits": 33738,
+          "pathSearches": 112509,
+          "pathVisits": 8028589,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 156435
+        },
+        "timing": {
+          "roadMs": 3430.3669531345367,
+          "calculationMs": 27856.122109889984,
+          "totalMs": 31286.48906302452
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1790938315197
+        },
+        "maxTimerLagMs": 735.970624923706,
+        "timerTicks": 490,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.57432504779673,
+          83.46385054507746,
+          82.98465200464246,
+          82.83311276745955,
+          82.68173701096887
+        ]
+      },
+      "before": {
+        "at": "2026-10-02T14:03:39.686Z",
+        "batteryC": 36.8,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 42.8,
+          "BAT": 36.9,
+          "CP": 40.8,
+          "PA": 42.1,
+          "SKIN": 38.9,
+          "SUBBAT": 0,
+          "USB": 34.3
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          1344000,
+          672000,
+          768000
+        ]
+      },
+      "after": {
+        "at": "2026-10-02T14:04:12.869Z",
+        "batteryC": 37.1,
+        "usbPowered": true,
+        "thermalStatus": 0,
+        "temperaturesC": {
+          "AP": 44,
+          "BAT": 37.1,
+          "CP": 40.5,
+          "PA": 41.8,
+          "SKIN": 39.1,
+          "SUBBAT": 0,
+          "USB": 34.4
+        },
+        "cpuPolicyKhz": [
+          1824000,
+          1824000,
+          672000,
+          768000
+        ]
+      },
+      "samples": [
+        {
+          "at": "2026-10-02T14:03:41.946Z",
+          "state": "R",
+          "cpuTicks": 138,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            672000,
+            1632000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:45.744Z",
+          "state": "R",
+          "cpuTicks": 508,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            864000,
+            2016000,
+            672000,
+            1728000
+          ],
+          "lastCpuPolicyKhz": 1728000
+        },
+        {
+          "at": "2026-10-02T14:03:49.596Z",
+          "state": "R",
+          "cpuTicks": 888,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1344000,
+            1824000,
+            672000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:03:53.500Z",
+          "state": "R",
+          "cpuTicks": 1271,
+          "lastCpu": 7,
+          "policyFrequenciesKhz": [
+            1248000,
+            1344000,
+            2016000,
+            1248000
+          ],
+          "lastCpuPolicyKhz": 2016000
+        },
+        {
+          "at": "2026-10-02T14:03:57.390Z",
+          "state": "R",
+          "cpuTicks": 1653,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            1824000,
+            768000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:04:01.260Z",
+          "state": "R",
+          "cpuTicks": 2036,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1344000,
+            672000,
+            1824000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:04:05.163Z",
+          "state": "R",
+          "cpuTicks": 2420,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1824000,
+            672000,
+            1248000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        },
+        {
+          "at": "2026-10-02T14:04:09.112Z",
+          "state": "R",
+          "cpuTicks": 2808,
+          "lastCpu": 9,
+          "policyFrequenciesKhz": [
+            1344000,
+            672000,
+            1248000,
+            1632000
+          ],
+          "lastCpuPolicyKhz": 1632000
+        }
+      ],
+      "jsCpuRatioBetweenRunningSamples": 0.9828462048148421
+    }
+  ]
+}

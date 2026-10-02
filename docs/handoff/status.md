@@ -1,5 +1,7 @@
 # 현재 상태와 인수인계
 
+**2026-10-02 23:08 KST 강남 Hermes 후속 분석:** 같은 전국 도로·5km의 release 프로파일에서 A*가 자식 호출 포함 57.5%, 최근접 노드 본체가 18.0%, GC가 1.6%였다. 기존 앱의 연속 계산은 24.309→28.137초, 새 프로세스도 27.856초였고 CPU 순간 주파수 저하를 함께 관측했다. 발열/전력 정책의 정확한 원인은 미확정이다. 추가 구현 실험 2개는 개선 근거가 없어 되돌렸으며 엔진·실행기와 휴대폰은 기존 성능 버전을 유지한다. 기존 코스 1개·메모 1개·러닝 2건/209좌표의 바이트 동일 보존·설치 해시·도우미 제거를 확인했다. [분석·교차 비교·남은 검증](../quality/hermes-gangnam-20261002.md). 성능 조사는 완료했지만 추가 속도 개선은 확보하지 못했다.
+
 **2026-10-02 23:22 KST Google·Supabase 설정 완료:** 사용자 결정으로 Google·카카오·네이버 중 Google부터 설정했다. 전용 프로젝트 `Running Art Mobile`(`running-art-mobile`), 동의 화면 `Running Art`·외부·테스트 중·현재 계정 연락처/테스트 사용자, 기본 정보 범위 3개와 웹 OAuth 클라이언트를 저장했다. Supabase Google 제공자에 Client ID·Secret을 연결해 활성화했고 `runningart://auth/callback` 복귀 주소를 확인했다. 실제 로그인 시작 요청이 Google 계정 선택 화면에 도달했다. 최종 코드 교환·앱 복귀·세션 유지·동기화는 미검증이며 앱 구현 후 진행한다. 비밀 값은 파일·문서·채팅에 남기지 않았다. 앞선 인증 패키지·config plugin은 유지했고 이번 설정 재개에서 앱 코드·빌드·휴대폰 설치는 추가하지 않았다. [설정·후속 작업](../development/google-sign-in.md) · [실행 기록](../history/executed-plans/2026-10-02-2247-google-login.md).
 
 **2026-10-02 22:41 KST Supabase 프로젝트 생성 확인:** 사용자가 `running-art-mobile-dev`를 생성했고 로그인된 프로젝트 개요에서 `Running Art / Free`·서울(`ap-northeast-2`)·`Healthy`·`nano`를 확인했다. 연결 주소는 `https://zymfblgzpidgfjjgrino.supabase.co`다. 아직 마이그레이션은 없고 앱 연결·로그인·개인 자료 동기화는 미구현이다. 다음 회원 작업은 로그인 방식 선택·Publishable key 연결·회원별 DB/비공개 Storage 접근 정책·기존 로컬 코스와 완료된 러닝 기록의 동기화/복원이다. 이메일·비밀번호는 제안 단계이며 미확정이다. [실행 기록](../history/executed-plans/2026-10-02-2229-supabase-project-setup.md).
