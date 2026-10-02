@@ -1,0 +1,113 @@
+{
+  "checkedAt": "2026-10-02T15:01:29.8779252+09:00",
+  "timezone": "Asia/Seoul",
+  "device": "RunningArt_API_36 / emulator-5580",
+  "androidApi": 36,
+  "apk": {
+    "path": "build/install/running-art-0.1.0-20261002-simulation.apk",
+    "bytes": 95673331,
+    "sha256": "20a29789b8f934f58ea23118f2bf69e979f6dd5b1c9c34d5b2d065c40e750b1e",
+    "installation": "adb install -r --no-streaming / Success",
+    "independentRelease": true,
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ]
+  },
+  "course": {
+    "source": "synthetic",
+    "targetKm": 3,
+    "displayedKm": 2.88,
+    "generatedViaApp": true,
+    "baselineCourseCount": 0,
+    "qaCourseRemoved": true
+  },
+  "offlineDuringPlayback": {
+    "airplane_mode_on": 1,
+    "wifi_on": 0,
+    "mobile_data": 0,
+    "location_mode": 0,
+    "activeDefaultNetwork": "none"
+  },
+  "settingsBefore": {
+    "airplane": "0",
+    "wifi": "0",
+    "data": "0",
+    "location": "3"
+  },
+  "settingsRestored": true,
+  "states": {
+    "ready": {
+      "status": "재생 준비",
+      "progress": "이동 0.00 / 2.88km · 0.0%",
+      "selectedSpeed": "simulation-speed-1",
+      "playEnabled": true,
+      "capturedAt": "2026-10-02T14:54:58.3015704+09:00"
+    },
+    "paused": {
+      "status": "일시정지",
+      "progress": "이동 0.07 / 2.88km · 2.5%",
+      "selectedSpeed": "simulation-speed-10",
+      "playEnabled": true,
+      "capturedAt": "2026-10-02T14:55:48.9707395+09:00"
+    },
+    "paused-later": {
+      "status": "일시정지",
+      "progress": "이동 0.07 / 2.88km · 2.5%",
+      "selectedSpeed": "simulation-speed-10",
+      "playEnabled": true,
+      "capturedAt": "2026-10-02T14:56:09.5129049+09:00"
+    },
+    "foreground-paused": {
+      "status": "일시정지",
+      "progress": "이동 0.13 / 2.88km · 4.5%",
+      "selectedSpeed": "simulation-speed-10",
+      "playEnabled": true,
+      "capturedAt": "2026-10-02T14:56:17.1872090+09:00"
+    },
+    "restart": {
+      "status": "재생 준비",
+      "progress": "이동 0.00 / 2.88km · 0.0%",
+      "selectedSpeed": "simulation-speed-10",
+      "playEnabled": true,
+      "capturedAt": "2026-10-02T14:56:49.6420260+09:00"
+    },
+    "arrived": {
+      "status": "도착했어요",
+      "progress": "이동 2.88 / 2.88km · 100.0%",
+      "selectedSpeed": "simulation-speed-30",
+      "playEnabled": false,
+      "capturedAt": "2026-10-02T14:57:37.3576234+09:00"
+    },
+    "speed-five": {
+      "status": "재생 준비",
+      "progress": "이동 0.00 / 2.88km · 0.0%",
+      "selectedSpeed": "simulation-speed-5",
+      "playEnabled": true,
+      "capturedAt": "2026-10-02T14:58:15.9891953+09:00"
+    },
+    "reentered": {
+      "status": "재생 준비",
+      "progress": "이동 0.00 / 2.88km · 0.0%",
+      "selectedSpeed": "simulation-speed-1",
+      "playEnabled": true,
+      "capturedAt": "2026-10-02T14:59:02.6411802+09:00"
+    }
+  },
+  "userDatabaseUnchangedDuringSimulation": true,
+  "databaseHashes": {
+    "main": "8dc35e4dc14794919a9bb140d166cfbf97b18b0725e2e66025a23a1c6b5a1bbf",
+    "wal": "d671d00c282c037a9e096147a959dd20e2cc85058533c44ba58f383c3a553032"
+  },
+  "evidence": [
+    ".cache/simulation-ready.png",
+    ".cache/simulation-paused.png",
+    ".cache/simulation-playing.png",
+    ".cache/simulation-arrived.png"
+  ],
+  "phoneVerified": false,
+  "limitations": [
+    "에뮬레이터 합성 코스 검증이며 실제 휴대폰·실제 OSM 코스 UI·저사양 성능은 미검증",
+    "공유 작업 폴더 빌드에는 시점에 존재한 전국 도로 작업 변경도 포함될 수 있음"
+  ]
+}

@@ -8,6 +8,7 @@ import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import { shareCourseGpx } from '@/modules/courses/share-gpx';
 import { exportErrorMessage } from '@/modules/courses/export';
+import SimulationPanel from '@/features/courses/SimulationPanel';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const emptyRoads = { type: 'FeatureCollection' as const, features: [] };
@@ -16,12 +17,13 @@ export default function CourseScreen() {
   const [course, setCourse] = useState<SavedCourse | null>(null), [name, setName] = useState('');
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [canDelete, setCanDelete] = useState(false), [background, setBackground] = useState(false);
+  const [simulation, setSimulation] = useState(false);
   const generation = useRef(0), inFlight = useRef(false);
   const exportController = useRef<AbortController | null>(null);
   const overlay = useMemo(() => course ? savedCourseOverlay(course.snapshot) : null, [course]);
   const supported = Platform.OS !== 'web';
   const refresh = useCallback(async () => {
-    const request = ++generation.current; setBusy(true); setError(''); setNotice(''); setCourse(null); setCanDelete(false); setBackground(false);
+    const request = ++generation.current; setBusy(true); setError(''); setNotice(''); setCourse(null); setCanDelete(false); setBackground(false); setSimulation(false);
     try {
       const loaded = await (await getStorage()).courses.get(id);
       if (request === generation.current) { setCourse(loaded); setName(loaded.name); setCanDelete(true); }
@@ -87,7 +89,7 @@ export default function CourseScreen() {
         <Text style={styles.description}>{courseShapes[course.shape]} · {course.lengthKm.toFixed(2)}km · {course.score}점</Text>
         <Text style={styles.description}>목표 {course.targetKm}km · 계산 버전 {course.snapshot.engineVersion}</Text>
         <Text style={styles.description}>{course.source === 'synthetic' ? '가상 테스트 코스 · 실제 달릴 길이 아니에요.' : '저장한 OSM 도로 코스예요.'} 경로를 다시 계산하지 않고 저장 자료를 표시해요.</Text>
-        <View style={styles.map}><MapSurface styleUrl={background ? styleUrl ?? '' : ''} position={null} origin={course.snapshot.origin}
+        {!simulation && <><View style={styles.map}><MapSurface styleUrl={background ? styleUrl ?? '' : ''} position={null} origin={course.snapshot.origin}
           routeOverlay={overlay} syntheticRoads={background ? undefined : emptyRoads} /></View>
         <Text style={styles.small}>초록 실선: 저장 경로 · 갈색 점선: 목표 도형 · 점: 출발/도착</Text>
         <Text style={styles.small}>{background ? '배경 지도는 인터넷 연결이 필요해요.' : '배경 지도 없이 저장 경로만 표시해요. 인터넷·GPS가 필요하지 않아요.'}</Text>
@@ -96,9 +98,12 @@ export default function CourseScreen() {
         </Pressable>}
         {background && <View style={styles.credits}><Image source={require('@/assets/images/maptiler-logo.png')} style={styles.logo} resizeMode="contain" />
           <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/').catch(() => {})}><Text style={styles.small}>© MapTiler</Text></Pressable></View>}
+        </>}
         {course.source === 'osm' && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {})}><Text style={styles.small}>© OpenStreetMap contributors · ODbL</Text></Pressable>}
         <Text style={styles.small}>계산 기준 {course.snapshot.origin.lat.toFixed(5)}, {course.snapshot.origin.lng.toFixed(5)}</Text>
         <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')} · 점수는 후보 비교용이며 일치율이 아니에요.</Text>
+        <Pressable testID="course-simulation-toggle" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => { setBackground(false); setSimulation(value => !value); }}><Text>{simulation ? '시뮬레이션 닫기' : '코스 시뮬레이션 시작'}</Text></Pressable>
+        {simulation && <SimulationPanel key={`${course.id}-${course.updatedAt}`} snapshot={course.snapshot} />}
         <Pressable testID="course-export-gpx" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void exportGpx()}>
           <Text>GPX 내보내기</Text>
         </Pressable>

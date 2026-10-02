@@ -2,7 +2,7 @@
 
 처음 참여할 때는 **목표 → 현재 상태 → 개발 환경 → 구현 구조 → 계획** 순서로 읽습니다. 명령은 별도 설명이 없으면 프로젝트 루트에서 실행합니다.
 
-**로컬 코스 저장·목록·상세·이름 변경·삭제와 PC·에뮬레이터·휴대폰 검증을 완료**했습니다. 후속 GPX 내보내기와 실제 휴대폰 파일 전달·오프라인 취소/재시도도 완료했습니다. 2026-10-01 R2 개발용 주소의 실제 표본 배포·공개 검사·첫 버전 전환을 완료했고 일반 앱의 R2 연결·휴대폰 영구 캐시 검증도 완료했습니다. 다음 데이터 작업은 4-4 전국 공급·갱신 운영입니다. 서버 독립 앱 작업은 코스 시뮬레이션입니다. [코스 저장 사용법](development/saved-courses.md)·[검증](quality/saved-courses-verification.md), 전체 순서는 [로드맵](planning/roadmap.md), 최신 상태는 [인수인계](handoff/status.md)를 기준으로 확인합니다.
+**로컬 코스 저장·목록·상세·이름 변경·삭제와 PC·에뮬레이터·휴대폰 검증을 완료**했습니다. 후속 GPX 내보내기와 실제 휴대폰 파일 전달·오프라인 취소/재시도도 완료했습니다. 2026-10-01 R2 개발용 주소의 실제 표본 배포·공개 검사·첫 버전 전환을 완료했고 일반 앱의 R2 연결·휴대폰 영구 캐시 검증도 완료했습니다. 다음 데이터 작업은 4-4 전국 공급·갱신 운영입니다. 코스 시뮬레이션 구현·PC·에뮬레이터 검증도 완료했고 실제 휴대폰 검증은 후속입니다. [코스 저장 사용법](development/saved-courses.md)·[검증](quality/saved-courses-verification.md), 전체 순서는 [로드맵](planning/roadmap.md), 최신 상태는 [인수인계](handoff/status.md)를 기준으로 확인합니다.
 
 개발 환경은 [Android 개발 환경 설정과 실행](development/android-studio.md)을 중심 안내로 사용합니다. 확정 구성, 새 PC 최초 설정, 매일 실행, 정상 확인을 한 문서에서 볼 수 있습니다.
 
@@ -19,6 +19,7 @@
 | 개발 | [SQLite 저장소 테스트](development/storage.md) | DB 위치·테스트 메모·마이그레이션·실행 방법 |
 | 개발 | [GPX 내보내기](development/gpx-export.md) | 저장 코스의 GPX 파일 공유·취소·데이터 범위 |
 | 개발 | [저장한 코스](development/saved-courses.md) | 계산 후보의 기기 저장·목록·경로 복원·이름 변경·삭제 |
+| 개발 | [코스 시뮬레이션](development/course-simulation.md) | 저장 경로의 오프라인 재생·속도·거리/진행률·일시정지 |
 | 개발 | [코스 계산 테스트](development/route-engine.md) | v0.2 계산·지도·취소·기준 결과 재현 |
 | 개발 | [지도 중심 기준 코스 조회](development/route-center.md) | 표본 위치·지도 중심·R2 공급·영구 캐시·오프라인 계산 |
 | 개발 | [코스 계산 성능·웹 비교](development/route-engine-performance.md) | 최적화 전략·원본 보존·PC 벤치마크·실기기 측정 구분 |
@@ -35,6 +36,7 @@
 | 검증 | [저장소 검증 기록](quality/storage-verification.md) | 실제 SQLite 테스트·Android CRUD·프로세스 재시작 복원 |
 | 검증 | [GPX 내보내기 검증](quality/gpx-export-verification.md) | 공식 XSD·전체 좌표·에뮬레이터 및 휴대폰 파일 전달·취소·재시도 |
 | 검증 | [로컬 코스 저장 검증](quality/saved-courses-verification.md) | SQLite 업그레이드·25개 후보 대조·에뮬레이터 및 휴대폰 독립 실행/오프라인 복원/삭제 |
+| 검증 | [코스 시뮬레이션 검증](quality/course-simulation-verification.md) | 34개 회귀·release 빌드·API 36 오프라인 재생·앱 수명·DB 보존 / 휴대폰 후속 |
 | 검증 | [코스 계산 검증](quality/route-engine-verification.md) | 원본 회귀·Android 결과·시간·메모리·응답성 |
 | 검증 | [지도 중심 조회 검증](quality/route-center-verification.md) | 중심 선택·주변 도로·취소·시간 표시·설치용 APK |
 | 검증 | [도로 재시도 서버 단일화](quality/road-retry-verification.md) | 단일 API 호출·서버 공급자 전환·취소·시간 제한·운영 반영 상태 |

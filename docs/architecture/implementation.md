@@ -14,6 +14,8 @@
 
 ## 현재와 예정 구조
 
+저장 코스 시뮬레이션은 `modules/course-simulation/player.ts`의 거리/시간 기반 제어와 `features/courses/SimulationPanel.tsx`의 화면·앱 수명으로 분리했다. `MapSurface`의 `simulationPosition`이 저장 좌표의 가상 위치를 표시하고 GPS 위치·카메라 추적은 유지한다. DB 쓰기·도로 조회·인터넷 없이 동작한다. [사용법](../development/course-simulation.md)·[검증](../quality/course-simulation-verification.md).
+
 현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 `map.tsx`·`route-lab.tsx`·`road-file-lab.tsx`·`road-cache-lab.tsx`·`courses/`·`storage.tsx`·`environment.tsx`로 이동합니다. 화면은 핵심 기능 테스트용이며 이후 서비스 기획·디자인에 맞춰 변경합니다.
 
 - `src/modules/map/`: MapLibre 네이티브 지도·MapTiler 스타일 URL·현재 위치 점·카메라·지도 실패 처리. 웹은 Android 확인 안내를 표시합니다.

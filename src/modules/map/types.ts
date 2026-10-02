@@ -6,6 +6,7 @@ import type { RouteOverlay } from '../route-engine/geojson';
 export type MapSurfaceProps = {
   styleUrl: string;
   position: Position | null;
+  simulationPosition?: [number, number];
   routeOverlay?: RouteOverlay | null;
   origin?: Origin;
   syntheticRoads?: FeatureCollection<LineString>;

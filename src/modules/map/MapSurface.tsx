@@ -7,7 +7,7 @@ import { centerFromMap } from './coordinates';
 
 const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
-function MapAttempt({ styleUrl, position, routeOverlay, origin, syntheticRoads, centerSelection, onRetry }: Props & { onRetry(): void }) {
+function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, origin, syntheticRoads, centerSelection, onRetry }: Props & { onRetry(): void }) {
   const camera = useRef<CameraRef>(null);
   const selection = useRef(centerSelection);
   useLayoutEffect(() => { selection.current = centerSelection; }, [centerSelection]);
@@ -93,6 +93,10 @@ function MapAttempt({ styleUrl, position, routeOverlay, origin, syntheticRoads, 
             <Layer id="route-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#183C32', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} />
           </GeoJSONSource>
         </>}
+        {simulationPosition && <GeoJSONSource id="simulation-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: simulationPosition } }}>
+          <Layer id="simulation-halo" type="circle" paint={{ 'circle-radius': 16, 'circle-color': '#3B82F6', 'circle-opacity': 0.2 }} />
+          <Layer id="simulation-dot" type="circle" paint={{ 'circle-radius': 7, 'circle-color': '#2563EB', 'circle-stroke-width': 3, 'circle-stroke-color': '#FFFFFF' }} />
+        </GeoJSONSource>}
         {position && (
           <GeoJSONSource id="current-position" data={{
             type: 'Feature',
