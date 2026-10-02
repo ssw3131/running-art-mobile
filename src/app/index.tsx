@@ -30,6 +30,16 @@ export default function HomeScreen() {
               <Text style={styles.secondaryText}>저장한 코스</Text>
             </Pressable>
           </Link>
+          <Link href="/run" asChild>
+            <Pressable accessibilityRole="button" testID="open-run" style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>러닝 GPS 기록</Text>
+            </Pressable>
+          </Link>
+          <Link href="/runs" asChild>
+            <Pressable accessibilityRole="button" testID="open-runs" style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>러닝 기록 목록</Text>
+            </Pressable>
+          </Link>
           <Link href="/storage" asChild>
             <Pressable accessibilityRole="button" testID="open-storage" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>저장소 테스트</Text>

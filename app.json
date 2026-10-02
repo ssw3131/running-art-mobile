@@ -12,6 +12,7 @@
     },
     "android": {
       "package": "com.runningart.mobile.dev",
+      "permissions": ["android.permission.POST_NOTIFICATIONS", "android.permission.RECEIVE_BOOT_COMPLETED"],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -46,12 +47,12 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "지도에서 내 위치를 확인하기 위해 위치 접근이 필요합니다.",
+          "locationWhenInUsePermission": "현재 위치를 확인하고 러닝 경로를 기록하기 위해 위치 접근이 필요합니다.",
           "locationAlwaysPermission": false,
           "locationAlwaysAndWhenInUsePermission": false,
           "motionUsagePermission": false,
-          "isAndroidBackgroundLocationEnabled": false,
-          "isAndroidForegroundServiceEnabled": false,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true,
           "isIosBackgroundLocationEnabled": false
         }
       ],

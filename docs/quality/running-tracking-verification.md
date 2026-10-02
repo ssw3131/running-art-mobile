@@ -1,0 +1,43 @@
+# 러닝 GPS 추적·기록 검증
+
+검증일: 2026-10-02 (Asia/Seoul). [사용법](../development/running-tracking.md)·[실행 계획](../history/executed-plans/2026-10-02-1738-running-tracking.md).
+
+상태: 구현·PC·API 36 에뮬레이터 검증 완료. 실제 휴대폰·야외 검증은 후속.
+
+## PC
+
+`npm.cmd test` 최종 **186개 통과**, 관련 러닝 검사 **21개 통과**. `powershell -ExecutionPolicy Bypass -File .\dev.ps1 check` 타입·린트 통과. 초기 184개에 전용 SQLite 연결의 삭제와 새 백그라운드 프로세스 중단 검사를 보강했다.
+
+실제 SQLite에서 좌표·요약의 원자적 저장/롤백, 기존 v2 코스·메모 보존, 파일 재시작, 일시정지/재개·GPS 공백·부정확한 위치·점프·중복/늦은 콜백, 프로세스 중단 시간 제외, 서비스 실패·저장 실패·권한 실패·중복 시작을 확인했다.
+
+Expo doctor는 20/21이다. 기존 expo 57.0.25→57.0.26, expo-constants 57.0.19→57.0.20, expo-router 57.0.23→57.0.24 패치 안내가 남는다. TaskManager 57.0.21의 호환성 문제는 보고되지 않았다.
+
+## Android 빌드와 발견·수정
+
+첫 release 빌드·설치 후 최초 실제 GPS 콜백에서 TaskManager의 지속 작업 예약이 `RECEIVE_BOOT_COMPLETED` 누락으로 앱을 종료했다. `app.json`에 권한을 추가하고 prebuild·재빌드로 수정했다. 알림 권한 요청도 추가했다. 최종 APK에서 GPS 수신·잠금 화면 기록이 동작하는 것을 확인했다.
+
+Expo typed route watcher가 Windows 경로 구분자를 잘못 처리해 `/runs/index`와 화면 밖 파일을 경로에 포함했다. `pretypecheck`에서 설치된 Expo 공식 선언 생성기를 새 프로세스로 실행해 전체 재생성한 뒤 타입·린트를 통과했다. 실제 Router 경로를 우회하거나 타입 검사를 제거하지 않았다.
+
+최종 `:app:assembleRelease --max-workers=2 -PreactNativeArchitectures=arm64-v8a,x86_64` 빌드 성공(1분 46초). Hermes 번들은 해당 release 빌드에 포함된다. APK는 `build/install/running-art-0.1.0-20261002-running.apk`, **95,764,735바이트**, SHA-256 `1ea274cf6082f487ba8f654216f6ed5869d6e53be7f28fe00c378e83d3600260`이다. 기존 전국 APK와 서명 SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`가 같다. 에뮬레이터의 실제 설치 APK를 다시 읽어 전체 해시 일치를 확인했다.
+
+## 에뮬레이터 실제 동작
+
+API 36·x86_64·개발 서버 없는 release 앱에서 합성 위치를 `adb emu geo fix`로 주입했다. Wi-Fi 0·모바일 데이터 0·활성 기본 네트워크 `none`, 위치 모드 3에서 검증했다. [기계 검증 보고서](running-tracking-emulator-report.json)와 `.cache/running-qa/`에 UI XML·PNG·DB/WAL·각 단계 JSON을 보존한다.
+
+- 전경 위치 권한 거부 시 오류 안내와 새 기록 생성 차단. 전경 권한은 이후 adb 테스트 설정으로 허용했다. 알림은 시스템 Allow 버튼으로 허용했다. 백그라운드 권한은 별도 재검사에서 취소한 뒤 앱 안내 → Android 위치 설정의 Allow all the time → 앱 복귀 → 러닝 중 상태를 확인했다.
+- 첫 수신 9점·약 49.71m. 일시정지 전후 전체 좌표·시간·요약이 동일하며 중간에 다른 위치를 주입해도 추가되지 않았다. 재개 후 새 구간만 거리로 계산했다.
+- Home → 화면 잠금 중 **15점·93.0225m 추가 저장**. 전경으로 돌아온 뒤 기록을 이어 확인했다.
+- 러닝 중 강제 종료 → 위치 주입 → 앱 재시작에서 **58점·191.6486m·472,986ms를 보존**했다. 중단 상태이며 종료 중 시간을 더하지 않고 사용자가 재개했다.
+- 종료 확인 취소 시 계속 기록했다. 종료·저장 후 추가 주입에도 좌표·요약이 같았다. 앱을 다시 시작해 인터넷 없이 기록 상세·궤적·거리·시간을 복원했다.
+- 완료 기록 **77점·222.4726316m**를 저장했고 별도 Python 거리 합산이 0.001m 이내로 일치했다. 활동 시간 695,408ms에는 검증 중 대기 시간이 포함되므로 운동 페이스 측정값으로 해석하지 않는다.
+- 위치 기능을 끈 상태에서는 새 러닝이 생기지 않았다. 기록 중 GPS를 끄면 5점을 보존한 채 중단했다.
+- 삭제 취소 시 기록을 유지하고 삭제 완료 시 해당 좌표·요약을 함께 제거했다. QA가 만든 기록만 정리하고 기존 빈 코스·메모 목록이 같음을 대조했다. 내용이 있는 기존 v2 코스·메모 업그레이드 보존은 PC 실제 SQLite 검사로 별도 확인했다.
+- 종료 뒤 GPS provider `OFF`·`mStarted=false`·앱 활성 위치 요청 없음과 기존 네트워크·위치 설정 복원을 확인했다. Expo의 서비스 바인딩 객체는 남아 있을 수 있으나 foreground 실행/위치 요청은 해제됐다.
+
+초시계 갱신 때문에 일반 `uiautomator dump`가 idle 대기에 실패하는 경우 이전 XML을 사용할 위험을 발견했다. 후속 검증은 `RunningUiDump.java`로 idle 대기를 0으로 설정하고 수행 성공을 확인했다. 화면 여백으로 스크롤해 지도 제스처와 구분했다. 앱에 테스트 전용 GPS 주입 API나 성공 상태를 추가하지 않았다.
+
+재대조: `python scripts/qa/verify-running-report.py`. 보조 Java 도우미 빌드·Python 문법 검사·`git diff --check`도 통과했다.
+
+## 검증 한계
+
+실제 휴대폰은 기존 판교 APK를 유지한다. 야외 실제 GPS 정확도·배터리·제조사 절전·장시간 기록·OS 강제 회수·재부팅·iOS는 별도 후속이다. 에뮬레이터 위치 주입은 이들의 검증으로 보고하지 않는다.

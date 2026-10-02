@@ -20,6 +20,7 @@
 | 개발 | [GPX 내보내기](development/gpx-export.md) | 저장 코스의 GPX 파일 공유·취소·데이터 범위 |
 | 개발 | [저장한 코스](development/saved-courses.md) | 계산 후보의 기기 저장·목록·경로 복원·이름 변경·삭제 |
 | 개발 | [코스 시뮬레이션](development/course-simulation.md) | 저장 경로의 오프라인 재생·속도·거리/진행률·일시정지 |
+| 개발 | [실제 러닝 GPS 기록](development/running-tracking.md) | 시작·일시정지·재개·종료·백그라운드 위치·로컬 기록·복원 |
 | 개발 | [코스 계산 테스트](development/route-engine.md) | v0.2 계산·지도·취소·기준 결과 재현 |
 | 개발 | [지도 중심 기준 코스 조회](development/route-center.md) | 전국 위치·지도 중심·R2 공급·영구 캐시·오프라인 계산 |
 | 개발 | [코스 계산 성능·웹 비교](development/route-engine-performance.md) | 최적화 전략·원본 보존·PC 벤치마크·실기기 측정 구분 |
@@ -38,6 +39,7 @@
 | 검증 | [GPX 내보내기 검증](quality/gpx-export-verification.md) | 공식 XSD·전체 좌표·에뮬레이터 및 휴대폰 파일 전달·취소·재시도 |
 | 검증 | [로컬 코스 저장 검증](quality/saved-courses-verification.md) | SQLite 업그레이드·25개 후보 대조·에뮬레이터 및 휴대폰 독립 실행/오프라인 복원/삭제 |
 | 검증 | [코스 시뮬레이션 검증](quality/course-simulation-verification.md) | 34개 회귀·release 빌드·API 36 오프라인 재생·앱 수명·DB 보존 / 휴대폰 후속 |
+| 검증 | [러닝 GPS 기록 검증](quality/running-tracking-verification.md) | 실제 SQLite·위치 판정·Android 서비스·오프라인·앱 중단 복원 |
 | 검증 | [코스 계산 검증](quality/route-engine-verification.md) | 원본 회귀·Android 결과·시간·메모리·응답성 |
 | 검증 | [지도 중심 조회 검증](quality/route-center-verification.md) | 중심 선택·주변 도로·취소·시간 표시·설치용 APK |
 | 검증 | [도로 재시도 서버 단일화](quality/road-retry-verification.md) | 단일 API 호출·서버 공급자 전환·취소·시간 제한·운영 반영 상태 |

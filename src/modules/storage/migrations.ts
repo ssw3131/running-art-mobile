@@ -24,6 +24,26 @@ export const migrations: readonly string[] = [
     created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
   );
   CREATE INDEX saved_courses_created ON saved_courses(created_at DESC,id DESC);`,
+  `CREATE TABLE running_sessions (
+    id TEXT PRIMARY KEY NOT NULL CHECK(length(id)=32),
+    status TEXT NOT NULL CHECK(status IN ('running','paused','interrupted','completed')),
+    started_at INTEGER NOT NULL, ended_at INTEGER,
+    active_ms REAL NOT NULL DEFAULT 0 CHECK(active_ms>=0), checkpoint_at INTEGER NOT NULL,
+    resumed_at INTEGER NOT NULL, distance_m REAL NOT NULL DEFAULT 0 CHECK(distance_m>=0),
+    point_count INTEGER NOT NULL DEFAULT 0, rejected_count INTEGER NOT NULL DEFAULT 0,
+    last_timestamp INTEGER NOT NULL DEFAULT 0, segment INTEGER NOT NULL DEFAULT 0,
+    break_pending INTEGER NOT NULL DEFAULT 1, reason TEXT
+  );
+  CREATE UNIQUE INDEX running_one_active ON running_sessions((1)) WHERE status!='completed';
+  CREATE INDEX running_created ON running_sessions(started_at DESC,id DESC);
+  CREATE TABLE running_points (
+    run_id TEXT NOT NULL REFERENCES running_sessions(id) ON DELETE CASCADE,
+    sequence INTEGER NOT NULL, segment INTEGER NOT NULL, timestamp INTEGER NOT NULL,
+    latitude REAL NOT NULL CHECK(latitude BETWEEN -90 AND 90),
+    longitude REAL NOT NULL CHECK(longitude BETWEEN -180 AND 180),
+    accuracy REAL NOT NULL CHECK(accuracy>=0),
+    PRIMARY KEY(run_id,sequence), UNIQUE(run_id,timestamp)
+  );`,
 ];
 
 export const SCHEMA_VERSION = migrations.length;

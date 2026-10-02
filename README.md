@@ -2,6 +2,8 @@
 
 사용자가 선택하거나 직접 그린 도형을 닮은 **실제 보행 도로 코스**를 찾고, 달린 궤적과 기록을 남기는 모바일 앱입니다. Android를 먼저 개발·배포하고 이후 iOS로 확장합니다.
 
+**실제 러닝 GPS 추적·기록을 구현했습니다.** 시작·일시정지·재개·종료, 거리·활동 시간·평균 페이스, Android 잠금 화면 수신, 오프라인 기록 목록·상세·삭제와 앱 중단 복원을 제공합니다. 전체 자동 검사 186개·타입·린트·release 빌드와 API 36 에뮬레이터의 위치 주입·잠금·강제 종료·오프라인 복원을 확인했습니다. 실제 휴대폰 설치·야외 GPS·배터리는 후속입니다. [러닝 사용법](docs/development/running-tracking.md)·[검증](docs/quality/running-tracking-verification.md).
+
 **4-4의 전국 도로 공급·갱신/복구·용량 운영을 PC와 개발용 R2에서 완료했습니다.** 일반 앱은 지도 중심 주변의 전국 도로 파일을 받아 영구 저장합니다. 두 날짜의 원본·23개 대표/경계 대조, 실제 새 날짜 갱신·이전 버전 복구·최신 복귀, 공개 자료의 새 프로세스 오프라인 복원을 확인했습니다. 전체 자동 검사 165개·타입·린트·release 빌드를 통과했습니다. **휴대폰 연결 테스트는 사용자 결정으로 후속이며 현재 설치본은 기존 판교 표본 APK입니다.** 운영 도메인/CDN도 후속입니다. [전국 공급 안내](docs/development/national-roads.md) · [전국 검증](docs/quality/national-roads-verification.md) · [기존 표본 휴대폰 검증](docs/quality/road-cache-verification.md)
 
 **계산한 코스의 기기 저장·목록·다시 열기·이름 변경·삭제를 구현했습니다.** 재계산 없이 경로를 복원하며 기본 경로 표시는 인터넷·GPS 없이 동작합니다. 자동 검사 119개·타입·린트·Android 번들과 에뮬레이터·실제 휴대폰의 저장·강제 종료 후 복원·삭제를 확인했습니다. SM-S942N에는 최신 독립 실행 APK를 업데이트했고 기존 메모 보존·네트워크 없는 복원을 확인했습니다. 이번 표본 측정 뒤 원래 설치본으로 복원·독립 실행을 확인했습니다. **저장 코스의 GPX 내보내기도 구현했습니다.** 전체 자동 검사 130개·최종 관련 검사 11개·타입·린트·Android 빌드와 에뮬레이터의 오프라인 파일 전달·취소·재시도를 확인했습니다. 후속 SM-S942N 업데이트·GPX 파일 전달·오프라인 취소/재시도와 기존 자료 보존도 확인했습니다. 코스 시뮬레이션은 구현·PC·에뮬레이터 검증을 완료했고 실제 휴대폰 검증은 후속입니다. [시뮬레이션 안내](docs/development/course-simulation.md)·[검증](docs/quality/course-simulation-verification.md). [GPX 사용법](docs/development/gpx-export.md) · [GPX 검증](docs/quality/gpx-export-verification.md). [코스 저장 사용법](docs/development/saved-courses.md) · [검증 결과](docs/quality/saved-courses-verification.md) · [전체 로드맵](docs/planning/roadmap.md)
@@ -10,9 +12,11 @@
 
 **현재는 핵심 기능 테스트용 앱입니다.** 최종 서비스 기획·디자인은 이후 반영합니다. 홈의 **코스 계산 테스트 → 주변 OSM**에서 대전·제주 등 위치 버튼을 선택하거나 지도를 움직여 중심 주변 2km 도로로 계산합니다. 결과에 도로 조회·계산·전체 시간과 캐시 사용을 표시하며 완료된 경로는 재탐색 전까지 유지합니다. [지도 중심 조회](docs/development/route-center.md), [계산 성능](docs/development/route-engine-performance.md), [독립 실행 APK](docs/development/android-test-apk.md)를 참고하세요.
 
-최신 상태는 [인수인계](docs/handoff/status.md), 사용법은 [코스 저장](docs/development/saved-courses.md)·[코스 계산](docs/development/route-engine.md)·[지도·위치](docs/development/map-location.md)를 참고하세요. 휴대폰에는 2026-10-01 R2 APK가 설치되어 있으며 GitHub 공개 APK는 이전 버전입니다. 러닝 추적·기록·회원/동기화와 CI/CD는 후속입니다.
+최신 상태는 [인수인계](docs/handoff/status.md), 사용법은 [코스 저장](docs/development/saved-courses.md)·[코스 계산](docs/development/route-engine.md)·[지도·위치](docs/development/map-location.md)를 참고하세요. 휴대폰에는 2026-10-01 R2 APK가 설치되어 있으며 GitHub 공개 APK는 이전 버전입니다. 러닝의 실제 휴대폰·야외 검증, 회원/동기화와 CI/CD는 후속입니다.
 
 ## 휴대폰 테스트 APK 다운로드
+
+**2026-10-02 러닝 GPS APK 준비 완료:** `build/install/running-art-0.1.0-20261002-running.apk`(95,764,735바이트, arm64·x86_64). 전국 도로·코스 저장/GPX·시뮬레이션과 실제 GPS 러닝을 포함합니다. 기존 서명·앱 ID를 유지하며 에뮬레이터에만 업데이트했습니다. 현재 휴대폰은 기존 판교 APK입니다. [검증·해시](docs/quality/running-tracking-verification.md).
 
 **2026-10-02 전국 공급 APK 준비 완료:** `build/install/running-art-0.1.0-20261002-national.apk`(95,680,819바이트). 전국 도로 공급과 현재 코스 기능을 포함하며 기존 APK와 서명·앱 ID가 같습니다. 휴대폰 설치는 아직 하지 않았습니다. [설치 안내·해시](docs/development/android-test-apk.md)를 참고하세요.
 
@@ -50,7 +54,7 @@
 
 - 기능·흐름: Google AI Studio 프로토타입을 기준으로 모바일에 맞게 재구현합니다.
 - 계산: Codex 프로토타입 **v0.2 알고리즘**을 휴대폰 내부 모듈로 이식합니다. 사용자 표현의 v2.0은 저장소의 v0.2이며, `exports/running-art-algorithm/` 소스를 사용합니다. 루트 v0.3은 테스트 버전으로 이식 기준에서 제외합니다.
-- 기술: React Native·Expo·TypeScript·Expo Router. 지도는 MapLibre React Native·MapTiler, 전경 위치는 Expo Location, 저장 기반은 Expo SQLite를 연결했습니다. 백그라운드 TaskManager는 후속 구현입니다.
+- 기술: React Native·Expo·TypeScript·Expo Router. 지도는 MapLibre React Native·MapTiler, 전경 위치는 Expo Location, 저장 기반은 Expo SQLite를 연결했습니다. 백그라운드 TaskManager·러닝 SQLite 기록을 연결했습니다.
 - 데이터: 전국 사용자 위치 주변의 OSM 보행 데이터를 지역 파일로 내려받고 캐시합니다. 지도 타일과 경로 계산용 그래프는 별개입니다.
 - 경로 계산에는 생성형 AI 호출이 필요하지 않습니다. Gemini 코칭·그림 생성은 현재 범위에서 제외합니다.
 

@@ -2,8 +2,9 @@ import { migrateDatabase } from './migrations.ts';
 import { createTestNoteRepository, type TestNoteRepository } from './test-notes.ts';
 import type { StorageDatabase } from './types.ts';
 import { createCourseRepository, type CourseRepository } from '../courses/repository.ts';
+import { createRunRepository, type RunRepository } from '../running/repository.ts';
 
-export type StorageRepositories = TestNoteRepository & { courses: CourseRepository };
+export type StorageRepositories = TestNoteRepository & { courses: CourseRepository; runs: RunRepository };
 
 export function createStorageClient(open: () => Promise<StorageDatabase>) {
   let pending: Promise<StorageRepositories> | undefined;
@@ -12,7 +13,7 @@ export function createStorageClient(open: () => Promise<StorageDatabase>) {
     const db = await open();
     try {
       await migrateDatabase(db);
-      return { ...createTestNoteRepository(db), courses: createCourseRepository(db) };
+      return { ...createTestNoteRepository(db), courses: createCourseRepository(db), runs: createRunRepository(db) };
     } catch (error) {
       // Never delete or recreate a failed database. Closing enables a clean retry.
       await db.closeAsync().catch(() => {});
