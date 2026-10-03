@@ -1,12 +1,21 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { AppState, Platform, Text } from 'react-native';
+import { AppState, Linking, Platform, Text } from 'react-native';
+import { authentication } from '@/modules/auth/runtime';
 import { running } from '@/modules/running/runtime';
 import { runErrorMessage } from '@/modules/running/model';
 
 export default function RootLayout() {
   const [recoveryError, setRecoveryError] = useState('');
+  useEffect(() => {
+    void authentication.start();
+    authentication.setActive(AppState.currentState === 'active');
+    const links = Linking.addEventListener('url', ({ url }) => { void authentication.handleUrl(url); });
+    void Linking.getInitialURL().then(url => { if (url) return authentication.handleUrl(url); }).catch(() => undefined);
+    const lifecycle = AppState.addEventListener('change', state => authentication.setActive(state === 'active'));
+    return () => { links.remove(); lifecycle.remove(); authentication.setActive(false); };
+  }, []);
   useEffect(() => {
     if (Platform.OS !== 'android') return;
     let mounted = true;
@@ -21,6 +30,8 @@ export default function RootLayout() {
       {!!recoveryError && <Text accessibilityRole="alert" style={{ color: '#A12F2F', padding: 16 }}>러닝 복원: {recoveryError}</Text>}
       <Stack screenOptions={{ headerStyle: { backgroundColor: '#F6F5F0' }, headerTintColor: '#183C32' }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="account" options={{ title: '내 계정' }} />
+        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen name="map" options={{ title: '내 주변 지도' }} />
         <Stack.Screen name="storage" options={{ title: '저장소 테스트' }} />
         <Stack.Screen name="route-lab" options={{ title: '코스 계산 테스트' }} />

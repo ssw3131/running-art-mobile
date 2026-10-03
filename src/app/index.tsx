@@ -1,8 +1,10 @@
 import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/features/auth/use-auth';
 
 export default function HomeScreen() {
+  const { account } = useAuth();
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -10,6 +12,11 @@ export default function HomeScreen() {
           <Text style={styles.eyebrow}>RUNNING ART</Text>
           <Text style={styles.title}>달리는 길이{'\n'}그림이 되도록.</Text>
           <Text style={styles.description}>핵심 기능을 확인하는 개발용 앱입니다. 서비스 화면과 디자인은 이후 반영합니다.</Text>
+          <Link href="/account" asChild>
+            <Pressable accessibilityRole="button" testID="open-account" style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>{account ? `${account.name} · 내 계정` : 'Google 로그인 · 내 계정'}</Text>
+            </Pressable>
+          </Link>
         </View>
         <View style={styles.card}>
           <Text style={styles.badge}>핵심 기능 테스트</Text>
