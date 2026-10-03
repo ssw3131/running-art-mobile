@@ -8,7 +8,7 @@ import type { GuidanceState } from '@/modules/guidance/engine';
 const basicStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#EDEFEA' } }] };
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const line = (coordinates: Coordinate[]) => ({ type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates } });
-export default function GuidanceMap({ route, state }: { route: Coordinate[]; state: GuidanceState }) {
+export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean }) {
   const camera = useRef<CameraRef>(null);
   const [follow, setFollow] = useState(true), [online, setOnline] = useState(!!styleUrl), [ready, setReady] = useState(false);
   const routeData = useMemo(() => line(route), [route]);
@@ -33,12 +33,13 @@ export default function GuidanceMap({ route, state }: { route: Coordinate[]; sta
       </GeoJSONSource>
       <GeoJSONSource id="guidance-trace" data={paths}><Layer id="guidance-trace-line" type="line" paint={{ 'line-color': '#117CB0', 'line-width': 4 }} /></GeoJSONSource>
       {state.returnPath.length >= 2 && <GeoJSONSource id="guidance-return" data={line(state.returnPath)}><Layer id="guidance-return-line" type="line" paint={{ 'line-color': '#9C4308', 'line-width': 5, 'line-dasharray': [2, 1] }} /></GeoJSONSource>}
-      <GeoJSONSource id="guidance-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.position } }}>
+      <GeoJSONSource id="guidance-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: route[0] } }}><Layer id="guidance-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#B7580A', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} /></GeoJSONSource>
+      {showPosition && <GeoJSONSource id="guidance-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.position } }}>
         <Layer id="guidance-halo" type="circle" paint={{ 'circle-radius': 18, 'circle-color': '#298CD5', 'circle-opacity': 0.2 }} />
         <Layer id="guidance-dot" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#147FC1', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 4 }} />
-      </GeoJSONSource>
+      </GeoJSONSource>}
     </Map>
-    <Pressable testID="guidance-recenter" accessibilityLabel="가상 위치로 지도 이동" accessibilityRole="button" style={styles.recenter} onPress={() => setFollow(true)}><Text style={styles.cross}>◎</Text></Pressable>
+    <Pressable testID="guidance-recenter" accessibilityLabel={positionLabel} accessibilityRole="button" style={styles.recenter} onPress={() => setFollow(true)}><Text style={styles.cross}>◎</Text></Pressable>
     <View style={styles.credits}>
       <Text style={styles.credit}>{online ? '© OpenStreetMap contributors' : '배경 지도 없이 경로 표시'}</Text>
       {online && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/')}><Image source={require('@/assets/images/maptiler-logo.png')} style={{ width: 60, height: 16 }} resizeMode="contain" /></Pressable>}

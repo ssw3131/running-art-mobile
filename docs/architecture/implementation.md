@@ -18,6 +18,8 @@
 
 ## 현재와 예정 구조
 
+2026-10-03 코스 생성·실제 GPS 안내 연결은 `CourseRunPreparation`의 출발 조건과 `LiveGuidancePanel`의 지도/집중·설정을 기존 `run.tsx`에 추가한다. `running/guidance.ts`가 코스 사본·안내 상태·설정을 검증하고 SQLite v5가 러닝별로 보존한다. `running/repository.ts`는 같은 수신 좌표를 안내 엔진과 거리 기록에 전달해 한 트랜잭션으로 저장하고, `controller.ts`가 저장 이후 `GuidanceFeedback.kt`의 한국어 음성·진동을 실행한다. 실제 GPS는 기존 Expo Location 서비스로 받으며 모의 서비스와 동시 실행하지 않는다. 완주 일시정지·확인/계속 달리기와 강제 종료 뒤 사용자 재개를 제공한다. 코스 연계 종료 기록은 동기화 파일 v2에 경로 사본·결과를 담고 기존 좌표 배열도 계속 읽는다. [사용법·자료 계약](../development/course-gps-guidance.md)·[검증 범위](../quality/course-gps-guidance-verification.md).
+
 실제 GPS 러닝은 `modules/running/`의 판정·저장소·제어·네이티브 서비스와 `app/run.tsx`·`app/runs/`로 구성한다. 사용자 DB 버전 3의 세션·좌표를 수신마다 원자적으로 저장하며 일시정지·공백 구간을 분리한다. `index.js`에서 Router보다 먼저 TaskManager 작업을 정의한다. 새 전경/백그라운드 JS 프로세스는 마지막 저장 지점에서 중단 상태로 복원하고 사용자가 재개한다. [러닝 사용법](../development/running-tracking.md)·[검증](../quality/running-tracking-verification.md).
 
 저장 코스 시뮬레이션은 `modules/course-simulation/player.ts`의 거리/시간 기반 제어와 `features/courses/SimulationPanel.tsx`의 화면·앱 수명으로 분리했다. `MapSurface`의 `simulationPosition`이 저장 좌표의 가상 위치를 표시하고 GPS 위치·카메라 추적은 유지한다. DB 쓰기·도로 조회·인터넷 없이 동작한다. [사용법](../development/course-simulation.md)·[검증](../quality/course-simulation-verification.md).

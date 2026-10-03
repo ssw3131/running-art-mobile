@@ -4,6 +4,8 @@ export type Run = {
   activeMs: number; checkpointAt: number; distanceM: number; pointCount: number;
   rejectedCount: number; lastTimestamp: number; segment: number; breakPending: number;
   resumedAt: number; reason: string | null;
+  courseId?: string | null; courseName?: string | null;
+  courseOutcome?: 'active' | 'arrival-pending' | 'finished' | 'stopped' | null;
 };
 export type Fix = { timestamp: number; latitude: number; longitude: number; accuracy: number | null };
 export type RunPoint = Fix & { sequence: number; segment: number };

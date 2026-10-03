@@ -1,5 +1,7 @@
 # Running Art Mobile — 작업 지침
 
+**2026-10-03 코스 생성·실제 GPS 안내 연결 목표 완료(PC·에뮬레이터 범위):** 기존 조건→후보→저장→정방향 출발 준비→실제 GPS 안내→완주 확인/계속→코스 연계 기록을 구현했다. SQLite v5·안내 복원/설정·동기화 파일 v2/레거시 호환, 249개 검사·타입·린트·release 빌드, API 36의 30분 잠금/오프라인 발화·이탈/복귀·강제 종료 복원·생성 화면 흐름을 통과했다. 동일 ID·서명의 `20261003-course-gps.apk`를 준비했으며 **휴대폰 설치·야외 검증은 하지 않았다.** 새 형식의 실제 서버/휴대폰 복원·야외/배터리와 아래 모의 서비스의 `heartbeat_timeout`은 후속이다. [사용법](docs/development/course-gps-guidance.md)·[검증](docs/quality/course-gps-guidance-verification.md)·[현재 상태](docs/handoff/status.md). 아래 시점별 ‘실제 GPS 연결 후속’보다 이 결과를 우선한다.
+
 **2026-10-03 16:05 실기기 검증 중단:** 사용자 요청으로 휴대폰 검증을 멈췄다. 모의 안내 화면/이탈·복귀/완주·연속 5분 잠금·음성/진동 요청·알림 일시정지를 확인했고, 설정 하단 버튼 잘림을 수정한 `20261003-guidance-phone.apk`를 16:00:54에 설치했다. **저장 코스의 일시정지→재개→Home 후 `heartbeat_timeout` 서비스 종료는 미해결**이다. 마지막 조회에 실행 서비스가 없어 USB 분리 가능하며, 다음 재개는 이 문제 진단과 최종 자료/계정 대조부터다. [상세/설치 해시](docs/quality/running-guidance-simulation-verification.md)·[최신 상태](docs/handoff/status.md). 아래 휴대폰 미검증·완료 표현보다 이 결과를 우선한다.
 
 **2026-10-03 15:27:29 KST 안내 APK 휴대폰 설치 완료:** 사용자 후속 요청으로 SM-S942N에 `20261003-guidance.apk`를 데이터 유지 방식으로 업데이트했다. 설치 해시·기존 appId/최초 설치 시각/자료 경로 유지 및 앱 프로세스 실행을 확인했다. 휴대폰 잠금으로 UI 표시·주행 시험은 후속이다. 아래 ‘휴대폰 미설치’는 최초 개발 완료 시점이며 [최신 상태](docs/handoff/status.md)와 [검증](docs/quality/running-guidance-simulation-verification.md)의 후속 설치 결과를 우선한다.

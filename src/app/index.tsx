@@ -29,7 +29,7 @@ export default function HomeScreen() {
           </Link>
           <Link href="/route-lab" asChild>
             <Pressable accessibilityRole="button" testID="open-route-lab" style={styles.secondaryButton}>
-              <Text style={styles.secondaryText}>코스 계산 테스트</Text>
+              <Text style={styles.secondaryText}>코스 만들기</Text>
             </Pressable>
           </Link>
           <Link href="/courses" asChild>

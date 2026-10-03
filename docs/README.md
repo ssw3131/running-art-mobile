@@ -30,6 +30,7 @@
 | 개발 | [저장한 코스](development/saved-courses.md) | 계산 후보의 기기 저장·목록·경로 복원·이름 변경·삭제 |
 | 개발 | [코스 시뮬레이션](development/course-simulation.md) | 저장 경로의 오프라인 재생·속도·거리/진행률·일시정지 |
 | 개발 | [실제 러닝 GPS 기록](development/running-tracking.md) | 시작·일시정지·재개·종료·백그라운드 위치·로컬 기록·복원 |
+| 개발 | [코스 생성·실제 GPS 안내](development/course-gps-guidance.md) | 후보 저장→출발 준비→지도/집중 안내→완주 확인·코스 연계 기록, SQLite v5·동기화 호환 |
 | 개발 | [코스 계산 테스트](development/route-engine.md) | v0.2 계산·지도·취소·기준 결과 재현 |
 | 개발 | [지도 중심 기준 코스 조회](development/route-center.md) | 전국 위치·지도 중심·R2 공급·영구 캐시·오프라인 계산 |
 | 개발 | [코스 계산 성능·웹 비교](development/route-engine-performance.md) | 최적화 전략·원본 보존·PC 벤치마크·실기기 측정 구분 |
@@ -50,6 +51,7 @@
 | 검증 | [로컬 코스 저장 검증](quality/saved-courses-verification.md) | SQLite 업그레이드·25개 후보 대조·에뮬레이터 및 휴대폰 독립 실행/오프라인 복원/삭제 |
 | 검증 | [코스 시뮬레이션 검증](quality/course-simulation-verification.md) | 34개 회귀·release 빌드·API 36 오프라인 재생·앱 수명·DB 보존 / 휴대폰 후속 |
 | 검증 | [러닝 GPS 기록 검증](quality/running-tracking-verification.md) | 실제 SQLite·위치 판정·Android 서비스·오프라인·앱 중단 복원 |
+| 검증 | [코스 생성·GPS 안내 검증](quality/course-gps-guidance-verification.md) | 출발/완주·체크포인트·버전 있는 동기화·API 36 위치 주입·잠금과 휴대폰 후속 구분 |
 | 검증 | [실기기 전후 비교·야외 GPS 확인](quality/phone-performance-20261002.md) | 교차 3쌍·실도로 개선 미확인·기록 보존·입력/취소/재생 |
 | 검증 | [2026-10-02 계산 성능 개선](quality/route-performance-20261002.md) | 전후 6사례 교차 반복·전체 결과 보존·188개·Hermes 입력/취소/재실행 |
 | 검증 | [코스 계산 검증](quality/route-engine-verification.md) | 원본 회귀·Android 결과·시간·메모리·응답성 |

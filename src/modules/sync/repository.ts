@@ -1,9 +1,10 @@
 import type { SqlExecutor, StorageDatabase } from '../storage/types.ts';
 import { serialDatabase } from '../storage/serial-database.ts';
 import { summaryColumns } from '../courses/repository.ts';
-import { decodeSnapshot, type CourseSummary } from '../courses/model.ts';
+import { decodeSnapshot, encodeSnapshot, type CourseSummary } from '../courses/model.ts';
 import { columns as runColumns, pointColumns } from '../running/repository.ts';
 import type { Run, RunPoint } from '../running/model.ts';
+import { guidanceColumns, readRunGuidance, type GuidanceRow } from '../running/guidance.ts';
 import { requireOwner, type OwnerScope } from './ownership.ts';
 import { decodePayload, tableFor, SyncError, type PendingRecord, type RecordKind, type RemoteRecord } from './model.ts';
 
@@ -59,6 +60,9 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
           point_count=excluded.point_count,rejected_count=excluded.rejected_count,last_timestamp=excluded.last_timestamp,
           segment=excluded.segment,break_pending=excluded.break_pending,reason=excluded.reason`,
         id,s.status,s.startedAt,s.endedAt,s.activeMs,s.checkpointAt,s.resumedAt,s.distanceM,s.pointCount,s.rejectedCount,s.lastTimestamp,s.segment,s.breakPending,s.reason,owner);
+        const encoded = decoded.course ? encodeSnapshot(decoded.course.snapshot) : null;
+        await tx.runAsync(`UPDATE running_sessions SET course_id=?,course_name=?,course_outcome=?,course_snapshot_json=?,course_snapshot_hash=?,guidance_json=NULL,guidance_options_json=NULL WHERE id=?`,
+          decoded.course?.id ?? null, decoded.course?.name ?? null, s.courseOutcome ?? null, encoded?.json ?? null, encoded?.hash ?? null, id);
         await tx.runAsync('DELETE FROM running_points WHERE run_id=?', id);
         for (const p of decoded.points) await tx.runAsync('INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy) VALUES(?,?,?,?,?,?,?)', id,p.sequence,p.segment,p.timestamp,p.latitude,p.longitude,p.accuracy);
       }
@@ -101,7 +105,9 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
             decodeSnapshot(snapshot_json,snapshot_hash); summary=rest; payload=snapshot_json;
           } else {
             summary = (await tx.getFirstAsync<Run>(`SELECT ${runColumns} FROM running_sessions WHERE id=?`, item.id))!;
-            payload = JSON.stringify(await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`, item.id));
+            const points = await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`, item.id);
+            const saved = summary.courseId ? readRunGuidance((await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`, item.id))!) : null;
+            payload = JSON.stringify(saved ? { schemaVersion: 2, points, course: saved.course, outcome: summary.courseOutcome } : points);
           }
           rows.push({ kind,id:item.id,remoteVersion:item.remoteVersion,mutationId:item.mutationId,deleted:false,summary,payload });
         }

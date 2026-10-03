@@ -4,4 +4,6 @@ export const guidanceNative = requireOptionalNativeModule<{
   start(token: string): Promise<void>; stop(): void; clock(): number; commands(): string[];
   status(): NativeStatus; publish(text: string, diagnostic: string): void;
   feedback(id: string, text: string, vibrate: boolean): void; silence(): void;
+  prepareLive(): void; feedbackLive(id: string, text: string, vibrate: boolean): void;
+  silenceLive(): void; liveStatus(): Omit<NativeStatus, 'running'>;
 }>('RunPenGuidance');

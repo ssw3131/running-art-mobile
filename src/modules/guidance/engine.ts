@@ -89,6 +89,7 @@ export function createGuidance(coordinates: readonly Coordinate[], saved?: Guida
     }
     const previous = last;
     const gap = !previous || now - previous.timestamp > GUIDANCE_LIMITS.gapMs;
+    if (gap) { offSince = null; returnSince = null; finishSince = null; }
     const step = previous ? distance(previous.position, fix.position) : 0;
     if (previous && !gap && step / ((now - previous.timestamp) / 1000) > 12) { weak = true; last = null; finishSince = null; if (off || breadcrumbs.length) continuous = false; return snapshot(); }
     const previousAccepted = lastAccepted;

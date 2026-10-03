@@ -4,6 +4,7 @@ import { strToU8 } from 'fflate';
 import { courseId, courseName, encodeSnapshot, type CourseSummary } from '../courses/model.ts';
 import { distanceMeters, type Run, type RunPoint } from '../running/model.ts';
 import { ownerId } from './ownership.ts';
+import { validateRunCourse, type RunCourse } from '../running/guidance.ts';
 
 export type RecordKind = 'course' | 'run';
 export type RecordSummary = CourseSummary | Run;
@@ -51,7 +52,11 @@ function validateRun(run: Run) {
   if (run.status !== 'completed' || !integer(run.startedAt) || !integer(run.endedAt) || run.endedAt < run.startedAt ||
     !finite(run.activeMs) || !finite(run.distanceM) || !integer(run.checkpointAt) || !integer(run.resumedAt) ||
     !integer(run.pointCount) || run.pointCount > 100000 || !integer(run.rejectedCount) || !integer(run.lastTimestamp) ||
-    !integer(run.segment) || ![0, 1].includes(run.breakPending) || (run.reason !== null && (typeof run.reason !== 'string' || run.reason.length > 500))) return fail();
+      !integer(run.segment) || ![0, 1].includes(run.breakPending) || (run.reason !== null && (typeof run.reason !== 'string' || run.reason.length > 500))) return fail();
+  if (run.courseId != null) {
+    courseId(run.courseId);
+    if (typeof run.courseName !== 'string' || courseName(run.courseName) !== run.courseName || !['finished', 'stopped'].includes(run.courseOutcome ?? '')) return fail();
+  } else if (run.courseName != null || run.courseOutcome != null) return fail();
 }
 export function decodePayload(row: RemoteRecord, payload: string) {
   if (strToU8(payload).length > PAYLOAD_BYTES_MAX || digest(payload) !== row.payload_hash) return fail();
@@ -64,6 +69,14 @@ export function decodePayload(row: RemoteRecord, payload: string) {
   }
   const run = row.summary as Run;
   validateRun(run);
+  let course: RunCourse | null = null;
+  if (!Array.isArray(parsed)) {
+    const envelope = parsed as { schemaVersion?: number; points?: unknown; course?: unknown; outcome?: unknown } | null;
+    if (envelope?.schemaVersion !== 2 || !Array.isArray(envelope.points)) return fail();
+    course = validateRunCourse(envelope.course);
+    if (course.id !== run.courseId || course.name !== run.courseName || envelope.outcome !== run.courseOutcome) return fail();
+    parsed = envelope.points;
+  } else if (run.courseId != null) return fail();
   if (!Array.isArray(parsed) || parsed.length !== run.pointCount) return fail();
   let last: RunPoint | undefined, distance = 0;
   const points = parsed.map((value, index): RunPoint => {
@@ -77,5 +90,5 @@ export function decodePayload(row: RemoteRecord, payload: string) {
     return { sequence: p.sequence, segment: p.segment, timestamp: p.timestamp, latitude: p.latitude, longitude: p.longitude, accuracy: p.accuracy };
   });
   if (Math.abs(distance - run.distanceM) > Math.max(0.01, run.distanceM * 1e-9)) return fail();
-  return { kind: 'run' as const, points };
+  return { kind: 'run' as const, points, course };
 }

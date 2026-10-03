@@ -44,6 +44,7 @@ function CourseEditor({ snapshot, selected }: { snapshot: CourseSnapshot; select
     {!!message && <Text testID="course-save-notice" accessibilityLiveRegion="polite" style={styles.small}>{message}</Text>}
     {Platform.OS === 'web' && <Text style={styles.small}>코스 저장은 Android 앱에서 확인해 주세요.</Text>}
     {savedId && <Link href={{ pathname: '/courses/[id]', params: { id: savedId } }} style={styles.link}>저장한 코스 열기</Link>}
+    {savedId && snapshot.source === 'osm' && <Link testID="saved-course-run" href={{ pathname: '/run', params: { courseId: savedId } }} style={styles.link}>이 코스로 러닝 준비</Link>}
     <Link href="/courses" style={styles.link}>저장한 코스 목록</Link>
   </View>;
 }

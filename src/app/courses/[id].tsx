@@ -101,6 +101,8 @@ export default function CourseScreen() {
         </>}
         {course.source === 'osm' && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {})}><Text style={styles.small}>© OpenStreetMap contributors · ODbL</Text></Pressable>}
         <Text style={styles.small}>계산 기준 {course.snapshot.origin.lat.toFixed(5)}, {course.snapshot.origin.lng.toFixed(5)}</Text>
+        <Text style={styles.small}>실제 코스 출발점 {course.snapshot.route[0][1].toFixed(5)}, {course.snapshot.route[0][0].toFixed(5)} · 정방향으로 달리는 코스예요.</Text>
+        {course.source === 'osm' && <Link href={{ pathname: '/run', params: { courseId: course.id } }} asChild><Pressable testID="course-run" accessibilityRole="button" style={styles.button}><Text>이 코스로 러닝 준비</Text></Pressable></Link>}
         <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')} · 점수는 후보 비교용이며 일치율이 아니에요.</Text>
         <Pressable testID="course-simulation-toggle" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => { setBackground(false); setSimulation(value => !value); }}><Text>{simulation ? '시뮬레이션 닫기' : '코스 시뮬레이션 시작'}</Text></Pressable>
         {simulation && <SimulationPanel key={`${course.id}-${course.updatedAt}`} snapshot={course.snapshot} />}

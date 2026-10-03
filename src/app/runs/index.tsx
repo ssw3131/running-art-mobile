@@ -37,6 +37,7 @@ export default function RunsScreen() {
         <Pressable accessibilityRole="button" testID={`run-row-${run.id}`} style={styles.card}>
           <Text style={styles.body}>{new Date(run.startedAt).toLocaleString('ko-KR')}</Text>
           <Text style={styles.title}>{(run.distanceM / 1000).toFixed(2)} km · {statusLabel[run.status]}</Text>
+          {!!run.courseName && <Text style={styles.body}>{run.courseName} · {run.courseOutcome === 'finished' ? '코스 완주' : run.courseOutcome === 'stopped' ? '중도 종료' : '코스 진행 중'}</Text>}
           <Text style={styles.body}>저장된 활동 시간 {durationLabel(run.activeMs)} · {run.pointCount}개 위치</Text>
         </Pressable>
       </Link>)}

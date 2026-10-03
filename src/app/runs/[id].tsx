@@ -32,6 +32,7 @@ export default function RunDetailScreen() {
     {!!error && <><Text accessibilityRole="alert" style={styles.error}>{error}</Text><RunButton id="run-detail-retry" title="다시 불러오기" disabled={busy} onPress={() => void refresh()} /></>}
     {run && <>
       <Text style={styles.body}>{new Date(run.startedAt).toLocaleString('ko-KR')} · {statusLabel[run.status]}</Text>
+      {run.courseId && <Text testID="run-course-result" style={styles.title}>{run.courseName} · {run.courseOutcome === 'finished' ? '코스 완주' : run.status === 'completed' ? '중도 종료' : '진행 중'}</Text>}
       <RunStats run={run} now={run.checkpointAt} />
       {!!run.reason && <Text style={styles.body}>{run.reason}</Text>}
       <RunPath points={points} />

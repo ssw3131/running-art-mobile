@@ -38,7 +38,8 @@ function locationMessage(state: CenterState) {
 }
 
 export default function RouteLabScreen() {
-  const [datasetId, setDatasetId] = useState<DatasetId>('grid');
+  const [datasetId, setDatasetId] = useState<DatasetId>('seoul');
+  const [diagnostics, setDiagnostics] = useState(false);
   const [shape, setShape] = useState<ShapeId>('heart');
   const [targetKm, setTargetKm] = useState(5);
   const [state, setState] = useState<State>({ kind: 'idle', message: '도형과 목표 거리를 고른 뒤 코스를 계산해 보세요.' });
@@ -169,12 +170,9 @@ export default function RouteLabScreen() {
       <Pressable testID="route-locate" accessibilityRole="button" disabled={centerState.location.kind === 'loading'} onPress={locate} style={styles.locate}><Text style={styles.chipText}>{centerState.location.kind === 'loading' ? '위치 확인 중…' : '내 위치'}</Text></Pressable>
     </View>}
     <ScrollView style={styles.panel} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>코스 계산 테스트</Text>
-      <View style={styles.row}>{(Object.keys(datasets) as DatasetId[]).map((id) => <Pressable key={id} testID={`dataset-${id}`} accessibilityRole="button" accessibilityState={{ selected: datasetId === id }} style={[styles.chip, datasetId === id && styles.chipSelected]} onPress={() => { reset(); if (id !== datasetId) { setMapReady(false); setMapMoving(false); } setDatasetId(id); setTargetKm(datasets[id].input.options.targetKm); }}><Text style={datasetId === id ? styles.chipTextSelected : styles.chipText}>{datasets[id].name}</Text></Pressable>)}</View>
-      <Text style={styles.description}>{dataset.description}</Text>
+      <Text style={styles.title}>코스 만들기</Text>
+      <Text style={styles.description}>1. 위치·거리·도형 설정 → 2. 후보 비교 → 3. 저장하고 달리기</Text>
       {!dataset.synthetic && <>
-        <View style={styles.wrap}>{roadSamples.map(sample => <Pressable key={sample.id} testID={`sample-${sample.id}`} accessibilityRole="button" style={styles.chip}
-          onPress={() => { changeSearch(); center.choose(sample.origin); setFixedCenter(true); setValidCenter(true); setMapMoving(false); }}><Text style={styles.chipText}>{sample.label}</Text></Pressable>)}</View>
         <View style={styles.wrap}>{roadModes.map(mode => <Pressable key={mode.id} testID={`road-mode-${mode.id}`} accessibilityRole="button" accessibilityState={{ selected: roadMode === mode.id }}
           style={[styles.chip, roadMode === mode.id && styles.chipSelected]} onPress={() => { changeSearch(); setRoadMode(mode.id); }}><Text style={roadMode === mode.id ? styles.chipTextSelected : styles.chipText}>{mode.label}</Text></Pressable>)}</View>
         <Text style={styles.small}>처음에는 인터넷으로 도로를 받습니다. 저장한 도로는 앱을 다시 열어도 사용할 수 있어요. 오프라인에서는 미리 저장한 위치를 선택해 계산하세요. 배경 지도는 별도 연결이 필요해요.</Text>
@@ -192,22 +190,29 @@ export default function RouteLabScreen() {
         <Text style={styles.statusText}>{state.message}</Text>
         {seconds > 0 && !completed && <Text style={styles.small}>{seconds.toFixed(1)}초</Text>}
       </View>
-      {completed && <View testID="route-timing" style={styles.timing}>
+      {completed && <Text style={styles.label}>후보 비교 · {completed.result.candidates.length}개</Text>}
+      {completed && overlay && <Text testID="course-start-position" style={styles.small}>선택한 코스 출발점 {overlay.start[1].toFixed(5)}, {overlay.start[0].toFixed(5)} · 지도 십자 표시는 계산 중심이에요.</Text>}
+      {diagnostics && completed && <View testID="route-timing" style={styles.timing}>
         <Text style={styles.candidateTitle}>전체 소요 시간 {time(completed.timing.totalMs)}</Text>
         <Text style={styles.description}>도로 조회 {time(completed.timing.roadMs)}{dataset.synthetic ? ' · 저장 표본' : completed.cached ? ' · 캐시 사용' : ' · 다운로드'}{'\n'}코스 계산 {time(completed.timing.calculationMs)}</Text>
         {!dataset.synthetic && <Text testID="result-center" style={styles.small}>계산 기준 {completed.origin.lat.toFixed(5)}, {completed.origin.lng.toFixed(5)}</Text>}
         <Text style={styles.small}>{completed.source}</Text>
       </View>}
-      <Pressable testID="response-check" accessibilityRole="button" onPress={() => setTaps((value) => value + 1)} style={styles.response}><Text style={styles.small}>화면 반응 확인 · 누른 횟수 {taps}</Text></Pressable>
       {completed && <>
-        <Text testID="reference-comparison" style={styles.description}>{completed.comparison}</Text>
-        <Text testID="calculation-metrics" style={styles.small}>노드 {completed.metrics.nodes} · 도로 구간 {completed.metrics.edges}{'\n'}최대 연속 계산 {completed.metrics.maxSliceMs.toFixed(1)}ms · 타이머 최대 지연 {completed.maxTimerLagMs.toFixed(1)}ms</Text>
         {completed.result.candidates.map((candidate, index) => <Pressable key={index} testID={`candidate-${index}`} accessibilityRole="button" accessibilityState={{ selected: selected === index }} onPress={() => setSelected(index)} style={[styles.candidate, selected === index && styles.candidateSelected]}>
           <Text style={styles.candidateTitle}>{index + 1}순위 · {candidate.score.lengthKm.toFixed(2)} km · {candidate.score.total}점</Text>
           <Text style={styles.small}>도형 크기 {(candidate.scaleRatio * 100).toFixed(0)}% · 접근/복귀 {candidate.accessKm.toFixed(2)} km</Text>
         </Pressable>)}
         <Text style={styles.small}>점수는 후보 비교용이며 정확한 일치율이 아니에요. 출발점은 입력 좌표에서 {completed.result.snapMeters.toFixed(1)}m 떨어진 도로 위 점이에요.</Text>
         {completed.result.candidates.length > 0 && <SaveCoursePanel completed={completed} selected={selected} />}
+      </>}
+      <Pressable testID="route-diagnostics" accessibilityRole="button" accessibilityState={{ expanded: diagnostics }} style={styles.cancel} onPress={() => setDiagnostics(value => !value)}><Text style={styles.chipText}>{diagnostics ? '개발 검증 정보 닫기' : '개발 검증 정보'}</Text></Pressable>
+      {diagnostics && <>
+        <View style={styles.row}>{(Object.keys(datasets) as DatasetId[]).map((id) => <Pressable key={id} testID={`dataset-${id}`} accessibilityRole="button" accessibilityState={{ selected: datasetId === id }} style={[styles.chip, datasetId === id && styles.chipSelected]} onPress={() => { reset(); if (id !== datasetId) { setMapReady(false); setMapMoving(false); } setDatasetId(id); setTargetKm(datasets[id].input.options.targetKm); }}><Text style={datasetId === id ? styles.chipTextSelected : styles.chipText}>{datasets[id].name}</Text></Pressable>)}</View>
+        <Text style={styles.description}>{dataset.description}</Text>
+        {!dataset.synthetic && <View style={styles.wrap}>{roadSamples.map(sample => <Pressable key={sample.id} testID={`sample-${sample.id}`} accessibilityRole="button" style={styles.chip} onPress={() => { changeSearch(); center.choose(sample.origin); setFixedCenter(true); setValidCenter(true); setMapMoving(false); }}><Text style={styles.chipText}>{sample.label}</Text></Pressable>)}</View>}
+        <Pressable testID="response-check" accessibilityRole="button" onPress={() => setTaps(value => value + 1)} style={styles.response}><Text style={styles.small}>화면 반응 확인 · 누른 횟수 {taps}</Text></Pressable>
+        {completed && <><Text testID="reference-comparison" style={styles.description}>{completed.comparison}</Text><Text testID="calculation-metrics" style={styles.small}>노드 {completed.metrics.nodes} · 도로 구간 {completed.metrics.edges}{'\n'}최대 연속 계산 {completed.metrics.maxSliceMs.toFixed(1)}ms · 타이머 최대 지연 {completed.maxTimerLagMs.toFixed(1)}ms</Text></>}
       </>}
     </ScrollView>
   </SafeAreaView>;

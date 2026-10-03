@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**2026-10-03 코스 생성·실제 GPS 안내 연결 완료(PC·에뮬레이터 범위):** 위치·거리·도형→후보→저장→출발 준비→실제 안내→완주 확인·코스 연계 기록을 연결했습니다. SQLite v5·체크포인트·동기화 형식 호환, 249개 검사·타입·린트·release 빌드와 30분 잠금/오프라인 안내·중단 복원·생성 화면 흐름을 확인했습니다. 기존 ID·서명의 `20261003-course-gps.apk`를 준비했으며 **휴대폰에는 설치하지 않았습니다.** 야외·배터리와 기존 모의 서비스의 실기기 재개 문제는 후속입니다. [사용법](docs/development/course-gps-guidance.md)·[검증·APK 해시](docs/quality/course-gps-guidance-verification.md)·[최신 상태](docs/handoff/status.md).
+
 **2026-10-03 16:05 휴대폰 검증 중단:** 사용자 요청으로 멈췄습니다. 모의 안내 화면·이탈/복귀·완주·연속 5분 잠금·알림 일시정지를 확인했고 설정 하단 잘림 수정 APK를 16:00:54에 설치했습니다. 저장 코스의 **일시정지 후 재개→백그라운드에서 안내 서비스가 멈추는 문제는 미해결**입니다. 다음 재개 시 이 문제와 시험 후 자료 대조부터 이어갑니다. [상세 결과](docs/quality/running-guidance-simulation-verification.md)·[현재 상태](docs/handoff/status.md).
 
 **2026-10-03 15:27:29 휴대폰 업데이트 완료:** 사용자 요청으로 SM-S942N에 안내 시험 APK를 설치했습니다. 기존 앱·데이터를 유지하는 업데이트이며 설치본 해시가 준비 파일과 일치합니다. 앱 프로세스 실행을 확인했고, 잠금 상태여서 화면·주행 검증은 후속입니다. 아래 미설치 표현은 최초 개발 완료 시점입니다. [설치 검증](docs/quality/running-guidance-simulation-verification.md).
