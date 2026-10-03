@@ -20,6 +20,7 @@ expo-env.d.ts
 /android/
 /ios/
 /build/
+/modules/*/android/build/
 .gradle/
 .kotlin/
 .cxx/

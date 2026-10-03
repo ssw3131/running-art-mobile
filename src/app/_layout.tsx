@@ -43,6 +43,7 @@ export default function RootLayout() {
         <Stack.Screen name="courses/index" options={{ title: '저장한 코스' }} />
         <Stack.Screen name="courses/[id]" options={{ title: '코스 상세' }} />
         <Stack.Screen name="run" options={{ title: '러닝 GPS 기록' }} />
+        <Stack.Screen name="guidance" options={{ headerShown: false }} />
         <Stack.Screen name="runs/index" options={{ title: '러닝 기록 목록' }} />
         <Stack.Screen name="runs/[id]" options={{ title: '러닝 상세' }} />
         <Stack.Screen name="road-file-lab" options={{ title: '도로 파일 검증' }} />

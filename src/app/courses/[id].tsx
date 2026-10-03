@@ -104,6 +104,9 @@ export default function CourseScreen() {
         <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')} · 점수는 후보 비교용이며 일치율이 아니에요.</Text>
         <Pressable testID="course-simulation-toggle" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => { setBackground(false); setSimulation(value => !value); }}><Text>{simulation ? '시뮬레이션 닫기' : '코스 시뮬레이션 시작'}</Text></Pressable>
         {simulation && <SimulationPanel key={`${course.id}-${course.updatedAt}`} snapshot={course.snapshot} />}
+        <Link href={{ pathname: '/guidance', params: { courseId: course.id } }} asChild>
+          <Pressable testID="course-guidance" accessibilityRole="button" style={styles.button}><Text>러닝 안내 시험 · 모의 주행</Text></Pressable>
+        </Link>
         <Pressable testID="course-export-gpx" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void exportGpx()}>
           <Text>GPX 내보내기</Text>
         </Pressable>

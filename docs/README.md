@@ -16,6 +16,7 @@
 
 | 분야 | 문서 | 내용 |
 | --- | --- | --- |
+| 개발·검증 | [러닝 안내 모의 시험](development/running-guidance-simulation.md) · [검증 기록](quality/running-guidance-simulation-verification.md) | 지도/집중·이탈/복귀·음성/진동·화면 꺼짐 모의 주행. 실제 GPS 안내와 구분 |
 | 제품 | [RunPen 실서비스 기획·제품 결정](product/overview.md) | Figma 출처·화면별 흐름·구현 차이·미정 정책·과금 검토안 |
 | 구현 | [모듈·데이터 흐름](architecture/implementation.md) | 현재 코드와 앞으로 만들 구조 |
 | 구현 | [프로토타입 이식](architecture/prototype-migration.md) | 기능 기준, v0.2 출처, 이식 주의점 |

@@ -22,6 +22,8 @@
 
 저장 코스 시뮬레이션은 `modules/course-simulation/player.ts`의 거리/시간 기반 제어와 `features/courses/SimulationPanel.tsx`의 화면·앱 수명으로 분리했다. `MapSurface`의 `simulationPosition`이 저장 좌표의 가상 위치를 표시하고 GPS 위치·카메라 추적은 유지한다. DB 쓰기·도로 조회·인터넷 없이 동작한다. [사용법](../development/course-simulation.md)·[검증](../quality/course-simulation-verification.md).
 
+2026-10-03 러닝 안내 모의 시험은 `modules/guidance/`의 순수 기하·안내 엔진·위치 공급기·세션과 Android 실행 연결로 나눴다. `features/guidance/GuidanceMap.tsx`가 코스/궤적/가상 위치를 그리고 `app/guidance.tsx`가 지도·집중·설정·결과를 표시한다. 로컬 Expo 모듈 `modules/guidance-native/`는 사용자 시작형 foreground service, Headless JS 수명, 한국어 TTS와 진동을 담당한다. 단일 세션을 화면과 백그라운드가 공유한다. 홈·저장 코스 상세에서 진입하며 기존 단순 시뮬레이션과 실제 GPS 러닝은 보존한다. SQLite/서버에 시험 기록을 쓰지 않고 생성된 `android/` 직접 수정에 의존하지 않는다. [계약·사용법](../development/running-guidance-simulation.md)·[검증](../quality/running-guidance-simulation-verification.md).
+
 현재 `src/app/_layout.tsx`는 Router Stack을 구성하고 `index.tsx`에서 지도·계산·캐시·코스·러닝·계정 등의 기능 화면으로 이동합니다. 현재 화면은 핵심 기능 검증용이며, 2026-10-03 전달받은 [RunPen 제품 기획](../product/overview.md)의 Figma UI 기준으로 이 앱을 실서비스로 이어 개발합니다. prototype은 보조, 보관함은 과거 시안이며 별도의 개발용·배포용 앱은 만들지 않습니다.
 
 ### 서비스 전환 시 연결할 책임 — 아직 구현 완료가 아님
@@ -32,7 +34,7 @@
 | --- | --- |
 | 홈·계정 | 기존 Auth·코스/러닝 저장 기반에 홈 3상태·프로필·설정·소셜 제공자·탈퇴 흐름을 연결. 소유권·동기화 기반 검증 완료 |
 | 코스 생성·상세 | road-data·route-engine·courses를 재사용. 직접 그리기·이미지 입력·장소 검색·후보 표시·서비스 상세를 추가 |
-| 러닝 안내 | running·map·location을 재사용. 선택 코스 진행·방향 안내·이탈/복귀·집중 모드·음성·이어달리기 책임을 추가 |
+| 러닝 안내 | guidance의 모의 위치·방향·이탈/복귀·집중·음성 시험 구현을 재사용해 실제 running·location과 연결. 실제 GPS 완주·기록 연계·중단 복원은 후속 |
 | 기록·배지·공유 | 코스와 GPS 기록의 관계, 완주 판정·성취/통계·재도전·이미지 공유를 추가. GPX·시뮬레이션 기반 보존 |
 | 운영 안내 | 소개·이용 방법·FAQ·문의·공지·약관과 계정/자료 삭제 정책을 연결. 서버 책임은 서버 전략에 따라 구현 단계에서 정함 |
 

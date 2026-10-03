@@ -3,10 +3,12 @@ import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { RunError } from './model';
 import type { TrackingDriver } from './controller';
+import { guidanceActivity } from '../guidance/activity';
 
 export const RUNNING_TASK = 'running-art-gps-v1';
 export const trackingDriver: TrackingDriver = {
   async prepare() {
+    if (guidanceActivity.active()) throw new RunError('모의 러닝 안내 시험을 종료한 뒤 GPS 러닝을 시작해 주세요.');
     if (Platform.OS !== 'android' || !await TaskManager.isAvailableAsync()) throw new RunError('러닝 추적은 Android 설치 앱에서 사용할 수 있어요.');
     const foreground = await Location.requestForegroundPermissionsAsync();
     if (!foreground.granted) throw new RunError('러닝을 기록하려면 위치 권한이 필요해요. 앱 설정에서 허용해 주세요.');

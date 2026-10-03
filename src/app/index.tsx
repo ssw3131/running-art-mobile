@@ -42,6 +42,11 @@ export default function HomeScreen() {
               <Text style={styles.secondaryText}>러닝 GPS 기록</Text>
             </Pressable>
           </Link>
+          <Link href="/guidance" asChild>
+            <Pressable accessibilityRole="button" testID="open-guidance" style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>러닝 안내 시험 · 모의 주행</Text>
+            </Pressable>
+          </Link>
           <Link href="/runs" asChild>
             <Pressable accessibilityRole="button" testID="open-runs" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>러닝 기록 목록</Text>

@@ -1,5 +1,11 @@
 # Running Art Mobile — 작업 지침
 
+**2026-10-03 16:05 실기기 검증 중단:** 사용자 요청으로 휴대폰 검증을 멈췄다. 모의 안내 화면/이탈·복귀/완주·연속 5분 잠금·음성/진동 요청·알림 일시정지를 확인했고, 설정 하단 버튼 잘림을 수정한 `20261003-guidance-phone.apk`를 16:00:54에 설치했다. **저장 코스의 일시정지→재개→Home 후 `heartbeat_timeout` 서비스 종료는 미해결**이다. 마지막 조회에 실행 서비스가 없어 USB 분리 가능하며, 다음 재개는 이 문제 진단과 최종 자료/계정 대조부터다. [상세/설치 해시](docs/quality/running-guidance-simulation-verification.md)·[최신 상태](docs/handoff/status.md). 아래 휴대폰 미검증·완료 표현보다 이 결과를 우선한다.
+
+**2026-10-03 15:27:29 KST 안내 APK 휴대폰 설치 완료:** 사용자 후속 요청으로 SM-S942N에 `20261003-guidance.apk`를 데이터 유지 방식으로 업데이트했다. 설치 해시·기존 appId/최초 설치 시각/자료 경로 유지 및 앱 프로세스 실행을 확인했다. 휴대폰 잠금으로 UI 표시·주행 시험은 후속이다. 아래 ‘휴대폰 미설치’는 최초 개발 완료 시점이며 [최신 상태](docs/handoff/status.md)와 [검증](docs/quality/running-guidance-simulation-verification.md)의 후속 설치 결과를 우선한다.
+
+**2026-10-03 러닝 안내 모의 시험 목표 완료:** 사용자 요청으로 5-1보다 안내 시험을 우선했다. 기존 단일 앱에 지도/집중 정상·이탈/설정/완주 결과, 방향·되짚기 복귀·한국어 음성/진동·화면 꺼짐 모의 주행을 구현했다. 전체 239개 검사·타입·린트·release 빌드, API 36 실제 30분 잠금·오프라인 음성·알림 제어·강제 종료 후 초기화·저장 코스 완주·검증 자료의 내용 해시 보존을 통과했다. 동일 ID·서명의 `20261003-guidance.apk`를 준비했고 **휴대폰에는 설치하지 않았다.** 실제 GPS 안내·휴대폰 야외/배터리·배지/칼로리/공유는 후속이다. [사용법](docs/development/running-guidance-simulation.md)·[검증](docs/quality/running-guidance-simulation-verification.md)·[현재 상태](docs/handoff/status.md). 아래 개인 동기화 APK는 기존 휴대폰 설치본이며 안내 APK 준비와 구분한다.
+
 **2026-10-03 개인 자료 동기화 목표 완료:** SQLite v4 소유권·계정별 접근, Supabase 개인 테이블·RLS·비공개 Storage·재전송·충돌·삭제·복원을 구현·적용했다. 220개 검사·타입·린트·release APK와 SM-S942N의 실제 업로드·오프라인 수정/재시작/재전송·Storage API 삭제·로그아웃/재로그인·빈 SQLite 복원을 통과했다. 코스 1개·러닝 2건/209좌표·메모 1개의 원래 내용 해시가 유지되며 최종 상태는 기존 계정 로그인·동기화 켜짐이다. 12:21:48 KST에 동일 ID·서명으로 최종 APK를 설치했다. 물리적 휴대폰 2대의 동시 검증은 후속이다. [검증](docs/quality/personal-sync-verification.md)·[사용법](docs/development/personal-sync.md). 아래 과거 동기화 미구현·로그아웃 최종 상태보다 이 결과를 우선하며 다음 기능은 RunPen 5-1 서비스 화면·계정이다.
 
 **2026-10-03 RunPen 실서비스 기획 기준:** 서비스명은 RunPen, 기술 프로젝트명은 Running Art다. [제품 기획](docs/product/overview.md)의 Figma **UI 페이지 우선·prototype 보조·보관함 과거 시안** 기준으로 현재 앱을 실서비스로 이어간다. 별도 개발용·배포용 앱은 만들지 않으며 서버 환경 분리 여부는 후속 결정이다. 전체 목표를 단계적으로 완성하고 최초 출시 필수 범위는 미확정이다. 과금 이미지는 검토안이며 커뮤니티는 후속 확장이다. 이번 변경은 문서 정리이고 앱 코드·ID·서명·DB·클라우드 설정·배포를 바꾸지 않았다. 아래 과거 기술 검증 요약보다 최신 제품 결정과 [현재 상태](docs/handoff/status.md)를 우선한다.
