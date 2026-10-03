@@ -1,4 +1,8 @@
-# Running Art Mobile
+# RunPen — Running Art Mobile
+
+**2026-10-03 실서비스 기획 반영:** 서비스명은 **RunPen**, 저장소·기술 프로젝트명은 Running Art입니다. [제품 기획](docs/product/overview.md)에 Figma UI 기준의 화면·흐름, 현재 구현과의 차이, 미확정 과금안을 정리했습니다. 현재 앱을 실서비스로 이어가며 개발용·배포용 앱을 따로 만들지 않습니다. 서버 환경 분리 여부와 최초 출시 필수 범위는 후속 결정입니다. 전체 목표를 단계적으로 완성하고 커뮤니티는 후속 확장으로 둡니다. 이번 변경은 문서 정리이며 서비스 화면 구현·앱 배포 완료를 뜻하지 않습니다.
+
+문서 읽기 순서는 **[서비스 기획](docs/product/overview.md) → [현재 상태](docs/handoff/status.md) → [로드맵](docs/planning/roadmap.md)**입니다. 개인 자료 동기화는 별도 진행 중이며 아래 날짜별 ‘미구현’·‘최신 APK’는 해당 시점의 기록입니다.
 
 **2026-10-03 Google 앱 로그인 목표 완료:** 홈의 내 계정에서 Google 로그인·브라우저 복귀·계정 표시·세션 보관·갱신·로그아웃을 제공합니다. 전체 자동 검사 202개·타입·린트·release APK·에뮬레이터에 이어 **SM-S942N에서 실제 로그인 → 앱 복귀 → 계정 표시 → 앱 재시작 후 유지 → 로그아웃**을 확인했습니다. 로그아웃 후 재시작·재로그인과 기존 코스·러닝·메모 보존도 통과했습니다. 개인 자료 동기화는 후속입니다. [사용법](docs/development/google-sign-in.md)·[검증과 APK](docs/quality/google-sign-in-verification.md).
 
@@ -18,9 +22,9 @@
 
 **2026-09-30 서버 방향 정리:** 두 웹 테스트 프로젝트는 알고리즘·기능 참고로만 사용하고 모바일의 서버·도로 공급·데이터·배포를 독립시킵니다. 로그인·동기화·코스 공유·커뮤니티를 서비스 범위에 포함하고, 초기 사용자 제공은 무료이며 유료화·횟수 제한은 후속 계획으로만 둡니다. [독립 서버 전략](docs/planning/server-strategy.md)에 구성과 전환 순서를 정리했습니다. 현재 일반 계산과 캐시 검증 화면은 같은 모바일 전용 R2 전국 채널·영구 저장을 사용합니다.
 
-**현재는 핵심 기능 테스트용 앱입니다.** 최종 서비스 기획·디자인은 이후 반영합니다. 홈의 **코스 계산 테스트 → 주변 OSM**에서 대전·제주 등 위치 버튼을 선택하거나 지도를 움직여 중심 주변 2km 도로로 계산합니다. 결과에 도로 조회·계산·전체 시간과 캐시 사용을 표시하며 완료된 경로는 재탐색 전까지 유지합니다. [지도 중심 조회](docs/development/route-center.md), [계산 성능](docs/development/route-engine-performance.md), [독립 실행 APK](docs/development/android-test-apk.md)를 참고하세요.
+**현재 설치된 화면은 핵심 기능 검증 화면이며, 이 앱을 RunPen 서비스로 이어 개발합니다.** Figma UI 페이지의 홈·코스 생성·실시간 러닝·기록 보관함·마이페이지와 계정·안내 화면이 목표입니다. 기존 홈의 **코스 계산 테스트 → 주변 OSM**에서 위치 버튼이나 지도를 이용해 중심 주변 도로로 계산할 수 있습니다. 현행 사용법은 [지도 중심 조회](docs/development/route-center.md), [계산 성능](docs/development/route-engine-performance.md), [독립 실행 APK](docs/development/android-test-apk.md)를 참고하세요.
 
-최신 상태는 [인수인계](docs/handoff/status.md), 사용법은 [코스 저장](docs/development/saved-courses.md)·[코스 계산](docs/development/route-engine.md)·[지도·위치](docs/development/map-location.md)를 참고하세요. 휴대폰에는 2026-10-02 러닝 통합 APK가 설치되어 있으며 GitHub 공개 APK는 이전 버전입니다. 러닝의 실제 휴대폰·야외 검증, 회원/동기화와 CI/CD는 후속입니다.
+최신 상태는 [인수인계](docs/handoff/status.md), 사용법은 [코스 저장](docs/development/saved-courses.md)·[코스 계산](docs/development/route-engine.md)·[지도·위치](docs/development/map-location.md)를 참고하세요. 휴대폰에는 2026-10-03 Google 로그인 APK까지 업데이트했으며 GitHub 공개 APK는 이전 버전입니다. 개인 자료 동기화는 별도 진행 중, 야외·장시간 검증은 후속, CI/CD는 실행 보류입니다.
 
 ## 휴대폰 테스트 APK 다운로드
 
@@ -60,7 +64,7 @@
 
 ## 핵심 기준
 
-- 기능·흐름: Google AI Studio 프로토타입을 기준으로 모바일에 맞게 재구현합니다.
+- 기능·흐름: RunPen Figma UI 페이지와 사용자 확정 결정을 우선합니다. prototype 페이지는 보조, 보관함은 과거 시안이며 Google AI Studio 프로토타입은 참고용입니다.
 - 계산: Codex 프로토타입 **v0.2 알고리즘**을 휴대폰 내부 모듈로 이식합니다. 사용자 표현의 v2.0은 저장소의 v0.2이며, `exports/running-art-algorithm/` 소스를 사용합니다. 루트 v0.3은 테스트 버전으로 이식 기준에서 제외합니다.
 - 기술: React Native·Expo·TypeScript·Expo Router. 지도는 MapLibre React Native·MapTiler, 전경 위치는 Expo Location, 저장 기반은 Expo SQLite를 연결했습니다. 백그라운드 TaskManager·러닝 SQLite 기록을 연결했습니다.
 - 데이터: 전국 사용자 위치 주변의 OSM 보행 데이터를 지역 파일로 내려받고 캐시합니다. 지도 타일과 경로 계산용 그래프는 별개입니다.

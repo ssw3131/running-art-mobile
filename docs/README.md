@@ -1,5 +1,7 @@
 # 문서 목차
 
+**2026-10-03 RunPen 실서비스 기획:** [제품 기획](product/overview.md)을 중심 문서로 사용합니다. 서비스명은 RunPen, 기술 프로젝트명은 Running Art이며 Figma UI 우선·단일 앱·단계적 완성·서버 환경 분리 미정·과금 검토·커뮤니티 후속 결정을 반영했습니다. [로드맵](planning/roadmap.md)은 서비스 전환 순서, [현재 상태](handoff/status.md)는 완료/진행 중/미구현/미검증을 구분합니다. 이번 실행은 문서만 변경했습니다. [실행 기록](history/executed-plans/2026-10-03-1144-runpen-service-planning.md).
+
 2026-10-03: [Google 앱 로그인 사용법](development/google-sign-in.md) · [자동 검사·APK·에뮬레이터·실제 휴대폰 로그인 검증 완료](quality/google-sign-in-verification.md).
 
 **2026-10-02 실제 휴대폰 후속 검증 완료:** SM-S942N·Android 16에서 개선 전/후 release APK를 교차 3쌍 비교했다. 합성 격자는 3쌍 모두 빨라졌지만 강남 실제 도로는 3쌍 중 2쌍에서 느려져 일관된 개선을 확인하지 못했다. 격자 전체 결과와 실제 도로 후보 점수·탐색량이 같고 입력/취소/재계산·저장 코스 재생을 통과했다. 최종 성능 APK 설치·해시와 기존 야외 기록 2건/209좌표·코스 1개·메모 1개 보존을 확인했다. GPS 거리 재합산은 정확히 일치하며 장시간 잠금·배터리·실제 이동 거리 오차는 후속이다. [전후 수치와 검증 범위](quality/phone-performance-20261002.md). 아래 이전 시각의 설치 보류·미검증 표현은 당시 이력이며 최신 상태는 이 문단을 우선한다.
@@ -12,7 +14,7 @@
 
 | 분야 | 문서 | 내용 |
 | --- | --- | --- |
-| 제품 | [목표·결정 이유](product/overview.md) | 사용자 경험, 선택 이유, 포함·제외 범위 |
+| 제품 | [RunPen 실서비스 기획·제품 결정](product/overview.md) | Figma 출처·화면별 흐름·구현 차이·미정 정책·과금 검토안 |
 | 구현 | [모듈·데이터 흐름](architecture/implementation.md) | 현재 코드와 앞으로 만들 구조 |
 | 구현 | [프로토타입 이식](architecture/prototype-migration.md) | 기능 기준, v0.2 출처, 이식 주의점 |
 | 개발 | [Android 개발 환경 — 중심 안내](development/android-studio.md) | 도구·버전·경로, 새 PC 최초 설정, 매일 Studio 실행·종료, 확인 기준 |
