@@ -37,7 +37,7 @@ export default function RunDetailScreen() {
       <RunPath points={points} />
       <Text style={styles.body}>저장된 GPS 궤적입니다. 일시정지·GPS 공백은 연결하지 않아요. 활동 시간에는 일시정지를 제외하고 GPS를 기다린 시간이 포함됩니다.</Text>
       {run.status !== 'completed' ? <Link href="/run" style={styles.link}>진행 중인 러닝으로 이동</Link> :
-        <RunButton id="run-delete" title="기록 삭제" disabled={busy} onPress={() => Alert.alert('이 러닝 기록을 삭제할까요?', '저장된 GPS 좌표와 요약이 함께 삭제됩니다.', [
+        <RunButton id="run-delete" title="기록 삭제" disabled={busy} onPress={() => Alert.alert('이 러닝 기록을 삭제할까요?', '저장된 GPS 좌표와 요약이 함께 삭제됩니다. 계정에 연결한 기록은 다음 동기화 때 서버와 다른 기기에서도 삭제됩니다.', [
           { text: '취소', style: 'cancel' }, { text: '삭제', style: 'destructive', onPress: () => void remove() },
         ])} />}
     </>}

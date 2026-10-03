@@ -1,17 +1,20 @@
 import type { SqlExecutor, StorageDatabase } from '../storage/types.ts';
+import { serialDatabase } from '../storage/serial-database.ts';
+import { guestScope, type OwnerScope } from '../sync/ownership.ts';
 import { classifyFix, elapsedMs, RunError, validateId, type Fix, type Run, type RunPoint, type RunStatus } from './model.ts';
 
-const columns = `id,status,started_at AS startedAt,ended_at AS endedAt,active_ms AS activeMs,
+export const columns = `id,status,started_at AS startedAt,ended_at AS endedAt,active_ms AS activeMs,
   checkpoint_at AS checkpointAt,distance_m AS distanceM,point_count AS pointCount,
   rejected_count AS rejectedCount,last_timestamp AS lastTimestamp,segment,break_pending AS breakPending,
   resumed_at AS resumedAt,reason`;
-const pointColumns = 'sequence,segment,timestamp,latitude,longitude,accuracy';
-async function read(tx: SqlExecutor, id: string) {
-  const run = await tx.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE id=?`, validateId(id));
+export const pointColumns = 'sequence,segment,timestamp,latitude,longitude,accuracy';
+async function read(tx: SqlExecutor, id: string, owner: string) {
+  const run = await tx.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE id=? AND owner_id=?`, validateId(id), owner);
   if (!run) throw new RunError('러닝 기록을 찾을 수 없어요.');
   return run;
 }
-export function createRunRepository(db: StorageDatabase, now = Date.now) {
+export function createRunRepository(db: StorageDatabase, now = Date.now, scope: OwnerScope = guestScope) {
+  db = serialDatabase(db);
   let tail: Promise<unknown> = Promise.resolve();
   function queue<T>(task: () => Promise<T>): Promise<T> {
     const result = tail.then(task); tail = result.catch(() => {}); return result;
@@ -20,23 +23,24 @@ export function createRunRepository(db: StorageDatabase, now = Date.now) {
     return queue(async () => { let result!: T; await db.withExclusiveTransactionAsync(async tx => { result = await task(tx); }); return result; });
   }
   return {
-    active: () => queue(() => db.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE status!='completed' LIMIT 1`)),
-    get: (id: string) => queue(() => read(db, id)),
-    points: (id: string) => queue(() => db.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`, validateId(id))),
+    active: () => queue(() => db.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE status!='completed' AND owner_id=? LIMIT 1`, scope())),
+    get: (id: string) => queue(() => read(db, id, scope())),
+    points: (id: string) => queue(async () => { await read(db, id, scope()); return db.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`, validateId(id)); }),
     list: (limit = 30, offset = 0) => queue(() => {
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isSafeInteger(offset) || offset < 0) throw new RunError('목록 범위가 올바르지 않아요.');
-      return db.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions ORDER BY started_at DESC,id DESC LIMIT ? OFFSET ?`, limit, offset);
+      return db.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? ORDER BY started_at DESC,id DESC LIMIT ? OFFSET ?`, scope(), limit, offset);
     }),
     start: () => transaction(async tx => {
       if (await tx.getFirstAsync("SELECT id FROM running_sessions WHERE status!='completed'")) throw new RunError('진행 중인 러닝을 먼저 재개하거나 종료해 주세요.');
       const at = now();
       const row = await tx.getFirstAsync<{ id: string }>('SELECT lower(hex(randomblob(16))) AS id');
       if (!row) throw new Error('ID unavailable');
-      await tx.runAsync(`INSERT INTO running_sessions(id,status,started_at,checkpoint_at,resumed_at) VALUES(?,'running',?,?,?)`, row.id, at, at, at);
-      return read(tx, row.id);
+      const owner = scope();
+      await tx.runAsync(`INSERT INTO running_sessions(id,status,started_at,checkpoint_at,resumed_at,owner_id) VALUES(?,'running',?,?,?,?)`, row.id, at, at, at, owner);
+      return read(tx, row.id, owner);
     }),
     append: (fixes: readonly Fix[]) => transaction(async tx => {
-      const run = await tx.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE status='running'`);
+      const run = await tx.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE status='running' AND owner_id=?`, scope());
       if (!run) return;
       const at = now();
       let last = await tx.getFirstAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence DESC LIMIT 1`, run.id);
@@ -59,11 +63,11 @@ export function createRunRepository(db: StorageDatabase, now = Date.now) {
       run.pointCount, run.rejectedCount, run.lastTimestamp, run.segment, run.breakPending, run.id);
     }),
     checkpoint: (id: string) => transaction(async tx => {
-      const run = await read(tx, id), at = now();
+      const run = await read(tx, id, scope()), at = now();
       if (run.status === 'running') await tx.runAsync('UPDATE running_sessions SET active_ms=?,checkpoint_at=? WHERE id=?', elapsedMs(run, at), Math.max(at, run.checkpointAt), run.id);
     }),
     transition: (id: string, status: RunStatus, reason: string | null = null) => transaction(async tx => {
-      const run = await read(tx, id), at = Math.max(now(), run.checkpointAt);
+      const run = await read(tx, id, scope()), at = Math.max(now(), run.checkpointAt);
       if (run.status === 'completed') { if (status === 'completed') return run; throw new RunError('이미 종료한 러닝이에요.'); }
       if (status === run.status) return run;
       if (status === 'running' && run.status !== 'paused' && run.status !== 'interrupted') throw new RunError('재개할 수 없는 상태예요.');
@@ -72,10 +76,10 @@ export function createRunRepository(db: StorageDatabase, now = Date.now) {
       await tx.runAsync(`UPDATE running_sessions SET status=?,active_ms=?,checkpoint_at=?,resumed_at=?,
         ended_at=?,break_pending=1,reason=? WHERE id=?`, status, active, at,
       status === 'running' ? at : run.resumedAt, status === 'completed' ? at : null, reason, run.id);
-      return read(tx, id);
+      return read(tx, id, scope());
     }),
     remove: (id: string) => transaction(async tx => {
-      const run = await read(tx, id);
+      const run = await read(tx, id, scope());
       if (run.status !== 'completed') throw new RunError('러닝을 종료한 뒤 삭제할 수 있어요.');
       // Expo exclusive transactions open another connection; foreign_keys may be off there.
       await tx.runAsync('DELETE FROM running_points WHERE run_id=?', id);

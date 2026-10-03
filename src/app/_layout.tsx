@@ -5,30 +5,35 @@ import { AppState, Linking, Platform, Text } from 'react-native';
 import { authentication } from '@/modules/auth/runtime';
 import { running } from '@/modules/running/runtime';
 import { runErrorMessage } from '@/modules/running/model';
+import { useAuth } from '@/features/auth/use-auth';
+import { personalSync } from '@/modules/sync/runtime';
 
 export default function RootLayout() {
+  const auth=useAuth();
   const [recoveryError, setRecoveryError] = useState('');
   useEffect(() => {
     void authentication.start();
+    personalSync.start();
+    personalSync.setActive(AppState.currentState==='active');
     authentication.setActive(AppState.currentState === 'active');
     const links = Linking.addEventListener('url', ({ url }) => { void authentication.handleUrl(url); });
     void Linking.getInitialURL().then(url => { if (url) return authentication.handleUrl(url); }).catch(() => undefined);
-    const lifecycle = AppState.addEventListener('change', state => authentication.setActive(state === 'active'));
-    return () => { links.remove(); lifecycle.remove(); authentication.setActive(false); };
+    const lifecycle = AppState.addEventListener('change', state => {authentication.setActive(state === 'active');personalSync.setActive(state==='active');});
+    return () => { links.remove(); lifecycle.remove(); authentication.setActive(false);personalSync.setActive(false); };
   }, []);
   useEffect(() => {
-    if (Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android' || !auth.ready) return;
     let mounted = true;
     const recover = () => { void running.monitor().then(() => { if (mounted) setRecoveryError(''); }).catch(error => { if (mounted) setRecoveryError(runErrorMessage(error)); }); };
     recover();
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') recover(); });
     return () => { mounted = false; subscription.remove(); };
-  }, []);
+  }, [auth.ready,auth.account?.id]);
   return (
     <>
       <StatusBar style="dark" />
       {!!recoveryError && <Text accessibilityRole="alert" style={{ color: '#A12F2F', padding: 16 }}>러닝 복원: {recoveryError}</Text>}
-      <Stack screenOptions={{ headerStyle: { backgroundColor: '#F6F5F0' }, headerTintColor: '#183C32' }}>
+      <Stack key={auth.ready?auth.account?.id??'guest':'loading'} screenOptions={{ headerStyle: { backgroundColor: '#F6F5F0' }, headerTintColor: '#183C32' }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="account" options={{ title: '내 계정' }} />
         <Stack.Screen name="auth/callback" options={{ headerShown: false }} />

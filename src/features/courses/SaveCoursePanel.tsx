@@ -35,7 +35,7 @@ function CourseEditor({ snapshot, selected }: { snapshot: CourseSnapshot; select
   }
   return <View style={styles.card}>
     <Text style={styles.title}>선택한 {selected + 1}순위 코스 저장</Text>
-    <Text style={styles.small}>계산 당시의 {courseShapes[snapshot.shape]} · 목표 {snapshot.targetKm}km를 저장해요. {snapshot.source === 'synthetic' ? '가상 테스트 코스이며 실제 달릴 길이 아니에요.' : '기기에만 저장되며 다른 사람에게 공개되지 않아요.'}</Text>
+    <Text style={styles.small}>계산 당시의 {courseShapes[snapshot.shape]} · 목표 {snapshot.targetKm}km를 저장해요. {snapshot.source === 'synthetic' ? '가상 테스트 코스이며 실제 달릴 길이 아니에요.' : '기기에 먼저 저장해요. 개인 기록 동기화를 켜면 내 계정의 서버에도 저장되며 다른 사람에게 공개되지 않아요.'}</Text>
     <TextInput testID="course-save-name" accessibilityLabel="저장할 코스 이름" value={name} onChangeText={setName}
       maxLength={COURSE_NAME_MAX} editable={!busy} style={styles.input} placeholder="코스 이름" />
     <Pressable testID="course-save" accessibilityRole="button" disabled={busy || Platform.OS === 'web'} style={styles.button} onPress={() => void save()}>

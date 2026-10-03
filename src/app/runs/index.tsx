@@ -27,7 +27,7 @@ export default function RunsScreen() {
   }, [fetchPage]));
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}><ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>러닝 기록 목록</Text>
-    <Text style={styles.body}>이 기기에 저장한 GPS 기록이에요. 앱 삭제·데이터 초기화 시 함께 삭제됩니다.</Text>
+    <Text style={styles.body}>기기에 저장한 GPS 기록이에요. 계정에 연결한 기록은 같은 계정에서 표시됩니다. 내 계정에서 동기화를 켜면 완료한 러닝을 서버에 저장하고 복원할 수 있어요.</Text>
     <Link href="/run" style={styles.link}>러닝 시작·계속하기</Link>
     {!!error && <Text accessibilityRole="alert" style={styles.error}>{error}</Text>}
     {Platform.OS !== 'android' ? <Text>Android 앱에서 확인해 주세요.</Text> : <>

@@ -15,12 +15,18 @@ const storage = createSecureStorage({
   setItem: (key, value) => SecureStore.setItemAsync(key, value),
   removeItem: key => SecureStore.deleteItemAsync(key),
 }, Crypto.randomUUID);
-const client = config && Platform.OS !== 'web' ? createClient(config.url, config.key, {
+export const authClient = config && Platform.OS !== 'web' ? createClient(config.url, config.key, {
   auth: { storage, storageKey: AUTH_STORAGE_KEY, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, flowType: 'pkce', debug: false },
 }) : null;
 
 export const authentication = createAuthController({
-  auth: client?.auth ?? null,
+  auth: authClient?.auth ?? null,
   storage,
   openBrowser: (url, redirect) => WebBrowser.openAuthSessionAsync(url, redirect),
+  canChangeAccount: async () => {
+    const { getStorage } = await import('../storage/database');
+    const active=await (await getStorage()).sync.hasActiveRun();
+    // Expiry must not lock a runner out of re-authenticating to finish their run.
+    return !active || active.owner_id!==(authentication.getSnapshot().account?.id??'');
+  },
 });

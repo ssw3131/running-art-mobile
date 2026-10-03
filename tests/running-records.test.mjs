@@ -92,7 +92,7 @@ test('v2 migration preserves existing courses and notes; GPS data survives file 
   const restored = createRunRepository(db, () => BASE + 999000);
   assert.equal((await restored.active()).id, run.id); assert.equal((await restored.points(run.id)).length, 1);
   assert.equal((await restored.transition(run.id, 'interrupted')).activeMs, 0);
-  assert.deepEqual(await db.getAllAsync('SELECT * FROM saved_courses'), courses);
+  assert.deepEqual(await db.getAllAsync('SELECT id,name,source,shape,target_km,length_km,score,snapshot_json,snapshot_hash,created_at,updated_at FROM saved_courses'), courses);
   assert.equal((await db.getFirstAsync('SELECT content FROM storage_test_notes')).content, '보존');
 });
 test('serialized concurrent commands preserve every point and reject invalid IDs and pagination', async t => {

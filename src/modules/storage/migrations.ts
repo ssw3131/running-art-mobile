@@ -1,4 +1,5 @@
 import { StorageError, type StorageDatabase } from './types.ts';
+import { personalSyncMigration } from '../sync/schema.ts';
 
 export const DATABASE_NAME = 'running-art.db';
 
@@ -44,6 +45,7 @@ export const migrations: readonly string[] = [
     accuracy REAL NOT NULL CHECK(accuracy>=0),
     PRIMARY KEY(run_id,sequence), UNIQUE(run_id,timestamp)
   );`,
+  personalSyncMigration,
 ];
 
 export const SCHEMA_VERSION = migrations.length;

@@ -1,6 +1,7 @@
 import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '@/features/auth/use-auth';
 import { authentication } from '@/modules/auth/runtime';
+import { SyncPanel } from '@/features/auth/SyncPanel';
 
 export default function AccountScreen() {
   const state = useAuth();
@@ -25,7 +26,8 @@ export default function AccountScreen() {
           <Text style={styles.buttonText}>{state.account ? '이 기기에서 로그아웃' : 'Google로 로그인'}</Text>
         </Pressable>
       </View>
-      <Text style={styles.body}>코스와 러닝 기록은 현재 이 기기에 저장됩니다. 계정 간 동기화는 아직 제공하지 않으며 로그아웃해도 기기 기록은 유지됩니다.</Text>
+      {state.account && <SyncPanel />}
+      <Text style={styles.body}>로그아웃해도 기록은 삭제되지 않습니다. 계정에 연결한 기록은 같은 계정으로 로그인하면 다시 볼 수 있습니다. 로그인 전의 기기 기록은 계정 연결을 선택하기 전까지 서버로 전송하지 않습니다.</Text>
     </ScrollView>
   );
 }

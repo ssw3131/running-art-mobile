@@ -38,11 +38,16 @@ function fixture(options = {}) {
     },
     startAutoRefresh: async () => { calls.active.push(true); }, stopAutoRefresh: async () => { calls.active.push(false); },
   };
-  const controller = createAuthController({ auth, storage, now: () => 1000000, openBrowser: () => browser.promise });
+  const controller = createAuthController({ auth, storage, now: () => 1000000, openBrowser: () => browser.promise, canChangeAccount:options.canChangeAccount });
   return { controller, auth, storage, calls, browser };
 }
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const callback = `${AUTH_REDIRECT_URL}?code=test-code`;
+
+test('account actions respect an unfinished running guard without contacting the provider',async()=>{
+  const signedOut=fixture({canChangeAccount:async()=>false});await signedOut.controller.signIn();assert.equal(signedOut.calls.oauth,0);assert.match(signedOut.controller.getSnapshot().message,/러닝/);assert.equal(signedOut.controller.getSnapshot().busy,false);
+  const signedIn=fixture({session,canChangeAccount:async()=>false});await signedIn.controller.signOut();assert.deepEqual(signedIn.calls.logout,[]);assert.ok(signedIn.controller.getSnapshot().account);assert.match(signedIn.controller.getSnapshot().message,/러닝/);
+});
 
 test('only HTTPS and publishable keys are accepted; server credentials fail closed', () => {
   assert.deepEqual(authConfig(' https://test.supabase.co/ ', 'sb_publishable_test'), { url: 'https://test.supabase.co', key: 'sb_publishable_test' });

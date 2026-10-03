@@ -35,7 +35,7 @@ export default function CoursesScreen() {
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
     <ScrollView contentContainerStyle={styles.content}>
       <Text style={styles.title}>저장한 코스</Text>
-      <Text style={styles.description}>이 기기에 저장한 코스를 다시 열 수 있어요. 앱 삭제·데이터 초기화 시 함께 삭제되며 서버 동기화는 아직 지원하지 않아요.</Text>
+      <Text style={styles.description}>저장한 코스를 다시 열 수 있어요. 계정에 연결한 코스는 같은 계정에서 표시됩니다. 내 계정에서 동기화를 켜면 서버에 저장하고 다른 기기에서 복원할 수 있어요.</Text>
       {!supported ? <Text>저장한 코스는 Android 앱에서 확인해 주세요.</Text> : <>
         {busy && <ActivityIndicator color="#183C32" />}
         {!!error && <Text accessibilityRole="alert" testID="courses-error" style={styles.error}>{error}</Text>}

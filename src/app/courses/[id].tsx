@@ -112,7 +112,7 @@ export default function CourseScreen() {
         <Pressable testID="course-rename" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void rename()}><Text>이름 변경 저장</Text></Pressable>
       </>}
       {supported && <Pressable accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void refresh()}><Text>다시 읽기</Text></Pressable>}
-      {canDelete && <Pressable testID="course-delete" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => Alert.alert('코스를 삭제할까요?', '이 기기에 저장한 코스를 삭제합니다. 삭제한 코스는 복원할 수 없어요.', [
+      {canDelete && <Pressable testID="course-delete" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => Alert.alert('코스를 삭제할까요?', '코스가 기기에서 삭제됩니다. 계정에 연결한 코스는 다음 동기화 때 서버와 다른 기기에서도 삭제됩니다. 삭제한 코스는 복원할 수 없어요.', [
         { text: '취소', style: 'cancel' }, { text: '삭제', style: 'destructive', onPress: () => void remove() },
       ])}><Text style={styles.error}>코스 삭제</Text></Pressable>}
       <Link href="/courses" style={styles.link}>저장한 코스 목록</Link>

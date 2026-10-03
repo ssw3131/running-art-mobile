@@ -20,6 +20,7 @@ export function createAuthController(deps: {
   storage: StringStorage;
   openBrowser: (url: string, redirect: string) => Promise<BrowserResult>;
   now?: () => number;
+  canChangeAccount?: () => Promise<boolean>;
 }) {
   const { auth, storage } = deps;
   let state: AuthState = { ready: !auth, configured: !!auth, busy: false, account: null, message: '' };
@@ -106,6 +107,7 @@ export function createAuthController(deps: {
       update({ busy: true, message: '' });
       try {
         await start();
+        if (deps.canChangeAccount && !await deps.canChangeAccount()) { update({ message:'진행 중인 러닝을 종료한 뒤 계정을 변경해 주세요.' }); return; }
         lastCallback = '';
         const attempt: Pending = { createdAt: now() };
         await storage.setItem(AUTH_PENDING_KEY, JSON.stringify(attempt));
@@ -134,6 +136,7 @@ export function createAuthController(deps: {
       update({ busy: true, message: '' });
       try {
         await start();
+        if (deps.canChangeAccount && !await deps.canChangeAccount()) { update({ message:'진행 중인 러닝을 종료한 뒤 로그아웃해 주세요.' }); return; }
         await clearPending();
         const { error } = await auth.signOut({ scope: 'local' });
         // This SDK removes the local session even when remote revocation fails.
