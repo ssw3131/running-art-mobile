@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="RunPen에서 달린 길을 지도 위에서 만나보세요.">
+  <title>달린 길 — RunPen</title>
+  <link rel="stylesheet" href="https://cdn.maptiler.com/maptiler-sdk-js/v4.1.0/maptiler-sdk.css">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="https://cdn.maptiler.com/maptiler-sdk-js/v4.1.0/maptiler-sdk.umd.min.js"></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header><a class="brand" href="./" aria-label="RunPen 공유 안내">RunPen<span class="brand-dot">•</span></a><span class="eyebrow">달리기로 그린 길</span></header>
+  <main>
+    <section id="status" class="empty" aria-live="polite"><span class="eyebrow">SHARED RUN</span><h1 id="status-title">경로를 불러오고 있어요</h1><p id="status-text">잠시만 기다려 주세요.</p><button id="retry" type="button" hidden>다시 불러오기</button></section>
+    <article id="content" hidden>
+      <section class="intro"><span class="eyebrow">SHARED RUN</span><h1 id="run-title"></h1><p>계획한 모양 위에, 직접 달린 발자취.</p>
+        <dl class="stats"><div><dt>달린 거리</dt><dd><span id="distance"></span><small> km</small></dd></div><div><dt>활동 시간</dt><dd id="duration"></dd></div></dl>
+      </section>
+      <section class="map-card" aria-label="공유된 러닝 경로 지도">
+        <div id="map" role="region" aria-label="확대하거나 이동할 수 있는 지도"></div>
+        <p id="map-status" class="map-status" role="status">지도를 준비하고 있어요.</p>
+        <button id="fit" class="fit" type="button" disabled>전체 경로 보기</button>
+      </section>
+      <fieldset class="legend"><legend>지도에 표시할 경로</legend>
+        <label><input id="show-actual" type="checkbox" checked><i class="swatch actual"></i>실제로 달린 경로</label>
+        <label id="planned-label"><input id="show-planned" type="checkbox" checked><i class="swatch planned"></i>계획한 코스</label>
+        <label id="target-label"><input id="show-target" type="checkbox" checked><i class="swatch target"></i>원래 도형</label>
+      </fieldset>
+      <p id="path-note" class="note">실제 경로의 끊어진 부분은 일시정지 또는 GPS 수신 공백이에요. 계획 코스와 원래 도형은 러닝을 시작할 때의 모습이에요.</p>
+    </article>
+  </main>
+  <footer><span>RunPen</span><p>나만의 모양으로, 나만의 속도로.</p></footer>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "runpen-shared-runs",
+  "compatibility_date": "2026-10-04",
+  "assets": { "directory": "../../build/run-share-web", "not_found_handling": "404-page" }
+}
