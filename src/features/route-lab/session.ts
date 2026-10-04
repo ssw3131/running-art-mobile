@@ -28,7 +28,8 @@ export function createLabSession(load: RoadLoader, run: typeof calculateRoute, n
       active = controller;
       const current = () => active === controller && !controller.signal.aborted;
       const liveRoads = request.liveRoads;
-      const input = { ...request.input, origin: { ...request.input.origin }, options: { ...request.input.options } };
+      const input = { ...request.input, origin: { ...request.input.origin }, options: { ...request.input.options,
+        ...(request.input.options.customTemplate ? { customTemplate: request.input.options.customTemplate.map(p => ({ ...p })) } : {}) } };
       const started = now();
       try {
         const roads: RoadData = liveRoads ? await load(input.origin, input.options.radiusKm * 1000, controller.signal, request.roadMode) : { elements: input.elements, source: '앱에 저장된 고정 표본', cached: false };

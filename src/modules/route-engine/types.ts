@@ -21,7 +21,7 @@ export type Graph = {
   origin: Origin;
   reachable?: Set<number>;
 };
-export type ShapeId = 'heart' | 'star' | 'cat' | 'rabbit' | 'house' | 'diamond' | 'bolt' | 'fish' | 'arrow';
+export type ShapeId = 'heart' | 'star' | 'cat' | 'rabbit' | 'house' | 'diamond' | 'bolt' | 'fish' | 'arrow' | 'custom';
 export type SearchOptions = {
   mode?: 'anchored' | 'free-loop';
   version: '0.1' | '0.2';

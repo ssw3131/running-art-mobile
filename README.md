@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**2026-10-04 직접 그리기 완료·23:53:59 휴대폰 설치:** 코스 만들기에서 한 획의 닫힌 도형을 그리고 미리보기 후 코스를 생성·저장·러닝에 사용할 수 있습니다. 344개 검사·타입/린트·release와 API 36 터치/계산/저장/재열기/러닝을 통과하고 시험 자료를 복구했습니다. 사용자 후속 요청으로 동일 ID·서명의 `20261004-custom-drawing.apk`를 SM-S942N에 자료 유지 방식으로 업데이트하고 설치 해시·기본 실행을 확인했습니다. 휴대폰 기능/DB 내용 해시 재검증은 별도이며 클라우드 변경은 없습니다. [사용법](docs/development/custom-drawing.md)·[검증/APK](docs/quality/custom-drawing-verification.md).
+
 **2026-10-04 실제 러닝 링크 공유 완료(PC·서버·웹):** 실제 Cloudflare·Supabase의 합성 링크 생성·세 경로/토글·공유 중단과 테스트 계정/자료 정리를 완료했다. 원본 앱에 배포 주소를 연결했고 18:56:38 KST 휴대폰에 동일 ID·서명 APK를 자료 유지 설치했다. 사용자 최종 지시에 따라 PC·서버·웹 범위를 완료하고 추가 폰 검증·임시 UI 파일 정리는 후속으로 남겼다. [검증/폰 후속](docs/quality/run-link-sharing-verification.md).
 
 **2026-10-04 코스 규칙 변경 완료(PC·에뮬레이터·APK):** 중심 100m 제한 없이 반경 2km 전체에서 순환 코스를 추천합니다. 코스 어디서나 원하는 방향으로 출발하고 한 바퀴를 연속 완주하면 확인합니다. 코스 밖에서는 보행 도로 최단 합류·이탈 시 마지막 진행 지점 복귀를 안내하며 접근도 실제 러닝 기록에 포함합니다. 330개 검사·타입/린트·release, 양방향 완주·잠금/오프라인·합류/중단 복귀·생성/저장을 통과했습니다. 동일 ID/서명의 `20261004-free-loop.apk`를 준비했으며 **휴대폰에는 설치하지 않았습니다.** [사용법](docs/development/course-gps-guidance.md)·[검증/APK](docs/quality/free-loop-guidance-verification.md)·[최신 상태](docs/handoff/status.md).

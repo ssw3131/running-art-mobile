@@ -15,7 +15,8 @@ import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import { SHAPES } from '@/modules/route-engine/engine';
 import { candidateOverlay } from '@/modules/route-engine/geojson';
-import type { ShapeId } from '@/modules/route-engine/types';
+import type { Point, ShapeId } from '@/modules/route-engine/types';
+import DrawingEditor, { DrawingPreview } from '@/features/route-lab/DrawingEditor';
 import { compareReference } from '@/modules/route-engine/verification';
 import SaveCoursePanel from '@/features/courses/SaveCoursePanel';
 
@@ -41,6 +42,8 @@ export default function RouteLabScreen() {
   const [datasetId, setDatasetId] = useState<DatasetId>('seoul');
   const [diagnostics, setDiagnostics] = useState(false);
   const [shape, setShape] = useState<ShapeId>('heart');
+  const [customTemplate, setCustomTemplate] = useState<Point[] | null>(null);
+  const [drawingOpen, setDrawingOpen] = useState(false);
   const [targetKm, setTargetKm] = useState(5);
   const [state, setState] = useState<State>({ kind: 'idle', message: '도형과 목표 거리를 고른 뒤 코스를 계산해 보세요.' });
   const [completed, setCompleted] = useState<Completed | null>(null);
@@ -98,12 +101,14 @@ export default function RouteLabScreen() {
     if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
   };
   const start = () => {
+    if (drawingOpen || (shape === 'custom' && !customTemplate)) return;
     if (!dataset.synthetic && ((!mapReady && !fixedCenter) || mapMoving || !validCenter || centerState.location.kind === 'loading')) return;
     cancel(); setCompleted(null); setSelected(0); setTaps(0); setSeconds(0);
     running.current = true;
     setState({ kind: 'running', message: dataset.synthetic ? '도로 데이터를 준비하고 있어요.' : '지도 중심 주변의 도로를 조회하고 있어요.' });
-    const input = { ...dataset.input, origin: dataset.synthetic ? dataset.input.origin : center.get().center, options: { ...dataset.input.options, mode: dataset.synthetic ? 'anchored' as const : 'free-loop' as const, version: '0.2' as const, shape, targetKm } };
-    const expected = dataset.synthetic ? referenceFor(datasetId, input.options) : null;
+    const input = { ...dataset.input, origin: dataset.synthetic ? dataset.input.origin : center.get().center, options: { ...dataset.input.options, mode: dataset.synthetic ? 'anchored' as const : 'free-loop' as const, version: '0.2' as const, shape, targetKm,
+      ...(shape === 'custom' && customTemplate ? { customTemplate: customTemplate.map(p => ({ ...p })) } : {}) } };
+    const expected = dataset.synthetic && shape !== 'custom' ? referenceFor(datasetId, input.options) : null;
     const started = performance.now();
     let lastTick = started, maxTimerLagMs = 0, timerTicks = 0, lastProgress = 0;
     let lastPhase = '';
@@ -146,7 +151,7 @@ export default function RouteLabScreen() {
       void Linking.sendIntent('android.settings.LOCATION_SOURCE_SETTINGS').catch(() => setState({ kind: 'error', message: '기기 설정에서 위치 기능을 켜 주세요.' }));
     } else void center.locate();
   };
-  const cannotCalculate = !dataset.synthetic && ((!mapReady && !fixedCenter) || mapMoving || !validCenter || centerState.location.kind === 'loading');
+  const cannotCalculate = (shape === 'custom' && !customTemplate) || (!dataset.synthetic && ((!mapReady && !fixedCenter) || mapMoving || !validCenter || centerState.location.kind === 'loading'));
 
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
     <View style={styles.map}>
@@ -179,7 +184,12 @@ export default function RouteLabScreen() {
       </>}
       {!dataset.synthetic && <Text testID={`route-location-${centerState.location.kind}`} style={styles.small}>{locationMessage(centerState)}</Text>}
       <Text style={styles.label}>도형</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>{SHAPES.map((item) => <Pressable key={item.id} testID={`shape-${item.id}`} accessibilityRole="button" accessibilityState={{ selected: shape === item.id }} style={[styles.chip, shape === item.id && styles.chipSelected]} onPress={() => { changeSearch(); setShape(item.id as ShapeId); }}><Text style={shape === item.id ? styles.chipTextSelected : styles.chipText}>{item.name}</Text></Pressable>)}</ScrollView>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
+        <Pressable testID="shape-custom" accessibilityRole="button" accessibilityState={{ selected: shape === 'custom' }} style={[styles.chip, shape === 'custom' && styles.chipSelected]}
+          onPress={() => { changeSearch(); setDrawingOpen(true); }}><Text style={shape === 'custom' ? styles.chipTextSelected : styles.chipText}>직접 그리기</Text></Pressable>
+        {SHAPES.map((item) => <Pressable key={item.id} testID={`shape-${item.id}`} accessibilityRole="button" accessibilityState={{ selected: shape === item.id }} style={[styles.chip, shape === item.id && styles.chipSelected]} onPress={() => { changeSearch(); setShape(item.id as ShapeId); }}><Text style={shape === item.id ? styles.chipTextSelected : styles.chipText}>{item.name}</Text></Pressable>)}
+      </ScrollView>
+      {shape === 'custom' && customTemplate && <View testID="selected-custom-shape" style={styles.row}><DrawingPreview template={customTemplate} /><Text style={[styles.small, { flex: 1 }]}>{'직접 그린 도형을 사용해요.\n직접 그리기를 누르면 수정할 수 있어요.'}</Text></View>}
       <View style={styles.row}><Text style={styles.label}>목표 거리</Text>{[3, 5, 7].map((km) => <Pressable key={km} testID={`distance-${km}`} accessibilityRole="button" accessibilityState={{ selected: targetKm === km }} style={[styles.chip, targetKm === km && styles.chipSelected]} onPress={() => { changeSearch(); setTargetKm(km); }}><Text style={targetKm === km ? styles.chipTextSelected : styles.chipText}>{km} km</Text></Pressable>)}</View>
       <View style={styles.row}>
         <Pressable testID="calculate-route" accessibilityRole="button" accessibilityState={{ disabled: cannotCalculate }} disabled={cannotCalculate} onPress={start} style={[styles.primary, cannotCalculate && styles.disabled]}><Text style={styles.primaryText}>{mapMoving ? '지도 중심 선택 중' : state.kind === 'running' ? '처음부터 다시 계산' : '코스 계산하기'}</Text></Pressable>
@@ -215,6 +225,9 @@ export default function RouteLabScreen() {
         {completed && <><Text testID="reference-comparison" style={styles.description}>{completed.comparison}</Text><Text testID="calculation-metrics" style={styles.small}>노드 {completed.metrics.nodes} · 도로 구간 {completed.metrics.edges}{'\n'}최대 연속 계산 {completed.metrics.maxSliceMs.toFixed(1)}ms · 타이머 최대 지연 {completed.maxTimerLagMs.toFixed(1)}ms</Text></>}
       </>}
     </ScrollView>
+    {drawingOpen && <DrawingEditor initial={customTemplate} onCancel={() => setDrawingOpen(false)} onApply={template => {
+      changeSearch(); setCustomTemplate(template.map(p => ({ ...p }))); setShape('custom'); setDrawingOpen(false);
+    }} />}
   </SafeAreaView>;
 }
 

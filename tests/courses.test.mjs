@@ -104,7 +104,7 @@ test('invalid names, formats, coordinates, candidates and excessive point counts
     v => { v.route = Array(COURSE_POINTS_MAX + 1).fill([127, 37]); }, v => { v.source = 'unknown'; }]) {
     const value = snapshot(); change(value); await assert.rejects(repository.save(value, '실패'), { code: 'validation' });
   }
-  await assert.rejects(repository.save({ ...snapshot(), schemaVersion: 3 }, '미래'), { code: 'newer-format' });
+  await assert.rejects(repository.save({ ...snapshot(), schemaVersion: 4 }, '미래'), { code: 'newer-format' });
   assert.throws(() => courseFromCalculation(calculation(), -1), { code: 'validation' });
   assert.throws(() => courseFromCalculation({ ...calculation(), result: { candidates: [] } }, 0), { code: 'validation' });
   assert.deepEqual(await repository.list(), []);
