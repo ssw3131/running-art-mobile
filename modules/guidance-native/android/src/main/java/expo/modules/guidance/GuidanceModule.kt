@@ -3,6 +3,8 @@ package expo.modules.guidance
 import android.content.Intent
 import android.os.Build
 import android.os.SystemClock
+import expo.modules.kotlin.Promise
+import expo.modules.kotlin.functions.Queues
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -20,6 +22,10 @@ class GuidanceModule : Module() {
     Function("stop") {
       appContext.reactContext?.stopService(Intent(appContext.reactContext, GuidanceService::class.java))
     }
+    AsyncFunction("nextTick") { token: String, promise: Promise ->
+      val service = GuidanceService.instance
+      if (service == null) promise.resolve(false) else service.nextTick(token, promise)
+    }.runOnQueue(Queues.MAIN)
     Function("clock") { SystemClock.elapsedRealtime().toDouble() }
     Function("commands") { GuidanceService.drainCommands() }
     Function("status") { GuidanceService.status() }

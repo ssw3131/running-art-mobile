@@ -1,5 +1,7 @@
 # Running Art Mobile — 작업 지침
 
+**2026-10-04 모의 안내 휴대폰 후속 완료:** 재개→Home의 `heartbeat_timeout`을 수정하고 3회 반복·315.8초 연속 잠금·음성/진동 요청·알림 제어·강제 종료/완주 정리를 통과했다. 11:31:09에 기존 `058c6d3` + 안내 수정 APK를 데이터 유지 설치했다. 현재 소스에도 수정 반영, 설치 기준 243개·이 수정의 통합 시점 284개 검사 통과. **사용자 잠금 해제 후 배경 OFF 자동 정지/복귀 후 정지 유지·ON 복원과 최종 자료/계정 UI 대조까지 통과했다.** 코스 1개·러닝 2건·메모 1개·같은 계정/동기화 ON/대기 0건 유지. 내부 DB 해시는 이번에 재검증하지 않았다. 임시 도우미 정리·서비스/활성 wake lock 없음, USB 분리 가능. 실제 야외 GPS·배터리는 후속이다. 아래 이전 실패/설치본보다 [현재 상태](docs/handoff/status.md)·[검증](docs/quality/running-guidance-simulation-verification.md)을 우선한다.
+
 **2026-10-03 코스 생성·실제 GPS 안내 연결 목표 완료(PC·에뮬레이터 범위):** 기존 조건→후보→저장→정방향 출발 준비→실제 GPS 안내→완주 확인/계속→코스 연계 기록을 구현했다. SQLite v5·안내 복원/설정·동기화 파일 v2/레거시 호환, 249개 검사·타입·린트·release 빌드, API 36의 30분 잠금/오프라인 발화·이탈/복귀·강제 종료 복원·생성 화면 흐름을 통과했다. 동일 ID·서명의 `20261003-course-gps.apk`를 준비했으며 **휴대폰 설치·야외 검증은 하지 않았다.** 새 형식의 실제 서버/휴대폰 복원·야외/배터리와 아래 모의 서비스의 `heartbeat_timeout`은 후속이다. [사용법](docs/development/course-gps-guidance.md)·[검증](docs/quality/course-gps-guidance-verification.md)·[현재 상태](docs/handoff/status.md). 아래 시점별 ‘실제 GPS 연결 후속’보다 이 결과를 우선한다.
 
 **2026-10-03 16:05 실기기 검증 중단:** 사용자 요청으로 휴대폰 검증을 멈췄다. 모의 안내 화면/이탈·복귀/완주·연속 5분 잠금·음성/진동 요청·알림 일시정지를 확인했고, 설정 하단 버튼 잘림을 수정한 `20261003-guidance-phone.apk`를 16:00:54에 설치했다. **저장 코스의 일시정지→재개→Home 후 `heartbeat_timeout` 서비스 종료는 미해결**이다. 마지막 조회에 실행 서비스가 없어 USB 분리 가능하며, 다음 재개는 이 문제 진단과 최종 자료/계정 대조부터다. [상세/설치 해시](docs/quality/running-guidance-simulation-verification.md)·[최신 상태](docs/handoff/status.md). 아래 휴대폰 미검증·완료 표현보다 이 결과를 우선한다.

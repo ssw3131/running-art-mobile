@@ -31,17 +31,19 @@
 
 로컬 Expo 모듈 `modules/guidance-native/`가 사용자 시작형 `specialUse` foreground service·한국어 오프라인 TTS·진동을 담당한다. 공통 TypeScript 안내 엔진은 단일 Headless JS 세션에서 실행된다. 화면은 상태를 구독하고 별도로 시간을 누적하지 않는다. 생성된 Android 폴더를 직접 수정하지 않고 로컬 모듈의 manifest와 Gradle 설정으로 재현한다.
 
+2026-10-04 재개 보완에서는 `setInterval` 대신 서비스의 `nextTick(token)`을 한 번씩 기다린다. Android main Handler가 250ms 뒤 응답하므로 화면 프레임 타이머가 멈춰도 갱신하며, JS가 늦어져도 요청을 쌓지 않는다. 서비스 종료는 대기 중 요청을 해제하고 세션 토큰으로 이전 응답이 새 주행에 영향을 주지 않게 한다. 완주 음성의 7초 대기·정리도 같은 신호를 사용한다. 하트비트 감시는 유지한다. 기기 재시험 결과와 설치 범위는 검증 문서를 따른다.
+
 화면 꺼짐 안내를 켜면 잠금/다른 앱에서도 실행한다. 알림에 일시정지·시험 종료가 있으며 앱 복귀 후 같은 상태를 표시한다. 끄면 백그라운드 전환 때 일시정지하고 전경 복귀만으로 자동 재개하지 않는다. 사용자 일시정지·종료·오류 시 서비스/작업/음성/진동을 정리한다. 서비스 응답이 끊기면 중단하며 OS가 프로세스를 없앤 뒤 자동으로 새 시험을 시작하지 않는다.
 
 MapTiler 배경 지도는 인터넷이 필요하다. 실패하거나 배경을 끄면 기본 경로 화면을 사용하며 안내 계산은 계속된다. 한국어 오프라인 음성은 Android 음성 출력 설정의 Google 음성 데이터 → Korean (South Korea)에서 설치할 수 있다. 모의 주행의 특별 용도 서비스는 내부 시험 APK용이며 스토어 출시용 서비스 종류는 실제 GPS 연결 단계에서 다시 검토한다.
 
 ## 검증 명령과 후속
 
-2026-10-03 휴대폰 후속은 사용자 요청으로 중단했다. 현재 폰에는 설정 하단 버튼 잘림을 고친 `20261003-guidance-phone.apk`가 설치되어 있다. 연속 5분 잠금은 통과했으나 일시정지→재개→Home 전환 뒤 `heartbeat_timeout` 종료가 미해결이다. 다음 재개 때 해당 문제부터 확인한다. `scripts/qa/guidance-phone.py --serial <연결한 기기 ID>`는 UI/서비스 증거만 수집하며 DB 쓰기는 하지 않는다. 삼성의 실시간 갱신 화면은 XML 덤프가 대기할 수 있어 일시정지 상태에서 캡처한다. 아래 최초 휴대폰 제외 범위보다 [최신 검증 결과](../quality/running-guidance-simulation-verification.md)를 우선한다.
+2026-10-04 휴대폰 후속에서 재개→Home의 `heartbeat_timeout`을 재현·수정했다. 현재 설치본은 `20261004-guidance-resume.apk`이며, 기존 `058c6d3`에 안내 수정만 담아 별도 GPS/계정 개발 변경과 구분한다. 3회 반복·315.8초 연속 잠금·알림 제어·강제 종료/완주에 이어 사용자 잠금 해제 후 배경 OFF 자동 정지/복귀 후 정지 유지·ON 복원·자료/계정 전후 UI 대조를 통과했다. 서비스와 임시 도우미 정리까지 완료했다. `scripts/qa/guidance-phone.py --serial <연결한 기기 ID>`는 UI/서비스 증거를 수집하며 DB 쓰기를 하지 않는다. 갱신 중 삼성 UI 덤프는 대기할 수 있어 정지 상태에서 캡처하며 보안 잠금은 사용자가 직접 해제한다. 아래 최초 휴대폰 제외 범위보다 [최신 검증 결과](../quality/running-guidance-simulation-verification.md)를 우선한다.
 
 ```powershell
 . .\scripts\env.ps1
-node --test tests/guidance.test.mjs
+node --test tests/guidance*.test.mjs
 npm.cmd test
 powershell -ExecutionPolicy Bypass -File .\dev.ps1 check
 ```

@@ -19,6 +19,7 @@ import android.util.Log
 import com.facebook.react.HeadlessJsTaskService
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.jstasks.HeadlessJsTaskConfig
+import expo.modules.kotlin.Promise
 import java.util.Locale
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -32,6 +33,7 @@ class GuidanceService : HeadlessJsTaskService(), TextToSpeech.OnInitListener {
   private var spoken = 0
   private var vibrations = 0
   private var activeToken: String? = null
+  private var pendingTick: Promise? = null
   private var notificationText = "모의 주행 준비 중 · 실제 GPS를 사용하지 않아요"
   private var lastDiagnostic = 0L
   private var lastState = ""
@@ -113,6 +115,22 @@ class GuidanceService : HeadlessJsTaskService(), TextToSpeech.OnInitListener {
     }
   }
 
+  fun nextTick(token: String, promise: Promise) {
+    // Invoked on the main queue, serialized with onDestroy so no wait is lost.
+    if (instance !== this || token != activeToken) {
+      promise.resolve(false)
+      return
+    }
+    pendingTick?.resolve(false)
+    pendingTick = promise
+    handler.postDelayed({
+      if (pendingTick === promise) {
+        pendingTick = null
+        promise.resolve(instance === this && token == activeToken)
+      }
+    }, 250)
+  }
+
   fun feedback(id: String, text: String, vibrate: Boolean) {
     handler.post {
       if (instance !== this) return@post
@@ -163,6 +181,7 @@ class GuidanceService : HeadlessJsTaskService(), TextToSpeech.OnInitListener {
   override fun onTaskRemoved(rootIntent: Intent?) { stopSelf(); super.onTaskRemoved(rootIntent) }
   override fun onDestroy() {
     handler.removeCallbacksAndMessages(null)
+    pendingTick?.resolve(false); pendingTick = null
     pending = null
     tts?.stop(); tts?.shutdown(); tts = null
     (getSystemService(VIBRATOR_SERVICE) as Vibrator).cancel()

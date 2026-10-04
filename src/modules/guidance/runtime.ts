@@ -8,8 +8,8 @@ import type { Coordinate } from './geometry';
 
 type Options = { mode: 'map' | 'focus'; voice: boolean; background: boolean };
 type View = { state: SimulationSnapshot | null; name: string; courseId: string | null; scenario: Scenario; options: Options; error: string; native: NativeStatus | null; ended: boolean };
-let session: SimulationSession | null = null, token = '', timer: ReturnType<typeof setInterval> | null = null;
-let release: (() => void) | null = null, lastFeedback = -Infinity;
+let session: SimulationSession | null = null, token = '';
+let lastFeedback = -Infinity;
 let events = new Set<string>(), pending = false;
 let coordinates: Coordinate[] = demoCourse('normal');
 let view: View = { state: null, name: '시험 코스', courseId: null, scenario: 'normal', options: { mode: 'map', voice: true, background: true }, error: '', native: null, ended: false };
@@ -20,8 +20,7 @@ function publish() {
   for (const listener of listeners) listener();
 }
 function cleanup() {
-  if (timer) clearInterval(timer);
-  timer = null; native?.silence(); native?.stop(); release?.(); release = null;
+  token = ''; native?.silence(); native?.stop();
 }
 function pause() { if (session) session.pause(clock()); cleanup(); publish(); }
 function finish() { pause(); view = { ...view, ended: true }; guidanceActivity.set(false); publish(); }
@@ -47,12 +46,6 @@ function tick() {
     }
     native.publish(`${state.instruction} · ${(state.distanceM / 1000).toFixed(2)}km`, `${state.status}|time=${state.elapsedMs}|distance=${state.distanceM.toFixed(1)}|progress=${state.progressM.toFixed(1)}|events=${state.events.map(e => e.id).join(',')}`);
     publish();
-    if (state.status === 'arrived') {
-      // Let the one arrival utterance complete while keeping the task alive briefly.
-      if (timer) clearInterval(timer); timer = null;
-      const finishedSession = session;
-      setTimeout(() => { if (session === finishedSession && session?.snapshot().status === 'arrived') { cleanup(); publish(); } }, 7000);
-    }
   } catch (error) { fail(error); }
 }
 export const guidance = {
@@ -85,11 +78,24 @@ export const guidance = {
   },
   async task(data: { token: string }) {
     console.info('RunPenGuidance task', { tokenMatches: data.token === token, sessionPresent: !!session, nativePresent: !!native });
-    if (data.token !== token || !session || !native) { native?.stop(); return; }
-    await new Promise<void>(resolve => {
-      release = resolve; session!.play(clock());
-      timer = setInterval(tick, 250); tick();
-    });
+    if (data.token !== token || !session || !native) return;
+    session.play(clock());
+    let arrivalDeadline: number | null = null;
+    try {
+      // Android owns the pulse: JS frame timers can stall after resume -> Home.
+      // One outstanding wait also prevents a delayed JS thread from queuing ticks.
+      while (data.token === token) {
+        tick();
+        if (data.token !== token) break;
+        if (session.snapshot().status === 'arrived') {
+          arrivalDeadline ??= clock() + 7000;
+          if (clock() >= arrivalDeadline) { cleanup(); publish(); break; }
+        }
+        const running = await native.nextTick(data.token);
+        if (data.token !== token) break;
+        if (!running) throw new Error('모의 주행 서비스가 종료됐어요. 앱에서 다시 재개해 주세요.');
+      }
+    } catch (error) { if (data.token === token) fail(error); }
   },
   pause, finish,
   restart() { guidance.load(view.name, coordinates, view.scenario, view.courseId); },
