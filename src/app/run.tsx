@@ -46,7 +46,7 @@ export default function RunScreen() {
     };
     void poll(); const timer = setInterval(() => void poll(), 1000);
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') { ticks = 0; void poll(); } });
-    return () => { generation.current++; clearInterval(timer); subscription.remove(); };
+    return () => { generation.current++; running.cancelPreparation(); clearInterval(timer); subscription.remove(); };
   }, [refresh, supported]));
   async function act(action: () => Promise<unknown>) {
     if (working.current) return;
@@ -81,6 +81,7 @@ export default function RunScreen() {
     <Text style={styles.body}>GPS로 달린 경로를 이 기기에 저장해요. 인터넷 없이도 기록할 수 있어요.</Text>
     {!supported ? <Text>러닝 추적은 Android 앱에서 사용해 주세요.</Text> : <>
       {busy && <ActivityIndicator />}
+      {busy && !run && courseId && <RunButton title="합류 경로 준비 취소" id="run-preparation-cancel" onPress={() => running.cancelPreparation()} />}
       {!!error && <Text testID="run-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}
       {!ready && <RunButton title="다시 불러오기" id="run-retry" disabled={busy} onPress={() => void act(async () => { await running.recover(); await refresh(); })} />}
       {run && <>

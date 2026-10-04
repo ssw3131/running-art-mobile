@@ -4,6 +4,8 @@ export const GUIDANCE_LIMITS = { offMeters: 25, offMs: 5000, returnMeters: 12, r
 export type GuidanceFix = { position: Coordinate; timestamp: number; accuracy: number };
 export type GuidanceEvent = { id: string; kind: 'turn' | 'off-route' | 'returned' | 'arrival'; text: string; timestamp: number; vibrate: boolean };
 export type GuidanceState = {
+  phase?: 'approach' | 'direction' | 'lap' | 'return' | 'arrived' | 'continued';
+  lapStart?: Coordinate | null; navigationError?: string | null;
   status: 'normal' | 'off-route' | 'weak' | 'arrived'; position: Coordinate; progressM: number; totalM: number;
   distanceM: number; remainingM: number; returnM: number; returnPath: Coordinate[]; trace: Coordinate[][];
   direction: 'straight' | 'left' | 'right' | 'uturn' | 'arrival' | 'unknown'; instruction: string; instructionM: number;

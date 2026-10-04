@@ -10,7 +10,8 @@ const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'backg
 function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, origin, syntheticRoads, centerSelection, onRetry }: Props & { onRetry(): void }) {
   const camera = useRef<CameraRef>(null);
   const selection = useRef(centerSelection);
-  useLayoutEffect(() => { selection.current = centerSelection; }, [centerSelection]);
+  const searchOrigin = useRef(origin);
+  useLayoutEffect(() => { selection.current = centerSelection; searchOrigin.current = origin; }, [centerSelection, origin]);
   const userMoving = useRef(false);
   const selecting = !!centerSelection;
   const target = centerSelection?.target;
@@ -42,9 +43,17 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, orig
   }, [status, target]);
 
   useEffect(() => {
-    if (status === 'ready' && routeOverlay && !selecting) {
-      camera.current?.fitBounds(routeOverlay.bounds, { padding: { top: 28, bottom: 28, left: 28, right: 28 }, duration: 400 });
+    if (status !== 'ready' || !routeOverlay || (selecting && !routeOverlay.freeStart)) return;
+    let bounds = routeOverlay.bounds;
+    if (selecting && searchOrigin.current) {
+      // Free loops can lie away from the crosshair. Show the whole candidate
+      // while retaining the chosen search center; manual panning stays free.
+      const { lng, lat } = searchOrigin.current;
+      const dx = Math.max(Math.abs(bounds[0] - lng), Math.abs(bounds[2] - lng));
+      const dy = Math.max(Math.abs(bounds[1] - lat), Math.abs(bounds[3] - lat));
+      bounds = [lng - dx, lat - dy, lng + dx, lat + dy];
     }
+    camera.current?.fitBounds(bounds, { padding: { top: 28, bottom: 28, left: 28, right: 28 }, duration: 400 });
   }, [routeOverlay, status, selecting]);
 
   return (
@@ -89,9 +98,9 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, orig
             <Layer id="route-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': 7 }} />
             <Layer id="route-line" type="line" paint={{ 'line-color': '#23694C', 'line-width': 4 }} />
           </GeoJSONSource>
-          <GeoJSONSource id="route-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: routeOverlay.start } }}>
+          {!routeOverlay.freeStart && <GeoJSONSource id="route-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: routeOverlay.start } }}>
             <Layer id="route-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#183C32', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} />
-          </GeoJSONSource>
+          </GeoJSONSource>}
         </>}
         {simulationPosition && <GeoJSONSource id="simulation-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: simulationPosition } }}>
           <Layer id="simulation-halo" type="circle" paint={{ 'circle-radius': 16, 'circle-color': '#3B82F6', 'circle-opacity': 0.2 }} />

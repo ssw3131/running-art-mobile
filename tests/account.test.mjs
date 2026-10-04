@@ -70,7 +70,7 @@ test('statistics include only owned completed runs and confirmed course finishes
 });
 
 test('new course runs use account defaults while existing runs keep their own options', async t => {
-  const f = await fixture(t), course = await f.courses.save(snapshot, '안내 설정');
+  const f = await fixture(t), course = await f.courses.save({ ...snapshot, route: [...route, route[0]] }, '안내 설정');
   await f.account.savePreferences(changed);
   const run = await f.runs.start(course.id, { timestamp: 1000, latitude: route[0][1], longitude: route[0][0], accuracy: 5 });
   assert.deepEqual((await f.runs.guidance(run.id)).options, changed.guidance);

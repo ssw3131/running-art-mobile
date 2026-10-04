@@ -33,7 +33,7 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
       </GeoJSONSource>
       <GeoJSONSource id="guidance-trace" data={paths}><Layer id="guidance-trace-line" type="line" paint={{ 'line-color': '#117CB0', 'line-width': 4 }} /></GeoJSONSource>
       {state.returnPath.length >= 2 && <GeoJSONSource id="guidance-return" data={line(state.returnPath)}><Layer id="guidance-return-line" type="line" paint={{ 'line-color': '#9C4308', 'line-width': 5, 'line-dasharray': [2, 1] }} /></GeoJSONSource>}
-      <GeoJSONSource id="guidance-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: route[0] } }}><Layer id="guidance-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#B7580A', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} /></GeoJSONSource>
+      {(!state.phase||state.lapStart) && <GeoJSONSource id="guidance-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.lapStart??route[0] } }}><Layer id="guidance-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#B7580A', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} /></GeoJSONSource>}
       {showPosition && <GeoJSONSource id="guidance-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.position } }}>
         <Layer id="guidance-halo" type="circle" paint={{ 'circle-radius': 18, 'circle-color': '#298CD5', 'circle-opacity': 0.2 }} />
         <Layer id="guidance-dot" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#147FC1', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 4 }} />

@@ -102,7 +102,7 @@ export default function RouteLabScreen() {
     cancel(); setCompleted(null); setSelected(0); setTaps(0); setSeconds(0);
     running.current = true;
     setState({ kind: 'running', message: dataset.synthetic ? '도로 데이터를 준비하고 있어요.' : '지도 중심 주변의 도로를 조회하고 있어요.' });
-    const input = { ...dataset.input, origin: dataset.synthetic ? dataset.input.origin : center.get().center, options: { ...dataset.input.options, version: '0.2' as const, shape, targetKm } };
+    const input = { ...dataset.input, origin: dataset.synthetic ? dataset.input.origin : center.get().center, options: { ...dataset.input.options, mode: dataset.synthetic ? 'anchored' as const : 'free-loop' as const, version: '0.2' as const, shape, targetKm } };
     const expected = dataset.synthetic ? referenceFor(datasetId, input.options) : null;
     const started = performance.now();
     let lastTick = started, maxTimerLagMs = 0, timerTicks = 0, lastProgress = 0;
@@ -159,7 +159,7 @@ export default function RouteLabScreen() {
       <View pointerEvents="none" style={styles.mapLabel}><Text style={styles.mapLabelText}>{dataset.synthetic ? '가상 도로 · 실제 길 아님' : '지도 중심 기준 · 주변 2km'}</Text></View>
       {!dataset.synthetic && <View pointerEvents="none" style={styles.crosshair}><View style={styles.crosshairHorizontal} /><View style={styles.crosshairVertical} /><View style={styles.crosshairDot} /></View>}
     </View>
-    <View style={styles.legend}><Text style={styles.small}>초록 실선: 추천 코스 · 갈색 점선: 목표 도형 · 점: 출발/도착</Text></View>
+    <View style={styles.legend}><Text style={styles.small}>초록 실선: 추천 코스 · 갈색 점선: 목표 도형 · 코스 어디서든 출발</Text></View>
     {!dataset.synthetic && <View style={styles.credits}>
       <Image source={require('@/assets/images/maptiler-logo.png')} style={styles.logo} resizeMode="contain" />
       <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/').catch(() => {})}><Text style={styles.small}>© MapTiler</Text></Pressable>
@@ -191,7 +191,7 @@ export default function RouteLabScreen() {
         {seconds > 0 && !completed && <Text style={styles.small}>{seconds.toFixed(1)}초</Text>}
       </View>
       {completed && <Text style={styles.label}>후보 비교 · {completed.result.candidates.length}개</Text>}
-      {completed && overlay && <Text testID="course-start-position" style={styles.small}>선택한 코스 출발점 {overlay.start[1].toFixed(5)}, {overlay.start[0].toFixed(5)} · 지도 십자 표시는 계산 중심이에요.</Text>}
+      {completed && overlay && <Text testID="course-start-position" style={styles.small}>{overlay.freeStart ? '어느 지점에서든 양방향 출발할 수 있어요.' : '개발 검증용 고정 출발 코스예요.'} 지도 십자 표시는 탐색 중심이에요.</Text>}
       {diagnostics && completed && <View testID="route-timing" style={styles.timing}>
         <Text style={styles.candidateTitle}>전체 소요 시간 {time(completed.timing.totalMs)}</Text>
         <Text style={styles.description}>도로 조회 {time(completed.timing.roadMs)}{dataset.synthetic ? ' · 저장 표본' : completed.cached ? ' · 캐시 사용' : ' · 다운로드'}{'\n'}코스 계산 {time(completed.timing.calculationMs)}</Text>
@@ -201,9 +201,9 @@ export default function RouteLabScreen() {
       {completed && <>
         {completed.result.candidates.map((candidate, index) => <Pressable key={index} testID={`candidate-${index}`} accessibilityRole="button" accessibilityState={{ selected: selected === index }} onPress={() => setSelected(index)} style={[styles.candidate, selected === index && styles.candidateSelected]}>
           <Text style={styles.candidateTitle}>{index + 1}순위 · {candidate.score.lengthKm.toFixed(2)} km · {candidate.score.total}점</Text>
-          <Text style={styles.small}>도형 크기 {(candidate.scaleRatio * 100).toFixed(0)}% · 접근/복귀 {candidate.accessKm.toFixed(2)} km</Text>
+          <Text style={styles.small}>도형 크기 {(candidate.scaleRatio * 100).toFixed(0)}% · {completed.result.mode === 'free-loop' ? '양방향 순환 코스' : `접근/복귀 ${candidate.accessKm.toFixed(2)} km`}</Text>
         </Pressable>)}
-        <Text style={styles.small}>점수는 후보 비교용이며 정확한 일치율이 아니에요. 출발점은 입력 좌표에서 {completed.result.snapMeters.toFixed(1)}m 떨어진 도로 위 점이에요.</Text>
+        <Text style={styles.small}>점수는 후보 비교용이며 정확한 일치율이 아니에요. 코스까지의 접근 경로는 러닝 준비에서 확인해요.</Text>
         {completed.result.candidates.length > 0 && <SaveCoursePanel completed={completed} selected={selected} />}
       </>}
       <Pressable testID="route-diagnostics" accessibilityRole="button" accessibilityState={{ expanded: diagnostics }} style={styles.cancel} onPress={() => setDiagnostics(value => !value)}><Text style={styles.chipText}>{diagnostics ? '개발 검증 정보 닫기' : '개발 검증 정보'}</Text></Pressable>

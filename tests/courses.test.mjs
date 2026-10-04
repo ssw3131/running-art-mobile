@@ -47,7 +47,7 @@ test('all saved v0.2 reference candidates restore exact route, target, origin an
       const value = courseFromCalculation(completed, index), saved = await repository.save(value, `후보 ${++count}`);
       const loaded = await repository.get(saved.id);
       assert.deepEqual(loaded.snapshot, value);
-      assert.deepEqual(savedCourseOverlay(loaded.snapshot), candidateOverlay(data.result.candidates[index], completed.origin));
+      assert.deepEqual(savedCourseOverlay(loaded.snapshot), { ...candidateOverlay(data.result.candidates[index], completed.origin), freeStart: true });
       assert.equal(loaded.lengthKm, data.result.candidates[index].score.lengthKm);
       assert.equal(loaded.source, data.fixture === 'seoul' ? 'osm' : 'synthetic');
     }
@@ -104,7 +104,7 @@ test('invalid names, formats, coordinates, candidates and excessive point counts
     v => { v.route = Array(COURSE_POINTS_MAX + 1).fill([127, 37]); }, v => { v.source = 'unknown'; }]) {
     const value = snapshot(); change(value); await assert.rejects(repository.save(value, '실패'), { code: 'validation' });
   }
-  await assert.rejects(repository.save({ ...snapshot(), schemaVersion: 2 }, '미래'), { code: 'newer-format' });
+  await assert.rejects(repository.save({ ...snapshot(), schemaVersion: 3 }, '미래'), { code: 'newer-format' });
   assert.throws(() => courseFromCalculation(calculation(), -1), { code: 'validation' });
   assert.throws(() => courseFromCalculation({ ...calculation(), result: { candidates: [] } }, 0), { code: 'validation' });
   assert.deepEqual(await repository.list(), []);

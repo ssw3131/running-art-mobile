@@ -31,6 +31,7 @@ function* validateInputSteps(input: SearchInput): Steps<void> {
     throw new Error('목표 거리와 탐색 반경은 0보다 커야 해요.');
   }
   if (options.version !== '0.2') throw new Error('모바일 계산은 v0.2 기준으로 실행해요.');
+  if (options.mode !== undefined && !['anchored', 'free-loop'].includes(options.mode)) throw new Error('지원하지 않는 코스 탐색 방식이에요.');
   if (options.customTemplate) validateCustomTemplate(options.customTemplate);
   else if (!SHAPES.some((shape) => shape.id === options.shape)) throw new Error('지원하지 않는 도형이에요.');
   if (!Array.isArray(elements)) throw new Error('도로 데이터 형식이 올바르지 않아요.');

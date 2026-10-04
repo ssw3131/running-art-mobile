@@ -8,12 +8,12 @@ import { createCourseRepository } from '../src/modules/courses/repository.ts';
 import { createSyncRepository } from '../src/modules/sync/repository.ts';
 import { decodePayload, digest } from '../src/modules/sync/model.ts';
 import { createGuidance } from '../src/modules/guidance/engine.ts';
-import { demoCourse, createSimulator } from '../src/modules/guidance/simulator.ts';
+import { createSimulator } from '../src/modules/guidance/simulator.ts';
 import { startReadiness } from '../src/modules/running/guidance.ts';
 import { offset } from '../src/modules/guidance/geometry.ts';
 
 const BASE = 1800000000000, owner = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
-const route = demoCourse('normal');
+const route = [[0,0],[0,240],[240,240],[240,0],[0,0]].map(([x,y])=>offset([127,37],x,y));
 const snap = { schemaVersion: 1, engineVersion: '0.2', source: 'osm', shape: 'heart', origin: { lat: route[0][1], lng: route[0][0] }, targetKm: 3, lengthKm: 3, score: 80, route, target: route };
 const gps = (time, position = route[0], accuracy = 5) => ({ timestamp: BASE + time, latitude: position[1], longitude: position[0], accuracy });
 async function fixture(t, options) {
@@ -34,10 +34,10 @@ async function complete(f) {
   }
   assert.fail('arrival not detected');
 }
-test('departure requires the owned OSM course, a fresh accurate fix, and the actual start point', async t => {
+test('departure requires owned closed OSM geometry, fresh GPS and on-course or prepared access', async t => {
   const f = await fixture(t);
   await assert.rejects(f.runs.start(f.course.id));
-  await assert.rejects(f.runs.start(f.course.id, gps(0, offset(route[0], 100, 0))));
+  await assert.rejects(f.runs.start(f.course.id, gps(0, offset(route[0], -100, 0))));
   await assert.rejects(f.runs.start(f.course.id, gps(-6000)));
   await assert.rejects(f.runs.start(f.course.id, gps(0, route[0], 31)));
   assert.equal(await f.runs.active(), null);
@@ -67,7 +67,7 @@ test('continue after arrival does not immediately stop again at the same point',
   assert.equal((await f.runs.get(run.id)).status, 'running');
   assert.equal((await f.runs.get(run.id)).courseOutcome, 'active');
   await f.runs.transition(run.id, 'completed');
-  assert.equal((await f.runs.get(run.id)).courseOutcome, 'stopped');
+  assert.equal((await f.runs.get(run.id)).courseOutcome, 'finished');
 });
 test('resume outside the last progress point never skips the intervening course', async t => {
   const f = await fixture(t), run = await f.runs.start(f.course.id, gps(0));

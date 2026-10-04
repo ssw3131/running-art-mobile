@@ -91,7 +91,7 @@ export default function CourseScreen() {
         <Text style={styles.description}>{course.source === 'synthetic' ? '가상 테스트 코스 · 실제 달릴 길이 아니에요.' : '저장한 OSM 도로 코스예요.'} 경로를 다시 계산하지 않고 저장 자료를 표시해요.</Text>
         {!simulation && <><View style={styles.map}><MapSurface styleUrl={background ? styleUrl ?? '' : ''} position={null} origin={course.snapshot.origin}
           routeOverlay={overlay} syntheticRoads={background ? undefined : emptyRoads} /></View>
-        <Text style={styles.small}>초록 실선: 저장 경로 · 갈색 점선: 목표 도형 · 점: 출발/도착</Text>
+        <Text style={styles.small}>초록 실선: 저장 경로 · 갈색 점선: 목표 도형</Text>
         <Text style={styles.small}>{background ? '배경 지도는 인터넷 연결이 필요해요.' : '배경 지도 없이 저장 경로만 표시해요. 인터넷·GPS가 필요하지 않아요.'}</Text>
         {course.source === 'osm' && styleUrl && <Pressable accessibilityRole="button" testID="course-map-toggle" style={styles.button} onPress={() => setBackground(value => !value)}>
           <Text>{background ? '배경 지도 끄기 · 경로만 보기' : '배경 지도 보기 · 인터넷 사용'}</Text>
@@ -101,7 +101,7 @@ export default function CourseScreen() {
         </>}
         {course.source === 'osm' && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {})}><Text style={styles.small}>© OpenStreetMap contributors · ODbL</Text></Pressable>}
         <Text style={styles.small}>계산 기준 {course.snapshot.origin.lat.toFixed(5)}, {course.snapshot.origin.lng.toFixed(5)}</Text>
-        <Text style={styles.small}>실제 코스 출발점 {course.snapshot.route[0][1].toFixed(5)}, {course.snapshot.route[0][0].toFixed(5)} · 정방향으로 달리는 코스예요.</Text>
+        <Text style={styles.small}>순환 코스 어디서든 출발하고 원하는 방향으로 한 바퀴 달려요. 코스 밖에서는 보행 도로로 합류해요.</Text>
         {course.source === 'osm' && <Link href={{ pathname: '/run', params: { courseId: course.id } }} asChild><Pressable testID="course-run" accessibilityRole="button" style={styles.button}><Text>이 코스로 러닝 준비</Text></Pressable></Link>}
         <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')} · 점수는 후보 비교용이며 일치율이 아니에요.</Text>
         <Pressable testID="course-simulation-toggle" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => { setBackground(false); setSimulation(value => !value); }}><Text>{simulation ? '시뮬레이션 닫기' : '코스 시뮬레이션 시작'}</Text></Pressable>

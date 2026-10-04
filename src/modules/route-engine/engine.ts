@@ -252,13 +252,13 @@ function *buildGraphSteps(elements: OsmElement[], origin: Origin, radius: number
     const id = nodes.length;
     nodes.push({...p, id, links: []}); index.set(key,id); return id;
   }
-  function edge(a: number,b: number,forward: boolean,backward: boolean,tags: Tags) {
+  function edge(a: number,b: number,forward: boolean,backward: boolean,tags: Tags,ref: import('./types.ts').RoadSegmentRef) {
     if(a===b) return;
     const key = `${a}:${b}:${forward}:${backward}`;
     if(edgeKeys.has(key)) return;
     edgeKeys.add(key);
     const length = dist(nodes[a],nodes[b]), id = edges.length;
-    edges.push({a,b,length,tags});
+    edges.push({a,b,length,tags,ref});
     if(forward) nodes[a].links.push({to:b,length,id});
     if(backward) nodes[b].links.push({to:a,length,id});
   }
@@ -278,7 +278,7 @@ function *buildGraphSteps(elements: OsmElement[], origin: Origin, radius: number
       for(let j=1;j<=count;j++) {
         if(j%64===0) yield;
         const next=node(j===count ? `osm:${way.nodes[i]}` : `way:${way.id}:${i}:${j}`,lerp(pa,pb,j/count));
-        edge(last,next,forward,backward,way.tags!); last=next;
+        edge(last,next,forward,backward,way.tags!,{way:way.id,from:way.nodes[i-1],to:way.nodes[i],start:(j-1)/count,end:j/count,bidirectional:forward&&backward}); last=next;
       }
     }
   }
@@ -521,25 +521,33 @@ function roadInfo(graph: Graph,ids: number[]) {
 }
 // A missing snap rejects this placement regardless of its remaining samples.
 // Successful placements retain the original sample order and numeric operations.
-function placementError(graph: Graph,target: Point[],start: GraphNode,targetMeters: number,columns: SpatialColumns): number | null {
+function placementError(graph: Graph,target: Point[],start: GraphNode,targetMeters: number,columns: SpatialColumns,free=false): number | null {
   const samples=densify(target,33),near: GraphNode[]=[];
   for(const sample of samples) {
     const node=nearestNode(graph,sample,180,false,columns);
     if(!node) return null;
     near.push(node);
   }
-  const approach=Math.min(...near.map(n=>dist(start,n)));
+  const approach=free?0:Math.min(...near.map(n=>dist(start,n)));
   if(approach*2>targetMeters*0.35) return null;
   return near.reduce((sum,n,i)=>sum+dist(n,samples[i]),0)/near.length+approach*0.10;
 }
 function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCallback=()=>{},diagnostics?: SearchDiagnostics): Steps<SearchResult> {
+  const free=options.mode==='free-loop';
+  if(free) {
+    // A reversible course cannot contain a pedestrian one-way edge. Keep IDs
+    // stable so persisted OSM references and the routing caches remain valid.
+    const nodes:GraphNode[]=[];
+    for(const n of graph.nodes){if(n.id%128===0)yield;nodes.push({...n,links:n.links.filter(l=>graph.nodes[l.to].links.some(back=>back.to===n.id&&back.id===l.id))});}
+    graph={...graph,reachable:undefined,nodes};
+  }
   if(diagnostics) Object.assign(diagnostics,{pathRequests:0,pathCacheHits:0,pathSearches:0,pathVisits:0,maxCachedPaths:0,maxCachedNodes:0});
   const routing=routingContext(graph,diagnostics);
   const targetMeters=options.targetKm*1000, radius=options.radiusKm*1000;
-  const foundStart=nearestNode(graph,point(0,0),100);
+  const foundStart=free?{id:-1,x:0,y:0,links:[]}:nearestNode(graph,point(0,0),100);
   if(!foundStart) throw new Error('출발지 100m 안에 연결 가능한 보행 도로가 없습니다. 지도에서 출발 위치를 다시 선택하세요.');
   const start=foundStart;
-  const reachable=new Set([start.id]),queue=[start.id];
+  const reachable=new Set(free?graph.nodes.filter(n=>n.links.length>0).map(n=>n.id):[start.id]),queue=free?[]:[start.id];
   for(let i=0;i<queue.length;i++) {
     if(i%128===0) yield;
     for(const link of graph.nodes[queue[i]].links)
@@ -559,14 +567,14 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     if(keys.has(key)) return; keys.add(key);checked++;
     const target=transformPoints(base,scale,rotation,tx,ty);
     if(target.some(p=>Math.hypot(p.x,p.y)>radius)) return;
-    const error=placementError(graph,target,start,targetMeters,indexes.all);
+    const error=placementError(graph,target,start,targetMeters,indexes.all,free);
     if(error===null) return;
     placements.push({target,rotation,scale,offset:point(tx,ty),error});
   }
-  const step=Math.max(250,targetMeters/12),reach=Math.min(radius,targetMeters*0.7);
+  const step=Math.max(250,targetMeters/12),reach=free?radius:Math.min(radius,targetMeters*0.7);
   for(let deg=0;deg<360;deg+=15) {
     const rotation=deg*Math.PI/180,c=Math.cos(rotation),s=Math.sin(rotation);
-    for(const a of anchors) yield* add(start.x-(a.x*c-a.y*s),start.y-(a.x*s+a.y*c),rotation);
+    if(!free) for(const a of anchors) yield* add(start.x-(a.x*c-a.y*s),start.y-(a.x*s+a.y*c),rotation);
     for(let x=-reach;x<=reach;x+=step) for(let y=-reach;y<=reach;y+=step) yield* add(x,y,rotation);
     progress({phase:'placement',text:`고정 크기 도형 비교 중 · ${deg+15}° / 360° · ${checked.toLocaleString()}개 배치`});
   }
@@ -586,6 +594,11 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     const loopIds=yield* routeFromTemplateSteps(graph,p.target,targetMeters*1.25,routing);
     if(!loopIds) return null;
     const loop=loopIds.map(id=>graph.nodes[id]),loopLength=pathLength(loop);
+    if(free) {
+      const usage=edgeUsage(graph,loopIds);
+      if(usage.total<targetMeters*0.75 || usage.total>targetMeters*1.25 || usage.repeated/usage.total>0.30) return null;
+      return {...p,ids:loopIds,route:loop,usage,access:[],loop,score:scoreCandidate(p.target,loop,loop,targetMeters,usage),loopKm:loopLength/1000,accessKm:0};
+    }
     const entries=[...new Set(loopIds.slice(0,-1))].sort((a,b)=>dist(start,graph.nodes[a])-dist(start,graph.nodes[b])).slice(0,6);
     let best: Pick<EvaluatedCandidate, "ids" | "route" | "usage" | "access"> | null=null;
     for(const entry of entries) {
@@ -640,7 +653,7 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
         const p: Placement={target,rotation,scale:nextScale,offset,scaleRatio:ratio,error:0};const key=placementKey(p);
         if(evaluated.has(key)||seen.has(key))continue;seen.add(key);checked++;
         if(target.some(t=>Math.hypot(t.x,t.y)>radius))continue;
-        const error=placementError(graph,target,start,targetMeters,indexes.all);if(error===null)continue;
+        const error=placementError(graph,target,start,targetMeters,indexes.all,free);if(error===null)continue;
         p.error=error;
         pool.push(p);
       }
@@ -658,11 +671,19 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     yield* routeBatch((yield* variants(winners,[0.98,1,1.02],[[0,0],[-30,0],[30,0],[0,-30],[0,30]],[-2.5,0,2.5])).slice(0,80),'우수 후보 미세 조정');
   }
   const selected=uniqueCandidates(candidates);
-  return {version,baseline:{candidates:baseline,valid:baselineValid,routed:baselineRouted},candidates:selected.map(c=>({...c,scaleRatio:c.scale/scale,templatePerimeter:pathLength(c.target),roadInfo:roadInfo(graph,c.ids),route:c.route.map(({x,y})=>point(x,y)),loop:c.loop.map(({x,y})=>point(x,y)),
+  return {...(free?{mode:'free-loop' as const}:{}),version,baseline:{candidates:baseline,valid:baselineValid,routed:baselineRouted},candidates:selected.map(c=>({...c,...(free?{roadSegments:routeReferences(graph,c.ids)}:{}),scaleRatio:c.scale/scale,templatePerimeter:pathLength(c.target),roadInfo:roadInfo(graph,c.ids),route:c.route.map(({x,y})=>point(x,y)),loop:c.loop.map(({x,y})=>point(x,y)),
     access:c.access.map(path=>path.map(({x,y})=>point(x,y))),ids:undefined,usage:undefined})),
     stats:{placements:checked,routed,extraRouted:routed-baselineRouted,valid:candidates.length,roads:graph.edges.length},
     start:point(start.x,start.y),snapMeters:dist(start,point(0,0)),
     template:{width:Math.max(...fixed.map(p=>p.x))-Math.min(...fixed.map(p=>p.x)),height:Math.max(...fixed.map(p=>p.y))-Math.min(...fixed.map(p=>p.y)),perimeter:targetMeters}};
+}
+
+export function routeReferences(graph: Graph,ids: number[]) {
+  return ids.slice(1).map((b,i)=>{
+    const a=ids[i],link=graph.nodes[a].links.find(l=>l.to===b),edge=link&&graph.edges[link.id];
+    if(!edge?.ref) throw new Error('코스의 도로 참조를 확인할 수 없어요.');
+    return edge.a===a?{...edge.ref}:{...edge.ref,start:edge.ref.end,end:edge.ref.start};
+  });
 }
 
 // Synchronous entry points are used by regression tests and small pure operations.

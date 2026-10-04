@@ -3,6 +3,7 @@ import { toLatLng } from './engine.ts';
 import type { Candidate, Origin, Point } from './types.ts';
 
 export type RouteOverlay = {
+  freeStart?: boolean;
   route: Feature<LineString>;
   target: Feature<LineString>;
   start: [number, number];
@@ -19,7 +20,7 @@ export function candidateOverlay(candidate: Candidate, origin: Origin): RouteOve
   const all = [...route, ...target];
   const feature = (points: [number, number][]): Feature<LineString> => ({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: points } });
   return {
-    route: feature(route), target: feature(target), start: route[0],
+    route: feature(route), target: feature(target), start: route[0], ...(candidate.roadSegments ? { freeStart: true } : {}),
     bounds: [Math.min(...all.map((p) => p[0])), Math.min(...all.map((p) => p[1])), Math.max(...all.map((p) => p[0])), Math.max(...all.map((p) => p[1]))],
   };
 }

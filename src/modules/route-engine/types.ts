@@ -10,7 +10,9 @@ export type OsmElement = {
 };
 export type Link = { to: number; length: number; id: number };
 export type GraphNode = Point & { id: number; links: Link[]; turn?: boolean };
-export type GraphEdge = { a: number; b: number; length: number; tags: Tags };
+// Fractions refer to the original OSM node pair, not transient graph node IDs.
+export type RoadSegmentRef = { way: number; from: number; to: number; start: number; end: number; bidirectional: boolean };
+export type GraphEdge = { a: number; b: number; length: number; tags: Tags; ref?: RoadSegmentRef };
 export type Graph = {
   nodes: GraphNode[];
   edges: GraphEdge[];
@@ -21,6 +23,7 @@ export type Graph = {
 };
 export type ShapeId = 'heart' | 'star' | 'cat' | 'rabbit' | 'house' | 'diamond' | 'bolt' | 'fish' | 'arrow';
 export type SearchOptions = {
+  mode?: 'anchored' | 'free-loop';
   version: '0.1' | '0.2';
   shape: ShapeId;
   targetKm: number;
@@ -50,6 +53,7 @@ export type EvaluatedCandidate = Placement & {
   score: Score; loopKm: number; accessKm: number;
 };
 export type Candidate = Omit<EvaluatedCandidate, 'ids' | 'usage'> & {
+  roadSegments?: RoadSegmentRef[];
   ids?: undefined;
   usage?: undefined;
   scaleRatio: number;
@@ -57,6 +61,7 @@ export type Candidate = Omit<EvaluatedCandidate, 'ids' | 'usage'> & {
   roadInfo: RoadInfo;
 };
 export type SearchResult = {
+  mode?: 'free-loop';
   version: '0.1' | '0.2';
   baseline: { candidates: { score: number; raw: number; lengthKm: number }[]; valid: number; routed: number };
   candidates: Candidate[];

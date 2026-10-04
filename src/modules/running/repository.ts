@@ -3,8 +3,9 @@ import { serialDatabase } from '../storage/serial-database.ts';
 import { guestScope, type OwnerScope } from '../sync/ownership.ts';
 import { classifyFix, elapsedMs, RunError, validateId, type Fix, type Run, type RunPoint, type RunStatus } from './model.ts';
 import { decodeSnapshot, encodeSnapshot } from '../courses/model.ts';
-import { createGuidance, type GuidanceEvent } from '../guidance/engine.ts';
-import { guidanceColumns, readRunGuidance, startReadiness, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
+import { type GuidanceEvent } from '../guidance/engine.ts';
+import { createRunGuidance, guidanceColumns, readRunGuidance, startReadiness, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
+import { validApproach, type ApproachPlan } from './approach.ts';
 import { defaultAccountPreferences, validatePreferences } from '../account/model.ts';
 
 export const columns = `id,status,started_at AS startedAt,ended_at AS endedAt,active_ms AS activeMs,
@@ -27,6 +28,20 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
     return queue(async () => { let result!: T; await db.withExclusiveTransactionAsync(async tx => { result = await task(tx); }); return result; });
   }
   return {
+    course: (id: string) => queue(async () => {
+      const row = await db.getFirstAsync<{name:string;snapshot_json:string;snapshot_hash:string}>('SELECT name,snapshot_json,snapshot_hash FROM saved_courses WHERE id=? AND owner_id=?',validateId(id),scope());
+      if(!row)throw new RunError('내 계정의 저장 코스를 찾을 수 없어요.');
+      return {id,name:row.name,snapshot:decodeSnapshot(row.snapshot_json,row.snapshot_hash)};
+    }),
+    setNavigation: (id: string,key: string,plan: ApproachPlan|null,error: string|null) => transaction(async tx => {
+      const run=await read(tx,id,scope());if(run.status!=='running'||!run.courseId)return;
+      const guide=readRunGuidance((await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`,id))!)!;
+      const engine=createRunGuidance(guide.course.snapshot.route,guide.checkpoint);
+      if(!('navigationRequest' in engine)||engine.navigationRequest()?.key!==key)return;
+      if(plan){try{validApproach(plan,guide.course.snapshot,engine.snapshot().position);}catch{return;}}
+      engine.setNavigation(plan,error);
+      await tx.runAsync('UPDATE running_sessions SET guidance_json=? WHERE id=?',JSON.stringify(engine.checkpoint()),id);
+    }),
     active: () => queue(() => db.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE status!='completed' AND owner_id=? LIMIT 1`, scope())),
     get: (id: string) => queue(() => read(db, id, scope())),
     guidance: (id: string) => queue(async () => {
@@ -43,7 +58,7 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isSafeInteger(offset) || offset < 0) throw new RunError('목록 범위가 올바르지 않아요.');
       return db.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? ORDER BY started_at DESC,id DESC LIMIT ? OFFSET ?`, scope(), limit, offset);
     }),
-    start: (courseId?: string, initialFix?: Fix) => transaction(async tx => {
+    start: (courseId?: string, initialFix?: Fix, approach?: ApproachPlan) => transaction(async tx => {
       if (await tx.getFirstAsync("SELECT id FROM running_sessions WHERE status!='completed'")) throw new RunError('진행 중인 러닝을 먼저 재개하거나 종료해 주세요.');
       const at = now();
       const row = await tx.getFirstAsync<{ id: string }>('SELECT lower(hex(randomblob(16))) AS id');
@@ -55,9 +70,10 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
         if (!course) throw new RunError('내 계정의 저장 코스를 찾을 수 없어요.');
         const snapshot = decodeSnapshot(course.snapshot_json, course.snapshot_hash);
         if (snapshot.source !== 'osm') throw new RunError('가상 테스트 코스는 실제 GPS 러닝에 사용할 수 없어요.');
-        const readiness = startReadiness({ id: courseId, name: course.name, snapshot }, initialFix ?? null, at);
+        const readiness = startReadiness({ id: courseId, name: course.name, snapshot }, initialFix ?? null, at, approach);
         if (!readiness.ready) throw new RunError(readiness.message);
-        const engine = createGuidance(snapshot.route);
+        if(approach)validApproach(approach,snapshot,[initialFix!.longitude,initialFix!.latitude]);
+        const engine = createRunGuidance(snapshot.route, undefined, approach);
         engine.ingest({ position: [initialFix!.longitude, initialFix!.latitude], accuracy: initialFix!.accuracy!, timestamp: 0 });
         const encoded = encodeSnapshot(snapshot);
         const preferences = await tx.getFirstAsync<{ preferences_json: string }>('SELECT preferences_json FROM account_preferences WHERE owner_id=?', owner);
@@ -72,7 +88,7 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       if (!run) return { events: [] as GuidanceEvent[], paused: false, voice: false };
       const at = now();
       const saved = run.courseId ? readRunGuidance((await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`, run.id))!) : null;
-      const engine = saved ? createGuidance(saved.course.snapshot.route, saved.checkpoint) : null;
+      const engine = saved ? createRunGuidance(saved.course.snapshot.route, saved.checkpoint) : null;
       const events: GuidanceEvent[] = [];
       let arrivedAt: number | null = null;
       let last = await tx.getFirstAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence DESC LIMIT 1`, run.id);
@@ -120,10 +136,10 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       if (run.courseId) {
         const saved = readRunGuidance((await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`, id))!)!;
         if (status === 'running') {
-          const engine = createGuidance(saved.course.snapshot.route, saved.checkpoint); engine.resume();
+          const engine = createRunGuidance(saved.course.snapshot.route, saved.checkpoint); engine.resume();
           await tx.runAsync("UPDATE running_sessions SET guidance_json=?,course_outcome='active' WHERE id=?", JSON.stringify(engine.checkpoint()), id);
         } else if (status === 'completed') {
-          await tx.runAsync('UPDATE running_sessions SET course_outcome=? WHERE id=?', run.courseOutcome === 'arrival-pending' ? 'finished' : 'stopped', id);
+          await tx.runAsync('UPDATE running_sessions SET course_outcome=? WHERE id=?', run.courseOutcome === 'arrival-pending' || (saved.checkpoint.version===2&&saved.checkpoint.finished) ? 'finished' : 'stopped', id);
         }
       }
       // An interruption uses only committed time; process downtime is never counted.
