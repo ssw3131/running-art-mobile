@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.runningart.accountqa">
+  <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36" />
+  <application android:label="RunPen account UI QA" android:debuggable="true" />
+  <instrumentation android:name="com.runningart.accountqa.NicknameInput" android:targetPackage="com.runningart.accountqa" />
+</manifest>

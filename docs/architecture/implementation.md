@@ -1,5 +1,9 @@
 # 구현 구조와 데이터 흐름
 
+2026-10-04: `account-withdraw`와 `modules/account/withdrawal*`에 확인→암호화 확인표 저장→SQLite v7 진행 상태/동기화 차단→서버 삭제/조회→기기 기록 비로그인 보관→세션 정리를 연결했다. 실제 서버 미배포로 기본 비활성이다. 내용 데이터는 보존하고 이전 동기화 메타데이터만 정리한다. Figma 디자인 적용·대조는 사용자 지시로 이번 목표에서 제외했다.
+
+2026-10-03 계정·마이페이지 후속: `modules/account/`의 SQLite v6 설정 저장·기록 집계·프로필 입력 검증과 `features/account/` 공통 UI를 추가했다. 기존 `auth/controller.ts`는 본인 프로필 메타데이터 저장을 직렬화한다. `account.tsx`에서 `account-profile`, `account-settings`, `account-sync`로 연결하며 기존 동기화 계약을 사용한다. 새 코스 러닝 시작 시 계정별 안내 기본값을 사본으로 저장한다. 탈퇴·추가 소셜과 Figma 대조는 미완료다. [계약과 범위](../development/account-mypage.md).
+
 **2026-10-03 서비스 기준:** RunPen Figma UI를 우선해 현재 앱을 실서비스로 이어간다. 아래 기존 구현은 재사용 기반이며 서비스 화면 전체의 완료를 뜻하지 않는다. 개인 자료 소유권·동기화는 구현·검증 완료이며 서버 환경 분리 여부는 후속 결정이다. 세부 기능·미정 정책은 [제품 기획](../product/overview.md), 전환할 화면 책임은 아래 ‘서비스 전환 시 연결할 책임’을 따른다.
 
 2026-10-03 `src/modules/auth/`에 Google PKCE·Supabase·보안 세션·로그아웃을 추가했다. `features/auth/use-auth.ts`가 계정 표시 상태를 구독하고, 루트가 최초/실행 중 딥링크와 앱 전경 갱신을 관리하며 `account.tsx`와 `auth/callback.tsx`가 계정/복귀 화면을 제공한다. 인증 자료는 Expo SecureStore에, 기존 코스·러닝·메모는 기존 SQLite에 유지한다. 로그인 자체가 로컬 기록을 업로드하거나 계정 소유로 바꾸지는 않는다. SM-S942N의 실제 계정 로그인·복귀·앱 재시작 유지·로그아웃·재로그인을 확인했으며 RLS·자료 동기화는 후속이다. [인증 계약과 사용법](../development/google-sign-in.md).

@@ -1,0 +1,4 @@
+# Prepared, not deployed. The handler verifies live Auth users itself for prepare
+# and delete. Status uses a signed capability after the user's JWT is invalidated.
+[functions.delete-account]
+verify_jwt = false

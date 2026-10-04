@@ -14,6 +14,7 @@ let state:SyncState={ owner:null,busy:false,status:null,message:'' };
 const listeners=new Set<()=>void>();
 let abort:AbortController|null=null, operation:Promise<void>|null=null, epoch=0, active=false, started=false, observed=false;
 let nextAttempt=0, failures=0;
+let held=0;
 const update=(patch:Partial<SyncState>)=>{ state={...state,...patch}; listeners.forEach(listener=>listener()); };
 async function refresh() {
   const owner=authentication.getSnapshot().account?.id;
@@ -45,6 +46,7 @@ async function remoteFor(owner:string,signal:AbortSignal) {
   return createSyncRemote(client,owner);
 }
 function execute(action?:{claim:boolean}|{conflict:SyncConflict;choice:'local'|'remote'}) {
+  if (held) return Promise.resolve();
   if (operation) return operation;
   const owner=authentication.getSnapshot().account?.id,current=epoch;
   if (!owner) return Promise.resolve();
@@ -72,11 +74,13 @@ function execute(action?:{claim:boolean}|{conflict:SyncConflict;choice:'local'|'
   return operation;
 }
 async function automatically() {
-  if (!active || operation || !state.owner || Date.now()<nextAttempt) return;
+  if (held || !active || operation || !state.owner || Date.now()<nextAttempt) return;
   await refresh();
   if (active && state.status?.enabled) await execute();
 }
 export const personalSync={
+  hold:async()=>{held++;abort?.abort();if(operation) await operation;},
+  release:()=>{held=Math.max(0,held-1);},
   getSnapshot:()=>state,
   subscribe:(listener:()=>void)=>{listeners.add(listener);return()=>{listeners.delete(listener);};},
   start:()=>{

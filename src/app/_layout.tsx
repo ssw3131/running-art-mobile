@@ -7,12 +7,14 @@ import { running } from '@/modules/running/runtime';
 import { runErrorMessage } from '@/modules/running/model';
 import { useAuth } from '@/features/auth/use-auth';
 import { personalSync } from '@/modules/sync/runtime';
+import { accountWithdrawal } from '@/modules/account/withdrawal-runtime';
 
 export default function RootLayout() {
   const auth=useAuth();
   const [recoveryError, setRecoveryError] = useState('');
   useEffect(() => {
     void authentication.start();
+    void accountWithdrawal.start();
     personalSync.start();
     personalSync.setActive(AppState.currentState==='active');
     authentication.setActive(AppState.currentState === 'active');
@@ -35,7 +37,11 @@ export default function RootLayout() {
       {!!recoveryError && <Text accessibilityRole="alert" style={{ color: '#A12F2F', padding: 16 }}>러닝 복원: {recoveryError}</Text>}
       <Stack key={auth.ready?auth.account?.id??'guest':'loading'} screenOptions={{ headerStyle: { backgroundColor: '#F6F5F0' }, headerTintColor: '#183C32' }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="account" options={{ title: '내 계정' }} />
+        <Stack.Screen name="account" options={{ title: '마이페이지' }} />
+        <Stack.Screen name="account-profile" options={{ title: '프로필 편집' }} />
+        <Stack.Screen name="account-settings" options={{ title: '설정' }} />
+        <Stack.Screen name="account-sync" options={{ title: '개인 기록 동기화' }} />
+        <Stack.Screen name="account-withdraw" options={{ title: '회원 탈퇴' }} />
         <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen name="map" options={{ title: '내 주변 지도' }} />
         <Stack.Screen name="storage" options={{ title: '저장소 테스트' }} />

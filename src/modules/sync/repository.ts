@@ -13,10 +13,11 @@ const meta = 'id,remote_version AS remoteVersion,mutation_id AS mutationId,dirty
 export type SyncConflict = { kind: RecordKind; id: string; remote: RemoteRecord };
 export function createSyncRepository(database: StorageDatabase, scope: OwnerScope) {
   const db = serialDatabase(database);
-  async function transaction<T>(owner: string, work: (tx: SqlExecutor) => Promise<T>): Promise<T> {
+  async function transaction<T>(owner: string, work: (tx: SqlExecutor) => Promise<T>, readOnly = false): Promise<T> {
     let result!: T;
     await db.withExclusiveTransactionAsync(async tx => {
       requireOwner(scope, owner);
+      if (!readOnly && await tx.getFirstAsync('SELECT owner_id FROM account_withdrawals WHERE owner_id=?', owner)) throw new SyncError('탈퇴 처리 중인 계정의 동기화를 중단했어요. 마이페이지에서 탈퇴 상태를 확인해 주세요.');
       result = await work(tx);
       requireOwner(scope, owner);
     });
@@ -81,7 +82,7 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
         (SELECT count(*) FROM running_sessions WHERE status!='completed') AS active`, owner,owner,owner);
       const conflicts = await tx.getAllAsync<{ kind: RecordKind; id: string; remote_json: string }>('SELECT kind,id,remote_json FROM sync_conflicts WHERE owner_id=? ORDER BY kind,id', owner);
       return { enabled: !!settings?.enabled, lastSuccess: settings?.last_success ?? null, ...counts!, conflicts: conflicts.map(c => ({ kind:c.kind,id:c.id,remote:JSON.parse(c.remote_json) as RemoteRecord })) };
-    }),
+    }, true),
     enable: async (owner: string, claimGuests: boolean) => transaction(owner, async tx => {
       if (claimGuests) {
         if (await tx.getFirstAsync("SELECT id FROM running_sessions WHERE status!='completed'")) throw new SyncError('진행 중인 러닝을 종료한 뒤 기기 기록을 연결해 주세요.');

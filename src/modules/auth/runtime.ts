@@ -8,19 +8,22 @@ import { Platform } from 'react-native';
 import { authConfig, AUTH_STORAGE_KEY } from './config';
 import { createAuthController } from './controller';
 import { createSecureStorage } from './secure-storage';
+import { configuredSignInProviders } from './providers';
 
 const config = authConfig(process.env.EXPO_PUBLIC_SUPABASE_URL, process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
-const storage = createSecureStorage({
+export const accountSecureStorage = createSecureStorage({
   getItem: key => SecureStore.getItemAsync(key),
   setItem: (key, value) => SecureStore.setItemAsync(key, value),
   removeItem: key => SecureStore.deleteItemAsync(key),
 }, Crypto.randomUUID);
+const storage = accountSecureStorage;
 export const authClient = config && Platform.OS !== 'web' ? createClient(config.url, config.key, {
   auth: { storage, storageKey: AUTH_STORAGE_KEY, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, flowType: 'pkce', debug: false },
 }) : null;
 
 export const authentication = createAuthController({
   auth: authClient?.auth ?? null,
+  providers: configuredSignInProviders(process.env.EXPO_PUBLIC_AUTH_KAKAO_ENABLED, process.env.EXPO_PUBLIC_AUTH_NAVER_ENABLED),
   storage,
   openBrowser: (url, redirect) => WebBrowser.openAuthSessionAsync(url, redirect),
   canChangeAccount: async () => {

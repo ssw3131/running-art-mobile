@@ -4,7 +4,8 @@ import { guestScope, type OwnerScope } from '../sync/ownership.ts';
 import { classifyFix, elapsedMs, RunError, validateId, type Fix, type Run, type RunPoint, type RunStatus } from './model.ts';
 import { decodeSnapshot, encodeSnapshot } from '../courses/model.ts';
 import { createGuidance, type GuidanceEvent } from '../guidance/engine.ts';
-import { defaultGuidanceOptions, guidanceColumns, readRunGuidance, startReadiness, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
+import { guidanceColumns, readRunGuidance, startReadiness, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
+import { defaultAccountPreferences, validatePreferences } from '../account/model.ts';
 
 export const columns = `id,status,started_at AS startedAt,ended_at AS endedAt,active_ms AS activeMs,
   checkpoint_at AS checkpointAt,distance_m AS distanceM,point_count AS pointCount,
@@ -59,8 +60,10 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
         const engine = createGuidance(snapshot.route);
         engine.ingest({ position: [initialFix!.longitude, initialFix!.latitude], accuracy: initialFix!.accuracy!, timestamp: 0 });
         const encoded = encodeSnapshot(snapshot);
+        const preferences = await tx.getFirstAsync<{ preferences_json: string }>('SELECT preferences_json FROM account_preferences WHERE owner_id=?', owner);
+        const options = validatePreferences(preferences ? JSON.parse(preferences.preferences_json) : defaultAccountPreferences).guidance;
         await tx.runAsync(`UPDATE running_sessions SET course_id=?,course_name=?,course_outcome='active',course_snapshot_json=?,course_snapshot_hash=?,guidance_json=?,guidance_options_json=? WHERE id=?`,
-          courseId, course.name, encoded.json, encoded.hash, JSON.stringify(engine.checkpoint()), JSON.stringify(defaultGuidanceOptions), row.id);
+          courseId, course.name, encoded.json, encoded.hash, JSON.stringify(engine.checkpoint()), JSON.stringify(options), row.id);
       }
       return read(tx, row.id, owner);
     }),

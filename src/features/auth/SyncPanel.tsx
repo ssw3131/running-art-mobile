@@ -1,16 +1,18 @@
-import { useEffect, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useSyncExternalStore } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { personalSync } from '@/modules/sync/runtime';
 import type { SyncConflict } from '@/modules/sync/repository';
+import { lightAccountColors, type AccountColors } from '../account/ui';
 
-export function SyncPanel() {
+export function SyncPanel({ colors = lightAccountColors }: { colors?: AccountColors }) {
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const state=useSyncExternalStore(personalSync.subscribe,personalSync.getSnapshot,personalSync.getSnapshot);
   useEffect(()=>{void personalSync.refresh();},[]);
   if (!state.owner) return null;
   const status=state.status;
   const enable=(claim:boolean)=>Alert.alert(claim?'기기 기록을 이 계정에 연결':'개인 기록 동기화 켜기',
-    claim ? `계정에 연결되지 않은 코스 ${status?.guestCourses??0}개와 완료된 러닝 ${status?.guestRuns??0}건을 현재 계정에 연결하고 Running Art의 비공개 서버에 저장합니다. 로그아웃하면 숨겨지며 같은 계정으로 다시 로그인하면 사용할 수 있습니다.`
-      : '이 계정의 코스와 완료된 러닝을 Running Art의 비공개 서버에 저장하고 다른 기기의 기록을 복원합니다. 계정에 연결되지 않은 기기 기록은 그대로 유지합니다.',
+    claim ? `계정에 연결되지 않은 코스 ${status?.guestCourses??0}개와 완료된 러닝 ${status?.guestRuns??0}건을 현재 계정에 연결하고 RunPen의 비공개 서버에 저장합니다. 로그아웃하면 숨겨지며 같은 계정으로 다시 로그인하면 사용할 수 있습니다.`
+      : '이 계정의 코스와 완료된 러닝을 RunPen의 비공개 서버에 저장하고 다른 기기의 기록을 복원합니다. 계정에 연결되지 않은 기기 기록은 그대로 유지합니다.',
     [{text:'취소',style:'cancel'},{text:claim?'연결하고 동기화':'켜기',onPress:()=>{void personalSync.enable(claim);}}]);
   const resolve=(conflict:SyncConflict,choice:'local'|'remote')=>Alert.alert('동기화 충돌 해결',
     choice==='local'?'이 기기의 변경을 서버에 반영합니다. 이 기기에서 삭제한 기록이면 서버에도 삭제를 반영합니다.'
@@ -38,11 +40,12 @@ export function SyncPanel() {
         {button('서버 내용 사용',()=>resolve(conflict,'remote'),`sync-remote-${conflict.id}`)}
       </View>)}
     </>}
-    {state.busy&&<ActivityIndicator accessibilityLabel="기록 동기화 중" color="#183C32"/>}
+    {state.busy&&<ActivityIndicator accessibilityLabel="기록 동기화 중" color={colors.accent}/>}
+    {!status && !state.busy && button('동기화 상태 다시 확인',()=>{void personalSync.refresh();},'sync-status-retry')}
     {!!state.message&&<Text testID="sync-message" accessibilityRole="alert" style={styles.body}>{state.message}</Text>}
     <Text style={styles.body}>연결한 기록은 이 계정에서만 볼 수 있습니다. 다른 기기에서도 같은 계정으로 로그인하고 동기화를 켜면 복원됩니다.</Text>
   </View>;
 }
-const styles=StyleSheet.create({card:{backgroundColor:'#FFFFFF',borderRadius:24,padding:24,gap:16},title:{color:'#183C32',fontSize:22,fontWeight:'700'},
-  body:{color:'#57675F',fontSize:16,lineHeight:25},button:{backgroundColor:'#183C32',borderRadius:14,padding:16,alignItems:'center'},
-  buttonText:{color:'#FFFFFF',fontSize:15,fontWeight:'600'},disabled:{opacity:0.5},conflict:{borderTopWidth:1,borderColor:'#DAE1D8',paddingTop:16,gap:12}});
+const createStyles=(colors:AccountColors)=>StyleSheet.create({card:{backgroundColor:colors.surface,borderRadius:24,padding:24,gap:16},title:{color:colors.text,fontSize:22,fontWeight:'700'},
+  body:{color:colors.muted,fontSize:16,lineHeight:25},button:{backgroundColor:colors.accent,borderRadius:14,padding:16,alignItems:'center'},
+  buttonText:{color:colors.onAccent,fontSize:15,fontWeight:'600'},disabled:{opacity:0.5},conflict:{borderTopWidth:1,borderColor:colors.border,paddingTop:16,gap:12}});

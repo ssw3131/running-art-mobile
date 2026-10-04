@@ -1,6 +1,8 @@
 import { StorageError, type StorageDatabase } from './types.ts';
 import { personalSyncMigration } from '../sync/schema.ts';
 import { runningGuidanceMigration } from '../running/guidance-schema.ts';
+import { accountMigration } from '../account/schema.ts';
+import { withdrawalMigration } from '../account/withdrawal-repository.ts';
 
 export const DATABASE_NAME = 'running-art.db';
 
@@ -48,6 +50,8 @@ export const migrations: readonly string[] = [
   );`,
   personalSyncMigration,
   runningGuidanceMigration,
+  accountMigration,
+  withdrawalMigration,
 ];
 
 export const SCHEMA_VERSION = migrations.length;

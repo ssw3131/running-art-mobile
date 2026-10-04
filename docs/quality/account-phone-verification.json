@@ -1,0 +1,40 @@
+{
+  "existingRecords": {
+    "saved_courses": {
+      "count": 1,
+      "originalColumnsSha256": "2df4b823aae31a450948df62f96fd85fa137fad1f0a21f1c6c0de914e82174a2",
+      "unchanged": true
+    },
+    "storage_test_notes": {
+      "count": 1,
+      "originalColumnsSha256": "39a4b30e2fdb9880a1c87f63592f16268f1f74d8f6a2619e9672f1315fef3c82",
+      "unchanged": true
+    },
+    "running_sessions": {
+      "count": 2,
+      "originalColumnsSha256": "f544d3892464efcc7c65789a2b53921f95db04b1d3128faaae39f8dd9a477faa",
+      "unchanged": true
+    },
+    "running_points": {
+      "count": 209,
+      "originalColumnsSha256": "3586c7db820bc3e3bc8f2bab96bb2ec8de2a4315eb30602254da663c56f7c8b6",
+      "unchanged": true
+    }
+  },
+  "phoneProfile": {
+    "existingSessionRetained": true,
+    "unchangedSaveDisabled": true,
+    "realSaveAndProcessRestart": true,
+    "originalIdentityAndProviderPictureRestored": true,
+    "syncEnabledPendingZero": true,
+    "withdrawalAvailablePolicyVerifiedWithoutDeletion": true
+  },
+  "preservedInstallFields": {
+    "appId": true,
+    "firstInstallTime": true,
+    "dataDir": true,
+    "ceDataInode": true
+  },
+  "serverProfileRestoredSha256": "039732e7ec09027d83f2cd2910236ade3823ca6d9c9d635683c5395fa8fa6be2",
+  "passed": true
+}

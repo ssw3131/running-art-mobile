@@ -53,6 +53,8 @@
     "pretypecheck": "node scripts/generate-route-types.cjs",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run lint",
+    "check:server": "tsc -p supabase/tsconfig.json && eslint supabase/functions",
+    "test:account-server": "node scripts/qa/account-server.mjs",
     "test:location": "node --test tests/location.test.mjs tests/map-config.test.mjs",
     "test:storage": "node --test tests/storage.test.mjs",
     "test:courses": "node --test tests/courses.test.mjs",

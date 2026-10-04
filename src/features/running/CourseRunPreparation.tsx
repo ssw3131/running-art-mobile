@@ -8,11 +8,13 @@ import { createGuidance } from '@/modules/guidance/engine';
 import GuidanceMap from '@/features/guidance/GuidanceMap';
 import { startReadiness, validateRunCourse, type RunCourse } from '@/modules/running/guidance';
 import type { Fix } from '@/modules/running/model';
+import { defaultAccountPreferences } from '@/modules/account/model';
 import { RunButton, styles } from './ui';
 
 export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(): void }) {
   const [course, setCourse] = useState<RunCourse | null>(null), [fix, setFix] = useState<Fix | null>(null);
   const [error, setError] = useState(''), [now, setNow] = useState(0);
+  const [background, setBackground] = useState(defaultAccountPreferences.guidance.background);
   const generation = useRef(0), subscription = useRef<Location.LocationSubscription | null>(null), locating = useRef(false);
   const locate = useCallback(async () => {
     if (locating.current) return;
@@ -20,9 +22,11 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
     const ticket = ++generation.current; subscription.current?.remove(); subscription.current = null; setError(''); setFix(null);
     try {
       const saved = await (await getStorage()).courses.get(id);
+      const preferences = await (await getStorage()).account.preferences();
       const c = validateRunCourse({ id: saved.id, name: saved.name, snapshot: saved.snapshot });
       if (ticket !== generation.current) return;
       setCourse(c);
+      setBackground(preferences.guidance.background);
       let permission = await Location.getForegroundPermissionsAsync();
       if (!permission.granted) permission = await Location.requestForegroundPermissionsAsync();
       if (!permission.granted || permission.android?.accuracy !== 'fine') throw new Error('location-settings');
@@ -58,7 +62,7 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
       <Text style={styles.body}>갈색 점이 코스 출발점이에요. 출발점 부근에서 정방향으로 시작합니다.</Text>
       <Text testID="run-readiness" style={styles.body}>{readiness?.message}</Text>
       {fix && <Text style={styles.body}>현재 위치 정확도 ±{Math.round(fix.accuracy ?? 0)}m</Text>}
-      <Text style={styles.body}>준비 중에는 기록하지 않아요. 시작 후에는 화면을 꺼도 안내와 GPS 기록이 이어집니다.</Text>
+      <Text style={styles.body}>준비 중에는 기록하지 않아요. {background ? '시작 후에는 화면을 꺼도 안내와 GPS 기록이 이어집니다.' : '화면 꺼짐 안내가 꺼져 있어 앱을 벗어나거나 화면을 끄면 일시정지됩니다.'}</Text>
       <RunButton id="run-course-start" title="이 코스로 러닝 시작" disabled={busy || !readiness?.ready} onPress={onStart} />
     </>}
     <RunButton id="run-locate" title="현재 위치 다시 확인" disabled={busy} onPress={() => void locate()} />

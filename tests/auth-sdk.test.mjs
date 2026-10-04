@@ -7,7 +7,7 @@ import { AUTH_REDIRECT_URL } from '../src/modules/auth/config.ts';
 
 // Real installed SDK + secure-storage adapter. HTTP is a local contract fixture,
 // not evidence of a real Google account or the remote Supabase configuration.
-test('Supabase SDK uses S256, exchanges its stored verifier, persists/refreshes and signs out locally', async () => {
+test('Supabase SDK uses S256, persists/refreshes, updates only profile metadata and signs out locally', async () => {
   const items = new Map(); let id = 0;
   const storage = createSecureStorage({
     getItem: async k => items.get(k) ?? null,
@@ -31,6 +31,12 @@ test('Supabase SDK uses S256, exchanges its stored verifier, persists/refreshes 
       return new Response(JSON.stringify(payload('refreshed')), { status: 200, headers: { 'content-type': 'application/json' } });
     }
     if (url.pathname.endsWith('/logout')) return new Response(null, { status: 204 });
+    if (url.pathname.endsWith('/user') && init.method === 'PUT') {
+      assert.equal(new Headers(init.headers).get('authorization'), 'Bearer test-access-refreshed');
+      assert.deepEqual(body, { data: { runpen_nickname: '프로필 SDK 검사', runpen_picture: 'initials' }, code_challenge: null, code_challenge_method: null });
+      user.user_metadata = { ...user.user_metadata, ...body.data };
+      return new Response(JSON.stringify(user), { status: 200, headers: { 'content-type': 'application/json' } });
+    }
     throw new Error('Unexpected SDK request');
   };
   const make = () => createClient('https://contract.supabase.co', 'sb_publishable_contract_test', {
@@ -52,6 +58,10 @@ test('Supabase SDK uses S256, exchanges its stored verifier, persists/refreshes 
   assert.equal(requests.length, 1, 'unexpired session restoration needs no HTTP');
   const refreshed = await restarted.auth.refreshSession(); assert.equal(refreshed.error, null);
   assert.equal((await restarted.auth.getSession()).data.session.refresh_token, 'test-refresh-refreshed');
+  const updated = await restarted.auth.updateUser({ data: { runpen_nickname: '프로필 SDK 검사', runpen_picture: 'initials' } });
+  assert.equal(updated.error, null);
+  assert.equal((await restarted.auth.getSession()).data.session.user.user_metadata.runpen_nickname, '프로필 SDK 검사');
+  assert.equal((await restarted.auth.getSession()).data.session.user.user_metadata.full_name, '테스트 계정');
   assert.equal((await restarted.auth.signOut({ scope: 'local' })).error, null);
   assert.equal((await restarted.auth.getSession()).data.session, null);
   assert.equal(requests.at(-1).scope, 'local');

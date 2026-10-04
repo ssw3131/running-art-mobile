@@ -1,5 +1,9 @@
 # 문서 목차
 
+2026-10-04: **두 작업 목표·휴대폰 후속 완료** — 탈퇴 서버·실제 Google 프로필 검증 후 사용자 승인으로 13:18:40 최신 APK를 휴대폰에 설치했다. 프로필 저장/재시작/원상 복구·동기화/탈퇴 안내와 기존 코스/러닝/GPS/메모 보존 통과. Figma·카카오/네이버는 후속이다. [사용법](development/account-mypage.md) · [실제 검증·APK·후속](quality/account-mypage-verification.md). 아래 문단은 과거 이력이다.
+
+2026-10-03: **계정·마이페이지 부분 구현** — [사용법·저장 계약](development/account-mypage.md) · [258개 검사·비로그인 에뮬레이터 검증과 미완료 범위](quality/account-mypage-verification.md). 탈퇴·실제 프로필 서버 검증 등은 계속 진행한다.
+
 2026-10-03: **개인 자료 동기화 완료** — [사용법·계약](development/personal-sync.md) · [220개 검사·실제 서버·휴대폰 복원·기존 자료 보존](quality/personal-sync-verification.md) · [실행 기록](history/executed-plans/2026-10-03-1112-personal-sync.md).
 
 **2026-10-03 RunPen 실서비스 기획:** [제품 기획](product/overview.md)을 중심 문서로 사용합니다. 서비스명은 RunPen, 기술 프로젝트명은 Running Art이며 Figma UI 우선·단일 앱·단계적 완성·서버 환경 분리 미정·과금 검토·커뮤니티 후속 결정을 반영했습니다. [로드맵](planning/roadmap.md)은 서비스 전환 순서, [현재 상태](handoff/status.md)는 완료/진행 중/미구현/미검증을 구분합니다. 이번 실행은 문서만 변경했습니다. [실행 기록](history/executed-plans/2026-10-03-1144-runpen-service-planning.md).

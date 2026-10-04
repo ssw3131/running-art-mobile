@@ -14,7 +14,7 @@ export default function HomeScreen() {
           <Text style={styles.description}>핵심 기능을 확인하는 개발용 앱입니다. 서비스 화면과 디자인은 이후 반영합니다.</Text>
           <Link href="/account" asChild>
             <Pressable accessibilityRole="button" testID="open-account" style={styles.secondaryButton}>
-              <Text style={styles.secondaryText}>{account ? `${account.name} · 내 계정` : 'Google 로그인 · 내 계정'}</Text>
+              <Text style={styles.secondaryText}>{account ? `${account.name} · 마이페이지` : '로그인 · 마이페이지'}</Text>
             </Pressable>
           </Link>
         </View>

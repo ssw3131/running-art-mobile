@@ -1,5 +1,7 @@
 # 휴대폰 독립 실행 테스트 APK
 
+**2026-10-04 13:18:40 KST 계정 통합 APK 설치·검증 완료:** `build/install/running-art-0.1.0-20261004-account-verified.apk`(96,852,162바이트, arm64·x86_64), SHA-256 `cc45df3904d3f88ccc0c89a018d639aa83d99e857664a9214e81c39d7c5c6c18`. 현재 안내 수정·GPS/계정/탈퇴 활성화를 포함하며 사용자 승인으로 SM-S942N에 동일 ID/서명·자료 유지 업데이트했다. 전체 301개·release, 실제 프로필 저장/재시작·서버 대조/원상 복구·동기화/탈퇴 안내·기존 코스 1개/러닝 2건/209좌표/메모 1개의 내용 해시 보존 통과. 실제 사용자 탈퇴는 하지 않았다. [최신 검증](../quality/account-mypage-verification.md)·[현재 상태](../handoff/status.md). 아래 APK/미설치 문단은 과거 이력이다.
+
 **2026-10-03 코스 생성·실제 GPS 안내 APK 준비:** `build/install/running-art-0.1.0-20261003-course-gps.apk`(96,779,694바이트, arm64·x86_64). 조건→후보→저장→GPS 안내·완주 확인과 코스 연계 기록/동기화를 포함한다. 기존 앱 ID `com.runningart.mobile.dev`·서명 인증서를 유지한다. **휴대폰에는 설치하지 않았다.** [검증·해시](../quality/course-gps-guidance-verification.md)·[사용법](course-gps-guidance.md)을 따른다. 같은 폴더에 `.sha256`와 `INSTALL-course-gps-20261003-ko.txt`를 보존한다.
 
 **2026-10-03 Google 로그인 APK 휴대폰 검증 완료:** `build/install/running-art-0.1.0-20261003-google-login.apk`(96,638,830바이트, arm64·x86_64)에 Google PKCE·내 계정·보안 세션·이 기기 로그아웃을 추가했다. 에뮬레이터의 취소/재시도·거절/오류 콜백 검증에 이어 **10:49:20 KST에 SM-S942N을 기존 서명·자료 유지 방식으로 업데이트했다.** 실제 로그인·복귀·계정 표시·앱 재시작 유지·로그아웃·재로그인과 설치 APK 해시·기존 DB 개수/내용 해시 보존을 확인했다. [검증·해시](../quality/google-sign-in-verification.md)·[사용법](google-sign-in.md).
