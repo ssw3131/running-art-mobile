@@ -4,10 +4,13 @@ import type { StringStorage } from './secure-storage.ts';
 import { profileImageUrl, validateProfile, type ProfileInput } from '../account/model.ts';
 import { StorageError } from '../storage/types.ts';
 import { isSignInProvider, oauthRequest, signInProviderLabels, type SignInProvider } from './providers.ts';
+import { profilePhotoPath, type PreparedProfilePhoto } from '../account/photo.ts';
+import type { ProfilePhotoStore } from '../account/photo-remote.ts';
+import { syncNaverProfile } from './naver-profile.ts';
 
-type AuthApi = Pick<SupabaseClient['auth'], 'getSession' | 'onAuthStateChange' | 'signInWithOAuth' | 'exchangeCodeForSession' | 'signOut' | 'startAutoRefresh' | 'stopAutoRefresh' | 'updateUser'>;
+type AuthApi = Pick<SupabaseClient['auth'], 'getSession' | 'onAuthStateChange' | 'signInWithOAuth' | 'exchangeCodeForSession' | 'signOut' | 'startAutoRefresh' | 'stopAutoRefresh' | 'updateUser' | 'refreshSession'>;
 type BrowserResult = { type: string; url?: string };
-export type Account = { id: string; email: string; name: string; picture: 'provider' | 'initials'; avatarUrl: string | null; providers: string[] };
+export type Account = { id: string; email: string; name: string; picture: ProfileInput['picture']; avatarUrl: string | null; photoPath: string | null; profileRevision: string | null; providers: string[] };
 export type AuthState = { ready: boolean; configured: boolean; busy: boolean; account: Account | null; message: string; providers: readonly SignInProvider[] };
 type Pending = { createdAt: number; flowId?: string; provider?: SignInProvider };
 const SIGN_IN_ERROR = '로그인을 완료하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';
@@ -15,11 +18,13 @@ const SIGN_IN_ERROR = '로그인을 완료하지 못했습니다. 인터넷 연�
 function accountFrom(session: Session | null): Account | null {
   if (!session) return null;
   const metadata = session.user.user_metadata ?? {};
-  const name: unknown = metadata.runpen_nickname ?? metadata.full_name ?? metadata.name ?? metadata.preferred_username ?? metadata.nickname;
+  const name: unknown = metadata.runpen_nickname ?? metadata.runpen_naver_nickname ?? metadata.full_name ?? metadata.name ?? metadata.preferred_username ?? metadata.nickname;
   const providers = [...new Set((session.user.identities ?? []).map(identity => identity.provider))];
   return { id: session.user.id, email: session.user.email ?? '', name: typeof name === 'string' && name.trim() ? name : '러너',
-    picture: metadata.runpen_picture === 'initials' ? 'initials' : 'provider',
-    avatarUrl: profileImageUrl(metadata.avatar_url ?? metadata.picture), providers };
+    picture: metadata.runpen_picture === 'uploaded' ? 'uploaded' : metadata.runpen_picture === 'initials' ? 'initials' : 'provider',
+    photoPath: profilePhotoPath(session.user.id, metadata.runpen_photo_path),
+    profileRevision: typeof metadata.runpen_profile_revision === 'string' ? metadata.runpen_profile_revision : null,
+    avatarUrl: profileImageUrl('runpen_naver_avatar_url' in metadata ? metadata.runpen_naver_avatar_url : metadata.avatar_url ?? metadata.picture), providers };
 }
 
 export function createAuthController(deps: {
@@ -29,6 +34,8 @@ export function createAuthController(deps: {
   now?: () => number;
   canChangeAccount?: () => Promise<boolean>;
   providers?: readonly SignInProvider[];
+  profilePhotos?: ProfilePhotoStore;
+  fetchProviderProfile?: typeof fetch;
 }) {
   const { auth, storage } = deps;
   const providers = Object.freeze([...new Set((deps.providers ?? ['google']).filter(isSignInProvider))]);
@@ -102,6 +109,13 @@ export function createAuthController(deps: {
       const { data, error } = await auth.exchangeCodeForSession(parsed.code, attempt.flowId ? { flowId: attempt.flowId } : undefined);
       if (error || !data.session) throw error ?? new Error('Missing session');
       acceptSession(data.session);
+      if (attempt.provider === 'custom:naver' && data.session.provider_token) {
+        try { acceptSession(await syncNaverProfile(auth, data.session, deps.fetchProviderProfile)); }
+        catch {
+          update({ message: '네이버 로그인되었습니다. 프로필을 불러오지 못했어요. 다시 로그인하면 재시도합니다.' });
+          return;
+        }
+      }
       update({ message: `${signInProviderLabels[attempt.provider ?? 'google']} 로그인되었습니다.` });
     })().catch(() => { update({ message: SIGN_IN_ERROR }); }).finally(async () => {
       try { await clearPending(); } catch { update({ message: '로그인 저장소를 정리하지 못했습니다. 앱을 다시 열어 주세요.' }); }
@@ -139,23 +153,37 @@ export function createAuthController(deps: {
       const operation = active ? auth?.startAutoRefresh() : auth?.stopAutoRefresh();
       void operation?.catch(() => { update({ message: '로그인 갱신을 확인하지 못했습니다. 인터넷 연결을 확인해 주세요.' }); });
     },
-    saveProfile: async (input: ProfileInput): Promise<boolean> => {
+    saveProfile: async (input: ProfileInput, photo?: PreparedProfilePhoto): Promise<boolean> => {
       if (!auth || state.busy || !state.account) return false;
       const owner = state.account.id;
+      const previous = state.account;
+      accountOperation = true;
       update({ busy: true, message: '' });
       try {
         const profile = validateProfile(input);
-        const { data, error } = await auth.updateUser({ data: { runpen_nickname: profile.nickname, runpen_picture: profile.picture } });
-        if (error || data.user?.id !== owner || state.account?.id !== owner) throw new Error('Profile update failed');
+        if (deps.profilePhotos) {
+          await deps.profilePhotos.save(owner, profile, previous.profileRevision, previous.photoPath, photo);
+          const refreshed = await auth.refreshSession();
+          if (refreshed.error || refreshed.data.user?.id !== owner || state.account?.id !== owner) throw new Error('Profile refresh failed');
+        } else {
+          if (profile.picture === 'uploaded') throw new StorageError('validation', '사진 업로드를 아직 사용할 수 없어요. 잠시 후 다시 시도해 주세요.');
+          const { data, error } = await auth.updateUser({ data: { runpen_nickname: profile.nickname, runpen_picture: profile.picture } });
+          if (error || data.user?.id !== owner || state.account?.id !== owner) throw new Error('Profile update failed');
+        }
         const restored = await auth.getSession();
         if (restored.error || restored.data.session?.user.id !== owner || state.account?.id !== owner) throw new Error('Account changed');
         acceptSession(restored.data.session);
         update({ message: '프로필을 저장했어요.' });
         return true;
       } catch (error) {
+        // Reconcile a lost RPC response or a concurrent save without guessing
+        // success. The store retains the same request ID on an unknown outcome.
+        if (deps.profilePhotos && state.account?.id === owner) {
+          try { const refreshed = await auth.refreshSession(); if (!refreshed.error && refreshed.data.session?.user.id === owner && state.account?.id === owner) acceptSession(refreshed.data.session); } catch { /* Keep the last confirmed state while offline. */ }
+        }
         if (state.account?.id === owner) update({ message: error instanceof StorageError ? error.message : '프로필을 저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.' });
         return false;
-      } finally { update({ busy: false }); }
+      } finally { accountOperation = false; update({ busy: false }); }
     },
     signIn: async (provider: SignInProvider = 'google') => {
       if (!auth || state.busy || state.account) return;

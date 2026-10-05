@@ -119,6 +119,9 @@ test('installed Supabase SDK verifies user bearer then preserves admin bearer fo
       if (url.pathname === '/storage/v1/object/personal-records') {
         assert.equal(init.method, 'DELETE'); assert.deepEqual(body, { prefixes: [path(1)] }); remaining = []; return Response.json([]);
       }
+      if (url.pathname === '/rest/v1/rpc/account_deletion_profile_photos') {
+        assert.deepEqual(body, { p_owner: A }); return Response.json([]);
+      }
       if (url.pathname === `/auth/v1/admin/users/${A}`) {
         assert.equal(init.method, 'DELETE'); assert.deepEqual(body, { should_soft_delete: false }); return Response.json({ id: A });
       }
@@ -127,5 +130,26 @@ test('installed Supabase SDK verifies user bearer then preserves admin bearer fo
   });
   const response = await createDeletionHandler(createDeletionBackend(admin), receipts)(request());
   assert.equal(response.status, 200);
-  assert.deepEqual(calls, ['/auth/v1/user', '/rest/v1/rpc/begin_account_deletion', '/rest/v1/rpc/account_deletion_files', '/storage/v1/object/personal-records', '/rest/v1/rpc/account_deletion_files', `/auth/v1/admin/users/${A}`]);
+  assert.deepEqual(calls, ['/auth/v1/user', '/rest/v1/rpc/begin_account_deletion', '/rest/v1/rpc/account_deletion_files', '/storage/v1/object/personal-records', '/rest/v1/rpc/account_deletion_files', '/rest/v1/rpc/account_deletion_profile_photos', `/auth/v1/admin/users/${A}`]);
+});
+
+test('account deletion drains private photos before Auth and resumes after a photo failure', async () => {
+  const f = fixture(0), photos = Array.from({ length: 502 }, (_, i) => `${A}/${i.toString(16).padStart(64, '0')}.jpg`);
+  f.backend.photos = async () => photos.slice(0, 100);
+  f.backend.removePhotos = async paths => { for (const path of paths) photos.splice(photos.indexOf(path), 1); };
+  assert.equal((await f.run()).status, 202); assert.equal(photos.length, 2); assert.equal(f.deleted(), false);
+  const remove = f.backend.removePhotos;
+  f.backend.removePhotos = async () => { throw new Error('lost response'); };
+  assert.equal((await f.run()).status, 503); assert.equal(f.deleted(), false);
+  f.backend.removePhotos = remove;
+  assert.equal((await f.run()).status, 200); assert.equal(photos.length, 0); assert.equal(f.deleted(), true);
+});
+
+test('invalid or foreign photo listings cannot delete another owner or Auth', async () => {
+  for (const paths of [[`${B}/${'a'.repeat(64)}.jpg`], [`${A}/../photo.jpg`], null]) {
+    const f = fixture(0); let removed = false;
+    f.backend.photos = async () => paths;
+    f.backend.removePhotos = async () => { removed = true; };
+    assert.equal((await f.run()).status, 503); assert.equal(removed, false); assert.equal(f.deleted(), false);
+  }
 });

@@ -8,6 +8,8 @@ export interface DeletionBackend {
   begin(owner: string): Promise<void>;
   files(owner: string): Promise<string[]>;
   remove(paths: string[]): Promise<void>;
+  photos?(owner: string): Promise<string[]>;
+  removePhotos?(paths: string[]): Promise<void>;
   deleteUser(owner: string): Promise<void>;
 }
 
@@ -77,6 +79,14 @@ export function createDeletionHandler(backend: DeletionBackend, receipts: Deleti
           throw new Error('Invalid server storage listing');
         }
         if (!paths.length) {
+          // Old installations have no photo bucket; updated deployments provide
+          // both operations. Never delete Auth before every owned image is gone.
+          if (backend.photos) {
+            const photos = await backend.photos(user.id);
+            if (!backend.removePhotos || !Array.isArray(photos) || photos.length > 100 || new Set(photos).size !== photos.length || photos.some(path =>
+              typeof path !== 'string' || !path.startsWith(`${user.id}/`) || !/^[a-f0-9]{64}\.jpg$/.test(path.slice(user.id.length + 1)))) throw new Error('Invalid photo listing');
+            if (photos.length) { await backend.removePhotos(photos); continue; }
+          }
           await backend.deleteUser(user.id);
           return reply(200, 'deleted');
         }

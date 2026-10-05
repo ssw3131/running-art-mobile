@@ -62,7 +62,8 @@
       "expo-sqlite",
       "expo-sharing",
       "expo-web-browser",
-      "expo-secure-store"
+      "expo-secure-store",
+      ["expo-image-picker", { "photosPermission": "프로필에 사용할 사진을 선택합니다.", "cameraPermission": false, "microphonePermission": false }]
     ],
     "experiments": {
       "typedRoutes": true,

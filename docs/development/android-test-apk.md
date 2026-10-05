@@ -1,5 +1,13 @@
 # 휴대폰 독립 실행 테스트 APK
 
+**2026-10-05 15:27:53 소셜 통합 APK 설치·15:47 검증 완료:** 바로 아래 `20261005-social.apk`를 SM-S942N·Android 16에 동일 ID/서명·자료 유지 방식으로 업데이트했다. 설치 해시·기존 appId/최초 설치/자료 경로 유지, 카카오·네이버 실제 복귀/프로필/새 프로세스 복원·취소/로그아웃·계정 분리를 통과했다. 최종 Google 로그인·동기화 ON/대기 0건과 코스 2개/러닝 2건/209좌표/메모 1개 내용 해시를 보존했다. 검사 도우미 정리·서비스 없음. 아래 미설치는 준비 시점이며 네이버 공개 검수·사진 직접 업로드는 후속이다. [상세 결과](../quality/account-expansion-verification.md).
+
+**2026-10-05 소셜 통합 준비본:** `build/install/running-art-0.1.0-20261005-social.apk`(97,461,285바이트, arm64·x86_64), SHA-256 `33f6920a2e3591838b57b777bd7e1f2eb59fdadf333a7cdca5a0e7697e964952`. Google/카카오/네이버 활성화와 네이버 별명·사진 조회 보완을 포함한다. 실제 서버/PC 로그인·프로필·세션 복원/갱신, 관련 59개·타입/전체 lint·release와 기존 ID/서명 일치 확인. **휴대폰 미설치·Android 추가 소셜 복귀 미검증**이며 사진 업로드는 비활성이다. [검증 범위](../quality/account-expansion-verification.md).
+
+**2026-10-05 카카오 활성화 준비본:** `build/install/running-art-0.1.0-20261005-kakao.apk`(97,457,789바이트, arm64·x86_64), SHA-256 `452b0a38d977d0dbc2b047fc0626899c17d98135c160c0793a8e1226b355246d`. 실제 카카오 가입/로그인·닉네임/HTTPS 사진·PC 세션 복원/갱신을 확인해 카카오 버튼을 활성화했다. 사진 업로드/네이버는 비활성이다. 관련 16개·타입/전체 lint·release와 기존 ID/서명 일치 확인, **미설치·Android 카카오 복귀/재시작 유지 후속**. [최신 상태](../handoff/status.md)·[검증](../quality/account-expansion-verification.md).
+
+**2026-10-05 계정 확장 준비본:** `build/install/running-art-0.1.0-20261005-account-prepared.apk`(97,457,793바이트, arm64·x86_64), SHA-256 `140f262b094a67550bee7e07f0c1c90c957494357d53769c91e1d8b30acfa19f`. 사진 선택/가공 네이티브 패키지·앱 코드를 포함하지만 사진/추가 소셜 플래그는 비활성이다. 352개·타입/린트·release 및 기존 ID/서명 일치 확인, **기기에 설치하지 않았다.** 실제 사진 왕복/활성화·네이티브 UI·추가 소셜은 후속. [검증](../quality/account-expansion-verification.md).
+
 **2026-10-04 18:56:38 KST 경로 링크 공유 APK 설치:** `build/install/running-art-0.1.0-20261004-run-sharing.apk`(96,916,458바이트, arm64·x86_64)를 SM-S942N에 동일 앱 ID·서명·자료 유지 방식으로 업데이트했다. 실제 공유 웹 주소를 포함하며 서버의 합성 링크 생성/세 경로 표시/중단/테스트 자료 정리를 통과했다. 폰에서는 기존 로그인·러닝 2건·설치 식별 정보·공유 확인 취소를 확인했다. 사용자가 폰 연결 없이 마무리하도록 지정해 추가 폰 검증은 후속이다. SHA-256 `0a5cd7b065872df133fecd489121adc708f5aaddb8406efe706d61c979727b06`. [검증·폰 후속](../quality/run-link-sharing-verification.md)·[현재 상태](../handoff/status.md).
 
 **2026-10-04 13:18:40 KST 계정 통합 APK 설치·검증 완료:** `build/install/running-art-0.1.0-20261004-account-verified.apk`(96,852,162바이트, arm64·x86_64), SHA-256 `cc45df3904d3f88ccc0c89a018d639aa83d99e857664a9214e81c39d7c5c6c18`. 현재 안내 수정·GPS/계정/탈퇴 활성화를 포함하며 사용자 승인으로 SM-S942N에 동일 ID/서명·자료 유지 업데이트했다. 전체 301개·release, 실제 프로필 저장/재시작·서버 대조/원상 복구·동기화/탈퇴 안내·기존 코스 1개/러닝 2건/209좌표/메모 1개의 내용 해시 보존 통과. 실제 사용자 탈퇴는 하지 않았다. [최신 검증](../quality/account-mypage-verification.md)·[현재 상태](../handoff/status.md). 아래 APK/미설치 문단은 과거 이력이다.

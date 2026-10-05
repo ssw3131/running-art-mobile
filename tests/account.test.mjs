@@ -83,6 +83,8 @@ test('profile validation uses Korean normalization, code points, control rejecti
   assert.equal(validateProfile({ nickname: '\u1100\u1161', picture: 'provider' }).nickname, '가');
   for (const nickname of ['', '  ', 'x'.repeat(21), 'a\nb', 'a\u202Eb']) assert.throws(() => validateProfile({ nickname, picture: 'provider' }));
   assert.equal(profileImageUrl('https://example.test/photo.png'), 'https://example.test/photo.png');
+  assert.equal(profileImageUrl('http://k.kakaocdn.net/dn/example/img.jpg'), 'https://k.kakaocdn.net/dn/example/img.jpg');
+  for (const url of ['http://k.kakaocdn.net.evil.test/p', 'http://user@k.kakaocdn.net/p', 'http://k.kakaocdn.net:8080/p']) assert.equal(profileImageUrl(url), null);
   for (const url of ['http://example.test/p', 'data:image/png;test', 'https://user:password@example.test/p', null]) assert.equal(profileImageUrl(url), null);
 });
 

@@ -5,6 +5,7 @@ import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleShee
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { AccountPreferences } from '@/modules/account/model';
 import type { Account } from '@/modules/auth/controller';
+import { useProfilePhoto } from './use-profile-photo';
 
 export const lightAccountColors = { background: '#F6F5F0', surface: '#FFFFFF', text: '#183C32', muted: '#57675F', border: '#D9E2DA', accent: '#183C32', onAccent: '#FFFFFF', danger: '#A12F2F' };
 export type AccountColors = typeof lightAccountColors;
@@ -40,11 +41,12 @@ export function AccountRow({ title, detail, onPress, colors, id, danger = false,
     <Text accessibilityElementsHidden style={{ color: colors.muted, fontSize: 24 }}>›</Text>
   </Pressable>;
 }
-export function ProfileAvatar({ account, colors, picture = account?.picture }: { account: Account | null; colors: AccountColors; picture?: Account['picture'] }) {
+export function ProfileAvatar({ account, colors, picture = account?.picture, preview }: { account: Account | null; colors: AccountColors; picture?: Account['picture']; preview?: string }) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
-  const url = picture === 'provider' ? account?.avatarUrl : null;
+  const uploaded = useProfilePhoto(account?.id, picture === 'uploaded' && !preview ? account?.photoPath : null);
+  const url = picture === 'provider' ? account?.avatarUrl : picture === 'uploaded' ? preview ?? uploaded : null;
   return <View style={[accountStyles.avatar, { backgroundColor: colors.background, borderColor: colors.border }]}>
-    {url && failedUrl !== url ? <Image accessibilityLabel="연결 계정의 프로필 사진" source={{ uri: url }} style={accountStyles.avatarImage} onError={() => setFailedUrl(url)} />
+    {url && failedUrl !== url ? <Image accessibilityLabel="프로필 사진" source={{ uri: url }} style={accountStyles.avatarImage} onError={() => setFailedUrl(url)} />
       : <Text accessibilityLabel="프로필 기본 이미지" style={{ color: colors.text, fontSize: 30, fontWeight: '700' }}>{[...(account?.name ?? 'R')][0]}</Text>}
   </View>;
 }

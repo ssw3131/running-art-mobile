@@ -18,6 +18,9 @@ export function oauthRequest(provider: SignInProvider): SignInWithOAuthCredentia
     provider,
     options: { redirectTo: AUTH_REDIRECT_URL, skipBrowserRedirect: true,
       ...(provider === 'google' ? { queryParams: { prompt: 'select_account' } } : {}),
+      // Supabase's Kakao defaults include account_email; `scopes` only appends.
+      // Replace the provider scope for our no-email app to avoid Kakao KOE205.
+      ...(provider === 'kakao' ? { queryParams: { scope: 'profile_nickname profile_image' } } : {}),
     },
   };
 }

@@ -129,6 +129,8 @@ test('installed SDK produces S256 for Google/Kakao/custom Naver and redeems the 
       assert.equal(url.searchParams.get('redirect_to'), AUTH_REDIRECT_URL);
       assert.equal(url.searchParams.get('code_challenge_method'), 's256');
       assert.equal(url.searchParams.get('prompt'), provider === 'google' ? 'select_account' : null);
+      assert.equal(url.searchParams.get('scope'), provider === 'kakao' ? 'profile_nickname profile_image' : null);
+      assert.equal(url.searchParams.has('scopes'), false, 'Kakao must replace the provider scope, not append to its email default');
       challenge = url.searchParams.get('code_challenge'); assert.ok(challenge);
       return { type: 'success', url: callback };
     } });

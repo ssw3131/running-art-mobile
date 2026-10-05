@@ -43,5 +43,15 @@ export function createDeletionBackend(admin: SupabaseClient): DeletionBackend {
       const { error } = await admin.auth.admin.deleteUser(owner, false);
       if (error) throw error;
     },
+    async photos(owner) {
+      const { data, error } = await admin.rpc('account_deletion_profile_photos', { p_owner: owner });
+      if (error) throw error;
+      if (!Array.isArray(data)) throw new Error('Missing photo listing');
+      return data;
+    },
+    async removePhotos(paths) {
+      const { error } = await admin.storage.from('profile-photos').remove(paths);
+      if (error) throw error;
+    },
   };
 }

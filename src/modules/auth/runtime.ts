@@ -9,6 +9,7 @@ import { authConfig, AUTH_STORAGE_KEY } from './config';
 import { createAuthController } from './controller';
 import { createSecureStorage } from './secure-storage';
 import { configuredSignInProviders } from './providers';
+import { createProfilePhotoStore } from '../account/photo-remote';
 
 const config = authConfig(process.env.EXPO_PUBLIC_SUPABASE_URL, process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 export const accountSecureStorage = createSecureStorage({
@@ -21,10 +22,12 @@ export const authClient = config && Platform.OS !== 'web' ? createClient(config.
   auth: { storage, storageKey: AUTH_STORAGE_KEY, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, flowType: 'pkce', debug: false },
 }) : null;
 
+export const profilePhotosEnabled = process.env.EXPO_PUBLIC_PROFILE_PHOTOS_ENABLED === 'true';
 export const authentication = createAuthController({
   auth: authClient?.auth ?? null,
   providers: configuredSignInProviders(process.env.EXPO_PUBLIC_AUTH_KAKAO_ENABLED, process.env.EXPO_PUBLIC_AUTH_NAVER_ENABLED),
   storage,
+  profilePhotos: authClient && profilePhotosEnabled ? createProfilePhotoStore(authClient, Crypto.randomUUID) : undefined,
   openBrowser: (url, redirect) => WebBrowser.openAuthSessionAsync(url, redirect),
   canChangeAccount: async () => {
     const { getStorage } = await import('../storage/database');
