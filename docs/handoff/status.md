@@ -2,6 +2,8 @@
 
 ## 부분 완료 — 2026-10-05 Figma 공통 UI
 
+**19:21:46 휴대폰 설치 완료:** 사용자 요청으로 `f237564`의 공통 UI/폰트를 포함한 독립 실행 release APK를 SM-S942N에 자료 유지 업데이트했다. 기존 앱 ID/서명·최초 설치 시각·자료 경로 유지와 설치본 해시 일치를 확인했고, Metro 연결 없이 공통 미리보기를 열어 실제 표시를 확인했다. 휴대폰의 **개발 환경 확인 → RunPen 공통 UI 미리보기 열기**에서 볼 수 있다. 아래 휴대폰 미설치 표현은 이전 시점 기록이다. 전체 Figma 대조 목표는 계속 blocked다.
+
 `src/theme`·`components/ui`·`components/navigation`과 `/ui-preview`를 추가했다. 기본 Noto Sans KR·명시적 Roboto 각각 4개 굵기, 로컬 SVG 9개, 버튼/입력/선택/탭/모달·상하단 바를 제공한다. 개발 환경 메뉴에서 미리보기로 진입한다. 타입·린트·Android 번들/개발 APK, 별도 빈 API 36 에뮬레이터의 주요 동작과 360dp/글꼴 1.6배 표시를 확인했다.
 
 **목표는 blocked·미완료(18:07):** Figma Starter MCP 한도가 세 번 이상 연속 작업에서 반복돼 최신 Roboto 위치·체크박스/스위치 ON·상단/팝업 아이콘과 일부 원본 상태 대조가 막혔다. 개인 계정 연결은 정상이다. 체크/토글은 에셋 슬롯 API까지만 구현했다. 후속에서 TalkBack 두 모달의 제목/복귀, 4회 연타 콜백 1회, 빠른 ASCII 입력과 최종 타입/lint/export를 통과했다. 한글 IME 등은 원본 반영 후 통합 검증에서 확인할 항목이다. 검증용 AVD/Metro/도우미는 정리했다. 기존 서비스 화면 일괄 이관·휴대폰 설치·서버 변경은 하지 않았다. [구조/사용법](../development/common-ui.md)·[검증/남은 조건](../quality/common-ui-verification.md)·[실행](../history/executed-plans/2026-10-05-1654-common-ui.md). 다른 검증 작업의 최신 휴대폰/계정 상태는 아래 절을 따른다.

@@ -2,6 +2,8 @@
 
 ## 판정
 
+**19:21:46 휴대폰 설치 후속:** 사용자 요청으로 소스 `f237564`의 독립 실행 release APK를 SM-S942N에 자료 유지 업데이트했다. 아래 초기 미설치 표현보다 이 후속을 우선한다. 공통 UI 표시를 확인했으며 전체 디자인 목표는 계속 Figma 원본 대기다.
+
 **부분 완료·목표 blocked(18:07).** 공통 토큰·폰트·주요 UI와 독립 미리보기를 구현하고 Android에서 실행했다. 최신 Figma의 Roboto 지정 위치와 일부 원본 에셋을 확보하지 못했으므로 전체 디자인 일치/목표 완료로 판정하지 않는다. 같은 MCP 한도가 연속 작업에서 반복돼 원본 접근 대기로 전환했다.
 
 ## 구현과 증거
@@ -67,3 +69,12 @@ UI 전용 emulator-5558의 font_scale=1.0·밀도 기본값을 복구하고 앱/
 - 새 빈 AVD에서 기존 앱 루트의 `러닝 복원` 오류 배너가 표시됐다. 공통 미리보기 외 기존 러닝 복원 기능은 이번 변경/완료 판정 범위에 포함하지 않는다.
 - 포커스 변경 후 `npm run check`와 위 최종 export가 통과했다. 앱 기능/서버/물리 휴대폰 배포 변경은 없다.
 - 후속 검증 종료 시 TalkBack 설정 null/0, 폰트 배율/밀도 복구와 임시 계측 앱 제거를 확인했다. 앱·adb reverse·emulator-5558·Metro를 종료하고 8087 listener가 없음을 확인했다.
+
+## 휴대폰 설치 — 2026-10-05 19:22
+
+- 사용자 명시 요청에 따라 release 빌드: `:app:assembleRelease --max-workers=2 -PreactNativeArchitectures=arm64-v8a,x86_64`, 4분 13초/846 tasks 성공.
+- 파일: `build/install/running-art-0.1.0-20261005-common-ui.apk`, 114,275,771 bytes. SHA-256 `3155bab0d86ddd445f3aac907669f520b21bc1d6796fedfd83ff45c491b01ad2`.
+- 설치 전 APK를 읽어 서명 SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`가 새 파일과 같음을 확인했다. 같은 앱 ID `com.runningart.mobile.dev`에 `adb install -r --no-streaming` 성공.
+- 설치 시각 19:21:46. 최초 설치 `2026-09-27 16:29:39`와 dataDir `/data/user/0/com.runningart.mobile.dev` 유지, 설치된 APK 해시와 전달 파일 일치. 앱 제거·자료 초기화·로그아웃은 하지 않았다. 이번에는 DB 내용 해시/계정 상태를 별도로 재검증하지 않았다.
+- Metro reverse 연결 없이 `runningart:///ui-preview`로 cold start, 공통 UI·Noto/Roboto·혼용·하단 아이콘 표시를 PNG/XML로 확인했다. 에뮬레이터에서 보였던 루트의 러닝 복원 오류 배너는 이번 휴대폰 화면에 없었다. 기기에서 직접 조작하는 전체 UI 회귀까지 수행한 것은 아니다.
+- 증거는 `.cache/common-ui-phone/`에 보관한다. 임시 `/sdcard/common-ui-install.xml`은 제거했고 앱은 사용자가 볼 수 있도록 미리보기 화면에 열어 두었다. 서버 배포 변경 없음.
