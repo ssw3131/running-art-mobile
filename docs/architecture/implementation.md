@@ -1,5 +1,7 @@
 # 구현 구조와 데이터 흐름
 
+2026-10-05 공통 UI: `src/theme`는 색상/치수/로컬 폰트, `src/components/ui`는 기능과 독립된 제어형 UI, `src/components/navigation`은 표시와 이벤트, `src/features/ui-preview`는 미리보기 상태, `src/app/ui-preview.tsx`는 라우팅 경계를 담당한다. 기존 기능 UI는 후속 화면 이관 때 전환한다. 최신 Figma 대조 일부는 아직 미완료다. [공통 UI 계약](../development/common-ui.md).
+
 2026-10-04: `account-withdraw`와 `modules/account/withdrawal*`에 확인→암호화 확인표 저장→SQLite v7 진행 상태/동기화 차단→서버 삭제/조회→기기 기록 비로그인 보관→세션 정리를 연결했다. 실제 서버 미배포로 기본 비활성이다. 내용 데이터는 보존하고 이전 동기화 메타데이터만 정리한다. Figma 디자인 적용·대조는 사용자 지시로 이번 목표에서 제외했다.
 
 2026-10-03 계정·마이페이지 후속: `modules/account/`의 SQLite v6 설정 저장·기록 집계·프로필 입력 검증과 `features/account/` 공통 UI를 추가했다. 기존 `auth/controller.ts`는 본인 프로필 메타데이터 저장을 직렬화한다. `account.tsx`에서 `account-profile`, `account-settings`, `account-sync`로 연결하며 기존 동기화 계약을 사용한다. 새 코스 러닝 시작 시 계정별 안내 기본값을 사본으로 저장한다. 탈퇴·추가 소셜과 Figma 대조는 미완료다. [계약과 범위](../development/account-mypage.md).

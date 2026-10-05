@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="50" height="24" viewBox="0 0 50 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="off">
+<path d="M0 12C0 5.37258 5.37258 0 12 0H38C44.6274 0 50 5.37258 50 12V12C50 18.6274 44.6274 24 38 24H12C5.37258 24 0 18.6274 0 12V12Z" fill="#B3B3B3"/>
+<path id="Knob" d="M22 12C22 16.9706 17.9706 21 13 21C8.02944 21 4 16.9706 4 12C4 7.02944 8.02944 3 13 3C17.9706 3 22 7.02944 22 12Z" fill="#F5F5F5"/>
+</g>
+</svg>

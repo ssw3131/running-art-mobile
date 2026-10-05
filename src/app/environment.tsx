@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { Link } from 'expo-router';
 import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function EnvironmentScreen() {
@@ -18,6 +19,7 @@ export default function EnvironmentScreen() {
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Text style={styles.title}>실행 환경</Text>
       <Text style={styles.description}>초기 개발 환경과 화면 이동을 확인하기 위한 개발용 화면입니다.</Text>
+      <Link href="/ui-preview" style={styles.value}>RunPen 공통 UI 미리보기 열기</Link>
       <View style={styles.card}>
         {details.map(([label, value]) => (
           <View key={label} style={styles.row}>
