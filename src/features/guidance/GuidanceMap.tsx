@@ -1,7 +1,8 @@
-import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Layer, Map, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { mapStyleUrl } from '@/modules/map/config';
+import { hideMapBuildings } from '@/modules/map/buildings';
 import type { Coordinate } from '@/modules/guidance/geometry';
 import type { GuidanceState } from '@/modules/guidance/engine';
 
@@ -10,6 +11,8 @@ const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const line = (coordinates: Coordinate[]) => ({ type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates } });
 export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean }) {
   const camera = useRef<CameraRef>(null);
+  const map = useRef<MapRef>(null);
+  const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
   const [follow, setFollow] = useState(true), [online, setOnline] = useState(!!styleUrl), [ready, setReady] = useState(false);
   const routeData = useMemo(() => line(route), [route]);
   useEffect(() => {
@@ -23,8 +26,14 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
   }, [ready, online]);
   const paths = { type: 'FeatureCollection' as const, features: state.trace.filter(p => p.length >= 2).map(line) };
   return <View style={styles.fill}>
-    <Map key={online ? 'online' : 'offline'} testID="guidance-map" style={styles.fill} mapStyle={online && styleUrl ? styleUrl : basicStyle} attribution logo={false}
-      onDidFinishLoadingMap={() => setReady(true)} onDidFailLoadingMap={() => { setReady(false); setOnline(false); }}
+    <Map ref={map} key={online ? 'online' : 'offline'} testID="guidance-map" style={styles.fill} mapStyle={online && styleUrl ? styleUrl : basicStyle} attribution logo={false}
+      onDidFinishLoadingStyle={() => {
+        buildingUpdate.current = (online && styleUrl ? hideMapBuildings(map.current) : Promise.resolve())
+          .then(() => true, () => { setReady(false); setOnline(false); return false; });
+      }}
+      onDidFinishLoadingMap={() => {
+        void buildingUpdate.current.then(applied => { if (applied) setReady(true); });
+      }} onDidFailLoadingMap={() => { setReady(false); setOnline(false); }}
       onRegionWillChange={event => { if (event.nativeEvent.userInteraction) setFollow(false); }}>
       <Camera ref={camera} initialViewState={{ center: route[0], zoom: 16 }} />
       <GeoJSONSource id="guidance-course" data={routeData}>

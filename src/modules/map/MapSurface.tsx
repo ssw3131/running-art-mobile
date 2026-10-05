@@ -1,14 +1,17 @@
-import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Layer, Map, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { MapSurfaceProps as Props } from './types';
 import { centerFromMap } from './coordinates';
+import { hideMapBuildings } from './buildings';
 
 const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
 function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, origin, syntheticRoads, centerSelection, onRetry }: Props & { onRetry(): void }) {
   const camera = useRef<CameraRef>(null);
+  const map = useRef<MapRef>(null);
+  const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
   const selection = useRef(centerSelection);
   const searchOrigin = useRef(origin);
   useLayoutEffect(() => { selection.current = centerSelection; searchOrigin.current = origin; }, [centerSelection, origin]);
@@ -59,6 +62,7 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, orig
   return (
     <View style={styles.fill}>
       <Map
+        ref={map}
         testID="native-map"
         style={styles.fill}
         mapStyle={syntheticRoads ? syntheticStyle : styleUrl}
@@ -83,7 +87,13 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, orig
           const center = centerFromMap(event.nativeEvent.center);
           selection.current?.onMoveEnd(center);
         }}
-        onDidFinishLoadingMap={() => setStatus('ready')}
+        onDidFinishLoadingStyle={() => {
+          buildingUpdate.current = (syntheticRoads ? Promise.resolve() : hideMapBuildings(map.current))
+            .then(() => true, () => { setStatus('error'); return false; });
+        }}
+        onDidFinishLoadingMap={() => {
+          void buildingUpdate.current.then(applied => { if (applied) setStatus('ready'); });
+        }}
         onDidFailLoadingMap={() => setStatus('error')}
       >
         <Camera ref={camera} initialViewState={{ center: origin ? [origin.lng, origin.lat] : [127.8, 36.3], zoom: origin ? 13 : 6 }} />
