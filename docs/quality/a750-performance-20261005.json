@@ -1,0 +1,214 @@
+{
+  "recordedAt": "2026-10-05T22:14:32.361675+09:00",
+  "device": {
+    "model": "SM-A750N",
+    "android": "10",
+    "api": 29,
+    "reportedRamKiB": 3788168,
+    "usbCharging": true,
+    "fontScale": 1.1
+  },
+  "apkSha256": "3155bab0d86ddd445f3aac907669f520b21bc1d6796fedfd83ff45c491b01ad2",
+  "grid": {
+    "runsSeconds": [
+      {
+        "road": 0.0,
+        "calculation": 20.284,
+        "total": 20.284
+      },
+      {
+        "road": 0.0,
+        "calculation": 20.336,
+        "total": 20.336
+      },
+      {
+        "road": 0.0,
+        "calculation": 20.299,
+        "total": 20.299
+      }
+    ],
+    "medianSeconds": {
+      "road": 0.0,
+      "calculation": 20.299,
+      "total": 20.299
+    },
+    "nodes": 4577,
+    "edges": 5060,
+    "candidates": 5,
+    "scores": [
+      93.7614648828351,
+      93.29160711051844,
+      93.29160711051844,
+      93.29160711045134,
+      93.29160711045134
+    ],
+    "maxTimerLagMs": 62.8
+  },
+  "gangnamFirst": {
+    "runsSeconds": [
+      {
+        "road": 14.914,
+        "calculation": 79.669,
+        "total": 94.583
+      }
+    ],
+    "medianSeconds": {
+      "road": 14.914,
+      "calculation": 79.669,
+      "total": 94.583
+    },
+    "nodes": 13614,
+    "edges": 15363,
+    "candidates": 5,
+    "scores": [
+      83.0470214471981,
+      82.93702188310498,
+      81.58102185169429,
+      81.53159808634092,
+      81.15381891008528
+    ],
+    "maxTimerLagMs": 1658.8
+  },
+  "gangnamCached": {
+    "runsSeconds": [
+      {
+        "road": 8.529,
+        "calculation": 79.27,
+        "total": 87.798
+      },
+      {
+        "road": 8.508,
+        "calculation": 78.523,
+        "total": 87.03
+      },
+      {
+        "road": 8.555,
+        "calculation": 78.478,
+        "total": 87.032
+      }
+    ],
+    "medianSeconds": {
+      "road": 8.529,
+      "calculation": 78.523,
+      "total": 87.032
+    },
+    "nodes": 13614,
+    "edges": 15363,
+    "candidates": 5,
+    "scores": [
+      83.0470214471981,
+      82.93702188310498,
+      81.58102185169429,
+      81.53159808634092,
+      81.15381891008528
+    ],
+    "maxTimerLagMs": 1684.6
+  },
+  "busanFirst": {
+    "runsSeconds": [
+      {
+        "road": 8.796,
+        "calculation": 37.009,
+        "total": 45.805
+      }
+    ],
+    "medianSeconds": {
+      "road": 8.796,
+      "calculation": 37.009,
+      "total": 45.805
+    },
+    "nodes": 9181,
+    "edges": 9972,
+    "candidates": 5,
+    "scores": [
+      77.481496310971,
+      77.22729796550773,
+      76.39208925624604,
+      76.0758712633461,
+      75.73765194798031
+    ],
+    "maxTimerLagMs": 751.5
+  },
+  "busanCached": {
+    "runsSeconds": [
+      {
+        "road": 6.799,
+        "calculation": 55.737,
+        "total": 62.537
+      },
+      {
+        "road": 4.996,
+        "calculation": 36.519,
+        "total": 41.515
+      }
+    ],
+    "medianSeconds": {
+      "road": 5.897,
+      "calculation": 46.128,
+      "total": 52.026
+    },
+    "nodes": 9181,
+    "edges": 9972,
+    "candidates": 5,
+    "scores": [
+      77.481496310971,
+      77.22729796550773,
+      76.39208925624604,
+      76.0758712633461,
+      75.73765194798031
+    ],
+    "maxTimerLagMs": 1241.4
+  },
+  "historicalGrid": {
+    "model": "SM-S942N",
+    "date": "2026-10-02",
+    "calculationMedianSeconds": 4.214889648914337,
+    "observedRatio": 4.815886011684285,
+    "inputRoutingAndScoresMatch": true,
+    "sameApk": false
+  },
+  "historicalBusan": {
+    "model": "SM-S942N",
+    "date": "2026-10-05",
+    "sameApk": true,
+    "oneCachedRunSeconds": {
+      "road": 0.94,
+      "calculation": 6.45,
+      "total": 7.38
+    },
+    "fiveDisplayedCandidatesAndCenterMatch": true,
+    "inputNodesAndEdgesMatch": true,
+    "fullGeometryCompared": false
+  },
+  "sampledMemoryMiB": {
+    "min": 217.3,
+    "max": 338.5,
+    "samples": 33
+  },
+  "batteryTemperatureC": {
+    "min": 31.3,
+    "max": 34.4
+  },
+  "checks": {
+    "freshProcesses": true,
+    "threeGridResultsMatch": true,
+    "threeCachedGangnamResultsMatchFirst": true,
+    "cachedDownloadsZero": true,
+    "busanDisplayedResultsMatchHistorical": true,
+    "responseDuringCalculation": true,
+    "cancelNoLateResult": true,
+    "retryResultMatches": true,
+    "signedOutEmptyRecords": true,
+    "installedHashMatches": true,
+    "appNotInCrashBuffer": true,
+    "noAppServices": true,
+    "temporaryFilesRemoved": true
+  },
+  "limitations": [
+    "과거 기기와 동시에 부하를 통제해 측정한 비교가 아니다.",
+    "부산 캐시는 SM-A750N 2회·SM-S942N 과거 1회이며 전체 경로 좌표는 비교하지 않았다.",
+    "PSS는 표본이며 연속 최대 사용량이 아니다.",
+    "USB 충전·화면 켜짐 시험으로 배터리 지속 시간을 판단하지 않는다.",
+    "오프라인은 도로 공급 모드이며 기기 통신은 켜진 상태를 유지했다."
+  ]
+}

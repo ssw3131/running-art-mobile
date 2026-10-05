@@ -1,0 +1,116 @@
+{
+  "source": "SM-A750N 2026-10-05 release; docs/quality/a750-performance-20261005.md. Public centers, no personal tracks. Real-road full geometry was not exported by phone diagnostics.",
+  "cases": [
+    {
+      "id": "grid",
+      "synthetic": true,
+      "origin": {
+        "lat": 37.57162,
+        "lng": 126.9764
+      },
+      "options": {
+        "version": "0.2",
+        "shape": "heart",
+        "targetKm": 5,
+        "radiusKm": 3,
+        "mode": "anchored"
+      },
+      "phone": {
+        "nodes": 4577,
+        "edges": 5060,
+        "candidates": 5,
+        "scores": [
+          93.7614648828351,
+          93.29160711051844,
+          93.29160711051844,
+          93.29160711045134,
+          93.29160711045134
+        ],
+        "routing": {
+          "pathRequests": 123833,
+          "pathCacheHits": 105920,
+          "pathSearches": 7461,
+          "pathVisits": 171725,
+          "maxCachedPaths": 7461,
+          "maxCachedNodes": 87126
+        }
+      }
+    },
+    {
+      "id": "gangnam",
+      "synthetic": false,
+      "origin": {
+        "lat": 37.4979,
+        "lng": 127.0276
+      },
+      "options": {
+        "version": "0.2",
+        "shape": "heart",
+        "targetKm": 5,
+        "radiusKm": 2,
+        "mode": "free-loop"
+      },
+      "release": "kr-20260930-c8cb96030306-roads-v1",
+      "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+      "fileCount": 9,
+      "phone": {
+        "nodes": 13614,
+        "edges": 15363,
+        "candidates": 5,
+        "scores": [
+          83.0470214471981,
+          82.93702188310498,
+          81.58102185169429,
+          81.53159808634092,
+          81.15381891008528
+        ],
+        "routing": {
+          "pathRequests": 150020,
+          "pathCacheHits": 30904,
+          "pathSearches": 118787,
+          "pathVisits": 8558110,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 154018
+        }
+      }
+    },
+    {
+      "id": "busan",
+      "synthetic": false,
+      "origin": {
+        "lat": 35.1796,
+        "lng": 129.0756
+      },
+      "options": {
+        "version": "0.2",
+        "shape": "heart",
+        "targetKm": 3,
+        "radiusKm": 2,
+        "mode": "free-loop"
+      },
+      "release": "kr-20260930-c8cb96030306-roads-v1",
+      "manifestHash": "35ca7c88052c975b9a48bd5c204f04c8e9833adf4ed1d952b01c63cf866275df",
+      "fileCount": 6,
+      "phone": {
+        "nodes": 9181,
+        "edges": 9972,
+        "candidates": 5,
+        "scores": [
+          77.481496310971,
+          77.22729796550773,
+          76.39208925624604,
+          76.0758712633461,
+          75.73765194798031
+        ],
+        "routing": {
+          "pathRequests": 128433,
+          "pathCacheHits": 60828,
+          "pathSearches": 61852,
+          "pathVisits": 1861772,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 99548
+        }
+      }
+    }
+  ]
+}

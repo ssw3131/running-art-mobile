@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-10-05T15:08:43.200Z",
+  "checks": {
+    "measurementCount": true,
+    "completedMeasurement": true,
+    "productEngineUnchanged": true,
+    "recordsAndPhoneEvidence": true,
+    "concurrentMatrix": true,
+    "bundleSourceHashes": true,
+    "reviewedBundleHttp": true
+  },
+  "engineHashes": {
+    "engine.ts": "29bcc67ee2e2030646611b680711987204a180ccd3806cbcb28f55b3217466a4",
+    "runner.ts": "796ead986186ec2f13dc7674c213da69921cb46220a11206f4a8910d5fb2bb74"
+  },
+  "measuredResponses": 57,
+  "bundleResponses": 13,
+  "measuredWorkerPids": [
+    38172,
+    27352,
+    19700,
+    16664,
+    33912,
+    22568,
+    31636
+  ],
+  "bundleFiles": 28,
+  "bundleCopiedBytes": 1778234,
+  "limits": [
+    "This report verifies local measurements; hosted results are in cloud-run-compute-20261005.json",
+    "Real-road phone full geometry not exported",
+    "Local PC has no CPU/memory quota"
+  ]
+}
