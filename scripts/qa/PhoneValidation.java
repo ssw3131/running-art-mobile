@@ -54,6 +54,27 @@ public class PhoneValidation extends Instrumentation {
       while(c.moveToNext())tests.put(new JSONObject().put("kind","run").put("id",c.getString(0)).put("name",c.getString(1)).put("remoteVersion",c.getInt(2)).put("dirty",c.getInt(3)).put("points",c.getInt(4)).put("courseHash",c.getString(5)));
     }
     out.put("tests",tests);
+    // Additional explicitly synthetic 2026-10-05 fixtures; report content hashes
+    // without account ownership so withdrawal's intended guest conversion can
+    // be verified independently from preservation of the original user records.
+    JSONObject remaining=new JSONObject();
+    for(String table:new String[]{"saved_courses","running_sessions","running_points"}) {
+      String where=table.equals("saved_courses")?" WHERE name LIKE 'QA remaining %'":table.equals("running_sessions")?" WHERE course_name LIKE 'QA remaining %'":" WHERE run_id IN (SELECT id FROM running_sessions WHERE course_name LIKE 'QA remaining %')";
+      String order=table.equals("running_points")?"run_id,sequence":"id";
+      MessageDigest digest=MessageDigest.getInstance("SHA-256");int count=0,guests=0;
+      try(Cursor c=db.rawQuery("SELECT * FROM "+table+where+" ORDER BY "+order,null)) {
+        while(c.moveToNext()){count++;for(int i=0;i<c.getColumnCount();i++) {
+          String col=c.getColumnName(i);
+          if(col.equals("owner_id")){if(c.getString(i).isEmpty())guests++;continue;}
+          if(col.equals("remote_version")||col.equals("dirty")||col.equals("mutation_id"))continue;
+          digest.update((byte)c.getType(i));if(c.isNull(i))continue;
+          byte[] bytes=c.getString(i).getBytes(StandardCharsets.UTF_8);digest.update(ByteBuffer.allocate(4).putInt(bytes.length).array());digest.update(bytes);
+        }}
+      }
+      StringBuilder hex=new StringBuilder();for(byte b:digest.digest())hex.append(String.format("%02x",b&255));
+      remaining.put(table,new JSONObject().put("count",count).put("guests",guests).put("contentHash",hex.toString()));
+    }
+    out.put("remainingSynthetic",remaining);
     for(String t:new String[]{"sync_deletions","sync_conflicts"})try(Cursor c=db.rawQuery("SELECT count(*) FROM "+t,null)){c.moveToFirst();out.put(t,c.getInt(0));}
     return out;
   }
