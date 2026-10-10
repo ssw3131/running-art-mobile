@@ -7,23 +7,11 @@ import { mobileRoadCodecs } from './mobile-codecs.ts';
 import { createNationalChannel } from './national-channel.ts';
 import { NATIONAL_PREFIX, nationalRegionId } from './national-format.ts';
 
-type Bounds = [number, number, number, number]; // south, west, north, east
+import { roadBounds } from './bounds.ts';
+export { roadBounds } from './bounds.ts';
 export type RoadMode = RoadCacheRequest['mode'];
 export type RoadData = { elements: OsmElement[]; source: string; cached: boolean; cache?: Omit<RoadCacheResult, 'elements'> };
 export type RoadLoader = (origin: Origin, radiusMeters: number, signal: AbortSignal, mode?: RoadMode) => Promise<RoadData>;
-
-// Same spherical bounding rectangle as the v0.2 data provider.
-export function roadBounds(origin: Origin, radius: number): Bounds {
-  if (!Number.isFinite(origin.lat) || Math.abs(origin.lat) > 85 || !Number.isFinite(origin.lng) || Math.abs(origin.lng) > 180 || !Number.isFinite(radius) || radius < 1000 || radius > 10000) {
-    throw new Error('이 위치 또는 탐색 반경은 지원하지 않아요. 지도를 이동해 주세요.');
-  }
-  const angle = radius / 6371000;
-  const height = angle * 180 / Math.PI;
-  const width = Math.asin(Math.sin(angle) / Math.cos(origin.lat * Math.PI / 180)) * 180 / Math.PI;
-  const bounds: Bounds = [origin.lat - height, origin.lng - width, origin.lat + height, origin.lng + width];
-  if (bounds[1] < -180 || bounds[3] > 180) throw new Error('날짜 변경선 주변은 아직 지원하지 않아요. 지도를 이동해 주세요.');
-  return bounds;
-}
 
 export type RoadAttempt = { provider: string; mode: RoadMode; elapsedMs: number; outcome: 'success' | 'failed';
   requests: number; cache?: Omit<RoadCacheResult, 'elements'> };

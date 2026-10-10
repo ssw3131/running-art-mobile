@@ -1,0 +1,336 @@
+{
+  "at": "2026-10-10T06:35:44.771Z",
+  "service": {
+    "name": "runpen-route-compute",
+    "revision": "runpen-route-compute-00001-96r",
+    "cpu": {
+      "cpu": "1",
+      "memory": "1Gi"
+    },
+    "concurrency": 1,
+    "timeoutSeconds": 70,
+    "maxInstances": "2",
+    "revisionMaxInstances": "2",
+    "image": "asia-northeast3-docker.pkg.dev/running-art-mobile/cloud-run-source-deploy/runpen-route-compute@sha256:44804338f7dfc4efa322957400d88c5af7b165ec4943caae147639db833175ff",
+    "serviceAccount": "runpen-route-compute@running-art-mobile.iam.gserviceaccount.com"
+  },
+  "local": {
+    "at": "2026-10-10T06:21:33.758Z",
+    "base": "http://127.0.0.1:49206",
+    "results": [
+      {
+        "id": "gangnam",
+        "httpMs": 9005.0007,
+        "resultSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": false
+        },
+        "timing": {
+          "roadMs": 4507.516700000001,
+          "calculationMs": 4326.369199999999,
+          "totalMs": 8833.885900000001
+        }
+      },
+      {
+        "id": "busan",
+        "httpMs": 3922.8078000000005,
+        "resultSha256": "17a664b6ebbb3fab1a8017cb287c75cc1e4519359745a22421fcb004731419a0",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "35ca7c88052c975b9a48bd5c204f04c8e9833adf4ed1d952b01c63cf866275df",
+          "cached": false
+        },
+        "timing": {
+          "roadMs": 2077.5995999999996,
+          "calculationMs": 1835.009900000001,
+          "totalMs": 3912.6095000000005
+        }
+      },
+      {
+        "id": "gangnam-custom",
+        "httpMs": 3185.2075000000004,
+        "resultSha256": "6e3424ee46898d446b709b1caeb10a6666f8f9fca9f66d96e08c4caa2ec3e19a",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        },
+        "timing": {
+          "roadMs": 109.61399999999776,
+          "calculationMs": 3059.452000000001,
+          "totalMs": 3169.065999999999
+        }
+      }
+    ],
+    "invalidStatus": 400
+  },
+  "cloud": {
+    "at": "2026-10-10T06:25:11.680Z",
+    "base": "https://runpen-route-compute-125644906792.asia-northeast3.run.app",
+    "results": [
+      {
+        "id": "gangnam",
+        "httpMs": 14208.0086,
+        "resultSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": false
+        },
+        "timing": {
+          "roadMs": 2054.9073459999927,
+          "calculationMs": 10068.006257000001,
+          "totalMs": 12122.913602999994
+        }
+      },
+      {
+        "id": "busan",
+        "httpMs": 6549.814499999997,
+        "resultSha256": "17a664b6ebbb3fab1a8017cb287c75cc1e4519359745a22421fcb004731419a0",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "35ca7c88052c975b9a48bd5c204f04c8e9833adf4ed1d952b01c63cf866275df",
+          "cached": false
+        },
+        "timing": {
+          "roadMs": 1566.380921,
+          "calculationMs": 4378.589574,
+          "totalMs": 5944.970495
+        }
+      },
+      {
+        "id": "gangnam-custom",
+        "httpMs": 7598.821500000002,
+        "resultSha256": "6e3424ee46898d446b709b1caeb10a6666f8f9fca9f66d96e08c4caa2ec3e19a",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        },
+        "timing": {
+          "roadMs": 238.54018699999142,
+          "calculationMs": 7009.822684999992,
+          "totalMs": 7248.362871999983
+        }
+      }
+    ],
+    "invalidStatus": 400
+  },
+  "burst": {
+    "at": "2026-10-10T06:29:40.986Z",
+    "elapsedMs": 17407.998499999998,
+    "results": [
+      {
+        "i": 0,
+        "status": 200,
+        "httpMs": 17170.1274,
+        "hash": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "timing": {
+          "roadMs": 318.0555980000063,
+          "calculationMs": 7573.713463999971,
+          "totalMs": 7891.769061999978
+        }
+      },
+      {
+        "i": 1,
+        "status": 200,
+        "httpMs": 10490.0049,
+        "hash": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "timing": {
+          "roadMs": 352.9775200000149,
+          "calculationMs": 9705.296295999957,
+          "totalMs": 10058.273815999972
+        }
+      },
+      {
+        "i": 2,
+        "status": 429,
+        "httpMs": 427.09990000000005,
+        "error": "Rate exceeded."
+      },
+      {
+        "i": 3,
+        "status": 200,
+        "httpMs": 9196.451200000001,
+        "hash": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "timing": {
+          "roadMs": 426.61925100005465,
+          "calculationMs": 8331.750302999979,
+          "totalMs": 8758.369554000034
+        }
+      }
+    ]
+  },
+  "tests": {
+    "passed": 368,
+    "failed": 0
+  },
+  "phone": {
+    "installed": false,
+    "reason": "No connected physical phone"
+  },
+  "preEmulatorRequestStatuses": {
+    "200": 8,
+    "400": 1,
+    "429": 3
+  },
+  "note": "First burst collector failed on a plaintext 429; successful response bodies from that burst were not retained.",
+  "android": {
+    "api": 36,
+    "device": "RunningArt_UI_QA emulator",
+    "apk": {
+      "path": "build/install/running-art-0.1.0-20261010-cloud-run.apk",
+      "bytes": 114289247,
+      "sha256": "2e626a809b754818bc0c757bcabceb7b9a333da734bb243a81d1a3d4e4387410",
+      "certificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+    },
+    "cases": [
+      {
+        "execution": "server",
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 10216.649344,
+        "computeMs": 10216.649344,
+        "maxSliceMs": 10216.649344,
+        "yields": 0,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 150020,
+          "pathCacheHits": 30904,
+          "pathSearches": 118787,
+          "pathVisits": 8558110,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 154018
+        },
+        "timing": {
+          "roadMs": 1714.0466390000001,
+          "calculationMs": 10216.649344,
+          "totalMs": 14763.017900000035
+        },
+        "cached": false,
+        "maxTimerLagMs": 24.057900000014342,
+        "timerTicks": 221,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.0470214471981,
+          82.93702188310498,
+          81.58102185169432,
+          81.53159808634092,
+          81.15381891008528
+        ]
+      },
+      {
+        "execution": "device",
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 42016.38559999998,
+        "computeMs": 38641.702100002265,
+        "maxSliceMs": 20.644300000043586,
+        "yields": 4565,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 150020,
+          "pathCacheHits": 30904,
+          "pathSearches": 118787,
+          "pathVisits": 8558110,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 154018
+        },
+        "timing": {
+          "roadMs": 7345.958799999964,
+          "calculationMs": 42016.49280000001,
+          "totalMs": 49362.46429999999
+        },
+        "cached": false,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1791615071034
+        },
+        "maxTimerLagMs": 659.3201000000117,
+        "timerTicks": 740,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.0470214471981,
+          82.93702188310498,
+          81.58102185169429,
+          81.53159808634092,
+          81.15381891008528
+        ]
+      },
+      {
+        "execution": "offline-fallback",
+        "dataset": "seoul",
+        "shape": "heart",
+        "targetKm": 5,
+        "elapsedMs": 39562.873199999915,
+        "computeMs": 36798.069899997325,
+        "maxSliceMs": 19.80980000004638,
+        "yields": 4377,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 150020,
+          "pathCacheHits": 30904,
+          "pathSearches": 118787,
+          "pathVisits": 8558110,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 154018
+        },
+        "timing": {
+          "roadMs": 3562.749000000069,
+          "calculationMs": 39562.9253,
+          "totalMs": 43140.23290000006
+        },
+        "cached": true,
+        "roadCache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false,
+          "checkedAt": 1791615071034
+        },
+        "maxTimerLagMs": 704.8839999999618,
+        "timerTicks": 646,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.0470214471981,
+          82.93702188310498,
+          81.58102185169429,
+          81.53159808634092,
+          81.15381891008528
+        ]
+      }
+    ],
+    "cancelled": true,
+    "scoreTolerance": 0.000001
+  },
+  "doctor": {
+    "passed": 20,
+    "total": 21,
+    "remaining": "Six existing package versions lag current SDK patch recommendations; dependencies unchanged"
+  }
+}

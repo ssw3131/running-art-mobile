@@ -11,6 +11,7 @@ import { expoLocationProvider } from '@/modules/location/expo-provider';
 import type { RoadMode } from '@/modules/road-data/client';
 import { roadLocations as roadSamples } from '@/modules/road-data/supply-config';
 import { loadMobileRoads } from '@/modules/road-data/mobile-loader';
+import { calculateServerRoute } from '@/modules/route-compute/mobile';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import { SHAPES } from '@/modules/route-engine/engine';
@@ -50,8 +51,9 @@ export default function RouteLabScreen() {
   const [selected, setSelected] = useState(0);
   const [taps, setTaps] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  const jobs = useMemo(() => createLabSession(loadMobileRoads, calculateMobileRoute), []);
+  const jobs = useMemo(() => createLabSession(loadMobileRoads, calculateMobileRoute, undefined, calculateServerRoute), []);
   const [roadMode, setRoadMode] = useState<RoadMode>('prefer-cache');
+  const [deviceOnly, setDeviceOnly] = useState(false);
   const [fixedCenter, setFixedCenter] = useState(false);
   const [validCenter, setValidCenter] = useState(true);
   const [centerState, setCenterState] = useState<CenterState>({ center: datasets.seoul.input.origin, position: null, location: { kind: 'idle' } });
@@ -118,7 +120,7 @@ export default function RouteLabScreen() {
       lastTick = now; timerTicks++;
       if (timerTicks % 5 === 0) setSeconds((now - started) / 1000);
     }, 50);
-    void jobs.start({ input, liveRoads: !dataset.synthetic, roadMode }, {
+    void jobs.start({ input, liveRoads: !dataset.synthetic, roadMode, deviceOnly }, {
       progress: (progress) => {
         const now = performance.now();
         if (progress.phase !== lastPhase || now - lastProgress >= 120) {
@@ -132,7 +134,8 @@ export default function RouteLabScreen() {
         const comparison = expected ? mismatch ? `원본과 차이 있음: ${mismatch}` : '원본과 일치 (허용 오차 0.000001)' : dataset.synthetic ? '이 입력은 저장된 원본 비교 사례에 없어요.' : '선택한 지도 중심 기준 결과예요. 고정 표본의 원본 비교는 적용하지 않아요.';
         setCompleted({ ...value, comparison, maxTimerLagMs, timerTicks });
         setSeconds(value.timing.totalMs / 1000);
-        setState({ kind: 'done', message: value.result.candidates.length ? `${value.result.candidates.length}개 코스를 찾았어요.` : '조건에 맞는 코스가 없어요. 도형이나 거리를 바꿔 보세요.' });
+        const where = value.execution === 'server' ? '서버에서' : value.fallback ? '서버 연결 대신 기기에서' : '기기에서';
+        setState({ kind: 'done', message: value.result.candidates.length ? `${where} ${value.result.candidates.length}개 코스를 찾았어요.` : '조건에 맞는 코스가 없어요. 도형이나 거리를 바꿔 보세요.' });
         console.info('ROUTE_LAB_METRICS', JSON.stringify({ dataset: datasetId, shape, targetKm, ...value.metrics, timing: value.timing, cached: value.cached, roadCache: value.roadCache, maxTimerLagMs, timerTicks, reference: expected ? mismatch ?? 'match' : 'unavailable', candidates: value.result.candidates.length, scores: value.result.candidates.map((c) => c.score.raw) }));
       },
       error: (error) => { stopTimer(); running.current = false; setState({ kind: 'error', message: error.message }); },
@@ -178,9 +181,10 @@ export default function RouteLabScreen() {
       <Text style={styles.title}>코스 만들기</Text>
       <Text style={styles.description}>1. 위치·거리·도형 설정 → 2. 후보 비교 → 3. 저장하고 달리기</Text>
       {!dataset.synthetic && <>
+        {calculateServerRoute && <View style={styles.wrap}>{[{ device: false, label: '서버 계산' }, { device: true, label: '기기 계산·도로 저장' }].map(item => <Pressable key={item.label} testID={item.device ? 'compute-device' : 'compute-server'} accessibilityRole="button" accessibilityState={{ selected: deviceOnly === item.device }} style={[styles.chip, deviceOnly === item.device && styles.chipSelected]} onPress={() => { changeSearch(); setDeviceOnly(item.device); }}><Text style={deviceOnly === item.device ? styles.chipTextSelected : styles.chipText}>{item.label}</Text></Pressable>)}</View>}
         <View style={styles.wrap}>{roadModes.map(mode => <Pressable key={mode.id} testID={`road-mode-${mode.id}`} accessibilityRole="button" accessibilityState={{ selected: roadMode === mode.id }}
           style={[styles.chip, roadMode === mode.id && styles.chipSelected]} onPress={() => { changeSearch(); setRoadMode(mode.id); }}><Text style={roadMode === mode.id ? styles.chipTextSelected : styles.chipText}>{mode.label}</Text></Pressable>)}</View>
-        <Text style={styles.small}>처음에는 인터넷으로 도로를 받습니다. 저장한 도로는 앱을 다시 열어도 사용할 수 있어요. 오프라인에서는 미리 저장한 위치를 선택해 계산하세요. 배경 지도는 별도 연결이 필요해요.</Text>
+        <Text style={styles.small}>{calculateServerRoute ? '로그인 없이 서버에서 계산해요. 선택한 중심·도형을 서버로 보냅니다. 오프라인 사용 전에는 ‘기기 계산·도로 저장’으로 해당 지역을 준비하세요. 오프라인은 항상 기기에서 계산해요.' : '처음에는 인터넷으로 도로를 받습니다. 오프라인에서는 미리 저장한 위치를 선택해 계산하세요.'} 배경 지도는 별도 연결이 필요해요.</Text>
       </>}
       {!dataset.synthetic && <Text testID={`route-location-${centerState.location.kind}`} style={styles.small}>{locationMessage(centerState)}</Text>}
       <Text style={styles.label}>도형</Text>
