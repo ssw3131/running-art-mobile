@@ -1,0 +1,217 @@
+{
+  "tests": 18,
+  "budget": {
+    "status": "configured_verified",
+    "initialRequested": "10USD",
+    "approvedAmount": "15000KRW",
+    "accountCurrency": "KRW",
+    "created": true,
+    "verifiedAt": "2026-10-10T16:58:52+09:00",
+    "emailDeliveryTested": false,
+    "configuration": {
+      "amount": {
+        "specifiedAmount": {
+          "currencyCode": "KRW",
+          "units": "15000"
+        }
+      },
+      "budgetFilter": {
+        "calendarPeriod": "MONTH",
+        "creditTypesTreatment": "EXCLUDE_ALL_CREDITS",
+        "projects": [
+          "projects/125644906792"
+        ]
+      },
+      "displayName": "RunPen monthly usage before credits",
+      "etag": "1791619090546234",
+      "name": "billingAccounts/01F803-1FFEFD-CA8D25/budgets/b45c4bb0-3857-4102-a4dd-f5ec87467231",
+      "notificationsRule": {},
+      "thresholdRules": [
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 0.5
+        },
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 0.9
+        },
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 1.0
+        },
+        {
+          "spendBasis": "FORECASTED_SPEND",
+          "thresholdPercent": 1.0
+        }
+      ]
+    }
+  },
+  "production": {
+    "status": 200,
+    "candidates": 5,
+    "contract": "runpen-routes-v1",
+    "elapsedMs": 11490,
+    "at": "2026-10-10T16:49:02.2914502+09:00"
+  },
+  "at": "2026-10-10T16:52:14.307504+09:00",
+  "revision": "runpen-route-compute-00002-nog",
+  "storage": {
+    "createdAt": "2026-10-10T07:35:49.254Z",
+    "bucket": "runpen-compute-guard-125644906792",
+    "object": "qa-d2d8aeaa-e187-40a2-b7f1-fa113f6bd7e3.json",
+    "checks": {
+      "concurrent": [
+        "limit_minute",
+        "admitted"
+      ],
+      "persistedCount": 1,
+      "freshGuardDenied": true,
+      "staleWriteRejected": true,
+      "anonymousStatus": 401,
+      "testObjectDeleted": true
+    }
+  },
+  "pause": {
+    "status": 503,
+    "at": "2026-10-10T16:44:15.3166398+09:00",
+    "body": {
+      "error": "compute_paused"
+    }
+  },
+  "imageDigest": "sha256:23633c7b34207be13beead3fe8e3a3444e2e39a058622959aaf900aa7cbc6bf8",
+  "compute": {
+    "at": "2026-10-10T07:42:36.787Z",
+    "base": "https://guard-check---runpen-route-compute-zehaomtsoq-du.a.run.app",
+    "results": [
+      {
+        "id": "gangnam",
+        "httpMs": 12426.701299999999,
+        "resultSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": false
+        },
+        "timing": {
+          "roadMs": 1653.360795000015,
+          "calculationMs": 9743.324934999982,
+          "totalMs": 11396.685729999997
+        }
+      },
+      {
+        "id": "busan",
+        "httpMs": 6133.792699999998,
+        "resultSha256": "17a664b6ebbb3fab1a8017cb287c75cc1e4519359745a22421fcb004731419a0",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "35ca7c88052c975b9a48bd5c204f04c8e9833adf4ed1d952b01c63cf866275df",
+          "cached": false
+        },
+        "timing": {
+          "roadMs": 993.7238519999955,
+          "calculationMs": 4715.730566000013,
+          "totalMs": 5709.454418000008
+        }
+      },
+      {
+        "id": "gangnam-custom",
+        "httpMs": 7236.431500000002,
+        "resultSha256": "6e3424ee46898d446b709b1caeb10a6666f8f9fca9f66d96e08c4caa2ec3e19a",
+        "candidates": 5,
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        },
+        "timing": {
+          "roadMs": 223.62069500001962,
+          "calculationMs": 6566.228818999982,
+          "totalMs": 6789.849514000001
+        }
+      }
+    ],
+    "invalidStatus": 400
+  },
+  "state": {
+    "version": 1,
+    "paused": false,
+    "lastMs": 1791618531979,
+    "windows": {
+      "minute": {
+        "start": 1791618480000,
+        "end": 1791618540000,
+        "count": 1
+      },
+      "hour": {
+        "start": 1791615600000,
+        "end": 1791619200000,
+        "count": 6
+      },
+      "day": {
+        "start": 1791590400000,
+        "end": 1791676800000,
+        "count": 6
+      },
+      "month": {
+        "start": 1790812800000,
+        "end": 1793491200000,
+        "count": 6
+      }
+    }
+  },
+  "overload": {
+    "at": "2026-10-10T07:42:50.388Z",
+    "base": "https://guard-check---runpen-route-compute-zehaomtsoq-du.a.run.app",
+    "responses": [
+      {
+        "status": 429,
+        "ms": 1249.3371000000002,
+        "error": "busy",
+        "retryAfter": "5"
+      },
+      {
+        "status": 200,
+        "ms": 10460.1692,
+        "resultSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5"
+      },
+      {
+        "status": 200,
+        "ms": 13419.9516,
+        "resultSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5"
+      },
+      {
+        "status": 429,
+        "ms": 1228.5389,
+        "error": "busy",
+        "retryAfter": "5"
+      },
+      {
+        "status": 429,
+        "ms": 1229.4211,
+        "error": "busy",
+        "retryAfter": "5"
+      },
+      {
+        "status": 429,
+        "ms": 1226.0420000000001,
+        "error": "busy",
+        "retryAfter": "5"
+      },
+      {
+        "status": 429,
+        "ms": 1228.3680000000002,
+        "error": "busy",
+        "retryAfter": "5"
+      },
+      {
+        "status": 429,
+        "ms": 1224.2495999999999,
+        "error": "busy",
+        "retryAfter": "5"
+      }
+    ]
+  },
+  "trafficPercent": 100
+}

@@ -2,6 +2,8 @@
 
 2026-10-10 사용자 결정: 로그인 여부와 관계없이 온라인 코스 계산을 Cloud Run으로 옮긴다. Supabase는 기존 계정·개인 자료 동기화, R2는 공개 전국 도로 공급을 맡는다. 계산 엔진 v0.2와 코스/러닝 저장 계약은 유지한다.
 
+같은 날 후속으로 [공통 계산량 제한·과부하 대응](compute-protection.md)을 배포했다. HTTP 수신 동시성은 8, 실제 계산은 인스턴스당 1개다. 모든 인스턴스가 비공개 Storage의 원자적 횟수를 공유하고 장애·한도 초과 시 기기 계산으로 전환한다. 실제 계정 통화 KRW에 맞춰 승인된 월 15,000원 예산 알림도 등록·조회 검증했다.
+
 ## 요청 흐름
 
 앱 → `POST /v1/routes` → 전국 R2 목록/타일 검증 → 동일 v0.2 엔진 → 후보 전체 결과 → 기존 앱의 후보 선택·저장·러닝. 서버 계산 성공 시 휴대폰에서 그래프/탐색을 다시 실행하지 않는다.
@@ -15,20 +17,20 @@
 
 ## 배포와 복구
 
-프로젝트 `running-art-mobile`, 서울 `asia-northeast3`, 서비스 `runpen-route-compute`. 1 CPU/1GiB, 동시성 1, 최소 0, 서비스·리비전 최대 2, 요청 기반 CPU, 시작 CPU 부스트 OFF. 전용 `runpen-route-compute` 서비스 계정에 프로젝트 권한을 부여하지 않는다. Supabase/R2 비밀 키 없이 공개 HTTPS 도로만 읽는다.
+프로젝트 `running-art-mobile`, 서울 `asia-northeast3`, 서비스 `runpen-route-compute`. 1 CPU/1GiB, HTTP 동시성 8·계산 1, 최소 0, 서비스·리비전 최대 2, 요청 기반 CPU, 시작 CPU 부스트 OFF. 전용 `runpen-route-compute` 서비스 계정에 프로젝트 권한을 부여하지 않는다. 공통 계산량 기록 버킷의 객체 권한만 사용하며 Supabase/R2 비밀 키 없이 공개 HTTPS 도로를 읽는다.
 
-최대 인스턴스는 비용 완전 차단이나 사용자별 이용 횟수 정책이 아니다. 공개 API이므로 반복 호출이 비용을 발생시킬 수 있다. 현재 규모의 제한된 초기 운영 구성이며 공개 출시 전 실제 부하와 남용 대응·예산 알림을 검토한다. 무료 체험 종료 후 과금 상태는 별도 확인한다.
+최대 인스턴스는 비용 완전 차단이나 사용자별 이용 횟수 정책이 아니다. 공통 계산량 제한과 월 15,000원 예산 알림을 적용했지만 공개 API의 반복 HTTP 호출은 여전히 비용을 발생시킬 수 있다. 현재는 제한된 초기 운영 구성으로 대규모 출시 부하·입구 차단은 후속이다. 무료 체험 종료 후 과금 상태는 별도 확인한다.
 
 ```powershell
 # 저장소 루트, 기존 도구/인증 사용
 & .\.tools\node\node.exe scripts/route-compute/package.mjs build/route-compute/NEW-REVISION
 $env:CLOUDSDK_CONFIG=Join-Path (Get-Location) '.cache/gcloud-server-compute'
-& .\.tools\google-cloud-sdk\bin\gcloud.cmd run deploy runpen-route-compute --project=running-art-mobile --region=asia-northeast3 --source=build/route-compute/NEW-REVISION --service-account=runpen-route-compute@running-art-mobile.iam.gserviceaccount.com --cpu=1 --memory=1Gi --concurrency=1 --min=0 --max=2 --max-instances=2 --timeout=70 --cpu-throttling --no-cpu-boost --allow-unauthenticated --ingress=all
+& .\.tools\google-cloud-sdk\bin\gcloud.cmd run deploy runpen-route-compute --project=running-art-mobile --region=asia-northeast3 --source=build/route-compute/NEW-REVISION --service-account=runpen-route-compute@running-art-mobile.iam.gserviceaccount.com --cpu=1 --memory=1Gi --concurrency=8 --min=0 --max=2 --max-instances=2 --timeout=70 --cpu-throttling --no-cpu-boost --allow-unauthenticated --ingress=all --update-env-vars=COMPUTE_GUARD_BUCKET=runpen-compute-guard-125644906792
 ```
 
-패키저는 코드 14개만 복사한다. 환경 파일·사용자 자료·키·APK를 빌드에 올리지 않는다. 새 출력 폴더를 사용하며 Docker 기본 이미지의 실제 digest는 배포 증거에서 확인한다. 앱 `.env.local`의 `EXPO_PUBLIC_COMPUTE_BASE_URL`에 배포 HTTPS origin을 넣어 APK를 다시 빌드한다. 주소가 비어 있으면 기존 기기 계산이다.
+패키저는 코드 16개만 복사한다. 환경 파일·사용자 자료·키·APK를 빌드에 올리지 않는다. 새 출력 폴더를 사용하며 Docker 기본 이미지의 실제 digest는 배포 증거에서 확인한다. 앱 `.env.local`의 `EXPO_PUBLIC_COMPUTE_BASE_URL`에 배포 HTTPS origin을 넣어 APK를 다시 빌드한다. 주소가 비어 있으면 기존 기기 계산이다.
 
-복구: Cloud Run 트래픽을 이전 정상 리비전으로 옮기거나 서비스를 중지/삭제하면 앱은 기기 계산으로 전환한다. 앱에서 즉시 ‘기기 계산·도로 저장’을 선택할 수도 있다. 서버 주소를 비운 APK로 되돌리면 서버 호출을 완전히 제거한다. 코스·계정 DB 마이그레이션은 필요 없다.
+복구: [운영 중지·재개](compute-protection.md#운영-중지재개)의 pause로 새 계산을 멈추면 앱은 기기 계산으로 전환한다. 이전 `00001-96r`로 단순 롤백하면 공통 제한도 사라지므로 주의한다. 앱에서 즉시 ‘기기 계산·도로 저장’을 선택할 수도 있다. 서버 주소를 비운 APK로 되돌리면 서버 호출을 완전히 제거한다. 코스·계정 DB 마이그레이션은 필요 없다.
 
 ## 검증 도구
 
