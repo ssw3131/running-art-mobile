@@ -9,6 +9,8 @@ import { mapStyleUrl } from '@/modules/map/config';
 import { shareCourseGpx } from '@/modules/courses/share-gpx';
 import { exportErrorMessage } from '@/modules/courses/export';
 import SimulationPanel from '@/features/courses/SimulationPanel';
+import TerrainPanel from '@/features/terrain/TerrainPanel';
+import { useTerrain } from '@/features/terrain/use-terrain';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const emptyRoads = { type: 'FeatureCollection' as const, features: [] };
@@ -21,6 +23,7 @@ export default function CourseScreen() {
   const generation = useRef(0), inFlight = useRef(false);
   const exportController = useRef<AbortController | null>(null);
   const overlay = useMemo(() => course ? savedCourseOverlay(course.snapshot) : null, [course]);
+  const terrain = useTerrain(course?.source === 'osm' && !simulation ? course.snapshot.route : undefined);
   const supported = Platform.OS !== 'web';
   const refresh = useCallback(async () => {
     const request = ++generation.current; setBusy(true); setError(''); setNotice(''); setCourse(null); setCanDelete(false); setBackground(false); setSimulation(false);
@@ -90,8 +93,8 @@ export default function CourseScreen() {
         <Text style={styles.description}>목표 {course.targetKm}km · 계산 버전 {course.snapshot.engineVersion}</Text>
         <Text style={styles.description}>{course.source === 'synthetic' ? '가상 테스트 코스 · 실제 달릴 길이 아니에요.' : '저장한 OSM 도로 코스예요.'} 경로를 다시 계산하지 않고 저장 자료를 표시해요.</Text>
         {!simulation && <><View style={styles.map}><MapSurface styleUrl={background ? styleUrl ?? '' : ''} position={null} origin={course.snapshot.origin}
-          routeOverlay={overlay} syntheticRoads={background ? undefined : emptyRoads} /></View>
-        <Text style={styles.small}>초록 실선: 저장 경로 · 갈색 점선: 목표 도형</Text>
+          routeOverlay={overlay} terrainOverlay={terrain.overlay} syntheticRoads={background ? undefined : emptyRoads} /></View>
+        <Text style={styles.small}>{terrain.overlay ? '색상 실선: 경사의 가파른 정도' : '초록 실선: 저장 경로'} · 갈색 점선: 목표 도형</Text>
         <Text style={styles.small}>{background ? '배경 지도는 인터넷 연결이 필요해요.' : '배경 지도 없이 저장 경로만 표시해요. 인터넷·GPS가 필요하지 않아요.'}</Text>
         {course.source === 'osm' && styleUrl && <Pressable accessibilityRole="button" testID="course-map-toggle" style={styles.button} onPress={() => setBackground(value => !value)}>
           <Text>{background ? '배경 지도 끄기 · 경로만 보기' : '배경 지도 보기 · 인터넷 사용'}</Text>
@@ -99,6 +102,7 @@ export default function CourseScreen() {
         {background && <View style={styles.credits}><Image source={require('@/assets/images/maptiler-logo.png')} style={styles.logo} resizeMode="contain" />
           <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/').catch(() => {})}><Text style={styles.small}>© MapTiler</Text></Pressable></View>}
         </>}
+        {course.source === 'osm' && !simulation && <TerrainPanel controller={terrain.controller} state={terrain.state} />}
         {course.source === 'osm' && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {})}><Text style={styles.small}>© OpenStreetMap contributors · ODbL</Text></Pressable>}
         <Text style={styles.small}>계산 기준 {course.snapshot.origin.lat.toFixed(5)}, {course.snapshot.origin.lng.toFixed(5)}</Text>
         <Text style={styles.small}>순환 코스 어디서든 출발하고 원하는 방향으로 한 바퀴 달려요. 코스 밖에서는 보행 도로로 합류해요.</Text>

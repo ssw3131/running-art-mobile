@@ -20,6 +20,9 @@ import type { Point, ShapeId } from '@/modules/route-engine/types';
 import DrawingEditor, { DrawingPreview } from '@/features/route-lab/DrawingEditor';
 import { compareReference } from '@/modules/route-engine/verification';
 import SaveCoursePanel from '@/features/courses/SaveCoursePanel';
+import TerrainPanel from '@/features/terrain/TerrainPanel';
+import { useTerrain } from '@/features/terrain/use-terrain';
+import type { Coordinate } from '@/modules/terrain/model';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const roadModes = [{ id: 'prefer-cache', label: '저장 자료 우선' }, { id: 'refresh', label: '새 버전 확인' }, { id: 'offline', label: '오프라인' }] as const;
@@ -72,6 +75,7 @@ export default function RouteLabScreen() {
     const candidate = completed?.result.candidates[selected];
     return candidate && completed ? candidateOverlay(candidate, completed.origin) : null;
   }, [completed, selected]);
+  const terrain = useTerrain(dataset.synthetic ? undefined : overlay?.route.geometry.coordinates as Coordinate[] | undefined);
 
   const stopTimer = useCallback(() => { if (timer.current !== null) clearInterval(timer.current); timer.current = null; }, []);
   const cancel = useCallback((message = '계산을 취소했어요. 다시 시작할 수 있어요.') => {
@@ -158,7 +162,7 @@ export default function RouteLabScreen() {
 
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
     <View style={styles.map}>
-      {dataset.synthetic || styleUrl ? <MapSurface key={datasetId} styleUrl={styleUrl ?? ''} position={dataset.synthetic ? null : centerState.position} origin={dataset.synthetic ? dataset.input.origin : centerState.center} syntheticRoads={roads} routeOverlay={overlay} centerSelection={dataset.synthetic ? undefined : {
+      {dataset.synthetic || styleUrl ? <MapSurface key={datasetId} styleUrl={styleUrl ?? ''} position={dataset.synthetic ? null : centerState.position} origin={dataset.synthetic ? dataset.input.origin : centerState.center} syntheticRoads={roads} routeOverlay={overlay} terrainOverlay={terrain.overlay} centerSelection={dataset.synthetic ? undefined : {
         target: centerState.cameraTarget,
         onMoveStart: () => { changeSearch(); setFixedCenter(false); center.beginMove(); setMapMoving(true); },
         onMoveEnd: (origin) => { setValidCenter(!!origin); if (origin) center.move(origin); setMapMoving(false); },
@@ -167,7 +171,7 @@ export default function RouteLabScreen() {
       <View pointerEvents="none" style={styles.mapLabel}><Text style={styles.mapLabelText}>{dataset.synthetic ? '가상 도로 · 실제 길 아님' : '지도 중심 기준 · 주변 2km'}</Text></View>
       {!dataset.synthetic && <View pointerEvents="none" style={styles.crosshair}><View style={styles.crosshairHorizontal} /><View style={styles.crosshairVertical} /><View style={styles.crosshairDot} /></View>}
     </View>
-    <View style={styles.legend}><Text style={styles.small}>초록 실선: 추천 코스 · 갈색 점선: 목표 도형 · 코스 어디서든 출발</Text></View>
+    <View style={styles.legend}><Text style={styles.small}>{terrain.overlay ? '색상 실선: 경사의 가파른 정도' : '초록 실선: 추천 코스'} · 갈색 점선: 목표 도형 · 코스 어디서든 출발</Text></View>
     {!dataset.synthetic && <View style={styles.credits}>
       <Image source={require('@/assets/images/maptiler-logo.png')} style={styles.logo} resizeMode="contain" />
       <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/').catch(() => {})}><Text style={styles.small}>© MapTiler</Text></Pressable>
@@ -218,6 +222,7 @@ export default function RouteLabScreen() {
           <Text style={styles.small}>도형 크기 {(candidate.scaleRatio * 100).toFixed(0)}% · {completed.result.mode === 'free-loop' ? '양방향 순환 코스' : `접근/복귀 ${candidate.accessKm.toFixed(2)} km`}</Text>
         </Pressable>)}
         <Text style={styles.small}>점수는 후보 비교용이며 정확한 일치율이 아니에요. 코스까지의 접근 경로는 러닝 준비에서 확인해요.</Text>
+        {!dataset.synthetic && overlay && <TerrainPanel controller={terrain.controller} state={terrain.state} />}
         {completed.result.candidates.length > 0 && <SaveCoursePanel completed={completed} selected={selected} />}
       </>}
       <Pressable testID="route-diagnostics" accessibilityRole="button" accessibilityState={{ expanded: diagnostics }} style={styles.cancel} onPress={() => setDiagnostics(value => !value)}><Text style={styles.chipText}>{diagnostics ? '개발 검증 정보 닫기' : '개발 검증 정보'}</Text></Pressable>

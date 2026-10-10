@@ -1,4 +1,4 @@
-import { Camera, GeoJSONSource, Layer, Map, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Layer, Map, Marker, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -8,7 +8,7 @@ import { hideMapBuildings } from './buildings';
 
 const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
-function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, origin, syntheticRoads, centerSelection, onRetry }: Props & { onRetry(): void }) {
+function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terrainOverlay, origin, syntheticRoads, centerSelection, onRetry }: Props & { onRetry(): void }) {
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
   const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
@@ -106,11 +106,26 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, orig
           </GeoJSONSource>
           <GeoJSONSource id="selected-route" data={routeOverlay.route}>
             <Layer id="route-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': 7 }} />
-            <Layer id="route-line" type="line" paint={{ 'line-color': '#23694C', 'line-width': 4 }} />
+            <Layer id="route-line" type="line" paint={{ 'line-color': '#23694C', 'line-width': 4, 'line-opacity': terrainOverlay ? 0 : 1 }} />
           </GeoJSONSource>
           {!routeOverlay.freeStart && <GeoJSONSource id="route-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: routeOverlay.start } }}>
             <Layer id="route-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#183C32', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} />
           </GeoJSONSource>}
+        </>}
+        {routeOverlay && terrainOverlay && <>
+          <GeoJSONSource id="terrain-segments" data={terrainOverlay.segments}>
+            <Layer id="terrain-lines" type="line" paint={{ 'line-color': ['get', 'color'], 'line-width': 4 }} />
+          </GeoJSONSource>
+          <GeoJSONSource id="terrain-direction" data={terrainOverlay.direction}>
+            <Layer id="terrain-arrow-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': 8 }} />
+            <Layer id="terrain-arrow" type="line" paint={{ 'line-color': '#183C32', 'line-width': 4 }} />
+          </GeoJSONSource>
+          <GeoJSONSource id="terrain-selected" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: terrainOverlay.selected } }}>
+            <Layer id="terrain-selected-dot" type="circle" paint={{ 'circle-radius': 7, 'circle-color': '#183C32', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 3 }} />
+          </GeoJSONSource>
+          <Marker id="terrain-origin" lngLat={terrainOverlay.origin} anchor="bottom" offset={[0, -10]}>
+            <View pointerEvents="none" style={{ backgroundColor: '#FFFFFF', borderRadius: 5, padding: 4 }}><Text style={{ color: '#183C32', fontSize: 11 }}>그래프 기준점</Text></View>
+          </Marker>
         </>}
         {simulationPosition && <GeoJSONSource id="simulation-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: simulationPosition } }}>
           <Layer id="simulation-halo" type="circle" paint={{ 'circle-radius': 16, 'circle-color': '#3B82F6', 'circle-opacity': 0.2 }} />
