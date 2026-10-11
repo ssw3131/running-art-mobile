@@ -29,7 +29,15 @@ Android 설치 앱의 **러닝 GPS 기록**에서 실제 위치 수신을 시작
 
 위치 콜백마다 활동 시간을 저장하고 러닝 화면 전경에서는 5초마다 상태·시간을 확인한다. 새 JS 프로세스에서 다시 시작하면 전경/백그라운드 실행 모두 마지막 저장 시점으로 기록을 중단하고 GPS 서비스를 해제한다. **자동으로 추적을 재개하지 않는다.** 사용자가 재개 또는 종료를 선택한다. 앱 강제 종료·OS 프로세스 제거·재부팅 중 이동은 복원할 수 없고 마지막 저장 이후 일부 시간은 제외될 수 있다.
 
-현재 서버 동기화는 없다. 앱 삭제·데이터 초기화 시 로컬 기록도 사라진다. GPS 좌표는 앱 로그나 공용 도로 저장소로 보내지 않는다. 에뮬레이터 검증의 좌표는 명시적인 합성 주입 자료다.
+로그인·개인 자료 동기화를 켜면 완료된 코스/러닝을 계정의 비공개 저장소에 동기화한다. [개인 동기화](personal-sync.md)를 참고한다. 앱 삭제·데이터 초기화 시 미동기화 로컬 기록은 사라진다. GPS 좌표는 앱 로그나 공용 도로 저장소로 보내지 않는다. 에뮬레이터 검증의 좌표는 명시적인 합성 주입 자료다.
+
+### 2026-10-11 백업·서비스 수명 수정
+
+Android 자동 백업은 앱 프로세스를 종료할 수 있다. 기존 휴대폰 중단과 격리 에뮬레이터의 `backupnow` 재현에 따라 `app.json`의 `android.allowBackup=false`로 해당 경로를 막는다. Supabase 동기화와 기존 SQLite/계정은 보존한다. **비로그인·미동기화 자료는 Android 클라우드 자동 백업에서 제외**되며, 제조사 기기 간 전송까지 차단한다고 보장하지 않는다. [Android Auto Backup](https://developer.android.com/identity/data/autobackup).
+
+Expo Location 57.0.20의 서비스 연결을 추적해 unregister 시 해제하고 늦은 바인더 연결이 서비스를 다시 켜지 못하게 한다. 작업 등록이 없어도 별도로 재전달된 위치 서비스를 정리하며, 중단/정지 후 늦은 GPS 콜백에도 정리를 재시도한다. 새 프로세스의 명시적 재개 정책은 유지한다.
+
+`scripts/patch-expo-location.cjs`는 설치/Android prebuild 시 버전·원본/수정 소스 해시를 검증하고 반복 적용한다. `package.json`의 `expo.autolinking.android.buildFromSource: ["expo-location"]`도 필수다. 기본 사전 컴파일 AAR을 사용하면 Kotlin 소스를 바꿔도 APK에 들어가지 않는다. 의존성 갱신 시 패치를 재검토하며 자동으로 무시하지 않는다. [Expo 사전 컴파일 모듈](https://docs.expo.dev/guides/prebuilt-expo-modules/). 실제 검증 범위는 [수정 검증](../quality/gps-process-recovery-20261011.md)을 따른다.
 
 ## 코드와 네이티브 구성
 

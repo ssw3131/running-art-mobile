@@ -38,11 +38,12 @@ export function createRunController(repository: () => Promise<RunRepository>, dr
     catch { throw new RunError('위치 서비스를 끄지 못했어요. 다시 시도해 주세요. 추가 좌표는 기록에 반영하지 않아요.'); }
   }
   async function recover(repo: RunRepository) {
-    if (recovered) return;
+    if (recovered) return false;
     const active = await repo.active();
     if (active?.status === 'running') await repo.transition(active.id, 'interrupted', '앱이 다시 시작되어 마지막 저장 지점에서 중단했어요. 재개하거나 종료할 수 있어요.');
     await stop();
     recovered = true;
+    return true;
   }
   async function fail(repo: RunRepository, message: string) {
     failure = message;
@@ -126,7 +127,10 @@ export function createRunController(repository: () => Promise<RunRepository>, dr
       let repo: RunRepository | undefined;
       try {
         repo = await repository();
-        await recover(repo);
+        const cleanedUp = await recover(repo);
+        // A callback can race unregister/service binding or arrive after a failed
+        // stop. Retry cleanup even after this JS process has already recovered.
+        if ((await repo.active())?.status !== 'running') { if (!cleanedUp) await stop(); return; }
         if (error || failure) { await fail(repo, error ?? failure!); return; }
         const result = await repo.append(fixes);
         // Effects follow the transaction, so a failed write never announces a

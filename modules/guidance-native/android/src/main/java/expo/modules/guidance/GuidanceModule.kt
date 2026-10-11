@@ -37,6 +37,13 @@ class GuidanceModule : Module() {
     }
     Function("feedbackLive") { id: String, text: String, vibrate: Boolean -> liveFeedback?.feedback(id, text, vibrate) }
     Function("silenceLive") { liveFeedback?.silence() }
+    // A redelivered Expo service can outlive its TaskManager registration.
+    // Run after unregister, even when no task exists, to cancel that orphan.
+    AsyncFunction("stopLiveLocationService") {
+      val context = appContext.reactContext ?: error("앱 실행 환경을 확인할 수 없어요.")
+      context.stopService(Intent().setClassName(context.packageName, "expo.modules.location.services.LocationTaskService"))
+      Unit
+    }.runOnQueue(Queues.MAIN)
     Function("liveStatus") { liveFeedback?.status() ?: mapOf("voiceReady" to false, "voiceError" to "", "utterances" to 0, "spoken" to 0, "vibrations" to 0) }
     OnDestroy { liveFeedback?.shutdown(); liveFeedback = null }
   }

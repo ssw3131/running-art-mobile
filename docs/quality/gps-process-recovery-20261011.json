@@ -1,0 +1,38 @@
+{
+  "complete": true,
+  "apkSha256": "7a3c0decbcd0f9bbc9385b3a7c71974baf7958fc8bebf4d0d2c976ee8eeefcc7",
+  "tests": 403,
+  "emulator": {
+    "backupExcluded": true,
+    "recoveryPreservesCheckpoint": true,
+    "stopSnapshotsWithoutServiceOrNotification": 8,
+    "resumePauseCycles": 3,
+    "priorSyntheticRecordsPreserved": true
+  },
+  "phone": {
+    "installedAtKst": "2026-10-11T23:30:32+09:00",
+    "backupExcluded": true,
+    "shortRecordingTestsCleaned": 2,
+    "originalCounts": [
+      3,
+      2,
+      209,
+      1
+    ],
+    "originalContentAccountAndSyncPreservedBeforeLock": true,
+    "longLock": {
+      "complete": true,
+      "confirmedMinimumUnpluggedMinutes": 60,
+      "adbReturnElapsedMinutes": 67.21,
+      "activeSeconds": 4545.588,
+      "savedPoints": 278,
+      "maxPointGapSeconds": 24.143,
+      "batteryBeforePercent": 100,
+      "batteryAfterBeforeChargingPercent": 97,
+      "timingBasis": "60-minute timer followed by user confirmation of continuous lock/no charging; ADB return includes connection troubleshooting",
+      "physicalReconnectTimeKnown": false,
+      "batteryScope": "whole device, indoor stationary, starts at full charge; not app-only consumption"
+    },
+    "originalContentAccountAndSyncPreservedAfterLock": true
+  }
+}

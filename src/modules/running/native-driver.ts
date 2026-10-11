@@ -7,6 +7,7 @@ import { guidanceActivity } from '../guidance/activity';
 import { guidanceNative } from '../guidance/native';
 import { locateForeground } from '../location/locate';
 import { expoLocationProvider } from '../location/expo-provider';
+import { stopTracking } from './stop-tracking';
 
 export const RUNNING_TASK = 'running-art-gps-v1';
 export const trackingDriver: TrackingDriver = {
@@ -43,7 +44,15 @@ export const trackingDriver: TrackingDriver = {
     });
   },
   async stop() {
-    if (Platform.OS === 'android' && await Location.hasStartedLocationUpdatesAsync(RUNNING_TASK)) await Location.stopLocationUpdatesAsync(RUNNING_TASK);
+    if (Platform.OS !== 'android') return;
+    await stopTracking({
+      registered: () => Location.hasStartedLocationUpdatesAsync(RUNNING_TASK),
+      unregister: () => Location.stopLocationUpdatesAsync(RUNNING_TASK),
+      stopService: async () => {
+        if (!guidanceNative) throw new RunError('위치 서비스를 정리하려면 앱을 다시 실행해 주세요.');
+        await guidanceNative.stopLiveLocationService();
+      },
+    });
   },
   async locate() {
     const result = await locateForeground(expoLocationProvider, new AbortController().signal, { askPermission: false });

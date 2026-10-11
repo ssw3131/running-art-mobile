@@ -77,3 +77,30 @@ test('double start is serialized and only one native service starts', async t =>
   const results = await Promise.allSettled([controller.start(), controller.start()]);
   assert.equal(results.filter(r => r.status === 'fulfilled').length, 1); assert.equal(calls.filter(c => c === 'start').length, 1);
 });
+
+test('late deliveries retry native cleanup after pause stop failure', async t => {
+  const { controller, repo, errors, calls, time } = await fixture(t);
+  const run = await controller.start();
+  errors.stop = true;
+  await assert.rejects(controller.pause(run.id));
+  errors.stop = false; calls.length = 0; time(1005000);
+  await controller.ingest([{ timestamp: 1005000, latitude: 37, longitude: 127, accuracy: 5 }]);
+  assert.deepEqual(calls, ['stop']);
+  assert.equal((await repo.get(run.id)).status, 'paused');
+  assert.equal((await repo.get(run.id)).pointCount, 0);
+});
+
+test('repeated headless deliveries cannot leave an interrupted or finished service running', async t => {
+  const { repo, driver, calls, time } = await fixture(t);
+  const run = await repo.start();
+  const cold = createRunController(async () => repo, driver);
+  await cold.recover();
+  time(1005000); calls.length = 0;
+  await cold.ingest([{ timestamp: 1005000, latitude: 37, longitude: 127, accuracy: 5 }]);
+  assert.deepEqual(calls, ['stop']);
+  assert.equal((await repo.get(run.id)).activeMs, 0);
+  await cold.finish(run.id); calls.length = 0; time(1010000);
+  await cold.ingest([{ timestamp: 1010000, latitude: 37, longitude: 127, accuracy: 5 }]);
+  assert.deepEqual(calls, ['stop']);
+  assert.equal((await repo.get(run.id)).pointCount, 0);
+});
