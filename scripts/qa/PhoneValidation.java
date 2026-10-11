@@ -15,8 +15,10 @@ import org.json.*;
 /** Explicit phone QA: on-device backups, synthetic fixtures, counts/hashes only. No auth access. */
 public class PhoneValidation extends Instrumentation {
   private String action;
+  private long photoSince;
+  private String photoPaths;
   private static final String[] FILES={"running-art.db","running-art.db-wal","running-art.db-shm"};
-  @Override public void onCreate(Bundle args){super.onCreate(args);action=args.getString("action","inspect");start();}
+  @Override public void onCreate(Bundle args){super.onCreate(args);action=args.getString("action","inspect");photoSince=Long.parseLong(args.getString("since","0"));photoPaths=args.getString("paths","");start();}
   private String hash(byte[] bytes)throws Exception{StringBuilder s=new StringBuilder();for(byte b:MessageDigest.getInstance("SHA-256").digest(bytes))s.append(String.format("%02x",b&255));return s.toString();}
   private byte[] read(File f)throws Exception{try(InputStream in=new FileInputStream(f);ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] b=new byte[65536];int n;while((n=in.read(b))!=-1)out.write(b,0,n);return out.toByteArray();}}
   private void copy(File a,File b)throws Exception{byte[] bytes=read(a);try(FileOutputStream out=new FileOutputStream(b)){out.write(bytes);out.getFD().sync();}if(!hash(bytes).equals(hash(read(b))))throw new Exception("Copy mismatch");}
@@ -116,14 +118,76 @@ public class PhoneValidation extends Instrumentation {
       if(!dir.delete())throw new Exception("Unexpected backup files");
     }
   }
+  private void photoFiles(File dir,JSONArray output,int depth)throws Exception {
+    if(depth>4||!dir.isDirectory())return;
+    File[] files=dir.listFiles();if(files==null)return;
+    for(File f:files){
+      if(f.isDirectory()){photoFiles(f,output,depth+1);continue;}
+      String relative=f.getCanonicalPath().substring(getTargetContext().getCacheDir().getCanonicalPath().length()+1);
+      if(f.lastModified()<photoSince||(!relative.startsWith("ImageManipulator/")&&!relative.startsWith("ImagePicker/")))continue;
+      if(f.length()>20_000_000)throw new Exception("Unexpected photo cache size");
+      byte[] bytes=read(f);boolean metadata=false;
+      if(bytes.length>4&&(bytes[0]&255)==255&&(bytes[1]&255)==216){
+        int offset=2;
+        while(offset+4<=bytes.length){
+          if((bytes[offset]&255)!=255)throw new Exception("Invalid JPEG marker");
+          int marker=bytes[offset+1]&255;if(marker==218||marker==217)break;
+          if(marker>=224&&marker<=239||marker==254)metadata=true;
+          int length=((bytes[offset+2]&255)<<8)|(bytes[offset+3]&255);
+          if(length<2||offset+2+length>bytes.length)throw new Exception("Invalid JPEG segment");
+          offset+=2+length;
+        }
+      }
+      android.graphics.BitmapFactory.Options options=new android.graphics.BitmapFactory.Options();
+      options.inJustDecodeBounds=true;android.graphics.BitmapFactory.decodeFile(f.getPath(),options);
+      output.put(new JSONObject().put("path",relative).put("bytes",bytes.length).put("sha256",hash(bytes))
+        .put("width",options.outWidth).put("height",options.outHeight).put("mime",options.outMimeType)
+        .put("hasAppOrCommentMetadata",metadata));
+    }
+  }
+  private JSONArray recentRuns(SQLiteDatabase db)throws Exception {
+    if(photoSince<=0)throw new Exception("Explicit test start time required");
+    JSONArray runs=new JSONArray();
+    try(Cursor c=db.rawQuery("SELECT id,status,started_at,ended_at,active_ms,checkpoint_at,resumed_at,distance_m,point_count,rejected_count,last_timestamp,segment,reason FROM running_sessions WHERE started_at>=? ORDER BY started_at",new String[]{Long.toString(photoSince)})){
+      while(c.moveToNext()){
+        JSONObject run=new JSONObject();
+        for(int i=0;i<c.getColumnCount();i++)run.put(c.getColumnName(i),c.isNull(i)?JSONObject.NULL:c.getType(i)==Cursor.FIELD_TYPE_INTEGER?c.getLong(i):c.getType(i)==Cursor.FIELD_TYPE_FLOAT?c.getDouble(i):c.getString(i));
+        JSONArray times=new JSONArray();
+        try(Cursor points=db.rawQuery("SELECT sequence,segment,timestamp,accuracy FROM running_points WHERE run_id=? ORDER BY sequence",new String[]{c.getString(0)})){
+          while(points.moveToNext())times.put(new JSONObject().put("sequence",points.getInt(0)).put("segment",points.getInt(1)).put("timestamp",points.getLong(2)).put("accuracy",points.getDouble(3)));
+        }
+        run.put("pointTiming",times);runs.put(run);
+      }
+    }
+    return runs;
+  }
   @Override public void onStart(){Bundle result=new Bundle();try{
-    if(action.equals("backup")){backup("phone-validation-original",false);result.putString("result","Original backup retained on device; fsync/hash verified");}
+    if(action.equals("photo-cleanup")){
+      if(photoSince<=0||photoPaths.isEmpty())throw new Exception("Explicit fixture time and paths required");
+      File cache=getTargetContext().getCacheDir().getCanonicalFile();int removed=0;
+      String[] paths=photoPaths.split(",");if(paths.length>50)throw new Exception("Too many photo paths");
+      for(String relative:paths){
+        if(!relative.matches("(?:ImagePicker|ImageManipulator)/[a-f0-9-]+\\.(?:jpg|jpeg|heic)"))throw new Exception("Not a photo fixture cache path");
+        File f=new File(cache,relative).getCanonicalFile();
+        if(!f.getParentFile().getParentFile().equals(cache))throw new Exception("Invalid cache root");
+        if(f.exists()){
+          if(f.lastModified()<photoSince)throw new Exception("Pre-existing cache file");
+          if(!f.delete())throw new Exception("Photo cleanup failed");removed++;
+        }
+      }
+      result.putInt("removed",removed);
+    }
+    else if(action.equals("photo-report")){
+      if(photoSince<=0)throw new Exception("Explicit fixture start time required");
+      JSONArray files=new JSONArray();photoFiles(getTargetContext().getCacheDir(),files,0);result.putString("photos",files.toString());
+    }
+    else if(action.equals("backup")){backup("phone-validation-original",false);result.putString("result","Original backup retained on device; fsync/hash verified");}
     else if(action.equals("isolate")){backup("phone-validation-synced",true);result.putString("result","Synced backup retained on device; empty store ready");}
     else if(action.equals("restore")){restore();result.putString("result","Synced database restored; fsync/hash verified");}
     else if(action.equals("cleanup-backups")){cleanupBackups();result.putString("result","Backup directories removed");}
     else{
       SQLiteDatabase db=SQLiteDatabase.openDatabase(new File(folder(),FILES[0]).getPath(),null,action.equals("seed")?SQLiteDatabase.OPEN_READWRITE:SQLiteDatabase.OPEN_READONLY);
-      try{if(action.equals("seed")){seed(db);result.putString("result","Synthetic fixtures added");}else if(action.equals("export-custom"))exportCustom(db,result);else if(action.equals("inspect"))result.putString("report",inspect(db).toString());else throw new Exception("Unknown action");}finally{db.close();}
+      try{if(action.equals("seed")){seed(db);result.putString("result","Synthetic fixtures added");}else if(action.equals("export-custom"))exportCustom(db,result);else if(action.equals("inspect"))result.putString("report",inspect(db).toString());else if(action.equals("recent-runs"))result.putString("runs",recentRuns(db).toString());else throw new Exception("Unknown action");}finally{db.close();}
     }finish(0,result);
   }catch(Exception e){result.putString("error",e.getClass().getSimpleName()+": "+e.getMessage());finish(1,result);}}
 }

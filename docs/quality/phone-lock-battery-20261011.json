@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-11",
+  "device": "SM-S942N / Android 16",
+  "outcome": "partial; sampling beyond 30 minutes observed; interrupted before return",
+  "apkSha256": "9b4426ca98a6466062c2696846057c088f9b4c6765b0cb1658a5a8d202282a32",
+  "productChanged": false,
+  "checks": [
+    "locked-start",
+    "unlocked-reconnect",
+    "stored-point-timing",
+    "interruption-ui-and-process-exit",
+    "automatic-backup-and-process-restart-events",
+    "battery-history-endpoint-with-limits",
+    "original-data-and-account",
+    "test-delete-and-sync",
+    "helpers-and-backup-cleanup",
+    "apk-network-location-and-final-service-state"
+  ],
+  "timeline": {
+    "runStartedAtKst": "2026-10-11T20:24:12.862+09:00",
+    "lockedAtKst": "2026-10-11T20:27:10+09:00",
+    "unplugConfirmedAtKst": "2026-10-11T20:28:48+09:00",
+    "lastStoredPointAtKst": "2026-10-11T21:04:19.058+09:00",
+    "lastProcessedFixAtKst": "2026-10-11T21:04:23.057+09:00",
+    "processExitAtKst": "2026-10-11T21:04:23.815+09:00",
+    "headlessProcessRestartAtKst": "2026-10-11T21:05:56.447+09:00",
+    "reconnectObservedAtKst": "2026-10-11T21:49:17+09:00",
+    "savedAtKst": "2026-10-11T21:52:04.333+09:00",
+    "cleanupCompletedAtKst": "2026-10-11T21:57:10+09:00"
+  },
+  "gps": {
+    "activeMs": 2410260,
+    "storedPoints": 155,
+    "rejectedFixes": 11,
+    "storedSegments": 141,
+    "storedGapMedianSeconds": 15.999,
+    "storedGapMaxSeconds": 28.536,
+    "pointsWithinFirst30MinutesAfterUnplugConfirmation": 104,
+    "lastStoredPointAfterUnplugConfirmationSeconds": 2131.058,
+    "lastStoredPointToReconnectSeconds": 2698.437,
+    "continuousUntilReturn": false,
+    "fieldAccuracyValidated": false
+  },
+  "battery": {
+    "lastMeasuredBeforeUnplugPercent": 94,
+    "historyUnpoweredAtKst": "2026-10-11T21:47:27.660+09:00",
+    "historyUnpoweredPercent": 93,
+    "historyChargingAtKst": "2026-10-11T21:47:30.817+09:00",
+    "firstAdbReconnectPercent": 94,
+    "observedPercentagePointDifference": 1,
+    "userConfirmedChargingStartApproxKst": "2026-10-11T21:47:00+09:00",
+    "approxWholeDevicePercentagePointDecrease": 1,
+    "exactUninterruptedUnpluggedDurationEstablished": false,
+    "continuousGpsBatteryBenchmarkPassed": false,
+    "limits": [
+      "History starts at 21:47; earlier charging/screen continuity cannot be reconstructed.",
+      "Latest user correction places charging at the 21:47 reconnect; this supersedes the earlier ambiguous answer.",
+      "94 was sampled before physical unplug; 93 is a later unpowered snapshot.",
+      "GPS recording stopped during the trial; these endpoints are not continuous-GPS energy usage."
+    ]
+  },
+  "preservation": {
+    "originalDataHashesMatch": true,
+    "accountIdentityMatch": true,
+    "syncEnabledPendingZero": true,
+    "testRunDeleted": true,
+    "deviceHelpersAndBackupRemoved": true,
+    "finalServicesNone": true,
+    "locationAndNetworkPreserved": true
+  },
+  "followup": [
+    "Reproduce OS backup/process exit and reconcile interrupted recording with surviving service.",
+    "Repeat a controlled unplugged battery trial after addressing recording continuity.",
+    "Outdoor movement, course guidance, battery saver and reboot remain separate."
+  ]
+}

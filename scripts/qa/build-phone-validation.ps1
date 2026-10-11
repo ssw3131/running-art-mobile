@@ -4,10 +4,10 @@ $qaDir=Join-Path $projectRoot '.cache/phone-validation/helper'
 $qaTools="$env:ANDROID_HOME/build-tools/36.0.0"
 $qaPlatform="$env:ANDROID_HOME/platforms/android-36/android.jar"
 New-Item -ItemType Directory -Force "$qaDir/classes","$qaDir/dex" | Out-Null
-'<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.runningart.authdigest"><uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36"/><application android:label="RunPen phone validation"/><instrumentation android:name="com.runningart.authdigest.PhoneValidation" android:targetPackage="com.runningart.mobile.dev"/></manifest>' | Set-Content "$qaDir/AndroidManifest.xml" -Encoding utf8
-& javac.exe -source 8 -target 8 -encoding UTF-8 -bootclasspath $qaPlatform -d "$qaDir/classes" "$PSScriptRoot/PhoneValidation.java"
+'<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.runningart.authdigest"><uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36"/><application android:label="RunPen phone validation"/><instrumentation android:name="com.runningart.authdigest.PhoneValidation" android:targetPackage="com.runningart.mobile.dev"/><instrumentation android:name="com.runningart.authdigest.PhoneAccessibility" android:targetPackage="com.runningart.authdigest"/></manifest>' | Set-Content "$qaDir/AndroidManifest.xml" -Encoding utf8
+& javac.exe -source 8 -target 8 -encoding UTF-8 -bootclasspath $qaPlatform -d "$qaDir/classes" "$PSScriptRoot/PhoneValidation.java" "$PSScriptRoot/PhoneAccessibility.java"
 if($LASTEXITCODE){throw 'compile failed'}
-& "$qaTools/d8.bat" --lib $qaPlatform --output "$qaDir/dex" "$qaDir/classes/com/runningart/authdigest/PhoneValidation.class"
+& "$qaTools/d8.bat" --lib $qaPlatform --output "$qaDir/dex" "$qaDir/classes/com/runningart/authdigest/PhoneValidation.class" "$qaDir/classes/com/runningart/authdigest/PhoneAccessibility.class"
 if($LASTEXITCODE){throw 'dex failed'}
 & "$qaTools/aapt2.exe" link -I $qaPlatform --manifest "$qaDir/AndroidManifest.xml" -o "$qaDir/unsigned.apk"
 if($LASTEXITCODE){throw 'package failed'}

@@ -1,0 +1,141 @@
+{
+  "recordedAt": "2026-10-11T22:33:22.430305+09:00",
+  "device": "SM-A750N / Android 10 / API 29",
+  "apkSha256": "9b4426ca98a6466062c2696846057c088f9b4c6765b0cb1658a5a8d202282a32",
+  "newInstall": true,
+  "timings": {
+    "server-gangnam": {
+      "runsSeconds": [
+        13.683,
+        10.815,
+        10.958
+      ],
+      "medianSeconds": {
+        "road": 0.398,
+        "calculation": 9.599,
+        "total": 10.958
+      },
+      "phoneMaxTimerLagMs": 41.1
+    },
+    "device-gangnam": {
+      "runsSeconds": [
+        87.683,
+        87.443,
+        87.76
+      ],
+      "medianSeconds": {
+        "road": 8.467,
+        "calculation": 79.242,
+        "total": 87.683
+      },
+      "phoneMaxTimerLagMs": 1705.2
+    },
+    "server-busan": {
+      "runsSeconds": [
+        7.168,
+        6.243,
+        6.187
+      ],
+      "medianSeconds": {
+        "road": 0.178,
+        "calculation": 5.014,
+        "total": 6.243
+      },
+      "phoneMaxTimerLagMs": 39.3
+    },
+    "device-busan": {
+      "runsSeconds": [
+        42.015,
+        41.741,
+        41.681
+      ],
+      "medianSeconds": {
+        "road": 4.734,
+        "calculation": 37.007,
+        "total": 41.741
+      },
+      "phoneMaxTimerLagMs": 837.3
+    }
+  },
+  "comparisons": {
+    "gangnam": {
+      "deviceToServerRatio": 8.0,
+      "waitReductionPercent": 87.5
+    },
+    "busan": {
+      "deviceToServerRatio": 6.69,
+      "waitReductionPercent": 85.0
+    }
+  },
+  "firstDeviceDownloadSeconds": {
+    "gangnam": 94.511,
+    "busan": 45.396
+  },
+  "historicalLowEndGangnamSeconds": 87.032,
+  "sameApkHighEndGangnamSeconds": {
+    "server": 10.3,
+    "device": 18.73
+  },
+  "temperatureRangeC": [
+    30.9,
+    34.6
+  ],
+  "sampledPssMiB": [
+    242.4,
+    425.2
+  ],
+  "checks": [
+    "fourteen-fresh-process-calculations",
+    "gangnam-inputs-search-counts-scores-and-five-summaries-match",
+    "gangnam-cached-downloads-zero",
+    "busan-inputs-search-counts-scores-and-five-summaries-match",
+    "busan-cached-downloads-zero",
+    "historical-a750-inputs-and-results-match",
+    "same-apk-high-end-five-summaries-match",
+    "both-cancel-no-late-success-and-retry",
+    "network-off-fallback-cached-same-results",
+    "input-while-computing",
+    "terrain-directions-offline-retry-snapshot",
+    "terrain-chart-selection",
+    "custom-drawing-schema-v3-reopened",
+    "save-retry-and-duplicate-prevention",
+    "saved-course-offline-simulation",
+    "gpx-chooser-cancel",
+    "stationary-gps-lifecycle-interruption-save-delete",
+    "original-empty-content-restored",
+    "network-font-and-apk-preserved",
+    "helpers-removed-no-services"
+  ],
+  "features": {
+    "terrainAscentMeters": 96,
+    "customSchema": 3,
+    "gpsSavedPoints": 4,
+    "gpsRejectedPoints": 0,
+    "gpsActiveSeconds": 55.095
+  },
+  "saveInteractionObservations": [
+    {
+      "firstAutomatedTapNoNotice": true,
+      "freshTapSaved": true,
+      "duplicatePrevented": true
+    },
+    {
+      "firstAutomatedTapNoNotice": true,
+      "freshTapSaved": true,
+      "duplicatePrevented": true
+    }
+  ],
+  "gpsFirstPermissionObservation": {
+    "permissionFlowCancelledPreparation": true,
+    "retryRequired": true
+  },
+  "limitations": [
+    "각 조건 3회이며 USB 충전·백그라운드 부하·CPU 주파수를 통제하지 않았다.",
+    "같은 APK 고사양폰은 같은 날의 이전 측정이며 동시 통제 비교가 아니다.",
+    "입력량·탐색량·5후보 점수/표시를 대조했으며 모든 후보의 전체 좌표를 비교하지 않았다.",
+    "서버의 maxSliceMs는 서버 계산 구간이다. 폰의 화면 지연은 maxTimerLagMs와 구분한다.",
+    "비로그인 검증이며 계정 동기화·사진 서버·야외 GPS·장시간 배터리를 완료한 것은 아니다.",
+    "이름 입력 후 자동 저장 첫 터치가 두 번 반응하지 않았다. 새 좌표 터치 후 저장/중복 방지는 통과했으나 수동 터치 재현·원인은 미확정이다.",
+    "Android 10 첫 위치 항상 허용 후 준비가 취소되어 다시 시작했다. 권한 창 전환 처리의 후속 확인이 필요하다."
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "date": "2026-10-11",
+  "device": "SM-S942N / Android 16",
+  "status": "indoor-complete; field/long-lock/battery/additional-device pending",
+  "apkSha256": "9b4426ca98a6466062c2696846057c088f9b4c6765b0cb1658a5a8d202282a32",
+  "installedAtKst": "2026-10-11T19:09:47+09:00",
+  "checks": [
+    "original-content",
+    "test-record-cleanup",
+    "account-preserved",
+    "sync-enabled-and-empty",
+    "installed-apk",
+    "network-and-service-restored",
+    "location-permissions-restored",
+    "eight-calculations-five-candidate-summaries",
+    "server-device-offline-routing",
+    "cancel-retained-before-recalculation",
+    "terrain-online-memory-and-retry",
+    "terrain-new-process-offline-error",
+    "terrain-accessibility-actions",
+    "location-off-and-approximate-only",
+    "real-gps-pause-interrupt-resume-save",
+    "three-native-photo-formats",
+    "temporary-device-files-removed"
+  ],
+  "originalContent": {
+    "saved_courses": "3:5d60985a10271c63f0cc7ca75868b83798f0f0b8c0c6f4a819ce0b4a92008e8a",
+    "running_sessions": "2:f3ce10eed8596e1c0b8d04380f55288b73f21ddf1ca129f133b993cb2f7dd34b",
+    "running_points": "209:b6ef3a573ec5334bdfb353f8ec06ca8ffc0c3f5d5ab4503b292bbeb80a57c96b",
+    "storage_test_notes": "1:c30c777c63fa7efd60cbec6bd4d09ed534a62aaa8d49c458e3c2630e05798067"
+  },
+  "sameAccount": true,
+  "syncPending": 0,
+  "timings": {
+    "server-gangnam-1": {
+      "totalSeconds": 13.89,
+      "stages": "도로 조회 2.13초 · 다운로드\n코스 계산 9.57초"
+    },
+    "server-gangnam-2": {
+      "totalSeconds": 10.3,
+      "stages": "도로 조회 0.35초 · 캐시 사용\n코스 계산 9.57초"
+    },
+    "server-gangnam-3": {
+      "totalSeconds": 9.62,
+      "stages": "도로 조회 0.35초 · 캐시 사용\n코스 계산 8.91초"
+    },
+    "device-gangnam-1": {
+      "totalSeconds": 19.31,
+      "stages": "도로 조회 2.64초 · 캐시 사용\n코스 계산 16.67초"
+    },
+    "device-gangnam-2": {
+      "totalSeconds": 18.42,
+      "stages": "도로 조회 1.57초 · 캐시 사용\n코스 계산 16.84초"
+    },
+    "device-gangnam-3": {
+      "totalSeconds": 18.73,
+      "stages": "도로 조회 1.57초 · 캐시 사용\n코스 계산 17.15초"
+    },
+    "offline-fallback": {
+      "totalSeconds": 20.71,
+      "stages": "도로 조회 1.84초 · 캐시 사용\n코스 계산 18.85초"
+    },
+    "server-after-cancel": {
+      "totalSeconds": 9.91,
+      "stages": "도로 조회 0.26초 · 캐시 사용\n코스 계산 9.08초"
+    }
+  },
+  "medianTotalSeconds": {
+    "server": 10.3,
+    "device": 18.73
+  },
+  "candidateSummaries": [
+    "1순위 · 5.07 km · 83점 / 도형 크기 102% · 양방향 순환 코스",
+    "2순위 · 4.90 km · 83점 / 도형 크기 100% · 양방향 순환 코스",
+    "3순위 · 5.31 km · 82점 / 도형 크기 104% · 양방향 순환 코스",
+    "4순위 · 5.12 km · 82점 / 도형 크기 96% · 양방향 순환 코스",
+    "5순위 · 4.80 km · 81점 / 도형 크기 94% · 양방향 순환 코스"
+  ],
+  "terrainAscentMeters": 96,
+  "accessibility": {
+    "before": "고도 변화 그래프. 좌우로 조절해 지점을 선택하세요., 0.00km, 고도 35m",
+    "incremented": "고도 변화 그래프. 좌우로 조절해 지점을 선택하세요., 0.05km, 고도 38m",
+    "restored": "고도 변화 그래프. 좌우로 조절해 지점을 선택하세요., 0.00km, 고도 35m"
+  },
+  "photoOutputs": [
+    {
+      "bytes": 9291,
+      "sha256": "0396361ea273ced63a18a511a4471d054983d0a540b78b9e694977300620a4f5",
+      "width": 512,
+      "height": 512,
+      "mime": "image/jpeg",
+      "hasAppOrCommentMetadata": false
+    },
+    {
+      "bytes": 9805,
+      "sha256": "7c2d791091a34792094b5c08ccbb08037f2c06ad9a5d3f3e0ee277aee072c088",
+      "width": 512,
+      "height": 512,
+      "mime": "image/jpeg",
+      "hasAppOrCommentMetadata": false
+    },
+    {
+      "bytes": 9911,
+      "sha256": "b9d42325a569d4333d3fa86d9bbdb303e9513225e7f4337624324de9d3e92609",
+      "width": 512,
+      "height": 512,
+      "mime": "image/jpeg",
+      "hasAppOrCommentMetadata": false
+    }
+  ],
+  "gps": {
+    "status": "completed",
+    "active_ms": 39813,
+    "distance_m": 0,
+    "point_count": 5,
+    "rejected_count": 5
+  },
+  "cleanup": {
+    "photoCacheFilesRemoved": 12,
+    "syntheticGalleryRowsRemoved": 3,
+    "galleryFolderRemoved": true,
+    "databaseBackupRemoved": true,
+    "helperUninstalled": true,
+    "uiHelpersRemoved": true
+  },
+  "network": {
+    "wifi_on": "1",
+    "mobile_data": "1",
+    "airplane_mode_on": "0"
+  },
+  "servicesNone": true,
+  "limits": [
+    "No field distance/height ground truth",
+    "No 30-minute phone lock or battery drain",
+    "No second physical phone or latest low-end-phone build",
+    "No spoken TalkBack confirmation",
+    "No other-device profile instant-refresh retest",
+    "No reboot or OS memory-pressure test",
+    "Candidate UI summaries compared; not full geometry hashes in this phone run",
+    "2026-10-11 parallel Figma changes excluded from installed APK"
+  ]
+}
