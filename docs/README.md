@@ -1,5 +1,7 @@
 # 문서 목차
 
+**서비스 개발 시작:** [제품 개요](product/overview.md) → [Figma 화면별 기획·결정 목록](product/figma-service-analysis.md) → [현재 비즈니스 모델](product/business-model.md) → [S0~S8 개발 계획](planning/service-implementation.md) → [실제 현재 상태](handoff/status.md). 2026-10-11 전체 UI 분석과 사용자 최신 상품 표를 반영했다. 이후 개발에서도 기본 문맥으로 사용한다.
+
 2026-10-04: **실제 러닝 링크 공유 완료(PC·서버·웹)** — 실제 Cloudflare·Supabase의 합성 링크 생성·세 경로/토글·공유 중단과 테스트 계정/자료 정리를 완료했다. 원본 앱에 배포 주소를 연결했고 18:56:38 KST 휴대폰에 동일 ID·서명 APK를 자료 유지 설치했다. 사용자 최종 지시에 따라 PC·서버·웹 범위를 완료하고 추가 폰 검증·임시 UI 파일 정리는 후속으로 남겼다. [검증/폰 후속](quality/run-link-sharing-verification.md).
 
 2026-10-04: **두 작업 목표·휴대폰 후속 완료** — 탈퇴 서버·실제 Google 프로필 검증 후 사용자 승인으로 13:18:40 최신 APK를 휴대폰에 설치했다. 프로필 저장/재시작/원상 복구·동기화/탈퇴 안내와 기존 코스/러닝/GPS/메모 보존 통과. Figma·카카오/네이버는 후속이다. [사용법](development/account-mypage.md) · [실제 검증·APK·후속](quality/account-mypage-verification.md). 아래 문단은 과거 이력이다.

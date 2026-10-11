@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**2026-10-11 서비스 기획:** 기존 기능 기반 위에 Figma 실제 서비스 경험을 단계적으로 구현합니다. [제품 개요](docs/product/overview.md)·[화면별 분석](docs/product/figma-service-analysis.md)·[현재 상품 기준](docs/product/business-model.md)·[개발 계획 S0~S8](docs/planning/service-implementation.md)을 이후 작업의 기준으로 사용합니다. 다음은 S0 서비스 구조/5탭이며 이번은 문서 갱신만 수행했습니다.
+
 **2026-10-10 코스 지형 표시:** 코스 후보와 저장 상세에서 ‘경사 보기’로 구간 색상·총 오르막·고도 그래프를 확인하고 방향을 바꿔 볼 수 있습니다. MapTiler 온라인 조회와 실행 중 메모리 재사용이며 기존 추천 순위는 유지합니다. 93개·타입/린트·API 36 검증과 동일 서명 APK를 준비했으며 **휴대폰에는 설치하지 않았습니다.** [사용법](docs/development/course-terrain.md)·[화면과 검증](docs/quality/course-terrain-20261010.md).
 
 **2026-10-10 Cloud Run 코스 계산:** 온라인에서는 로그인 없이 서버가 코스를 계산합니다. 서버 연결 실패·오프라인에서는 기기 계산을 유지하며, ‘기기 계산·도로 저장’으로 오프라인 지역을 준비할 수 있습니다. Supabase 로그인·개인 자료 동기화와 코스 저장 형식은 유지합니다. [구조와 실행](docs/development/cloud-run-routes.md)·[검증 결과](docs/quality/cloud-run-routes-20261010.md)·[최신 상태](docs/handoff/status.md).

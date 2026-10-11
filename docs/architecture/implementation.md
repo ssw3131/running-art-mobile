@@ -1,5 +1,7 @@
 # 구현 구조와 데이터 흐름
 
+**2026-10-11 현재 서비스 전환:** [화면 분석](../product/figma-service-analysis.md)과 [S0~S8 계획·폴더 책임](../planning/service-implementation.md)을 따른다. modules는 기능 기반, app은 경로/레이아웃, features는 화면 합성·상태, components는 기능과 독립된 표현, theme는 토큰/폰트다. 상품 숫자는 화면에 하드코딩하지 않고 [정책 버전/카탈로그·실제 권리/거래](../product/business-model.md)를 분리한다. 새 도전·동의·성취·상품 모듈은 필요한 단계에서만 추가한다. 공통 UI는 10-11 원본 대조까지 완료했고 계정/사진/탈퇴·동기화·공유·온라인 서버 계산은 [최신 상태](../handoff/status.md)를 따른다. 아래 날짜별 미구현/미배포 문단은 해당 시점 이력이다.
+
 2026-10-05 공통 UI: `src/theme`는 색상/치수/로컬 폰트, `src/components/ui`는 기능과 독립된 제어형 UI, `src/components/navigation`은 표시와 이벤트, `src/features/ui-preview`는 미리보기 상태, `src/app/ui-preview.tsx`는 라우팅 경계를 담당한다. 기존 기능 UI는 후속 화면 이관 때 전환한다. 최신 Figma 대조 일부는 아직 미완료다. [공통 UI 계약](../development/common-ui.md).
 
 2026-10-04: `account-withdraw`와 `modules/account/withdrawal*`에 확인→암호화 확인표 저장→SQLite v7 진행 상태/동기화 차단→서버 삭제/조회→기기 기록 비로그인 보관→세션 정리를 연결했다. 실제 서버 미배포로 기본 비활성이다. 내용 데이터는 보존하고 이전 동기화 메타데이터만 정리한다. Figma 디자인 적용·대조는 사용자 지시로 이번 목표에서 제외했다.
