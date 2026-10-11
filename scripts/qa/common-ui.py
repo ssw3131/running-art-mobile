@@ -45,6 +45,40 @@ if __name__ == '__main__':
         adb('shell', 'am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///ui-preview', APP)
     elif action == 'tap':
         tap(sys.argv[2])
+    elif action == 'seek':
+        for _ in range(18):
+            tree = capture('seek')
+            viewport = next(n for n in tree.iter('node') if n.get('resource-id') == 'ui-preview-scroll')
+            _, top, _, bottom = map(int, re.findall(r'\d+', viewport.get('bounds')))
+            node = next((n for n in tree.iter('node') if n.get('resource-id') == sys.argv[2]), None)
+            if node is not None:
+                _, y1, _, y2 = map(int, re.findall(r'\d+', node.get('bounds')))
+                if top + 20 <= y1 < y2 <= bottom - 20:
+                    print('Visible:', sys.argv[2])
+                    break
+            adb('shell', 'input', 'swipe', '980', str(bottom-60), '980', str(top+250), '450')
+        else:
+            raise RuntimeError('Control not reached: ' + sys.argv[2])
+    elif action == 'choices':
+        for name, checkbox, toggle in [('choice-initial', False, True), ('choice-changed', True, False), ('choice-restored', False, True)]:
+            if name != 'choice-initial':
+                tap('preview-checkbox')
+                tap('preview-toggle')
+            tree = capture(name)
+            for key, checked, enabled in [('preview-checkbox', checkbox, True), ('preview-toggle', toggle, True), ('preview-checkbox-disabled', True, False), ('preview-toggle-disabled', True, False)]:
+                node = next(n for n in tree.iter('node') if n.get('resource-id') == key)
+                assert node.get('checkable') == 'true', node.attrib
+                assert node.get('checked') == str(checked).lower(), node.attrib
+                assert node.get('enabled') == str(enabled).lower(), node.attrib
+                x1, y1, x2, y2 = map(int, re.findall(r'\d+', node.get('bounds')))
+                assert 538 <= y1 < y2 <= 2142 and y2-y1 >= 126, node.attrib
+                if not enabled:
+                    adb('shell', 'input', 'tap', str((x1+x2)//2), str((y1+y2)//2))
+            after = capture(name + '-disabled')
+            for key in ['preview-checkbox-disabled', 'preview-toggle-disabled']:
+                node = next(n for n in after.iter('node') if n.get('resource-id') == key)
+                assert node.get('checked') == 'true' and node.get('enabled') == 'false'
+        print('Checkbox/switch: both transitions, disabled states, accessibility and 48dp targets passed')
     elif action == 'scroll':
         adb('shell', 'input', 'swipe', '980', '1900', '980', '650', '400')
     elif action == 'bottom':

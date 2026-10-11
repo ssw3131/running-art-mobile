@@ -1,0 +1,466 @@
+{
+  "date": "2026-10-11",
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "page": "0:1",
+  "note": "Visible text ranges only. Long strings truncated at 65 characters. Korean/Inter text uses agreed Noto Sans KR default; Roboto numeric ranges are explicit.",
+  "fonts": {
+    "Noto Sans KR / Bold": 636,
+    "Noto Sans KR / Medium": 153,
+    "Noto Sans KR / Regular": 142,
+    "Roboto / Medium": 16,
+    "Roboto / Black": 44,
+    "Noto Sans KR / Black": 65,
+    "Inter / Medium": 9,
+    "Roboto / Regular": 2,
+    "Inter / Regular": 2,
+    "Inter / Bold": 38,
+    "Roboto / SemiBold": 4,
+    "Roboto / Bold": 2,
+    "Inter / Black": 1,
+    "Inter / Semi Bold": 9
+  },
+  "roboto": [
+    {
+      "id": "305:11648",
+      "text": "2/5",
+      "style": "Medium"
+    },
+    {
+      "id": "305:11651",
+      "text": "5/15",
+      "style": "Medium"
+    },
+    {
+      "id": "3:1253",
+      "text": "4.2",
+      "style": "Black"
+    },
+    {
+      "id": "268:7495",
+      "text": "7.1 ",
+      "style": "Black"
+    },
+    {
+      "id": "268:7499",
+      "text": "59",
+      "style": "Black"
+    },
+    {
+      "id": "305:11664",
+      "text": "2/5",
+      "style": "Medium"
+    },
+    {
+      "id": "305:11667",
+      "text": "5/15",
+      "style": "Medium"
+    },
+    {
+      "id": "8:90",
+      "text": "6.8 ",
+      "style": "Black"
+    },
+    {
+      "id": "8:96",
+      "text": "12",
+      "style": "Black"
+    },
+    {
+      "id": "8:102",
+      "text": "52.3 ",
+      "style": "Black"
+    },
+    {
+      "id": "305:11680",
+      "text": "2/5",
+      "style": "Medium"
+    },
+    {
+      "id": "305:11683",
+      "text": "5/15",
+      "style": "Medium"
+    },
+    {
+      "id": "307:2184",
+      "text": "이용자는 서비스에서 안내하는 절차에 따라 AI 코스 브리핑, 완주 기념 이미지 생성 또는 회사가 별도로 정한 유료 기",
+      "style": "Regular"
+    },
+    {
+      "id": "307:2184",
+      "text": "이용자는 관련 법령이 정하는 범위에서 유료 이용권 구매에 대한 청약철회 또는 계약 해제를 요청할 수 있습니다.\n이용권",
+      "style": "Regular"
+    },
+    {
+      "id": "10:2821",
+      "text": "5",
+      "style": "Black"
+    },
+    {
+      "id": "253:7303",
+      "text": "2/5",
+      "style": "Medium"
+    },
+    {
+      "id": "253:7300",
+      "text": "5/15",
+      "style": "Medium"
+    },
+    {
+      "id": "289:10046",
+      "text": "5",
+      "style": "Black"
+    },
+    {
+      "id": "289:10362",
+      "text": "2/5",
+      "style": "Medium"
+    },
+    {
+      "id": "289:10365",
+      "text": "5/15",
+      "style": "Medium"
+    },
+    {
+      "id": "289:10235",
+      "text": "현재 설정으로 코스 생성할까요?",
+      "style": "SemiBold"
+    },
+    {
+      "id": "289:10236",
+      "text": "설정한 조건을 바탕으로 추천 코스 5개를 만들어요.",
+      "style": "Medium"
+    },
+    {
+      "id": "289:10324",
+      "text": "3",
+      "style": "Black"
+    },
+    {
+      "id": "289:10331",
+      "text": "2",
+      "style": "Black"
+    },
+    {
+      "id": "289:10244",
+      "text": "코스는 1번 생성하면 최대 5개가 생성돼요.\n조건을 바꿔 다시 생성하면 이용 횟수가 추가로 차감돼요.\n생성에는 잠시 ",
+      "style": "SemiBold"
+    },
+    {
+      "id": "25:378",
+      "text": "87%",
+      "style": "Black"
+    },
+    {
+      "id": "25:403",
+      "text": "76%",
+      "style": "Black"
+    },
+    {
+      "id": "25:428",
+      "text": "64%",
+      "style": "Black"
+    },
+    {
+      "id": "25:453",
+      "text": "51%",
+      "style": "Black"
+    },
+    {
+      "id": "305:11696",
+      "text": "2/5",
+      "style": "Medium"
+    },
+    {
+      "id": "305:11699",
+      "text": "5/15",
+      "style": "Medium"
+    },
+    {
+      "id": "191:14578",
+      "text": "5.2",
+      "style": "Black"
+    },
+    {
+      "id": "191:14581",
+      "text": "00:35:00",
+      "style": "Black"
+    },
+    {
+      "id": "268:9657",
+      "text": "코스 저장 공간을 늘릴까요?",
+      "style": "SemiBold"
+    },
+    {
+      "id": "268:9658",
+      "text": "저장 공간을 추가하면 더 많은 코스를 보관하고,\n언제든 다시 달릴 수 있어요.",
+      "style": "Medium"
+    },
+    {
+      "id": "268:9668",
+      "text": "코스 생성 횟수도 함께 추가돼요.\n구매 후 바로 사용할 수 있어요.",
+      "style": "SemiBold"
+    },
+    {
+      "id": "268:9364",
+      "text": "5.2",
+      "style": "Black"
+    },
+    {
+      "id": "268:9369",
+      "text": "00:35:00",
+      "style": "Black"
+    },
+    {
+      "id": "286:9902",
+      "text": "새롭게 늘어난 혜택",
+      "style": "Bold"
+    },
+    {
+      "id": "286:9960",
+      "text": "구매 내역 확인 >",
+      "style": "Medium"
+    },
+    {
+      "id": "286:10000",
+      "text": "+10",
+      "style": "Black"
+    },
+    {
+      "id": "286:10007",
+      "text": "15",
+      "style": "Black"
+    },
+    {
+      "id": "305:11192",
+      "text": "구매 기록",
+      "style": "Bold"
+    },
+    {
+      "id": "35:5846",
+      "text": "5.2",
+      "style": "Black"
+    },
+    {
+      "id": "35:5849",
+      "text": "00:35:00",
+      "style": "Black"
+    },
+    {
+      "id": "35:5939",
+      "text": "2026/09/23",
+      "style": "Medium"
+    },
+    {
+      "id": "24:4228",
+      "text": "3.2",
+      "style": "Black"
+    },
+    {
+      "id": "24:4230",
+      "text": "1.8",
+      "style": "Black"
+    },
+    {
+      "id": "24:4231",
+      "text": "00:18:42",
+      "style": "Black"
+    },
+    {
+      "id": "24:4232",
+      "text": "5:48",
+      "style": "Black"
+    },
+    {
+      "id": "27:4345",
+      "text": "1.8",
+      "style": "Black"
+    },
+    {
+      "id": "27:4356",
+      "text": "00:18:42",
+      "style": "Black"
+    },
+    {
+      "id": "27:4378",
+      "text": "5:48",
+      "style": "Black"
+    },
+    {
+      "id": "268:9330",
+      "text": "1.8",
+      "style": "Black"
+    },
+    {
+      "id": "268:9336",
+      "text": "00:18:42",
+      "style": "Black"
+    },
+    {
+      "id": "268:9340",
+      "text": "5:48",
+      "style": "Black"
+    },
+    {
+      "id": "35:4694",
+      "text": "5.2",
+      "style": "Black"
+    },
+    {
+      "id": "35:4699",
+      "text": "32:18",
+      "style": "Black"
+    },
+    {
+      "id": "268:9343",
+      "text": "6:12",
+      "style": "Black"
+    },
+    {
+      "id": "268:9347",
+      "text": "312",
+      "style": "Black"
+    },
+    {
+      "id": "145:14214",
+      "text": "5.2",
+      "style": "Black"
+    },
+    {
+      "id": "145:14221",
+      "text": "32:18",
+      "style": "Black"
+    },
+    {
+      "id": "145:14228",
+      "text": "6:12",
+      "style": "Black"
+    },
+    {
+      "id": "145:14235",
+      "text": "312",
+      "style": "Black"
+    },
+    {
+      "id": "196:15180",
+      "text": "5.2",
+      "style": "Black"
+    },
+    {
+      "id": "196:15187",
+      "text": "32:18",
+      "style": "Black"
+    },
+    {
+      "id": "196:15194",
+      "text": "6:12",
+      "style": "Black"
+    },
+    {
+      "id": "196:15201",
+      "text": "312",
+      "style": "Black"
+    }
+  ],
+  "nav": [
+    {
+      "id": "I253:6536;253:6494",
+      "parent": "253:6535",
+      "font": {
+        "family": "Noto Sans KR",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700
+        }
+      },
+      "fills": [
+        {
+          "type": "SOLID",
+          "visible": true,
+          "opacity": 1,
+          "blendMode": "NORMAL",
+          "color": {
+            "r": 0.4588235318660736,
+            "g": 0.4588235318660736,
+            "b": 0.4588235318660736
+          },
+          "boundVariables": {}
+        }
+      ]
+    },
+    {
+      "id": "I253:6559;253:6494",
+      "parent": "253:6558",
+      "font": {
+        "family": "Noto Sans KR",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700
+        }
+      },
+      "fills": [
+        {
+          "type": "SOLID",
+          "visible": true,
+          "opacity": 1,
+          "blendMode": "NORMAL",
+          "color": {
+            "r": 0.4588235318660736,
+            "g": 0.4588235318660736,
+            "b": 0.4588235318660736
+          },
+          "boundVariables": {}
+        }
+      ]
+    },
+    {
+      "id": "I253:6582;253:6494",
+      "parent": "253:6581",
+      "font": {
+        "family": "Noto Sans KR",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700
+        }
+      },
+      "fills": [
+        {
+          "type": "SOLID",
+          "visible": true,
+          "opacity": 1,
+          "blendMode": "NORMAL",
+          "color": {
+            "r": 0.4588235318660736,
+            "g": 0.4588235318660736,
+            "b": 0.4588235318660736
+          },
+          "boundVariables": {}
+        }
+      ]
+    },
+    {
+      "id": "I253:6628;253:6494",
+      "parent": "253:6627",
+      "font": {
+        "family": "Noto Sans KR",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700
+        }
+      },
+      "fills": [
+        {
+          "type": "SOLID",
+          "visible": true,
+          "opacity": 1,
+          "blendMode": "NORMAL",
+          "color": {
+            "r": 0.4588235318660736,
+            "g": 0.4588235318660736,
+            "b": 0.4588235318660736
+          },
+          "boundVariables": {}
+        }
+      ]
+    }
+  ]
+}

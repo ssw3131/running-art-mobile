@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type PropsWithChildren } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AppText, Button, ConfirmDialog, Divider, Icon, IconButton, SelectField, Surface, Tabs, TextField } from '@/components/ui';
+import { AppText, Button, Checkbox, ConfirmDialog, Divider, Icon, IconButton, SelectField, Surface, Tabs, TextField, Toggle } from '@/components/ui';
 import { BottomTabBar } from '@/components/navigation/BottomTabBar';
 import { TopBar } from '@/components/navigation/TopBar';
 import { colors, radius, space } from '@/theme/tokens';
@@ -16,12 +16,14 @@ export function UIPreviewScreen({ onBack }: { onBack(): void }) {
   const [selection, setSelection] = useState<string | null>(null); const [dialog, setDialog] = useState(false);
   const [busy, setBusy] = useState(false); const [message, setMessage] = useState('버튼을 눌러 상태를 확인하세요.');
   const [confirmationCount, setConfirmationCount] = useState(0);
+  const [checked, setChecked] = useState(false); const [enabled, setEnabled] = useState(true);
   const dialogTrigger = useRef<View>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   const confirm = () => { setConfirmationCount(n => n + 1); setBusy(true); timer.current = setTimeout(() => { setBusy(false); setDialog(false); setMessage('미리보기 확인 완료'); }, 1500); };
   return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: colors.background, paddingTop: inset.top }}>
-    <TopBar title="공통 UI" leading={<Button compact variant="outline" label="뒤로" onPress={onBack} />} />
+    <TopBar title="공통 UI" leading={<IconButton label="뒤로" onPress={onBack}><Icon name="chevronLeft" /></IconButton>}
+      trailing={<IconButton label="미리보기 메뉴" onPress={() => setMessage('상단 메뉴 버튼 선택')}><Icon name="menu" /></IconButton>} />
     <ScrollView testID="ui-preview-scroll" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 26, paddingBottom: 32, maxWidth: 540, width: '100%', alignSelf: 'center' }}>
       <AppText variant="caption" style={{ color: colors.subtle }}>RunPen · 라이트 스타일 미리보기</AppText>
       <AppText variant="caption" style={{ color: colors.subtle }}>입력과 선택은 이 화면 안에서만 유지됩니다.</AppText>
@@ -31,10 +33,11 @@ export function UIPreviewScreen({ onBack }: { onBack(): void }) {
         <AppText weight="medium">중간 굵기 · 한글과 English 123</AppText>
         <AppText weight="semibold">세미볼드 · 한글과 English 123</AppText>
         <AppText weight="bold">굵게 · 한글과 English 123</AppText>
+        <AppText weight="black">가장 굵게 · 한글과 English 123</AppText>
         <AppText variant="caption">Roboto 명시 지정 예시</AppText>
-        <AppText family="roboto" variant="metric" weight="bold">5.24 km</AppText>
-        <AppText>혼용 예시: <AppText family="roboto" weight="medium">00:32:18</AppText> 달렸어요</AppText>
-        <AppText variant="caption">실제 화면별 Roboto 적용 위치는 최신 Figma 대조 후 확정합니다.</AppText>
+        <AppText family="roboto" variant="metric" weight="black">5.24</AppText>
+        <AppText>혼용 예시: <AppText family="roboto" weight="black">00:32:18</AppText> 달렸어요</AppText>
+        <AppText variant="caption">거리·시간·페이스·횟수는 Figma에서 지정한 수치만 Roboto로 표시합니다.</AppText>
       </Section>
       <Divider />
       <Section title="색상·간격·모서리">
@@ -64,6 +67,16 @@ export function UIPreviewScreen({ onBack }: { onBack(): void }) {
         <SelectField label="목표 거리" value={selection} onChange={setSelection} options={[{ value: '3', label: '3 km' }, { value: '5', label: '5 km' }, { value: '10', label: '10 km' }, { value: '20', label: '20 km (준비 중)', disabled: true }]} testID="preview-select" />
       </Section>
       <Divider />
+      <Section title="체크박스·스위치">
+        <Checkbox label="선택 항목" checked={checked} onChange={setChecked} testID="preview-checkbox" />
+        <Checkbox label="선택된 비활성 항목" checked disabled onChange={() => setMessage('오류: 비활성 체크박스 실행')} testID="preview-checkbox-disabled" />
+        <Checkbox label="선택되지 않은 비활성 항목" checked={false} disabled onChange={() => setMessage('오류: 비활성 체크박스 실행')} />
+        <Toggle label="음성 안내" checked={enabled} onChange={setEnabled} testID="preview-toggle" />
+        <Toggle label="켜진 비활성 스위치" checked disabled onChange={() => setMessage('오류: 비활성 스위치 실행')} testID="preview-toggle-disabled" />
+        <Toggle label="꺼진 비활성 스위치" checked={false} disabled onChange={() => setMessage('오류: 비활성 스위치 실행')} />
+        <AppText testID="preview-choice-state" variant="caption" accessibilityLiveRegion="polite">{`체크 ${checked ? 'ON' : 'OFF'} · 안내 ${enabled ? 'ON' : 'OFF'}`}</AppText>
+      </Section>
+      <Divider />
       <Section title="탭">
         <Tabs value={tab} onChange={setTab} options={[{ value: 'condition', label: '조건 설정' }, { value: 'recommend', label: '추천 코스' }]} />
         <AppText variant="caption">{tab === 'condition' ? '조건 설정 내용' : '추천 코스 내용'}</AppText>
@@ -73,11 +86,15 @@ export function UIPreviewScreen({ onBack }: { onBack(): void }) {
         <AppText testID="preview-confirm-count" variant="caption" accessibilityLiveRegion="polite">확인 실행 {confirmationCount}회</AppText>
         <AppText variant="caption">뒤로 가기로 닫기 · 확인 중 중복 실행 방지 · 글꼴 확대 시 스크롤</AppText>
       </Section>
-      <Section title="원본 대조 대기">
-        <AppText variant="caption">체크박스·스위치 선택 상태와 상단 바 아이콘은 Figma 호출 한도로 원본 에셋을 아직 확보하지 못했습니다.</AppText>
+      <Section title="원본 아이콘">
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 20 }}>
+          <Icon name="chevronLeft" /><Icon name="menu" /><Icon name="logout" /><Icon name="chevronDown" />
+          <View style={{ padding: 12, backgroundColor: colors.action, borderRadius: radius.field }}><Icon name="share" /></View>
+        </View>
+        <AppText variant="caption">원본 크기 유지 · 아이콘 버튼 터치 영역 최소 48</AppText>
       </Section>
     </ScrollView>
     <BottomTabBar value={nav} onChange={setNav} bottomInset={inset.bottom} />
-    <ConfirmDialog visible={dialog} title="미리보기를 확인할까요?" description={'확인을 누르면 잠시 처리 중 상태가 표시돼요.\n실제 계정이나 기록은 변경하지 않아요.'} busy={busy} onConfirm={confirm} onCancel={() => setDialog(false)} returnFocusRef={dialogTrigger} />
+    <ConfirmDialog visible={dialog} title="미리보기를 확인할까요?" description={'확인을 누르면 잠시 처리 중 상태가 표시돼요.\n실제 계정이나 기록은 변경하지 않아요.'} icon={<Icon name="logout" />} busy={busy} onConfirm={confirm} onCancel={() => setDialog(false)} returnFocusRef={dialogTrigger} />
   </KeyboardAvoidingView>;
 }

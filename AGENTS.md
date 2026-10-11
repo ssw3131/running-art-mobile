@@ -1,5 +1,7 @@
 # Running Art Mobile — 작업 지침
 
+**2026-10-11 공통 UI 완료:** Figma 원본 조회 복구로 체크/토글 양 상태·상단/팝업 아이콘·80dp 상단 바·공유 슬롯을 완성했다. Noto 기본·명시 Roboto/Black과 UI 글꼴 전수 대조, 타입/린트/Android export·API 36 상태/한글/커서/붙여넣기/확대 검증 통과. 이번 변경은 휴대폰 미설치, 기능 화면 이관은 다음 단계다. 과거 공통 UI blocked보다 [현재 상태](docs/handoff/status.md)·[검증](docs/quality/common-ui-verification.md)을 우선한다.
+
 **2026-10-10 코스 지형 표시 완료:** 선택 후보·저장 상세의 ‘경사 보기’에 MapTiler 고도 조회·세 색상·누적 상승·고도 그래프·양방향/지도 선택 지점을 연결했다. 관련 93개·최종 지형 16개·타입/린트·release, API 36의 실제 조회/저장/방향/오프라인·재시도/러닝 준비·코스 행 해시 보존을 통과했다. `20261010-terrain.apk` 준비, **휴대폰 미설치·서버/요금제/DB 형식 변경 없음**. 경사 추천·영구 저장·실시간 안내·야외 정확도는 후속. [사용법](docs/development/course-terrain.md)·[검증](docs/quality/course-terrain-20261010.md)·[현재 상태](docs/handoff/status.md).
 
 **2026-10-10 계산 서버 보호·예산 알림 완료:** 공통 분/시간/일/월 제한·비공개 GCS 원자적 기록·빠른 429·비상 중지/재개를 `00002-nog`로 배포하고 트래픽 100%를 확인했다. HTTP 수신 동시 8·엔진 실행 1이며 기존 앱 계약·APK·휴대폰은 유지한다. 관련 18개·실제 저장소 경쟁·결과 해시·8요청/중지/재개를 검증했다. 후속 사용자 승인으로 **월 15,000 KRW** 예산을 등록하고 프로젝트 전체·크레딧 제외·실제 50/90/100%·예상 100%·기존 결제 수신자 설정을 조회 검증했다. 메일 도착 실증·전체 지출 차단·대규모 DDoS 완료를 뜻하지 않는다. [운영](docs/development/compute-protection.md)·[검증](docs/quality/compute-protection-20261010.md)·[최신 상태](docs/handoff/status.md).

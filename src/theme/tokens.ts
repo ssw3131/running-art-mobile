@@ -12,8 +12,8 @@ export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24, section: 3
 export const radius = { field: 8, compact: 10, card: 20, outline: 28, button: 30, pill: 999 } as const;
 export const size = { touch: 48, button: 60, secondaryButton: 50, field: 50, popupButton: 35 } as const;
 export const fonts = {
-  noto: { regular: 'NotoSansKR_400Regular', medium: 'NotoSansKR_500Medium', semibold: 'NotoSansKR_600SemiBold', bold: 'NotoSansKR_700Bold' },
-  roboto: { regular: 'Roboto_400Regular', medium: 'Roboto_500Medium', semibold: 'Roboto_600SemiBold', bold: 'Roboto_700Bold' },
+  noto: { regular: 'NotoSansKR_400Regular', medium: 'NotoSansKR_500Medium', semibold: 'NotoSansKR_600SemiBold', bold: 'NotoSansKR_700Bold', black: 'NotoSansKR_900Black' },
+  roboto: { regular: 'Roboto_400Regular', medium: 'Roboto_500Medium', semibold: 'Roboto_600SemiBold', bold: 'Roboto_700Bold', black: 'Roboto_900Black' },
 } as const;
 export type FontFamily = keyof typeof fonts;
 export type FontWeight = keyof typeof fonts.noto;

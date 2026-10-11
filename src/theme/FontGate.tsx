@@ -5,14 +5,16 @@ import { NotoSansKR_400Regular } from '@expo-google-fonts/noto-sans-kr/400Regula
 import { NotoSansKR_500Medium } from '@expo-google-fonts/noto-sans-kr/500Medium';
 import { NotoSansKR_600SemiBold } from '@expo-google-fonts/noto-sans-kr/600SemiBold';
 import { NotoSansKR_700Bold } from '@expo-google-fonts/noto-sans-kr/700Bold';
+import { NotoSansKR_900Black } from '@expo-google-fonts/noto-sans-kr/900Black';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular';
 import { Roboto_500Medium } from '@expo-google-fonts/roboto/500Medium';
 import { Roboto_600SemiBold } from '@expo-google-fonts/roboto/600SemiBold';
 import { Roboto_700Bold } from '@expo-google-fonts/roboto/700Bold';
+import { Roboto_900Black } from '@expo-google-fonts/roboto/900Black';
 
 // Package assets are bundled by Metro. No runtime font download is performed.
-export const fontSources = { NotoSansKR_400Regular, NotoSansKR_500Medium, NotoSansKR_600SemiBold, NotoSansKR_700Bold,
-  Roboto_400Regular, Roboto_500Medium, Roboto_600SemiBold, Roboto_700Bold };
+export const fontSources = { NotoSansKR_400Regular, NotoSansKR_500Medium, NotoSansKR_600SemiBold, NotoSansKR_700Bold, NotoSansKR_900Black,
+  Roboto_400Regular, Roboto_500Medium, Roboto_600SemiBold, Roboto_700Bold, Roboto_900Black };
 export function FontGate({ children }: PropsWithChildren) {
   const [attempt, setAttempt] = useState(0); const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
   useEffect(() => {

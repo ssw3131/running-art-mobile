@@ -1,4 +1,34 @@
-# 공통 UI 검증 — 2026-10-05
+# 공통 UI 검증 — 2026-10-11
+
+## 최신 판정 — 공통 기반·갤러리 완료
+
+개인 Figma 연결의 원본 접근이 복구되어 이전 blocked 원인을 해소했다. 공통 스타일·상태 컴포넌트·원본 아이콘·글꼴 API와 미리보기를 완료했다. 서비스 화면별 이관·휴대폰 재설치·iOS 검증은 별도 후속이다. 아래 10-05의 부분 완료/원본 대기는 당시 이력이다.
+
+### 원본 대조와 구현
+
+- UI 페이지 `0:1`의 보이는 Text 전체를 구간별 조회했다. Noto 996구간, Roboto 68구간, Inter 59구간이다. [노드·문구·굵기 근거](../design/common-ui-font-audit-20261011.json). 기본 Noto 정책 유지, 명시된 Roboto 수치의 Black 지원을 추가했다. 한글에 남은 Roboto/Inter는 공통 Noto로 표시한다.
+- 체크박스 ON/OFF `54:8929`/`54:8930`, 스위치 ON/OFF `30:4568`/`30:4569` 연결. OFF 체크박스는 실제 도형 primitive, 다른 상태는 원본 SVG다. 기본값을 제공하면서 선택적인 visuals 확장을 유지했다.
+- TopBar 원본 `253:6237`보다 실제 UI `253:6238`의 Noto Bold 24 제목을 우선했다. 최소 높이 80·상단 3 제목 여백·그림자, 원본 back 30/menu 24와 48dp 터치를 확인했다. 로그아웃 팝업 원본 `49:8453`은 16×16이다.
+- 공유 아이콘 `248:4593`의 18×18 바깥 슬롯·원본 21.5×20.666·left -2.5/top -1.6667 overflow 기하를 반영했다. 14개 SVG의 root 크기를 유지하며 Android에서 표시했다.
+- UI 하단 라벨 95개 모두 #757575였다. 기존 선택 주황색은 앱 상호작용 보완임을 명시했다. 연결된 Simple Design System 코드 컴포넌트는 이 RN 저장소/설치 의존성에 없어 해당 Figma 노드를 원본 SVG로 export했다.
+
+### 실행 검증
+
+- `dev.ps1 check`: 타입·전체 lint 통과. Android export 1,655 modules/55 assets, `index-bdc23daa00523aa22561b761b6d2db41.hbc`. 로컬 Noto/Roboto 400/500/600/700/900 각각 5개 포함.
+- `RunningArt_UI_QA` API 36, emulator-5558의 기존 debug APK와 localhost 127.0.0.1:8087의 최신 `--no-dev --minify` JS로 실행했다. 이번에는 네이티브 의존성 변경이나 새 APK 빌드를 하지 않았다. 기존 설치가 release여서 debug APK로 갱신한 뒤 최신 화면 문구를 확인했다.
+- `common-ui.py choices`: 실제 체크·스위치 OFF→ON/ON→OFF와 복귀, 비활성 상태, 접근성 checkable/checked/enabled, 48dp 터치 영역 assertion 통과. `choice-initial`, `choice-changed`, `choice-restored` 및 `*-disabled` PNG/XML.
+- `final-top`, `choice-before`, `final-bottom`, `final-modal`: 원본 상단 아이콘·Black 글꼴·ON/OFF·팝업/공유 아이콘 표시 대조. `confirm-burst 1`: 실제 확인 4회 터치가 콜백 1회인 것을 다시 확인했다.
+- `scaled-top`, `scaled-choices`, `scaled-toggles`, `scaled-modal`: 480dpi=360dp, font_scale 1.6. 제목·라벨·모달 줄바꿈과 버튼/원본 이미지 표시 확인. 하단 라벨은 여러 줄로 확장되고 아이콘 상단 정렬을 유지했다.
+- 실제 Gboard 두벌식 키 ㅎ/ㅏ/ㄴ/ㄱ/ㅡ/ㄹ과 공백으로 `한글 ` 조합을 확인했다(`korean-retried.xml`). 언어 추가 직후에는 자모가 분리됐고 Android 자체 Gboard 설정 입력창에서도 같은 현상(`native-composed`)을 확인했다. Gboard 재시작 후 정상 조합됐다. TextField 제품 코드는 수정하지 않았다.
+- 한국어/영문 키보드 전환 후 한글·영문·숫자 혼용 값, Android 전체 선택/복사/붙여넣기 결과의 정확한 2회 연결, 처음부터 한 문자 뒤로 커서 이동 후 `X` 삽입을 문자열 assertion으로 확인했다(`korean-mixed`, `clipboard-result`, `cursor-result`). 한국어 키보드에서 adb의 영문 keycode가 한글로 처리되는 시험 도구 조건은 앱의 문자 누락으로 판정하지 않았다.
+
+### 범위와 한계
+
+10-05에 확인한 TalkBack 모달 포커스 복귀 로직은 변경하지 않았다. 첫 서비스 활성화 직후 포커스 불안정·iOS/제조사별 IME·실물 휴대폰의 이번 UI는 추가 검증 대상이다. 오래된 debug APK의 루트 러닝 복원 배너가 다시 나타났으며 공통 UI 밖의 기존 문제다. 이번 작업은 물리 휴대폰·서버·사용자 자료를 조작하지 않았다. 별도 대화의 휴대폰 검증 변경은 이 결과에 포함하지 않는다.
+
+검증 후 font_scale 1.0/밀도 420/하드웨어 키보드 시 IME 표시 0/접근성 서비스 null을 확인했다. 추가한 한국어는 재검증용 AVD에 보존하고 마지막 입력 언어는 English로 돌렸다. 앱·adb reverse·UI 전용 AVD·localhost Metro를 종료했고 8087 listener가 없음을 확인했다. 기기의 임시 PNG/XML은 제거하고 PC의 `.cache/common-ui-qa` 증거를 보존했다.
+
+## 2026-10-05 이력
 
 ## 판정
 
