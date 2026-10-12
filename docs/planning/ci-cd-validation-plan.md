@@ -1,7 +1,9 @@
 # Running Art CI/CD·검증 자동화 구축 계획
 
 작성일: 2026-09-25  
-상태: **계획 저장 완료 · 구축 미착수 · 추후 사용자 요청 시 실행**
+상태: **2026-10-12 사용자 요청으로 CI 구축 재개 · 자동 배포 보류**
+
+최신 [실행 계획](../history/executed-plans/2026-10-12-2354-verification-ci.md)과 [운영](../development/verification-ci.md)을 아래 과거 배포안보다 우선한다. 작업 브랜치→PR→CI→main 흐름과 UI/API 검사를 구축하며 APK·서버 자동 배포는 제외한다.
 
 갱신일: 2026-10-03. **RunPen 단일 앱 결정으로 development·preview 별도 앱 ID·서명 분리안을 대체했다.** 현재 앱을 실서비스로 이어가고 빌드·검증 방식만 구분한다. 서비스명은 RunPen, 기술 프로젝트명은 Running Art다. 서버 환경 분리 여부는 후속 결정이며 CI/CD 실행 보류는 유지한다. [제품 기획](../product/overview.md)·[현재 상태](../handoff/status.md)를 우선한다. 아래 명령·자동화는 구현 완료된 계약이 아니라 재개 시 구체화할 계획이다.
 

@@ -1,8 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { pathToFileURL } from 'node:url';
-const moduleUrl=process.env.RUN_SHARE_PGLITE_MODULE ? pathToFileURL(process.env.RUN_SHARE_PGLITE_MODULE).href : new URL('../../.cache/account-server-qa/node_modules/@electric-sql/pglite/dist/index.js',import.meta.url).href;
-const {PGlite}=await import(moduleUrl);
+import { PGlite } from '@electric-sql/pglite';
 const db=new PGlite();
 try {
   await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;

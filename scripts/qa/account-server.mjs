@@ -1,8 +1,8 @@
 // Local PostgreSQL/WASM policy verification. This never contacts hosted Supabase.
-// Install the optional runner into the ignored cache as documented in account-mypage.md.
+// Installed reproducibly by npm ci; no private cache dependency.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { PGlite } from '../../.cache/account-server-qa/node_modules/@electric-sql/pglite/dist/index.js';
+import { PGlite } from '@electric-sql/pglite';
 
 const db = new PGlite();
 try {

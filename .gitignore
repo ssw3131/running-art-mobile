@@ -59,6 +59,8 @@ pnpm-debug.*
 coverage/
 .nyc_output/
 /test-results/
+.schemathesis/
+.hypothesis/
 .eslintcache
 
 # TypeScript

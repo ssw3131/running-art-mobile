@@ -1,4 +1,39 @@
-# Prepared, not deployed. The handler verifies live Auth users itself for prepare
+project_id = "runpen-ci"
+
+# The handler verifies live Auth users itself for prepare
 # and delete. Status uses a signed capability after the user's JWT is invalidated.
 [functions.delete-account]
 verify_jwt = false
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.seed]
+enabled = false
+
+[studio]
+enabled = false
+
+[inbucket]
+enabled = false
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+enable_signup = true
+
+[analytics]
+enabled = false

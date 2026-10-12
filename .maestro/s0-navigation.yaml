@@ -1,0 +1,34 @@
+appId: com.runningart.mobile.dev
+name: S0 five tabs and menu return
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: service-home
+    timeout: 30000
+- tapOn:
+    id: tab-courses
+- assertVisible:
+    id: selected-center
+- tapOn:
+    id: tab-run
+- assertVisible:
+    id: tab-run
+- tapOn:
+    id: tab-archive
+- assertVisible: 저장한 코스
+- tapOn:
+    id: tab-account
+- assertVisible:
+    id: tab-account
+- tapOn:
+    id: service-menu
+- assertVisible:
+    id: service-back
+- tapOn:
+    id: service-back
+- tapOn:
+    id: tab-home
+- assertVisible:
+    id: service-home
+- takeScreenshot: maestro-home
