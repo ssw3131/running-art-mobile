@@ -15,6 +15,7 @@ import subprocess
 import time
 from datetime import datetime, timezone
 from sqlite_snapshot import query_snapshot
+from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5_geometry
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -100,6 +101,8 @@ environment = {'host': platform.system(), 'api': q.shell('getprop', 'ro.build.ve
 environment['locale'] = environment['locale'] or q.shell('getprop', 'ro.product.locale').decode().strip()
 environment['timezone'] = q.shell('getprop', 'persist.sys.timezone').decode().strip()
 environment['systemBar'] = 'demo-1200-full-signal-battery100-v1'
+if int(environment['api']) >= 36:
+    environment['displayProfile'] = 'pixel_5-overlays-v1'
 # Android 10's sqlite3 shell predates -json. Preserve numeric/null/string values
 # with a consistent online backup queried by the host, rather than parsing CSV.
 if int(environment['api']) < 30:
@@ -112,6 +115,58 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'mode': 'visual-only' if args.visual_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
+original_overlays = None
+
+
+def restart_system_ui():
+    old = q.shell('pidof', 'com.android.systemui').decode().split()
+    assert old and all(pid.isdigit() for pid in old), 'SystemUI process unavailable'
+    q.shell('kill', *old)
+    for _ in range(30):
+        try:
+            current = q.shell('pidof', 'com.android.systemui').decode().split()
+            if current and not set(old) & set(current):
+                return
+        except RuntimeError:
+            pass
+        time.sleep(1)
+    raise RuntimeError('SystemUI did not restart after display configuration')
+
+
+def pin_display(folder):
+    global original_overlays
+    if int(environment['api']) < 36:
+        return
+    overlays = device_overlays(q.shell('cmd', 'overlay', 'list').decode())
+    assert PIXEL5 <= overlays.keys(), 'Pixel 5 overlays unavailable on this image'
+    if original_overlays is None:
+        original_overlays = {name for name, enabled in overlays.items() if enabled}
+    for name, enabled in overlays.items():
+        if enabled and name not in PIXEL5:
+            q.shell('cmd', 'overlay', 'disable', name)
+        elif not enabled and name in PIXEL5:
+            q.shell('cmd', 'overlay', 'enable', name)
+    # SystemUI can retain the old 63px window while drawing the new cutout
+    # profile, clipping the clock. Recreate this emulator-only system process.
+    restart_system_ui()
+    # Do not launch React Native with stale initial safe-area metrics while the
+    # OS applies overlay/density changes. This waits for state, not a scenario retry.
+    for _ in range(30):
+        raw = q.shell('dumpsys', 'window', 'displays').decode()
+        (folder / 'display-profile.txt').write_text(raw, encoding='utf8')
+        try:
+            geometry = display_geometry(raw)
+            valid = is_pixel5_geometry(geometry) if platform.system() == 'Linux' else geometry['statusBar'][3] == geometry['cutoutInsets'][1] > 100
+            if valid:
+                overlay_text = q.shell('cmd', 'overlay', 'list').decode()
+                (folder / 'display-overlays.txt').write_text(overlay_text, encoding='utf8')
+                assert {name for name, enabled in device_overlays(overlay_text).items() if enabled} == PIXEL5
+                report['displayGeometry'] = geometry
+                return
+        except ValueError:
+            pass
+        time.sleep(1)
+    raise RuntimeError('Pixel 5 OS insets did not settle; see display-profile.txt')
 
 def save_report():
     (args.output / 'report.json').write_text(json.dumps(report, indent=2), encoding='utf8')
@@ -137,6 +192,10 @@ def capture_visuals():
     try:
         for tab in ['home', 'run', 'archive', 'account']:
             q.tap('tab-' + tab); q.capture('visual-' + tab)
+            if int(environment['api']) >= 36:
+                raw = q.shell('dumpsys', 'window', 'displays').decode()
+                (q.OUT / ('visual-' + tab + '-display.txt')).write_text(raw, encoding='utf8')
+                assert display_geometry(raw) == report['displayGeometry'], 'OS insets changed during capture'
             screens.append({'id': tab, 'file': 'visual-' + tab + '.png'})
         (q.OUT / 'screens.json').write_text(json.dumps({**report, 'screens': screens}, indent=2), encoding='utf8')
     finally:
@@ -162,6 +221,7 @@ def maestro_navigation():
     # Driver initialization can reset display overrides. Restore and verify the
     # evidence dimensions before any fixed-size accessibility checks.
     q.shell('wm','size','1080x2340'); q.shell('wm','density','420')
+    pin_display(q.OUT)
     time.sleep(2)
     q.capture('after-maestro-display')
     import struct
@@ -180,6 +240,7 @@ try:
         q.OUT = args.output / f'attempt-{attempt:02}'
         q.OUT.mkdir(parents=True, exist_ok=True)
         result = {'attempt': attempt, 'startedAt': datetime.now(timezone.utc).isoformat(), 'steps': [], 'status': 'running'}; report['attempts'].append(result)
+        pin_display(q.OUT)
         # This runner accepts only dedicated emulator names above. Never physical.
         q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP)
         for permission in ['ACCESS_FINE_LOCATION', 'ACCESS_COARSE_LOCATION', 'ACCESS_BACKGROUND_LOCATION']:
@@ -218,6 +279,7 @@ try:
         assert preserved_fixture() == original_fixture, 'Original fixture rows changed'
         result['preservation'] = {'status': 'passed', 'sha256': hashlib.sha256(json.dumps(original_fixture, sort_keys=True).encode()).hexdigest()}
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
+        pin_display(q.OUT)
         # Fixed visual fixtures, independent of the timestamped GPS scenario.
         q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); launch(); q.seed()
         capture_visuals()
@@ -243,6 +305,16 @@ finally:
         try: q.shell(*command)
         except Exception as error: cleanup_errors.append({'command': command[:2], 'error': str(error)})
     report['cleanup'] = {'status': 'failed' if cleanup_errors else 'passed', 'errors': cleanup_errors}
+    if original_overlays is not None:
+        try:
+            overlays = device_overlays(q.shell('cmd', 'overlay', 'list').decode())
+            for name, enabled in overlays.items():
+                if enabled != (name in original_overlays):
+                    q.shell('cmd', 'overlay', 'enable' if name in original_overlays else 'disable', name)
+            restart_system_ui()
+        except Exception as error:
+            cleanup_errors.append({'command': ['cmd', 'overlay'], 'error': str(error)})
+            report['cleanup']['status'] = 'failed'
     report['finishedAt'] = datetime.now(timezone.utc).isoformat()
     report['status'] = 'passed' if not cleanup_errors and len(report['attempts']) == args.repeat and all(a['status'] == 'passed' for a in report['attempts']) else 'failed'
     save_report()

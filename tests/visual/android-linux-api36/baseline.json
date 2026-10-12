@@ -22,7 +22,8 @@
     "fontScale": 1,
     "locale": "en-US",
     "timezone": "UTC",
-    "systemBar": "demo-1200-full-signal-battery100-v1"
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
   },
   "screens": [
     {
@@ -87,5 +88,28 @@
     "ciRun": "38281173312",
     "reason": "All four screens have 249 raw differing pixels (23 after pixelmatch AA handling), confined to the system Wi-Fi icon edges at x817..857/y53..85. Product pixels are identical. Keep original PNGs and hashes; exclude only this 41x33 system region.",
     "originalFailureArtifact": 11762535955
+  },
+  "geometryReview": {
+    "reviewedAt": "2026-10-13T03:11:25.031569+09:00",
+    "referenceRun": "38277992141",
+    "referenceUiBounds": {
+      "serviceHome": [
+        0,
+        346,
+        1080,
+        2082
+      ],
+      "serviceMenu": [
+        902,
+        178,
+        1028,
+        304
+      ]
+    },
+    "expectedOsInsets": {
+      "top": 136,
+      "bottom": 63
+    },
+    "reason": "Preserve original Pixel 5 reference PNGs. Explicitly apply both Pixel 5 overlays, restart SystemUI and measure OS frames before capture; reject the 63px default top inset seen in run 38283809954."
   }
 }

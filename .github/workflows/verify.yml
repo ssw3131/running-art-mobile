@@ -147,13 +147,13 @@ jobs:
       - run: python scripts/qa/install-maestro.py
       - name: Build test APK with no local credentials or test hooks
         run: |
+          python -m unittest discover -s scripts/qa -p 'test_*.py'
           npm run prebuild:android
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2
           cd ..
           python scripts/qa/check-apk.py android/app/build/outputs/apk/release/app-release.apk
-          python scripts/qa/test_sqlite_snapshot.py
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
