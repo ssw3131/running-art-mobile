@@ -124,7 +124,7 @@ jobs:
     needs: scope
     if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'android')
     runs-on: ubuntu-24.04
-    timeout-minutes: 110
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
@@ -164,9 +164,15 @@ jobs:
           arch: x86_64
           profile: pixel_5
           avd-name: RunPen_CI
-          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=ko-KR
+          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
           disable-animations: true
           script: python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '10' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
+      - name: Compare reviewed API 36 screens
+        if: matrix.api == 36
+        run: node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json
+      - name: Build screenshot report
+        if: always()
+        run: node scripts/qa/gallery.mjs test-results/android-${{ matrix.api }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

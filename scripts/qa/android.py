@@ -20,6 +20,7 @@ parser.add_argument('--serial', required=True)
 parser.add_argument('--apk', required=True, type=pathlib.Path)
 parser.add_argument('--repeat', type=int, default=1)
 parser.add_argument('--smoke', action='store_true')
+parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
 assert args.serial.startswith('emulator-') and args.serial[9:].isdigit(), 'Physical devices are forbidden'
@@ -89,14 +90,19 @@ q.shell('wm', 'size', '1080x2340'); q.shell('wm', 'density', '420')
 for namespace, key, value in [('system', 'font_scale', '1.0'), ('system', 'screen_off_timeout', '1800000'),
                               ('global', 'window_animation_scale', '0'), ('global', 'transition_animation_scale', '0'), ('global', 'animator_duration_scale', '0')]:
     q.shell('settings', 'put', namespace, key, value)
+q.shell('setprop', 'persist.sys.timezone', 'UTC')
 q.shell('input', 'keyevent', '82')
 environment = {'host': platform.system(), 'api': q.shell('getprop', 'ro.build.version.sdk').decode().strip(),
                'fingerprint': q.shell('getprop', 'ro.build.fingerprint').decode().strip(), 'size': '1080x2340', 'density': 420,
                'fontScale': 1, 'locale': q.shell('getprop', 'persist.sys.locale').decode().strip()}
+environment['locale'] = environment['locale'] or q.shell('getprop', 'ro.product.locale').decode().strip()
+environment['timezone'] = q.shell('getprop', 'persist.sys.timezone').decode().strip()
+environment['systemBar'] = 'demo-1200-full-signal-battery100-v1'
 report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
           'dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip()),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
-          'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(), 'attempts': [], 'retries': 0}
+          'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
+          'mode': 'visual-only' if args.visual_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
 
@@ -107,6 +113,27 @@ def preserved_fixture():
     # Match complete original rows, including timestamps and snapshot content.
     return {'course': q.query("SELECT * FROM saved_courses WHERE id='" + 'd'*32 + "'"),
             'note': q.query("SELECT * FROM storage_test_notes WHERE content='S0 preservation fixture'")}
+
+def demo(command, **values):
+    extras = ['-e', 'command', command]
+    for key, value in values.items(): extras += ['-e', key, value]
+    q.shell('am', 'broadcast', '-a', 'com.android.systemui.demo', *extras)
+
+def capture_visuals():
+    q.shell('settings', 'put', 'global', 'sysui_demo_allowed', '1')
+    demo('enter'); demo('clock', hhmm='1200')
+    demo('battery', level='100', plugged='false')
+    demo('network', wifi='show', level='4', fully='true')
+    demo('network', mobile='show', datatype='none', level='4')
+    demo('notifications', visible='false')
+    screens = []
+    try:
+        for tab in ['home', 'run', 'archive', 'account']:
+            q.tap('tab-' + tab); q.capture('visual-' + tab)
+            screens.append({'id': tab, 'file': 'visual-' + tab + '.png'})
+        (q.OUT / 'screens.json').write_text(json.dumps({**report, 'screens': screens}, indent=2), encoding='utf8')
+    finally:
+        demo('exit'); q.shell('settings', 'put', 'global', 'sysui_demo_allowed', '0')
 
 def launch(route=''):
     q.shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///' + route, q.APP)
@@ -161,6 +188,7 @@ try:
             # selected intentionally, so verify it after the independent GPS run.
             steps += [('S0-04-save', q.calculation), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
                       ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled)]
+        if args.visual_only: steps = []
         for scenario, action in steps:
             step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)
             try:
@@ -180,11 +208,7 @@ try:
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
         # Fixed visual fixtures, independent of the timestamped GPS scenario.
         q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); launch(); q.seed()
-        screens = []
-        for tab in ['home', 'run', 'archive', 'account']:
-            q.tap('tab-' + tab); q.capture('visual-' + tab)
-            screens.append({'id': tab, 'file': 'visual-' + tab + '.png'})
-        (q.OUT / 'screens.json').write_text(json.dumps({**report, 'screens': screens}, indent=2), encoding='utf8')
+        capture_visuals()
         result['status'] = 'passed'
         save_report()
 except Exception:
@@ -192,10 +216,15 @@ except Exception:
     raise
 finally:
     # Clean even after failed assertions, and retain evidence. Dedicated emulator only.
-    q.shell('am', 'force-stop', q.APP)
-    q.shell('pm', 'clear', q.APP)
-    q.shell('wm', 'size', 'reset'); q.shell('wm', 'density', 'reset')
-    q.shell('settings', 'put', 'system', 'font_scale', '1.0')
-    q.shell('rm', '-f', '/data/local/tmp/running-ui-dump.jar', '/data/local/tmp/running-qa.xml', '/data/local/tmp/local/tmp/running-qa.xml')
-    report['status'] = 'passed' if len(report['attempts']) == args.repeat and all(a['status'] == 'passed' for a in report['attempts']) else 'failed'
+    cleanup_errors = []
+    for command in [('am', 'force-stop', q.APP), ('pm', 'clear', q.APP), ('wm', 'size', 'reset'), ('wm', 'density', 'reset'),
+                    ('settings', 'put', 'system', 'font_scale', '1.0'),
+                    ('am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'),
+                    ('settings', 'put', 'global', 'sysui_demo_allowed', '0'),
+                    ('rm', '-f', '/data/local/tmp/running-ui-dump.jar', '/data/local/tmp/running-qa.xml', '/data/local/tmp/local/tmp/running-qa.xml')]:
+        try: q.shell(*command)
+        except Exception as error: cleanup_errors.append({'command': command[:2], 'error': str(error)})
+    report['cleanup'] = {'status': 'failed' if cleanup_errors else 'passed', 'errors': cleanup_errors}
+    report['status'] = 'passed' if not cleanup_errors and len(report['attempts']) == args.repeat and all(a['status'] == 'passed' for a in report['attempts']) else 'failed'
     save_report()
+    if cleanup_errors: raise RuntimeError('Emulator cleanup incomplete; see report.json')

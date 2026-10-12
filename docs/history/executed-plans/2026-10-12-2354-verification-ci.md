@@ -143,3 +143,5 @@ GitHub 이벤트는 `pull_request`, main 대상 `push`, `workflow_dispatch`를 �
 2026-10-13 00:00 이후 S0를 `feat/service-s0`의 `4f386c5`로 보존하고 `chore/verification-ci`에서 기반을 구축했다. 원래 403개·타입/린트 통과. 신규 UI 4개·OpenAPI 2개·상태 생성 2개·시각 결함 주입 1개, PGlite 두 묶음을 포함한 빠른 검사와 Schemathesis 182요청 통과. 개인 캐시 PGlite 참조를 개발 의존성으로 옮겼다.
 
 Windows Maestro 2.11.0 CLI 기동을 확인했다. 첫 API 36 흐름은 System UI ANR 대화상자에 가려 실패했고 화면·JUnit·로그를 보존했다. 앱 성공으로 세지 않으며 환경을 안정화한 뒤 별도 실행으로 검증한다. ADB에 물리 폰이 없어 사용자에게 연결을 요청했고 설치는 대기 중이다. GitHub 저장소는 public·Actions 활성·main 보호 없음으로 조회됐다. 유료 러너와 자동 배포는 추가하지 않았다.
+
+2026-10-13 01:00 후속: S0 휴대폰 자료 유지 설치·주요 화면·원본 해시/계정/설정 보존과 도우미 정리를 완료했다. 상세는 [폰 결과](../../quality/service-s0-phone-20261013.md). S0 PR #1을 squash merge(`0e7182c`)했다. CI는 PR #2에서 별도로 진행한다. 첫 Linux 실행은 빠른 검사·HTTP Fuzz 182·실제 격리 Supabase/SQL/Storage/두 SQLite 복원을 통과했다. Android 빌드·Maestro는 통과했으나 스크롤 좌표와 실제 화면 크기 차이로 실패했다. 화면 크기 복구와 접근성 경계 기반 스크롤로 보강하고 재실행했다. 두 번째 API/빠른 검사도 통과했고 타인 접근 정책 결함 주입을 탐지했다. Windows 반복 실행과 Linux UI는 진행 중이다.

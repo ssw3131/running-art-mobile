@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
+import { isDeepStrictEqual } from 'node:util';
 
 export function comparePng(reference, actual, masks = []) {
   const a = PNG.sync.read(reference), b = PNG.sync.read(actual);
@@ -26,13 +27,14 @@ if (process.argv[1]?.endsWith('visual.mjs')) {
   const actual = JSON.parse(readFileSync(actualPath)), results = [];
   let baseline;
   if (existsSync(baselinePath)) baseline = JSON.parse(readFileSync(baselinePath));
-  if (!baseline?.reviewed || JSON.stringify(baseline.environment) !== JSON.stringify(actual.environment)) {
+  if (!baseline?.reviewed || !isDeepStrictEqual(baseline.environment, actual.environment)) {
     writeFileSync(path.join(outputPath, 'report.json'), JSON.stringify({ status: 'not_run', reason: 'No reviewed baseline for this exact environment', candidate: actualPath }, null, 2));
     throw Error('Visual baseline requires review for this environment');
   }
   for (const entry of baseline.screens) {
     const current = actual.screens.find(screen => screen.id === entry.id);
     if (!current) throw Error(`Missing scenario ${entry.id}`);
+    if (!/^[a-z0-9-]+$/.test(entry.id)) throw Error('Invalid scenario identifier');
     const a = readFileSync(path.resolve(path.dirname(baselinePath), entry.file));
     const b = readFileSync(path.resolve(path.dirname(actualPath), current.file));
     const result = comparePng(a, b, entry.masks ?? []);
@@ -43,6 +45,7 @@ if (process.argv[1]?.endsWith('visual.mjs')) {
       baselineSha256: createHash('sha256').update(a).digest('hex'), currentSha256: createHash('sha256').update(b).digest('hex') });
   }
   if (actual.screens.length !== baseline.screens.length) throw Error('Unreviewed scenario set');
-  writeFileSync(path.join(outputPath, 'report.json'), JSON.stringify({ environment: actual.environment, source: actual.source, apkSha256: actual.apkSha256, results }, null, 2));
+  writeFileSync(path.join(outputPath, 'report.json'), JSON.stringify({ status: results.every(result => result.status === 'passed') ? 'passed' : 'failed',
+    environment: actual.environment, source: actual.source, apkSha256: actual.apkSha256, fixtureSha256: actual.fixtureSha256, results }, null, 2));
   process.exitCode = results.some(result => result.status !== 'passed') ? 1 : 0;
 }

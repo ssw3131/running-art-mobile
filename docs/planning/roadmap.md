@@ -1,6 +1,6 @@
 # 단계별 개발 계획
 
-**2026-10-13 CI 구축 진행:** 사용자 승인으로 작업 브랜치·PR·UI/API 자동 검증을 구축 중이다. 자동 배포는 보류한다. 로컬 빠른 검사와 HTTP Fuzz를 통과했고 Android·Linux CI·필수 검사 승격은 실행 중이다. S0 휴대폰 설치는 USB 미연결로 대기한다. [실행 기록](../history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](../development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.
+**2026-10-13 CI 구축 진행:** 사용자 승인으로 작업 브랜치·PR·UI/API 자동 검증을 구축 중이다. 자동 배포는 보류한다. 로컬·Linux 빠른 검사, HTTP Fuzz, 실제 격리 Supabase 왕복·권한 검사를 통과했다. Android 10회 연속·시각 기준·필수 검사 승격은 실행 중이다. S0는 SM-S942N에 설치하고 5탭·기존 자료/계정/설정 보존 검증과 도우미 정리를 마쳤으며 기능 PR #1을 main에 합쳤다. [실행 기록](../history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](../development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.
 
 **2026-10-12 S0 완료(PC·격리 API 36):** 기존 앱에 서비스 5탭·공통 상하단 바·홈의 활성 러닝 복귀·상세/안내/개발 경로를 연결했다. 403개·타입/린트·release, 생성 입력/코스 준비/보관함 상태·OAuth 취소·GPS 탭 이동/중단 복원·딥링크/GPX·360dp/큰 글씨/키보드를 검증했다. 시험 원본 해시 보존·빈 QA DB 원복·도우미/서비스 정리 완료. `20261012-service-s0.apk` 준비, **휴대폰 미설치·클라우드 변경 없음**. 다음은 **S1 가입/동의·홈 3상태**이며 기능별 전체 Figma 이관·실기기 후속과 구분한다. [검증](../quality/service-s0-verification.md)·[다음 단계](service-implementation.md). 아래 날짜별 계획은 해당 시점 이력이다.
 

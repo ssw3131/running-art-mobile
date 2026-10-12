@@ -16,6 +16,17 @@ const admin = createClient(url.href, env.SERVICE_ROLE_KEY, options);
 
 test('DB-ROUNDTRIP-01: real Auth/Storage/RPC → empty SQLite, ownership and lost response', async t => {
   const users = [], clients = [];
+  let injectedStatus = null;
+  const controlledFetch = async (input, init) => {
+    const requestUrl = new URL(typeof input === 'string' ? input : input.url ?? input.href);
+    assert.equal(requestUrl.origin, url.origin, 'Integration traffic must stay on the isolated stack');
+    if (injectedStatus && requestUrl.pathname.startsWith('/storage/v1/object/') && ['POST', 'PUT'].includes(init?.method)) {
+      const status = injectedStatus; injectedStatus = null;
+      return new Response(JSON.stringify({ statusCode: status, error: 'InjectedTransportFailure', message: `injected HTTP ${status}` }),
+        { status, headers: { 'content-type': 'application/json' } });
+    }
+    return fetch(input, init);
+  };
   t.after(async () => {
     for (const client of clients) await client.auth.signOut();
     for (const id of users) {
@@ -30,7 +41,7 @@ test('DB-ROUNDTRIP-01: real Auth/Storage/RPC → empty SQLite, ownership and los
     const email = `qa-${randomUUID()}@example.invalid`, password = randomUUID() + 'Aa!9';
     const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
     assert.equal(error, null); users.push(data.user.id);
-    const client = createClient(url.href, env.ANON_KEY, options);
+    const client = createClient(url.href, env.ANON_KEY, { ...options, global: { fetch: controlledFetch } });
     const auth = await client.auth.signInWithPassword({ email, password }); assert.equal(auth.error, null); clients.push(client);
   }
   const owner = users[0], first = await device(t, owner), second = await device(t, owner);
@@ -39,7 +50,10 @@ test('DB-ROUNDTRIP-01: real Auth/Storage/RPC → empty SQLite, ownership and los
   const real = createSyncRemote(clients[0], owner);
   const perform = (d, remote = real) => synchronize({ owner, repository: d.sync, remote, check: () => {}, now: () => 2000000 });
   for (const code of [401, 429, 503]) {
-    await assert.rejects(perform(first, { ...real, upload: async () => { throw Error(`injected HTTP ${code}`); } }), new RegExp(String(code)));
+    // Exercise the SDK's real HTTP error conversion and app transport handling.
+    injectedStatus = code;
+    await assert.rejects(perform(first), new RegExp(String(code)));
+    assert.equal(injectedStatus, null, 'Fault must reach the HTTP boundary');
     assert.equal((await first.sync.status(owner)).pending, 2);
   }
   let lost = true;
