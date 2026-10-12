@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**2026-10-13 브랜치·CI 및 S0 휴대폰 후속:** 기능별 작업 브랜치→PR 필수 검사→main squash merge를 적용했다. UI 상태·API 계약/격리 DB·Android 29/36 동작·정적 화면 비교를 자동화했다. S0는 SM-S942N에 기존 3코스/4러닝/1,437좌표/1메모·계정/설정을 보존해 설치·검증했다. [브랜치·검증 운영](docs/development/verification-ci.md)·[CI 실행 결과](docs/quality/verification-ci-20261013.md)·[폰 검증](docs/quality/service-s0-phone-20261013.md)을 아래 과거 보류/미설치 표현보다 우선한다. 다음 기능은 S1 가입/동의·홈 3상태이며 APK·서버 자동 배포는 보류한다.
+
 **2026-10-12 S0 완료(PC·격리 API 36):** 기존 앱에 서비스 5탭·공통 상하단 바·홈의 활성 러닝 복귀·상세/안내/개발 경로를 연결했다. 403개·타입/린트·release, 생성 입력/코스 준비/보관함 상태·OAuth 취소·GPS 탭 이동/중단 복원·딥링크/GPX·360dp/큰 글씨/키보드를 검증했다. 시험 원본 해시 보존·빈 QA DB 원복·도우미/서비스 정리 완료. `20261012-service-s0.apk` 준비, **휴대폰 미설치·클라우드 변경 없음**. 다음은 **S1 가입/동의·홈 3상태**이며 기능별 전체 Figma 이관·실기기 후속과 구분한다. [구조와 사용 경로](docs/development/service-navigation.md)·[검증](docs/quality/service-s0-verification.md).
 
 **2026-10-11 저사양폰 비교:** A7에서 같은 지형 APK의 기기/서버 계산을 비교했습니다. 각 3회 중앙값은 강남 87.68→10.96초(8.00배), 부산 41.74→6.24초(6.69배)이며 입력량·탐색량·5후보 점수/표시가 일치했습니다. 취소·오프라인 전환과 기존 실내 기능·자료 정리를 확인했고 저장 첫 터치·첫 GPS 권한 승인 후 재시작 관찰을 남겼습니다. [결과와 후속](docs/quality/a750-server-comparison-20261011.md).
@@ -70,7 +72,7 @@
 
 **현재 설치된 화면은 핵심 기능 검증 화면이며, 이 앱을 RunPen 서비스로 이어 개발합니다.** Figma UI 페이지의 홈·코스 생성·실시간 러닝·기록 보관함·마이페이지와 계정·안내 화면이 목표입니다. 기존 홈의 **코스 계산 테스트 → 주변 OSM**에서 위치 버튼이나 지도를 이용해 중심 주변 도로로 계산할 수 있습니다. 현행 사용법은 [지도 중심 조회](docs/development/route-center.md), [계산 성능](docs/development/route-engine-performance.md), [독립 실행 APK](docs/development/android-test-apk.md)를 참고하세요.
 
-최신 상태는 [인수인계](docs/handoff/status.md), 사용법은 [코스 저장](docs/development/saved-courses.md)·[코스 계산](docs/development/route-engine.md)·[지도·위치](docs/development/map-location.md)를 참고하세요. 휴대폰에는 2026-10-03 개인 자료 동기화 APK까지 업데이트했으며 GitHub 공개 APK는 이전 버전입니다. 야외·장시간 검증은 후속, CI/CD는 실행 보류입니다.
+최신 상태는 [인수인계](docs/handoff/status.md), 사용법은 [코스 저장](docs/development/saved-courses.md)·[코스 계산](docs/development/route-engine.md)·[지도·위치](docs/development/map-location.md)를 참고하세요. 휴대폰에는 2026-10-13 S0 APK까지 업데이트했으며 GitHub 공개 APK는 이전 버전입니다. CI 검사는 운영 중이고 APK·서버 자동 배포는 보류합니다. 야외·장시간 검증은 날짜별 결과와 남은 범위를 구분합니다.
 
 ## 휴대폰 테스트 APK 다운로드
 
@@ -128,7 +130,7 @@ running-art-mobile/
 │  ├─ product/              목표·범위·결정 이유
 │  ├─ architecture/         모듈·데이터 흐름·이식 기준
 │  ├─ development/          설치·실행·Codex 사용법
-│  ├─ planning/             개발 순서·미실행 CI/CD 계획
+│  ├─ planning/             개발 순서·CI/CD 계획과 최신 결정
 │  ├─ quality/              검증 기준·실제 검증 기록
 │  ├─ handoff/              현재 상태·다음 담당자 안내
 │  └─ history/executed-plans/ 실제 실행한 계획과 결과
