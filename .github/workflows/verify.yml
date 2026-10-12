@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       full: ${{ steps.scope.outputs.full }}
+      compatibility: ${{ steps.scope.outputs.compatibility }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -128,7 +129,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api: ${{ fromJSON(github.event_name == 'push' && '[36,29]' || '[36]') }}
+        api: ${{ fromJSON((github.event_name == 'push' || needs.scope.outputs.compatibility == 'true') && '[36,29]' || '[36]') }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -146,6 +147,7 @@ jobs:
       - run: python scripts/qa/install-maestro.py
       - name: Build test APK with no local credentials or test hooks
         run: |
+          python -m unittest discover -s scripts/qa -p 'test_*.py'
           npm run prebuild:android
           cd android
           chmod +x gradlew

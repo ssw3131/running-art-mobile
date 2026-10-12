@@ -2,7 +2,28 @@
 
 작업은 `feat/*`, `fix/*`, `chore/*`에서 진행하고 PR 검사를 통과한 뒤 `main`에 squash merge한다. 계속 유지하는 브랜치는 main 하나다. UI·API·검사는 기능별로 함께 변경한다. APK 설치와 서버 배포는 별도 작업이다.
 
-2026-10-13 도입 진행 중이다. 로컬 빠른 검사와 HTTP Fuzz는 통과했고, Android 반복 검사·Linux CI·브랜치 보호의 실제 적용 결과는 [실행 기록](../history/executed-plans/2026-10-12-2354-verification-ci.md)에 이어 기록한다. 핵심 흐름 10회 연속 통과 전에는 Android를 필수 검사로 승격하지 않는다.
+2026-10-13 Windows/API 36의 동일 S0 APK에서 핵심 흐름 10회 연속 통과와 독립 Linux 전체 검사·4화면 차이 0을 확인한 뒤 필수 게이트로 승격했다. main 보호와 squash merge 정책을 실제 적용했다. [도입 결과](../quality/verification-ci-20261013.md)에서 실행별 범위와 근거를 확인한다.
+
+## 작업 순서
+
+깨끗한 작업 폴더에서 최신 main을 가져와 기능별 브랜치를 만든다. 이미 수정 중이면 먼저 작업 브랜치를 만들고 변경을 보존한다.
+
+```sh
+git switch main
+git pull --ff-only
+git switch -c feat/signup-home
+```
+
+기능·검사·문서를 함께 수정하고 로컬 검사를 마친 뒤 한글 제목으로 커밋한다. 브랜치를 push하고 main 대상 PR을 연다. 기존 PR이 있으면 같은 브랜치에 후속 커밋을 push한다.
+
+```sh
+npm run qa:fast
+git add <검토한-파일>
+git commit -m "feat: 가입 동의와 홈 상태 연결"
+git push -u origin feat/signup-home
+```
+
+`verification-gate` 통과와 변경 검토 후 squash merge한다. main이 먼저 바뀌면 작업 브랜치에 최신 main을 반영해 다시 검사한다. 병합된 원격 브랜치는 자동 삭제하고 로컬도 main을 갱신한 뒤 정리한다. 실패 시 Actions 아티팩트의 `report.json`과 `index.html`에서 실패 단계·스크린샷·로그를 확인한다. 기준 이미지 갱신으로 실패를 숨기지 않고 변경 의도와 실제 결함을 구분한다.
 
 ## 실행 조건
 
@@ -10,7 +31,7 @@
 |---|---|
 | 파일 저장·로컬 커밋 | 원격 실행 없음. 개발자가 로컬 검사 |
 | PR 없는 작업 브랜치 push | 원격 실행 없음 |
-| main 대상 PR 생성·재개·추가 push | 빠른 검사·API·API 36 핵심 흐름 |
+| main 대상 PR 생성·재개·추가 push | 빠른 검사·API·API 36 핵심 흐름. QA 도구·워크플로·빌드 설정/의존성 변경이면 API 29도 추가 |
 | main push | 전체 회귀·API 36·API 29 호환 smoke |
 | workflow_dispatch | all·fast·api·android 선택, 반복 1회 또는 10회 |
 | 문서만 변경 | 변경 문서 링크·구조 검사 |
@@ -59,9 +80,15 @@ python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outp
 
 전용 `RunPen_CI` 또는 `RunningArt_UI_QA` 에뮬레이터만 받으며 물리 폰은 거부한다. 전용 에뮬레이터의 앱 데이터를 매 회 초기화한다. 공개 fixture 생성부터 탭·입력 보존·OAuth 취소·저장/재실행·출발 준비·주입 GPS·중단 복원·GPX 취소·큰 글씨/키보드까지 검사하고, 실패해도 시험 자료와 도우미를 정리한다. 테스트 상태를 주입하는 제품 코드나 별도 앱 ID를 추가하지 않는다. CI APK는 개발 머신의 서명·환경값을 사용하지 않으므로 사용자 폰 설치용으로 배포하지 않는다.
 
+API 36은 위 전체 흐름과 4개 정적 화면 비교를 실행한다. main에서 추가하는 API 29의 `--smoke`는 5탭/메뉴, 상세/뒤로/입력 보존, OAuth 취소 복귀의 3단계와 원본 보존·정리·화면 캡처를 실행한다. API 29의 전체 GPS 회귀나 정적 픽셀 기준 통과로 해석하지 않는다.
+
+Android 10의 시스템 SQLite에는 `-json`이 없어 전용 에뮬레이터에서 [온라인 백업](https://www.sqlite.org/backup.html)으로 WAL까지 일관된 사본을 만든 뒤 호스트 Python으로 조회한다. 문자열/줄바꿈·숫자·NULL 타입을 보존하고 성공/실패 모두 임시 사본을 삭제한다. 제품 앱 DB 구현을 바꾸는 기능이 아니다.
+
+API 36은 Pixel 5의 프레임워크/SystemUI 오버레이를 명시하고, 시스템 UI 프로세스를 갱신한 뒤 실제 시스템 바와 cutout 여백이 정해진 값이 될 때까지 기다린다. Linux 1080×2340 기준은 상단 136px·하단 63px다. Maestro와 배율 검사 뒤에도 다시 적용한다. 촬영 중 여백이 바뀌면 실패하며 원래 오버레이는 정리 단계에서 복원한다. `display-profile.txt`, `display-overlays.txt`, 화면별 display 진단과 `displayGeometry`를 보존한다. 앱 전체를 이동시키는 환경 차이를 이미지 마스크로 숨기지 않는다.
+
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
 
-`scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 기본적으로 마스크를 쓰지 않으며, 필요한 경우 시스템 시계의 작은 영역만 명시적으로 제외할 수 있다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
+`scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 마스크는 근거를 기록한 작은 시스템 시계/Wi-Fi 영역만 허용한다. 현재 기준에는 main 실행에서 네 화면 모두 같은 가장자리 차이가 난 Wi-Fi 아이콘의 41×33px(`x=817,y=53`)만 제외했고 원본 PNG는 유지했다. 마스크의 위치/최대 크기를 검사하며 앱 영역·상태 표시줄 전체 가림은 거부한다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
 
 `node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json`으로 각 회차를 비교하고, `node scripts/qa/gallery.mjs test-results/android-36`으로 기준·현재·차이와 실패 화면을 연결한 `index.html`을 만든다. `--visual-only`는 후보 촬영 전용이며 기능/안정성 통과 횟수에 포함하지 않는다.
 
