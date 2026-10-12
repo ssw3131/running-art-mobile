@@ -1,5 +1,7 @@
 # 문서 목차
 
+**2026-10-13 검증 자동화:** [작업 브랜치·CI 운영](development/verification-ci.md) · [실행 결과와 증거](quality/verification-ci-20261013.md) · [S0 휴대폰 설치/검증](quality/service-s0-phone-20261013.md). APK·서버 자동 배포는 별도 보류한다.
+
 **서비스 개발 시작:** [제품 개요](product/overview.md) → [Figma 화면별 기획·결정 목록](product/figma-service-analysis.md) → [현재 비즈니스 모델](product/business-model.md) → [S0~S8 개발 계획](planning/service-implementation.md) → [실제 현재 상태](handoff/status.md). 2026-10-11 전체 UI 분석과 사용자 최신 상품 표를 반영했다. 이후 개발에서도 기본 문맥으로 사용한다.
 
 2026-10-04: **실제 러닝 링크 공유 완료(PC·서버·웹)** — 실제 Cloudflare·Supabase의 합성 링크 생성·세 경로/토글·공유 중단과 테스트 계정/자료 정리를 완료했다. 원본 앱에 배포 주소를 연결했고 18:56:38 KST 휴대폰에 동일 ID·서명 APK를 자료 유지 설치했다. 사용자 최종 지시에 따라 PC·서버·웹 범위를 완료하고 추가 폰 검증·임시 UI 파일 정리는 후속으로 남겼다. [검증/폰 후속](quality/run-link-sharing-verification.md).
@@ -50,7 +52,9 @@
 | 계획 | [모바일 독립 서버 전략](planning/server-strategy.md) | 테스트 프로젝트 분리, 도로 공급·회원·커뮤니티 구성, 무료 출시와 유료화 후속 범위 |
 | 계획 | [서버 서비스와 가입 준비 안내](planning/cloud-services-and-accounts.md) | Cloudflare·Supabase·MapTiler 역할, AWS 비교, 서버 이전, 지금과 출시 전 계정 준비 |
 | 계획 | [도로 공급과 지도 비용 및 라이선스 핵심 정리](planning/roads-maps-costs-licensing-summary.md) | 속도 원인·전국 도로·압축/갱신·R2 요금·지도 교체·OSM 이용 조건 |
-| 계획 | [CI/CD 자동화](planning/ci-cd-validation-plan.md) | 계획 저장, 아직 미실행 |
+| 개발 | [브랜치·CI 운영](development/verification-ci.md) | PR 필수 검사·트리거·재현 명령·화면 기준 검토 |
+| 계획 | [CI/CD 자동화](planning/ci-cd-validation-plan.md) | CI 도입, 과거 자동 배포안은 보류 |
+| 검증 | [CI 도입 결과](quality/verification-ci-20261013.md) | API/DB·Android 29/36·화면·자료 보존·실패와 수정 근거 |
 | 검증 | [검증 기준](quality/strategy.md) | 변경별 확인 방법 |
 | 검증 | [환경 검증 기록](quality/setup-verification.md) | 실제 통과·미검증 사항 |
 | 검증 | [지도·위치 검증 기록](quality/map-location-verification.md) | 자동 검사·Android 빌드·기기 결과 |

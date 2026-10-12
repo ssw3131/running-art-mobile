@@ -12,6 +12,11 @@
 | 코스 계산 | `npm run test:route-engine` | 원본 해시·전체 결과 회귀·연결·거리·중복·크기·취소·늦은 결과 차단·GeoJSON 좌표·기기 비교 검사 |
 | 지도 중심·주변 도로 | `node --test tests/route-center-road.test.mjs` | 지도/GPS 경쟁·요청 중심 보존·캐시 범위/만료·손상/시간 초과·다운로드 취소·시간 분리 |
 | 전체 기능 로직 | `npm test` | 현재 위치·지도 설정·저장소·코스 계산 테스트 전체 실행 |
+| PR 빠른 검사 | `npm run qa:fast` | 앱/서버 타입·린트·전체 로직·UI 상태·OpenAPI·PGlite 정책 |
+| 컴포넌트 상태 | `npm run test:components` | Jest·React Native Testing Library, 입력·저장·로딩/오류·중복 제출 |
+| API 계약/상태 순서 | `npm run test:api-contract`, `npm run test:properties` | 실제 HTTP 계약, fast-check로 동기화·GPS 조작 순서 생성 |
+| 실제 격리 DB | `npm run qa:integration` | 로컬 Supabase 준비 후 Auth/Storage/RPC·두 SQLite 복원·실패 복구 |
+| Android 회귀·스크린샷 | [CI 운영 명령](../development/verification-ci.md#android-동작과-화면) | 전용 에뮬레이터의 Maestro/ADB·자료 보존·정리·pixelmatch |
 | Expo 의존성·설정 | `powershell -ExecutionPolicy Bypass -File .\dev.ps1 doctor` | 호환성 진단, 네트워크 필요 |
 | 네이티브 설정·패키지 | `powershell -ExecutionPolicy Bypass -File .\dev.ps1 build` | prebuild·개발용 APK |
 | 화면·권한·네이티브 동작 | `powershell -ExecutionPolicy Bypass -File .\dev.ps1 android` | 기기에서 실행 |
@@ -20,7 +25,7 @@
 
 직접 npm 명령을 실행할 때는 `scripts/env.ps1`을 현재 셸에 적용합니다. 웹 확인은 Android 검증을 대신하지 않습니다. 실제 결과는 [지도 검증](map-location-verification.md)·[저장소 검증](storage-verification.md)·[코스 계산 검증](route-engine-verification.md)에 있습니다.
 
-현재 Jest·React Native Testing Library·Maestro·GitHub Actions는 없습니다. `test:ci`, `verify`, `android:preview`, `test:e2e`는 [CI/CD 계획](../planning/ci-cd-validation-plan.md)의 예정 명령입니다.
+2026-10-13 Jest·React Native Testing Library·Maestro·GitHub Actions와 PR 필수 `verification-gate`를 도입했다. 새 작업은 [브랜치·검증 운영](../development/verification-ci.md)을 따른다. 위 실제 명령을 사용하며 과거 [CI/CD 계획](../planning/ci-cd-validation-plan.md)의 `test:ci`, `verify`, `android:preview`, `test:e2e`는 구현된 명령이 아니다. APK·서버 자동 배포는 보류한다.
 
 ## 기능별 추가 검증
 
