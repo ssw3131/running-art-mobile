@@ -1,6 +1,6 @@
 # 단계별 개발 계획
 
-**2026-10-13 CI 도입 검증:** 작업 브랜치·PR·UI/API 자동 검증과 main 보호를 적용하고 S0/CI PR #1·#2를 squash merge했다. 410개+UI 4개·HTTP Fuzz 182·실제 격리 Supabase 왕복/권한, Windows API 36 핵심 흐름 10회 연속(재시도 0), 독립 Linux 전체/정적 4화면 차이 0을 통과했다. main API 29·36 후속은 실행 중이다. SM-S942N의 S0 설치·5탭·기존 3코스/4러닝/1,437좌표/1메모·계정/설정 보존과 정리 완료. 다음 기능은 S1 가입/동의·홈 3상태이며 자동 배포는 보류한다. [실행 기록](../history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](../development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.
+**2026-10-13 CI 도입 완료:** 작업 브랜치→PR→필수 검사→squash merge와 main 보호를 적용했다. 최신 PR 및 main에서 로직 411개·UI 상태 4개·Python 3개·HTTP Fuzz 182·실제 격리 Supabase 왕복/권한, API 36 전체 9단계·정적 4화면 차이 0(검토된 시스템 Wi-Fi 영역만 제외), API 29 호환 3단계·원본 보존/정리를 통과했다. main API 29는 도우미 명령 종료 오류 후 진단 재실행 통과로, 최초 실패 이력을 보존했다. Windows API 36의 동일 S0 APK 핵심 흐름 10회 연속·재시도 0 근거도 보존했다. SM-S942N S0 설치·5탭·기존 3코스/4러닝/1,437좌표/1메모·계정/설정 보존과 정리 완료, USB 분리 가능. 다음 기능은 S1 가입/동의·홈 3상태이며 APK·서버 자동 배포는 보류한다. [실행 기록](../history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](../development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.
 
 **2026-10-12 S0 완료(PC·격리 API 36):** 기존 앱에 서비스 5탭·공통 상하단 바·홈의 활성 러닝 복귀·상세/안내/개발 경로를 연결했다. 403개·타입/린트·release, 생성 입력/코스 준비/보관함 상태·OAuth 취소·GPS 탭 이동/중단 복원·딥링크/GPX·360dp/큰 글씨/키보드를 검증했다. 시험 원본 해시 보존·빈 QA DB 원복·도우미/서비스 정리 완료. `20261012-service-s0.apk` 준비, **휴대폰 미설치·클라우드 변경 없음**. 다음은 **S1 가입/동의·홈 3상태**이며 기능별 전체 Figma 이관·실기기 후속과 구분한다. [검증](../quality/service-s0-verification.md)·[다음 단계](service-implementation.md). 아래 날짜별 계획은 해당 시점 이력이다.
 
