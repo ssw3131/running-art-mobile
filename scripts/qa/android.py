@@ -14,6 +14,7 @@ import re
 import subprocess
 import time
 from datetime import datetime, timezone
+from sqlite_snapshot import query_snapshot
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -99,6 +100,10 @@ environment = {'host': platform.system(), 'api': q.shell('getprop', 'ro.build.ve
 environment['locale'] = environment['locale'] or q.shell('getprop', 'ro.product.locale').decode().strip()
 environment['timezone'] = q.shell('getprop', 'persist.sys.timezone').decode().strip()
 environment['systemBar'] = 'demo-1200-full-signal-battery100-v1'
+# Android 10's sqlite3 shell predates -json. Preserve numeric/null/string values
+# with a consistent online backup queried by the host, rather than parsing CSV.
+if int(environment['api']) < 30:
+    q.query = lambda sql: query_snapshot(q.adb, q.shell, q.DB, sql)
 report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
           'dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip()),
           'startedAt': datetime.now(timezone.utc).isoformat(), 'ciRun': os.environ.get('GITHUB_RUN_ID'),
@@ -219,7 +224,12 @@ try:
         result['status'] = 'passed'
         result['finishedAt'] = datetime.now(timezone.utc).isoformat()
         save_report()
-except Exception:
+except Exception as error:
+    report['error'] = str(error)
+    try:
+        q.capture('failure')
+    except Exception as capture_error:
+        report['captureError'] = str(capture_error)
     if report['attempts']: report['attempts'][-1]['status'] = 'failed'
     raise
 finally:
@@ -229,7 +239,7 @@ finally:
                     ('settings', 'put', 'system', 'font_scale', '1.0'),
                     ('am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'),
                     ('settings', 'put', 'global', 'sysui_demo_allowed', '0'),
-                    ('rm', '-f', '/data/local/tmp/running-ui-dump.jar', '/data/local/tmp/running-qa.xml', '/data/local/tmp/local/tmp/running-qa.xml')]:
+                    ('rm', '-f', '/data/local/tmp/runpen-qa-query.db', '/data/local/tmp/runpen-qa-query.db-wal', '/data/local/tmp/runpen-qa-query.db-shm', '/data/local/tmp/running-ui-dump.jar', '/data/local/tmp/running-qa.xml', '/data/local/tmp/local/tmp/running-qa.xml')]:
         try: q.shell(*command)
         except Exception as error: cleanup_errors.append({'command': command[:2], 'error': str(error)})
     report['cleanup'] = {'status': 'failed' if cleanup_errors else 'passed', 'errors': cleanup_errors}

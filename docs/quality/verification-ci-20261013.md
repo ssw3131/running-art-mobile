@@ -27,7 +27,8 @@ DB 원본 테스트는 RLS·Storage 소유권·불변 파일·RPC 검증·재시
 | [Linux 38275123413](https://github.com/ssw3131/running-art-mobile/actions/runs/38275123413) | 빠른/API·전체 S0 9단계·원본 보존·정리 통과. 최초 기준 부재를 not_run으로 탐지해 게이트 실패. 생성된 4개 화면을 검토해 기준 등록 |
 | Windows API 36 연속 실행 | 같은 S0 APK·9단계 × 10회, 재시도 0·90단계 모두 통과. 01:51:37 최종 보고서 생성 |
 | [Linux 38277992141](https://github.com/ssw3131/running-art-mobile/actions/runs/38277992141) | 최신 PR head `94344ec`의 깨끗한 merge checkout에서 빠른/API·S0 전체·원본 보존·정리 통과. 새 빌드/재촬영한 네 화면 모두 차이 0, PNG SHA도 기준과 동일. 전체 게이트 통과 |
-| [main 38281173312](https://github.com/ssw3131/running-art-mobile/actions/runs/38281173312) | CI squash commit `9422128`, API 36 전체·API 29 호환 smoke 실행 중 |
+| [main 38281173312](https://github.com/ssw3131/running-art-mobile/actions/runs/38281173312) | CI squash commit `9422128`. API 29는 앱 시나리오 전 시스템 SQLite의 `-json` 미지원으로 실패·정리 통과. API 36은 별도 확인 중 |
+| [문서 PR 38282323384](https://github.com/ssw3131/running-art-mobile/actions/runs/38282323384) | 문서/집계 통과, 앱/API/빠른 검사 생략을 확인. 이후 같은 PR에 Android 10 하니스 수정이 추가돼 전체 검사로 확대 |
 
 Windows 10회 실행은 `7fa78cf` 시점의 하니스에 시나리오 순서·정적 fixture 초기화 보강을 읽어 시작했다. 이후 추가한 Linux 스크롤/보고서/표시줄 고정 보강과 구분하며, 최신 하니스의 Linux 10회 또는 Windows 픽셀 비교 10회 성공을 주장하지 않는다. 같은 APK 해시 `729c60a28efd29dfb6cf857933ee9f9db87b4a81e88535b508a416620fe2992f`와 fixture를 유지한 핵심 동작 안정성 검사다. 완료 뒤 서비스 없음·도우미 없음·글꼴 배율 1.0을 확인하고 전용 에뮬레이터를 종료했다.
 
@@ -57,4 +58,4 @@ Actions 실행의 `android-36-1` 아티팩트를 내려받아 압축을 풀고 `
 
 ## 남은 확인
 
-main API 29 호환 검사 결과를 확인 중이다. APK/서버 자동 배포는 범위 밖이다. 실제 소셜 인증·야외 GPS 정확도·충전 해제 소모·TalkBack 발화는 실기기 확인을 병행한다.
+main에서 발견한 API 29 SQLite 조회 호환성 수정을 PR에서 재검증 중이다. SQL 온라인 백업→호스트 읽기 방식으로 변경하고 WAL·한글/줄바꿈/숫자/NULL·읽기 전용·전송 실패 정리 검사를 추가했다. QA/워크플로/빌드 설정·의존성이 바뀌는 PR은 API 29를 main 반영 전에 추가 실행한다. 최초 실패 이력은 유지한다. APK/서버 자동 배포는 범위 밖이다. 실제 소셜 인증·야외 GPS 정확도·충전 해제 소모·TalkBack 발화는 실기기 확인을 병행한다.

@@ -31,7 +31,7 @@ git push -u origin feat/signup-home
 |---|---|
 | 파일 저장·로컬 커밋 | 원격 실행 없음. 개발자가 로컬 검사 |
 | PR 없는 작업 브랜치 push | 원격 실행 없음 |
-| main 대상 PR 생성·재개·추가 push | 빠른 검사·API·API 36 핵심 흐름 |
+| main 대상 PR 생성·재개·추가 push | 빠른 검사·API·API 36 핵심 흐름. QA 도구·워크플로·빌드 설정/의존성 변경이면 API 29도 추가 |
 | main push | 전체 회귀·API 36·API 29 호환 smoke |
 | workflow_dispatch | all·fast·api·android 선택, 반복 1회 또는 10회 |
 | 문서만 변경 | 변경 문서 링크·구조 검사 |
@@ -81,6 +81,8 @@ python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outp
 전용 `RunPen_CI` 또는 `RunningArt_UI_QA` 에뮬레이터만 받으며 물리 폰은 거부한다. 전용 에뮬레이터의 앱 데이터를 매 회 초기화한다. 공개 fixture 생성부터 탭·입력 보존·OAuth 취소·저장/재실행·출발 준비·주입 GPS·중단 복원·GPX 취소·큰 글씨/키보드까지 검사하고, 실패해도 시험 자료와 도우미를 정리한다. 테스트 상태를 주입하는 제품 코드나 별도 앱 ID를 추가하지 않는다. CI APK는 개발 머신의 서명·환경값을 사용하지 않으므로 사용자 폰 설치용으로 배포하지 않는다.
 
 API 36은 위 전체 흐름과 4개 정적 화면 비교를 실행한다. main에서 추가하는 API 29의 `--smoke`는 5탭/메뉴, 상세/뒤로/입력 보존, OAuth 취소 복귀의 3단계와 원본 보존·정리·화면 캡처를 실행한다. API 29의 전체 GPS 회귀나 정적 픽셀 기준 통과로 해석하지 않는다.
+
+Android 10의 시스템 SQLite에는 `-json`이 없어 전용 에뮬레이터에서 [온라인 백업](https://www.sqlite.org/backup.html)으로 WAL까지 일관된 사본을 만든 뒤 호스트 Python으로 조회한다. 문자열/줄바꿈·숫자·NULL 타입을 보존하고 성공/실패 모두 임시 사본을 삭제한다. 제품 앱 DB 구현을 바꾸는 기능이 아니다.
 
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
 
