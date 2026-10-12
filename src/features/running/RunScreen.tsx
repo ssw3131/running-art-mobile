@@ -32,6 +32,7 @@ export default function RunScreen() {
   }, []);
   useFocusEffect(useCallback(() => {
     if (!supported) return;
+    setBusy(working.current);
     const request = ++generation.current;
     let polling = false, ticks = 0;
     const poll = async () => {
@@ -55,7 +56,9 @@ export default function RunScreen() {
     try { await action(); }
     catch (cause) { if (request === generation.current) setError(runErrorMessage(cause)); }
     finally {
-      if (request === generation.current) { await refresh().catch(cause => setError(runErrorMessage(cause))); setBusy(false); }
+      if (request === generation.current) { await refresh().catch(cause => setError(runErrorMessage(cause))); }
+      // Tabs stay mounted after blur. Do not leave a cancelled operation busy.
+      setBusy(false);
       working.current = false;
     }
   }
@@ -68,7 +71,7 @@ export default function RunScreen() {
     if (!run) return;
     const id = run.id;
     Alert.alert(run.courseOutcome === 'arrival-pending' ? '완주 기록을 저장할까요?' : '러닝을 종료할까요?', '현재까지 기록을 저장합니다. 동기화를 켜둔 계정의 기록은 연결되면 서버에도 저장됩니다.', [
-      { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.replace({ pathname: '/runs/[id]', params: { id } }); }) },
+      { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.setParams({ courseId: undefined }); router.push({ pathname: '/runs/[id]', params: { id } }); }) },
     ]);
   }
   function options(value: GuidanceOptions) {
@@ -76,7 +79,7 @@ export default function RunScreen() {
     void act(async () => { await (await getStorage()).runs.setGuidanceOptions(run.id, value); if (!value.voice) guidanceNative?.silenceLive(); });
   }
   const last = points[points.length - 1];
-  return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}><ScrollView contentContainerStyle={styles.content}>
+  return <SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>{guide || courseId ? '코스 러닝' : '러닝 기록'}</Text>
     <Text style={styles.body}>GPS로 달린 경로를 이 기기에 저장해요. 인터넷 없이도 기록할 수 있어요.</Text>
     {!supported ? <Text>러닝 추적은 Android 앱에서 사용해 주세요.</Text> : <>

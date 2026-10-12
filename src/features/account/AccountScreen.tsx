@@ -20,7 +20,7 @@ export default function AccountScreen() {
     `이 기기의 로그인만 종료합니다. 코스와 러닝 기록은 삭제되지 않으며 같은 계정으로 다시 로그인하면 볼 수 있어요.${sync.status?.pending ? `\n아직 전송하지 않은 변경 ${sync.status.pending}건도 기기에 남습니다.` : ''}`,
     [{ text: '취소', style: 'cancel' }, { text: '로그아웃', onPress: () => { void authentication.signOut(); } }]);
   const stat = (label: string, value: string) => <View key={label} style={{ width: '47%', gap: 5 }}><Text style={[s.heading, { color: colors.text }]}>{value}</Text><Text style={[s.caption, { color: colors.muted }]}>{label}</Text></View>;
-  return <AccountPage title="마이페이지" colors={colors}>
+  return <AccountPage title="마이페이지" colors={colors} embedded>
     <AccountCard colors={colors}>
       <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
         <ProfileAvatar account={auth.account} colors={colors} />
@@ -51,7 +51,7 @@ export default function AccountScreen() {
       <Text style={[s.caption, { color: colors.muted }]}>이 기기에 저장·복원된 종료 기록 기준입니다. 코스 완주는 안내를 따라 도착 후 완주를 확인한 기록만 셉니다.</Text>
       {!!data.error && <><Text accessibilityRole="alert" style={[s.body, { color: colors.danger }]}>{data.error}</Text><AccountButton id="account-retry" title="다시 불러오기" colors={colors} onPress={data.reload} /></>}
       <AccountRow id="account-runs" title="러닝 기록 보기" colors={colors} onPress={() => router.push('/runs')} />
-      <AccountRow id="account-courses" title="저장한 코스" detail={data.statistics ? `${data.statistics.courses}개` : undefined} colors={colors} onPress={() => router.push('/courses')} />
+      <AccountRow id="account-courses" title="저장한 코스" detail={data.statistics ? `${data.statistics.courses}개` : undefined} colors={colors} onPress={() => router.navigate({ pathname: '/courses', params: { view: 'courses' } })} />
     </AccountCard>
     <AccountCard colors={colors}>
       {auth.account && <AccountRow id="account-sync" title="개인 기록 동기화" detail="전송 상태 · 기기 기록 연결 · 충돌 해결" colors={colors} onPress={() => router.push('/account-sync')} />}

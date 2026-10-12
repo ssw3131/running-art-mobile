@@ -1,0 +1,223 @@
+{
+  "recordedAt": "2026-10-12T20:40:51+09:00",
+  "environment": {
+    "avd": "RunningArt_UI_QA",
+    "serial": "emulator-5558",
+    "api": 36,
+    "physicalPhoneInstalled": false,
+    "cloudChanged": false
+  },
+  "apk": {
+    "sha256": "729c60a28efd29dfb6cf857933ee9f9db87b4a81e88535b508a416620fe2992f",
+    "bytes": 117857703
+  },
+  "bundleSourceFilesMatched": 163,
+  "automatedTests": {
+    "total": 403,
+    "passed": 403,
+    "failed": 0
+  },
+  "keyboardBounds": {
+    "inputBottom": 1434,
+    "keyboardTop": 1491
+  },
+  "seededBeforeAndAfterUpdate": {
+    "account_preferences": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "account_withdrawals": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "running_points": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "running_sessions": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "saved_courses": {
+      "count": 1,
+      "hash": "810dbfb8d89fbebffc366c8a6d1aa07657099572b0b4849a55340f614b6032db"
+    },
+    "storage_test_notes": {
+      "count": 1,
+      "hash": "06e87910c01a93cc2d6ecdacdcaf6c0e59747f4f59999fbdb1ca9e03895179e6"
+    },
+    "sync_accounts": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sync_conflicts": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sync_deletions": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "beforeCleanup": {
+    "account_preferences": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "account_withdrawals": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "running_points": {
+      "count": 10,
+      "hash": "feb57cfa59f1ac6522e108010645ca2d7028c3aa7b0e3eef407f5f05f0b0a37d"
+    },
+    "running_sessions": {
+      "count": 1,
+      "hash": "3a9b62baefe360c6083f25eced087c1c1ab067100707cce58fb722e869ddbe3b"
+    },
+    "saved_courses": {
+      "count": 3,
+      "hash": "1adfdc2055e44b55ce8bb9c5bb09b9993734052cbbaf2443982e993af1b10f62"
+    },
+    "storage_test_notes": {
+      "count": 1,
+      "hash": "06e87910c01a93cc2d6ecdacdcaf6c0e59747f4f59999fbdb1ca9e03895179e6"
+    },
+    "sync_accounts": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sync_conflicts": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sync_deletions": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "originalAndRestoredTables": {
+    "account_preferences": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "account_withdrawals": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "running_points": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "running_sessions": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "saved_courses": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "storage_test_notes": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sync_accounts": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sync_conflicts": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sync_deletions": {
+      "count": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "cleanup": {
+    "originalTablesMatch": true,
+    "seededCourseAndNotePreservedBeforeCleanup": true,
+    "appServicesAbsent": true,
+    "helperRemoved": true,
+    "emulatorStopped": true,
+    "fontScale": 1.0,
+    "density": 420,
+    "screenTimeoutMs": 60000,
+    "originalTimeoutNotRecorded": true
+  },
+  "localEvidenceDirectory": ".cache/service-s0-20261012",
+  "screens": {
+    "tab-home": {
+      "pngSha256": "c55a8e4d5b5afe80d6bfaa1b39ca9d665b872fc246bf3cc8af93bd68ea2598dd",
+      "xmlSha256": "44e732b170edfb23ac37989ab561f694d9e73359b93e20b197dea2e02893acca"
+    },
+    "draft-after-menu-link": {
+      "pngSha256": "9f8d3b511af7a2252d0874e33ae070366dfa4d65d6527ccea35477fb64fe966a",
+      "xmlSha256": "e7f2116d127fb33fc68477df0cdc5f8e17eea52e8aa27d57b0b557ad8a3eeed5"
+    },
+    "draft-after-callback": {
+      "pngSha256": "d85274f1a22e4b688e6155221e1649bd8b7c8037704b7e59166adde5ac9cca42",
+      "xmlSha256": "e7f2116d127fb33fc68477df0cdc5f8e17eea52e8aa27d57b0b557ad8a3eeed5"
+    },
+    "archive-view-after-tab": {
+      "pngSha256": "ddd7b3783161ab3099841306e191552fc268f4a95c1bf200afe51b026415dc9b",
+      "xmlSha256": "0884a9102c6297bac683387ea6e909100528b538c894e00001d84b9bf6245595"
+    },
+    "save-draft-after-tab": {
+      "pngSha256": "099301139abf76546ce8c8eb94395208e463eab65b756ea257db638889ff5647",
+      "xmlSha256": "36f221448387d8025dacca2977ce86a2e774dab07daafa778a1eda2954036094"
+    },
+    "gps-home-banner": {
+      "pngSha256": "713901c072982024e3bea29310984f85f85f6b5522bea6daea2fa87ef8ad95b3",
+      "xmlSha256": "f6436594e44b389f16bc55d926582ac7e335116cff8f338445b92b4f896b3a2e"
+    },
+    "gps-cold-recovery": {
+      "pngSha256": "f419f0108751f3ad0e565bac15b4cff8c7c889f636a152de911f74d0185f22ed",
+      "xmlSha256": "deb53a4238508b12e027083c87354644793272c702e52a561bedb71ebf4c9755"
+    },
+    "gps-result": {
+      "pngSha256": "3d894ef2a7fa33315fb3dca6b42e2a631e12129c0f438e4bc115cd689fb270af",
+      "xmlSha256": "702421b6be23ce16988e9590127d254b9a26bc16cf43fd72569a02a60d794679"
+    },
+    "course-preparation-return": {
+      "pngSha256": "8e6e1f5915b6eb32680af3a5dd30d497b66263feccb77a86ea7e906affd8ef03",
+      "xmlSha256": "b3899fbcfdc3909ef4c66f502f29a95c508ff54fb0eacfe2373fc4d678b11771"
+    },
+    "scaled-home": {
+      "pngSha256": "9ee7e60db4d2d8e94d4ecff4a53d508410cbea287d7899d06b3e33ed721a0415",
+      "xmlSha256": "48130aab6b818dc47bfdd739457edb2f0a346f882e3860420db63ce13709691b"
+    },
+    "scaled-menu": {
+      "pngSha256": "e5ceed71f6c39dcd5d76ffc2ef40861218dfb931de3ba4276022ad970c0c5fde",
+      "xmlSha256": "9c4dda45a7b2827aa64613c2486fb5abd947769aa7b12f1cdcd3a3faed236f96"
+    },
+    "scaled-keyboard": {
+      "pngSha256": "c9d0105d3d59ea095705d100324fadf003108973ecc76cd48d6e997eed1a4fcd",
+      "xmlSha256": "2ba3ade2a177b2bafa5a52626b1bd46d3603ca4d2ff25f6fa0900d7acb09b4f0"
+    },
+    "cold-link-back": {
+      "pngSha256": "e7a471680bbb988f5ee0c9fc72e1052cc1b11882495bf7a0bbdba9a80f5f8387",
+      "xmlSha256": "3941191d9454ec7d3440edb4653ade18239a0dbebbe1fa606dbd293eb4b00da4"
+    },
+    "gpx-chooser": {
+      "pngSha256": "9258509e0232ef47f56713944005e50b05f1dfd40d88c589318da11708e588a8",
+      "xmlSha256": "2aaea06fb3940c8a5b6c8c1565549811f84843d528cc6ad09e42ef1e2820d6a0"
+    },
+    "legacy-run-share": {
+      "pngSha256": "fb50b39ea365a5eb18dfac7e0875fb8844acf9f2501ebb97ddb154e64beee11e",
+      "xmlSha256": "702421b6be23ce16988e9590127d254b9a26bc16cf43fd72569a02a60d794679"
+    },
+    "development-ui-preview": {
+      "pngSha256": "957fffa69a6feb07dfb0d3d646a4e5ecc6739436ef7d60faf2877107ef7dbc57",
+      "xmlSha256": "9bee258151ff8f06fb6067600089a8466037b8825bfe527d28199e514dd3568e"
+    }
+  },
+  "limits": [
+    "emulator injected GPS",
+    "no new real login or cloud sync roundtrip",
+    "no outdoor accuracy or battery test",
+    "TalkBack speech not tested",
+    "S1-S8 remain"
+  ]
+}

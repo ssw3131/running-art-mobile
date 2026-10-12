@@ -12,6 +12,7 @@
 | run.svg | 하단 내비 `253:6489` | 20×20 |
 | archive.svg | 하단 내비 `253:6490` | 20×20 |
 | user.svg | 하단 내비 `253:6491` | 20×20 |
+| runpen-logo.png | MAIN-1 상단 `305:11644` | 표시 100×33, 원본 이미지 fill / cover |
 | switch-off.svg | 스위치 `30:4569` | 50×24 |
 | switch-on.svg | 스위치 `30:4568` | 50×24 |
 | checkbox-on.svg | 체크박스 `54:8929` | 24×24 |

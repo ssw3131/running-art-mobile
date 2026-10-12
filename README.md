@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**2026-10-12 S0 완료(PC·격리 API 36):** 기존 앱에 서비스 5탭·공통 상하단 바·홈의 활성 러닝 복귀·상세/안내/개발 경로를 연결했다. 403개·타입/린트·release, 생성 입력/코스 준비/보관함 상태·OAuth 취소·GPS 탭 이동/중단 복원·딥링크/GPX·360dp/큰 글씨/키보드를 검증했다. 시험 원본 해시 보존·빈 QA DB 원복·도우미/서비스 정리 완료. `20261012-service-s0.apk` 준비, **휴대폰 미설치·클라우드 변경 없음**. 다음은 **S1 가입/동의·홈 3상태**이며 기능별 전체 Figma 이관·실기기 후속과 구분한다. [구조와 사용 경로](docs/development/service-navigation.md)·[검증](docs/quality/service-s0-verification.md).
+
 **2026-10-11 저사양폰 비교:** A7에서 같은 지형 APK의 기기/서버 계산을 비교했습니다. 각 3회 중앙값은 강남 87.68→10.96초(8.00배), 부산 41.74→6.24초(6.69배)이며 입력량·탐색량·5후보 점수/표시가 일치했습니다. 취소·오프라인 전환과 기존 실내 기능·자료 정리를 확인했고 저장 첫 터치·첫 GPS 권한 승인 후 재시작 관찰을 남겼습니다. [결과와 후속](docs/quality/a750-server-comparison-20261011.md).
 
 **2026-10-11 서비스 기획:** 기존 기능 기반 위에 Figma 실제 서비스 경험을 단계적으로 구현합니다. [제품 개요](docs/product/overview.md)·[화면별 분석](docs/product/figma-service-analysis.md)·[현재 상품 기준](docs/product/business-model.md)·[개발 계획 S0~S8](docs/planning/service-implementation.md)을 이후 작업의 기준으로 사용합니다. 다음은 S0 서비스 구조/5탭이며 이번은 문서 갱신만 수행했습니다.

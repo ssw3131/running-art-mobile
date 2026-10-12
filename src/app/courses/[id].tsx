@@ -1,6 +1,8 @@
-import { Link, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { openServiceTab } from '@/features/service/open-service-tab';
+import { ServiceTabLink } from '@/features/service/ServiceTabLink';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Keyboard, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getStorage } from '@/modules/storage/database';
 import { COURSE_NAME_MAX, CourseError, courseErrorMessage, courseShapes, savedCourseOverlay, type SavedCourse } from '@/modules/courses/model';
@@ -15,13 +17,25 @@ import { useTerrain } from '@/features/terrain/use-terrain';
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const emptyRoads = { type: 'FeatureCollection' as const, features: [] };
 export default function CourseScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>(), router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [course, setCourse] = useState<SavedCourse | null>(null), [name, setName] = useState('');
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [canDelete, setCanDelete] = useState(false), [background, setBackground] = useState(false);
   const [simulation, setSimulation] = useState(false);
   const generation = useRef(0), inFlight = useRef(false);
   const exportController = useRef<AbortController | null>(null);
+  const scroll = useRef<ScrollView>(null), renameInput = useRef<TextInput>(null);
+  const revealName = useCallback(() => {
+    if (!renameInput.current?.isFocused()) return;
+    // The ScrollView helper assumes screen origin; include the service header.
+    scroll.current?.getNativeScrollRef()?.measureInWindow((_x, y) => {
+      if (renameInput.current?.isFocused()) scroll.current?.scrollResponderScrollNativeHandleToKeyboard(renameInput.current, y + 16, true);
+    });
+  }, []);
+  useFocusEffect(useCallback(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', revealName);
+    return () => listener.remove();
+  }, [revealName]));
   const overlay = useMemo(() => course ? savedCourseOverlay(course.snapshot) : null, [course]);
   const terrain = useTerrain(course?.source === 'osm' && !simulation ? course.snapshot.route : undefined);
   const supported = Platform.OS !== 'web';
@@ -60,7 +74,7 @@ export default function CourseScreen() {
     inFlight.current = true; const request = generation.current; setBusy(true); setError('');
     try {
       await (await getStorage()).courses.remove(id);
-      if (request === generation.current) router.replace('/courses');
+      if (request === generation.current) openServiceTab({ pathname: '/courses', params: { view: 'courses' } });
     } catch (cause) { if (request === generation.current) setError(courseErrorMessage(cause)); }
     finally { inFlight.current = false; if (request === generation.current) setBusy(false); }
   }
@@ -82,7 +96,7 @@ export default function CourseScreen() {
     }
   }
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
-    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView ref={scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       {!supported && <Text>저장한 코스는 Android 앱에서 확인해 주세요.</Text>}
       {busy && <ActivityIndicator color="#183C32" />}
       {!!error && <Text testID="course-detail-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}
@@ -106,7 +120,7 @@ export default function CourseScreen() {
         {course.source === 'osm' && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {})}><Text style={styles.small}>© OpenStreetMap contributors · ODbL</Text></Pressable>}
         <Text style={styles.small}>계산 기준 {course.snapshot.origin.lat.toFixed(5)}, {course.snapshot.origin.lng.toFixed(5)}</Text>
         <Text style={styles.small}>순환 코스 어디서든 출발하고 원하는 방향으로 한 바퀴 달려요. 코스 밖에서는 보행 도로로 합류해요.</Text>
-        {course.source === 'osm' && <Link href={{ pathname: '/run', params: { courseId: course.id } }} asChild><Pressable testID="course-run" accessibilityRole="button" style={styles.button}><Text>이 코스로 러닝 준비</Text></Pressable></Link>}
+        {course.source === 'osm' && <ServiceTabLink href={{ pathname: '/run', params: { courseId: course.id } }} asChild><Pressable testID="course-run" accessibilityRole="button" style={styles.button}><Text>이 코스로 러닝 준비</Text></Pressable></ServiceTabLink>}
         <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')} · 점수는 후보 비교용이며 일치율이 아니에요.</Text>
         <Pressable testID="course-simulation-toggle" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => { setBackground(false); setSimulation(value => !value); }}><Text>{simulation ? '시뮬레이션 닫기' : '코스 시뮬레이션 시작'}</Text></Pressable>
         {simulation && <SimulationPanel key={`${course.id}-${course.updatedAt}`} snapshot={course.snapshot} />}
@@ -117,14 +131,14 @@ export default function CourseScreen() {
           <Text>GPX 내보내기</Text>
         </Pressable>
         <Text style={styles.small}>저장된 이름과 경로를 GPX 파일로 공유해요. 실제 러닝 기록은 포함하지 않아요. 파일에 출발 위치와 전체 경로가 들어가요.</Text>
-        <TextInput testID="course-rename-input" accessibilityLabel="코스 이름 변경" style={styles.input} value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} />
+        <TextInput ref={renameInput} onFocus={() => { if (Keyboard.isVisible()) revealName(); }} testID="course-rename-input" accessibilityLabel="코스 이름 변경" style={styles.input} value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} />
         <Pressable testID="course-rename" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void rename()}><Text>이름 변경 저장</Text></Pressable>
       </>}
       {supported && <Pressable accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void refresh()}><Text>다시 읽기</Text></Pressable>}
       {canDelete && <Pressable testID="course-delete" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => Alert.alert('코스를 삭제할까요?', '코스가 기기에서 삭제됩니다. 계정에 연결한 코스는 다음 동기화 때 서버와 다른 기기에서도 삭제됩니다. 삭제한 코스는 복원할 수 없어요.', [
         { text: '취소', style: 'cancel' }, { text: '삭제', style: 'destructive', onPress: () => void remove() },
       ])}><Text style={styles.error}>코스 삭제</Text></Pressable>}
-      <Link href="/courses" style={styles.link}>저장한 코스 목록</Link>
+      <ServiceTabLink href={{ pathname: '/courses', params: { view: 'courses' } }} style={styles.link}>저장한 코스 목록</ServiceTabLink>
     </ScrollView>
   </SafeAreaView>;
 }

@@ -19,11 +19,11 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
   const [plan,setPlan]=useState<ApproachPlan|null>(null),[planning,setPlanning]=useState(false);
   const planController=useRef<AbortController|null>(null);
   const [background, setBackground] = useState(defaultAccountPreferences.guidance.background);
-  const generation = useRef(0), subscription = useRef<Location.LocationSubscription | null>(null), locating = useRef(false);
+  const generation = useRef(0), subscription = useRef<Location.LocationSubscription | null>(null), locating = useRef<number | null>(null);
   const locate = useCallback(async () => {
-    if (locating.current) return;
-    locating.current = true;
-    const ticket = ++generation.current; subscription.current?.remove(); subscription.current = null; planController.current?.abort(); setPlan(null); setError(''); setFix(null);
+    if (locating.current !== null) return;
+    const ticket = ++generation.current; locating.current = ticket;
+    subscription.current?.remove(); subscription.current = null; planController.current?.abort(); setPlan(null); setError(''); setFix(null);
     try {
       const saved = await (await getStorage()).courses.get(id);
       const preferences = await (await getStorage()).account.preferences();
@@ -43,16 +43,16 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
       if (ticket === generation.current) subscription.current = watch; else watch.remove();
     } catch (cause) {
       if (ticket === generation.current) setError(cause instanceof Error && ['location-settings', 'GPS'].includes(cause.message) ? '위치 설정에서 정확한 위치를 허용하고 기기의 GPS를 켜 주세요.' : courseErrorMessage(cause));
-    } finally { locating.current = false; }
+    } finally { if (locating.current === ticket) locating.current = null; }
   }, [id]);
   useFocusEffect(useCallback(() => {
     void locate();
     const timer = setInterval(() => setNow(Date.now()), 1000);
     const state = AppState.addEventListener('change', value => {
-      if (value === 'background' && !locating.current) { generation.current++; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; setFix(null); }
+      if (value === 'background' && locating.current === null) { generation.current++; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; setFix(null); }
       if (value === 'active' && !subscription.current) void locate();
     });
-    return () => { generation.current++; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; clearInterval(timer); state.remove(); };
+    return () => { generation.current++; locating.current = null; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; clearInterval(timer); state.remove(); };
   }, [locate]));
   async function preparePath(){
     if(!course||!fix||planning)return;

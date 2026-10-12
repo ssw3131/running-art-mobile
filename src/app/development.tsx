@@ -2,21 +2,22 @@ import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth/use-auth';
+import { ServiceTabLink } from '@/features/service/ServiceTabLink';
 
-export default function HomeScreen() {
+export default function DevelopmentScreen() {
   const { account } = useAuth();
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.heading}>
           <Text style={styles.eyebrow}>RUNNING ART</Text>
-          <Text style={styles.title}>달리는 길이{'\n'}그림이 되도록.</Text>
-          <Text style={styles.description}>핵심 기능을 확인하는 개발용 앱입니다. 서비스 화면과 디자인은 이후 반영합니다.</Text>
-          <Link href="/account" asChild>
+          <Text style={styles.title}>개발 도구</Text>
+          <Text style={styles.description}>기존 지도·도로·저장소·모의 안내 검증 도구입니다.</Text>
+          <ServiceTabLink href="/account" asChild>
             <Pressable accessibilityRole="button" testID="open-account" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>{account ? `${account.name} · 마이페이지` : '로그인 · 마이페이지'}</Text>
             </Pressable>
-          </Link>
+          </ServiceTabLink>
         </View>
         <View style={styles.card}>
           <Text style={styles.badge}>핵심 기능 테스트</Text>
@@ -27,21 +28,21 @@ export default function HomeScreen() {
               <Text style={styles.buttonText}>지도 열기</Text>
             </Pressable>
           </Link>
-          <Link href="/route-lab" asChild>
+          <ServiceTabLink href="/route-lab" asChild>
             <Pressable accessibilityRole="button" testID="open-route-lab" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>코스 만들기</Text>
             </Pressable>
-          </Link>
-          <Link href="/courses" asChild>
+          </ServiceTabLink>
+          <ServiceTabLink href={{ pathname: '/courses', params: { view: 'courses' } }} asChild>
             <Pressable accessibilityRole="button" testID="open-courses" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>저장한 코스</Text>
             </Pressable>
-          </Link>
-          <Link href="/run" asChild>
+          </ServiceTabLink>
+          <ServiceTabLink href="/run" asChild>
             <Pressable accessibilityRole="button" testID="open-run" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>러닝 GPS 기록</Text>
             </Pressable>
-          </Link>
+          </ServiceTabLink>
           <Link href="/guidance" asChild>
             <Pressable accessibilityRole="button" testID="open-guidance" style={styles.secondaryButton}>
               <Text style={styles.secondaryText}>러닝 안내 시험 · 모의 주행</Text>

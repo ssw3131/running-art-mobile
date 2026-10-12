@@ -6,7 +6,7 @@ import { getStorage } from '@/modules/storage/database';
 import { courseErrorMessage, courseShapes, type CourseSummary } from '@/modules/courses/model';
 
 const PAGE = 30;
-export default function CoursesScreen() {
+export default function CoursesScreen({ embedded = false }: { embedded?: boolean }) {
   const [rows, setRows] = useState<CourseSummary[]>([]), [busy, setBusy] = useState(false);
   const [error, setError] = useState(''), [ready, setReady] = useState(false), [more, setMore] = useState(false);
   const generation = useRef(0), loading = useRef(false);
@@ -32,7 +32,7 @@ export default function CoursesScreen() {
     } catch (cause) { if (generation.current === request) setError(courseErrorMessage(cause)); }
     finally { if (generation.current === request) { loading.current = false; setBusy(false); } }
   }
-  return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
+  return <SafeAreaView style={styles.screen} edges={embedded ? ['left', 'right'] : ['bottom', 'left', 'right']}>
     <ScrollView contentContainerStyle={styles.content}>
       <Text style={styles.title}>저장한 코스</Text>
       <Text style={styles.description}>저장한 코스를 다시 열 수 있어요. 계정에 연결한 코스는 같은 계정에서 표시됩니다. 내 계정에서 동기화를 켜면 서버에 저장하고 다른 기기에서 복원할 수 있어요.</Text>
