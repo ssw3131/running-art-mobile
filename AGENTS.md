@@ -1,6 +1,6 @@
 # Running Art Mobile — 작업 지침
 
-**2026-10-13 CI 구축 진행:** 사용자 승인으로 작업 브랜치·PR·UI/API 자동 검증을 구축 중이다. 자동 배포는 보류한다. 로컬·Linux 빠른 검사, HTTP Fuzz, 실제 격리 Supabase 왕복·권한 검사를 통과했다. Android 10회 연속·시각 기준·필수 검사 승격은 실행 중이다. S0는 SM-S942N에 설치하고 5탭·기존 자료/계정/설정 보존 검증과 도우미 정리를 마쳤으며 기능 PR #1을 main에 합쳤다. [실행 기록](docs/history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](docs/development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.
+**2026-10-13 CI 도입 검증:** 작업 브랜치·PR·UI/API 자동 검증과 main 보호를 적용하고 S0/CI PR #1·#2를 squash merge했다. 410개+UI 4개·HTTP Fuzz 182·실제 격리 Supabase 왕복/권한, Windows API 36 핵심 흐름 10회 연속(재시도 0), 독립 Linux 전체/정적 4화면 차이 0을 통과했다. main API 29·36 후속은 실행 중이다. SM-S942N의 S0 설치·5탭·기존 3코스/4러닝/1,437좌표/1메모·계정/설정 보존과 정리 완료. 다음 기능은 S1 가입/동의·홈 3상태이며 자동 배포는 보류한다. [실행 기록](docs/history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](docs/development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.
 
 **2026-10-12 S0 완료(PC·격리 API 36):** 기존 앱에 서비스 5탭·공통 상하단 바·홈의 활성 러닝 복귀·상세/안내/개발 경로를 연결했다. 403개·타입/린트·release, 생성 입력/코스 준비/보관함 상태·OAuth 취소·GPS 탭 이동/중단 복원·딥링크/GPX·360dp/큰 글씨/키보드를 검증했다. 시험 원본 해시 보존·빈 QA DB 원복·도우미/서비스 정리 완료. `20261012-service-s0.apk` 준비, **휴대폰 미설치·클라우드 변경 없음**. 다음은 **S1 가입/동의·홈 3상태**이며 기능별 전체 Figma 이관·실기기 후속과 구분한다. [검증](docs/quality/service-s0-verification.md)·[현재 상태](docs/handoff/status.md)를 아래 과거 요약보다 우선한다.
 
@@ -93,7 +93,7 @@
 - React Native·Expo·TypeScript·Expo Router, Android 우선이다. 2026-10-10부터 온라인 경로 계산은 Cloud Run의 동일 v0.2 엔진을 우선 사용하고 오프라인/기기 계산을 유지한다. Gemini 호출은 추가하지 않는다.
 - 지도는 MapLibre React Native·MapTiler, 도로 그래프는 지역별 OSM 파일·캐시로 분리한다. OSM 노드 ID·연결성을 보존한다.
 - 위 구성 중 아직 미구현인 항목이 있다. 파일과 상태 문서를 확인하고 계획을 구현 사실로 보고하지 않는다.
-- CI/CD는 사용자가 추후 실행하기로 한 별도 계획이다. 일반 정리·세션 재개를 CI/CD 구축 지시로 해석하지 않는다.
+- 2026-10-13부터 기능별 작업 브랜치·PR과 `verification-gate` 필수 검사를 사용한다. [운영](docs/development/verification-ci.md)을 따르고 보호된 main에 직접 push하지 않는다. APK·서버 자동 배포는 계속 보류한다.
 
 ## 작업과 코드 배치
 

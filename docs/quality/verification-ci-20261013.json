@@ -1,0 +1,700 @@
+{
+  "schemaVersion": 1,
+  "scope": "S0 core stability and independent Linux PR verification",
+  "windows": {
+    "sourceReportedAtStart": "7fa78cf373bef18c026d86a39038c8c886b9164f",
+    "harnessNote": "Started with scenario ordering and static-fixture reset fixes. Later Linux geometry, reporting and demo-mode refinements are not part of this in-memory ten-run process. Not ten Linux or Windows pixel comparisons.",
+    "apkSha256": "729c60a28efd29dfb6cf857933ee9f9db87b4a81e88535b508a416620fe2992f",
+    "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+    "environment": {
+      "host": "Windows",
+      "api": "36",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "size": "1080x2340",
+      "density": 420,
+      "fontScale": 1,
+      "locale": ""
+    },
+    "status": "passed",
+    "retries": 0,
+    "attempts": [
+      {
+        "attempt": 1,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 2,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 3,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 4,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 5,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 6,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 7,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 8,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 9,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "attempt": 10,
+        "status": "passed",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed"
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed"
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed"
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed"
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed"
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed"
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed"
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed"
+          }
+        ]
+      }
+    ],
+    "rawReportSha256": "40d2155f5d9834a7bb003421ab06bcde285247de117955f6c14c50cd7392e232",
+    "cleanupChecked": "No running service or helper package, font scale 1.0; dedicated emulator stopped after completion."
+  },
+  "linuxPr": {
+    "runId": 38277992141,
+    "head": "94344eccd4b88282558596da6e7a680ebbb01c35",
+    "android": {
+      "schemaVersion": 1,
+      "source": "7870391665fe050af4b2c1529bce366be5dc0bb5",
+      "dirty": false,
+      "startedAt": "2026-10-12T16:49:16.948745+00:00",
+      "ciRun": "38277992141",
+      "apkSha256": "42195e78386a17989a4f6cdfb415ecc263b64e03a6bf2ca1bda75340822057f6",
+      "environment": {
+        "host": "Linux",
+        "api": "36",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "size": "1080x2340",
+        "density": 420,
+        "fontScale": 1,
+        "locale": "en-US",
+        "timezone": "UTC",
+        "systemBar": "demo-1200-full-signal-battery100-v1"
+      },
+      "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+      "mode": "full",
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-12T16:49:17.055954+00:00",
+          "steps": [
+            {
+              "id": "S0-01-maestro",
+              "status": "passed",
+              "screenshots": [
+                "after-maestro-display.png"
+              ],
+              "durationSeconds": 71.984
+            },
+            {
+              "id": "S0-02-draft",
+              "status": "passed",
+              "screenshots": [
+                "archive-runs.png",
+                "archive-view-after-tab.png",
+                "center-after-tab.png",
+                "center-before-tab.png",
+                "course-detail.png",
+                "draft-after-detail.png",
+                "draft-after-menu-back.png",
+                "draft-after-menu-link.png",
+                "draft-after-system-back.png",
+                "draft-before.png",
+                "system-back-home.png"
+              ],
+              "durationSeconds": 61.373
+            },
+            {
+              "id": "S0-03-oauth-cancel",
+              "status": "passed",
+              "screenshots": [
+                "auth-cancel-callback.png",
+                "draft-after-callback.png"
+              ],
+              "durationSeconds": 16.622
+            },
+            {
+              "id": "S0-04-save",
+              "status": "passed",
+              "screenshots": [
+                "before-grid.png",
+                "calculation-after-blur.png",
+                "calculation-progress.png",
+                "save-draft-after-tab.png",
+                "save-keyboard.png",
+                "save-list-destination.png"
+              ],
+              "durationSeconds": 65.765
+            },
+            {
+              "id": "S0-04-restart",
+              "status": "passed",
+              "screenshots": [
+                "saved-course-restart.png"
+              ],
+              "durationSeconds": 15.261
+            },
+            {
+              "id": "S0-06-gps",
+              "status": "passed",
+              "screenshots": [
+                "gps-cold-recovery.png",
+                "gps-home-banner.png",
+                "gps-result-back.png",
+                "gps-result.png",
+                "gps-resumed.png"
+              ],
+              "durationSeconds": 99.847
+            },
+            {
+              "id": "S0-05-preparation",
+              "status": "passed",
+              "screenshots": [
+                "course-preparation-return.png",
+                "course-preparation-tab.png"
+              ],
+              "durationSeconds": 33.552
+            },
+            {
+              "id": "S0-07-deep-link-gpx",
+              "status": "passed",
+              "screenshots": [
+                "cold-course-link.png",
+                "cold-link-back.png",
+                "development-back-home.png",
+                "development-environment.png",
+                "development-ui-preview.png",
+                "gpx-chooser.png",
+                "legacy-run-share.png"
+              ],
+              "durationSeconds": 49.497
+            },
+            {
+              "id": "S0-08-accessibility",
+              "status": "passed",
+              "screenshots": [
+                "scaled-account.png",
+                "scaled-home.png",
+                "scaled-keyboard.png",
+                "scaled-menu.png"
+              ],
+              "durationSeconds": 39.929
+            }
+          ],
+          "status": "passed",
+          "preservation": {
+            "status": "passed",
+            "sha256": "6718753772b2567588c33451e68e8be6b3e5a548e8d882def90e720432adf0ff"
+          },
+          "finishedAt": "2026-10-12T16:57:19.363708+00:00"
+        }
+      ],
+      "retries": 0,
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "finishedAt": "2026-10-12T16:57:20.646396+00:00",
+      "status": "passed"
+    },
+    "visual": {
+      "status": "passed",
+      "baseline": "tests/visual/android-linux-api36/baseline.json",
+      "results": [
+        {
+          "attempt": "attempt-01",
+          "status": "passed",
+          "environment": {
+            "host": "Linux",
+            "api": "36",
+            "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+            "size": "1080x2340",
+            "density": 420,
+            "fontScale": 1,
+            "locale": "en-US",
+            "timezone": "UTC",
+            "systemBar": "demo-1200-full-signal-battery100-v1"
+          },
+          "source": "7870391665fe050af4b2c1529bce366be5dc0bb5",
+          "apkSha256": "42195e78386a17989a4f6cdfb415ecc263b64e03a6bf2ca1bda75340822057f6",
+          "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+          "results": [
+            {
+              "id": "home",
+              "status": "passed",
+              "pixels": 0,
+              "baselineSha256": "db62c138825f4817588151be84388317ec9fac61c765429739ddc0c611eee2c3",
+              "currentSha256": "db62c138825f4817588151be84388317ec9fac61c765429739ddc0c611eee2c3"
+            },
+            {
+              "id": "run",
+              "status": "passed",
+              "pixels": 0,
+              "baselineSha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f",
+              "currentSha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f"
+            },
+            {
+              "id": "archive",
+              "status": "passed",
+              "pixels": 0,
+              "baselineSha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc",
+              "currentSha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc"
+            },
+            {
+              "id": "account",
+              "status": "passed",
+              "pixels": 0,
+              "baselineSha256": "1e66b0d9e5814c7b97e6f4f2146cbe6753219bd95c0f45129a5ff92959d53041",
+              "currentSha256": "1e66b0d9e5814c7b97e6f4f2146cbe6753219bd95c0f45129a5ff92959d53041"
+            }
+          ]
+        }
+      ]
+    },
+    "artifactZipSha256": "a352e5f44185c260adc1ed07aeed5749d9b91cd42d3d44a2caf1f5b88dd33a6b",
+    "api": {
+      "schemaVersion": 1,
+      "suite": "integration",
+      "startedAt": "2026-10-12T16:35:32.874Z",
+      "source": "7870391665fe050af4b2c1529bce366be5dc0bb5",
+      "dirty": false,
+      "workingTree": [],
+      "ciRun": "38277992141",
+      "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+      "environment": {
+        "platform": "linux",
+        "node": "v24.21.0"
+      },
+      "retry": 0,
+      "steps": [
+        {
+          "id": "supabase-roundtrip",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 1060,
+          "log": "supabase-roundtrip.log"
+        }
+      ],
+      "finishedAt": "2026-10-12T16:35:34.052Z",
+      "status": "passed"
+    }
+  },
+  "main": {
+    "runId": 38281173312,
+    "source": "9422128bfe2d7c704e0420844589158128585c6b",
+    "status": "in_progress"
+  },
+  "branchProtection": {
+    "verifiedBy": "GitHub REST PUT followed by GET",
+    "requiredChecks": [
+      {
+        "context": "verification-gate",
+        "app_id": 15368
+      }
+    ],
+    "strict": true,
+    "enforceAdmins": true,
+    "requiredPullRequest": true,
+    "approvals": 0,
+    "linearHistory": true,
+    "conversationResolution": true,
+    "allowForcePushes": false,
+    "allowDeletions": false,
+    "mergeMethods": [
+      "squash"
+    ],
+    "deleteMergedBranches": true
+  }
+}

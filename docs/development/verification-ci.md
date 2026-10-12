@@ -2,7 +2,28 @@
 
 작업은 `feat/*`, `fix/*`, `chore/*`에서 진행하고 PR 검사를 통과한 뒤 `main`에 squash merge한다. 계속 유지하는 브랜치는 main 하나다. UI·API·검사는 기능별로 함께 변경한다. APK 설치와 서버 배포는 별도 작업이다.
 
-2026-10-13 도입 진행 중이다. 로컬 빠른 검사와 HTTP Fuzz는 통과했고, Android 반복 검사·Linux CI·브랜치 보호의 실제 적용 결과는 [실행 기록](../history/executed-plans/2026-10-12-2354-verification-ci.md)에 이어 기록한다. 핵심 흐름 10회 연속 통과 전에는 Android를 필수 검사로 승격하지 않는다.
+2026-10-13 Windows/API 36의 동일 S0 APK에서 핵심 흐름 10회 연속 통과와 독립 Linux 전체 검사·4화면 차이 0을 확인한 뒤 필수 게이트로 승격했다. main 보호와 squash merge 정책을 실제 적용했다. [도입 결과](../quality/verification-ci-20261013.md)에서 실행별 범위와 근거를 확인한다.
+
+## 작업 순서
+
+깨끗한 작업 폴더에서 최신 main을 가져와 기능별 브랜치를 만든다. 이미 수정 중이면 먼저 작업 브랜치를 만들고 변경을 보존한다.
+
+```sh
+git switch main
+git pull --ff-only
+git switch -c feat/signup-home
+```
+
+기능·검사·문서를 함께 수정하고 로컬 검사를 마친 뒤 한글 제목으로 커밋한다. 브랜치를 push하고 main 대상 PR을 연다. 기존 PR이 있으면 같은 브랜치에 후속 커밋을 push한다.
+
+```sh
+npm run qa:fast
+git add <검토한-파일>
+git commit -m "feat: 가입 동의와 홈 상태 연결"
+git push -u origin feat/signup-home
+```
+
+`verification-gate` 통과와 변경 검토 후 squash merge한다. main이 먼저 바뀌면 작업 브랜치에 최신 main을 반영해 다시 검사한다. 병합된 원격 브랜치는 자동 삭제하고 로컬도 main을 갱신한 뒤 정리한다. 실패 시 Actions 아티팩트의 `report.json`과 `index.html`에서 실패 단계·스크린샷·로그를 확인한다. 기준 이미지 갱신으로 실패를 숨기지 않고 변경 의도와 실제 결함을 구분한다.
 
 ## 실행 조건
 
@@ -58,6 +79,8 @@ python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outp
 ```
 
 전용 `RunPen_CI` 또는 `RunningArt_UI_QA` 에뮬레이터만 받으며 물리 폰은 거부한다. 전용 에뮬레이터의 앱 데이터를 매 회 초기화한다. 공개 fixture 생성부터 탭·입력 보존·OAuth 취소·저장/재실행·출발 준비·주입 GPS·중단 복원·GPX 취소·큰 글씨/키보드까지 검사하고, 실패해도 시험 자료와 도우미를 정리한다. 테스트 상태를 주입하는 제품 코드나 별도 앱 ID를 추가하지 않는다. CI APK는 개발 머신의 서명·환경값을 사용하지 않으므로 사용자 폰 설치용으로 배포하지 않는다.
+
+API 36은 위 전체 흐름과 4개 정적 화면 비교를 실행한다. main에서 추가하는 API 29의 `--smoke`는 5탭/메뉴, 상세/뒤로/입력 보존, OAuth 취소 복귀의 3단계와 원본 보존·정리·화면 캡처를 실행한다. API 29의 전체 GPS 회귀나 정적 픽셀 기준 통과로 해석하지 않는다.
 
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
 
