@@ -80,6 +80,20 @@ public class PhoneValidation extends Instrumentation {
     for(String t:new String[]{"sync_deletions","sync_conflicts"})try(Cursor c=db.rawQuery("SELECT count(*) FROM "+t,null)){c.moveToFirst();out.put(t,c.getInt(0));}
     return out;
   }
+  private String settingsDigest(SQLiteDatabase db)throws Exception {
+    ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+    try(DataOutputStream out=new DataOutputStream(bytes)) {
+      for(String sql:new String[]{"SELECT * FROM account_preferences ORDER BY owner_id", "SELECT owner_id,enabled FROM sync_accounts ORDER BY owner_id"}) {
+        try(Cursor cursor=db.rawQuery(sql,null)) {
+          while(cursor.moveToNext())for(int i=0;i<cursor.getColumnCount();i++) {
+            out.writeInt(cursor.getType(i));
+            if(!cursor.isNull(i)){byte[] value=cursor.getString(i).getBytes(StandardCharsets.UTF_8);out.writeInt(value.length);out.write(value);}
+          }
+        }
+      }
+    }
+    return hash(bytes.toByteArray());
+  }
   private void exportCustom(SQLiteDatabase db,Bundle out)throws Exception{
     try(Cursor c=db.rawQuery("SELECT id,snapshot_json FROM saved_courses WHERE name='QA phone v3'",null)){
       if(c.getCount()!=1||!c.moveToFirst())throw new Exception("Ambiguous fixture");
@@ -184,6 +198,16 @@ public class PhoneValidation extends Instrumentation {
     else if(action.equals("backup")){backup("phone-validation-original",false);result.putString("result","Original backup retained on device; fsync/hash verified");}
     else if(action.equals("isolate")){backup("phone-validation-synced",true);result.putString("result","Synced backup retained on device; empty store ready");}
     else if(action.equals("restore")){restore();result.putString("result","Synced database restored; fsync/hash verified");}
+    else if(action.equals("compare-settings")){
+      File original=new File(folder(),"phone-validation-original");
+      if(!new File(original,"READY").isFile())throw new Exception("No original backup");
+      try(SQLiteDatabase before=SQLiteDatabase.openDatabase(new File(original,FILES[0]).getPath(),null,SQLiteDatabase.OPEN_READONLY);
+          SQLiteDatabase current=SQLiteDatabase.openDatabase(new File(folder(),FILES[0]).getPath(),null,SQLiteDatabase.OPEN_READONLY)) {
+        String baseline=settingsDigest(before),actual=settingsDigest(current);
+        if(!baseline.equals(actual))throw new Exception("Account preferences or sync opt-in changed");
+        result.putString("settingsSha256",actual);
+      }
+    }
     else if(action.equals("cleanup-backups")){cleanupBackups();result.putString("result","Backup directories removed");}
     else{
       SQLiteDatabase db=SQLiteDatabase.openDatabase(new File(folder(),FILES[0]).getPath(),null,action.equals("seed")?SQLiteDatabase.OPEN_READWRITE:SQLiteDatabase.OPEN_READONLY);

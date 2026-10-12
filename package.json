@@ -43,9 +43,19 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "3.1143.0",
+    "@electric-sql/pglite": "0.5.9",
+    "@testing-library/react-native": "14.1.0",
     "@types/react": "~19.2.2",
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
     "eslint": "9.39.5",
     "eslint-config-expo": "~57.0.2",
+    "fast-check": "4.10.2",
+    "jest": "29.7.0",
+    "jest-expo": "57.0.6",
+    "pixelmatch": "8.0.0",
+    "pngjs": "7.0.0",
+    "test-renderer": "1.0.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -84,7 +94,13 @@
     "doctor": "npx --yes expo-doctor",
     "preprebuild:android": "node scripts/patch-expo-location.cjs",
     "prebuild:android": "expo prebuild --platform android --no-clean",
-    "export:android": "expo export --platform android"
+    "export:android": "expo export --platform android",
+    "test:components": "jest --runInBand --no-watchman",
+    "test:api-contract": "node --test tests/compute-openapi.test.mjs",
+    "test:properties": "node --test tests/state-sequences.test.mjs",
+    "qa:fast": "node scripts/qa/run.mjs fast",
+    "qa:integration": "node scripts/qa/run.mjs integration",
+    "qa:openapi": "node scripts/qa/openapi.mjs --check"
   },
   "engines": {
     "node": ">=24.21.0 <25"
@@ -93,7 +109,9 @@
   "expo": {
     "autolinking": {
       "android": {
-        "buildFromSource": ["expo-location"]
+        "buildFromSource": [
+          "expo-location"
+        ]
       }
     }
   },

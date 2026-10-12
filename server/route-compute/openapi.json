@@ -1,0 +1,700 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RunPen route compute",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8087",
+      "description": "Isolated contract harness; never hosted production"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Health",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes": {
+      "post": {
+        "operationId": "computeRoutes",
+        "description": "JSON body <= 16384 bytes; response <= 8 MiB. No authentication required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Point": {
+        "type": "object",
+        "required": [
+          "x",
+          "y"
+        ],
+        "properties": {
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          }
+        }
+      },
+      "Path": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Point"
+        },
+        "maxItems": 20000
+      },
+      "Request": {
+        "type": "object",
+        "required": [
+          "contract",
+          "origin",
+          "options",
+          "refresh"
+        ],
+        "properties": {
+          "contract": {
+            "const": "runpen-routes-v1"
+          },
+          "origin": {
+            "type": "object",
+            "required": [
+              "lat",
+              "lng"
+            ],
+            "properties": {
+              "lat": {
+                "type": "number",
+                "minimum": 33,
+                "exclusiveMaximum": 39
+              },
+              "lng": {
+                "type": "number",
+                "minimum": 124,
+                "exclusiveMaximum": 132
+              }
+            }
+          },
+          "options": {
+            "type": "object",
+            "required": [
+              "version",
+              "mode",
+              "shape",
+              "targetKm",
+              "radiusKm"
+            ],
+            "properties": {
+              "version": {
+                "const": "0.2"
+              },
+              "mode": {
+                "const": "free-loop"
+              },
+              "shape": {
+                "enum": [
+                  "heart",
+                  "star",
+                  "cat",
+                  "rabbit",
+                  "house",
+                  "diamond",
+                  "bolt",
+                  "fish",
+                  "arrow",
+                  "custom"
+                ]
+              },
+              "targetKm": {
+                "enum": [
+                  3,
+                  5,
+                  7
+                ]
+              },
+              "radiusKm": {
+                "const": 2
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "shape": {
+                      "const": "custom"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "customTemplate"
+                  ],
+                  "properties": {
+                    "customTemplate": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "x",
+                          "y"
+                        ],
+                        "properties": {
+                          "x": {
+                            "type": "number",
+                            "minimum": -10,
+                            "maximum": 10
+                          },
+                          "y": {
+                            "type": "number",
+                            "minimum": -10,
+                            "maximum": 10
+                          }
+                        }
+                      },
+                      "minItems": 4,
+                      "maxItems": 49
+                    }
+                  }
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "customTemplate"
+                    ]
+                  }
+                }
+              }
+            ],
+            "description": "Custom contours must close within 0.00001 and have perimeter >= 0.1. Semantic violations return 400. Unknown fields are ignored."
+          },
+          "refresh": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "Health": {
+        "type": "object",
+        "required": [
+          "contract",
+          "ok"
+        ],
+        "properties": {
+          "contract": {
+            "const": "runpen-routes-v1"
+          },
+          "ok": {
+            "const": true
+          }
+        }
+      },
+      "Candidate": {
+        "type": "object",
+        "required": [
+          "rotation",
+          "scale",
+          "error",
+          "loopKm",
+          "accessKm",
+          "scaleRatio",
+          "templatePerimeter",
+          "offset",
+          "target",
+          "route",
+          "loop",
+          "access",
+          "score",
+          "roadInfo",
+          "roadSegments"
+        ],
+        "properties": {
+          "rotation": {
+            "type": "number"
+          },
+          "scale": {
+            "type": "number"
+          },
+          "error": {
+            "type": "number"
+          },
+          "loopKm": {
+            "type": "number"
+          },
+          "accessKm": {
+            "type": "number"
+          },
+          "scaleRatio": {
+            "type": "number"
+          },
+          "templatePerimeter": {
+            "type": "number"
+          },
+          "offset": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "target": {
+            "$ref": "#/components/schemas/Path"
+          },
+          "route": {
+            "$ref": "#/components/schemas/Path"
+          },
+          "loop": {
+            "$ref": "#/components/schemas/Path"
+          },
+          "access": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Path"
+            }
+          },
+          "score": {
+            "type": "object",
+            "required": [
+              "raw",
+              "total",
+              "contour",
+              "flow",
+              "angles",
+              "distanceFit",
+              "reusePenalty",
+              "lengthKm"
+            ],
+            "properties": {
+              "raw": {
+                "type": "number"
+              },
+              "total": {
+                "type": "number"
+              },
+              "contour": {
+                "type": "number"
+              },
+              "flow": {
+                "type": "number"
+              },
+              "angles": {
+                "type": "number"
+              },
+              "distanceFit": {
+                "type": "number"
+              },
+              "reusePenalty": {
+                "type": "number"
+              },
+              "lengthKm": {
+                "type": "number"
+              }
+            }
+          },
+          "roadInfo": {
+            "type": "object",
+            "required": [
+              "crowd",
+              "stepsKm"
+            ],
+            "properties": {
+              "crowd": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "stepsKm": {
+                "type": "number"
+              }
+            }
+          },
+          "roadSegments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "way",
+                "from",
+                "to",
+                "start",
+                "end",
+                "bidirectional"
+              ],
+              "properties": {
+                "way": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "from": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "to": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "start": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "end": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "bidirectional": {
+                  "const": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "Response": {
+        "type": "object",
+        "required": [
+          "contract",
+          "request",
+          "result",
+          "metrics",
+          "roads",
+          "timing"
+        ],
+        "properties": {
+          "contract": {
+            "const": "runpen-routes-v1"
+          },
+          "request": {
+            "$ref": "#/components/schemas/Request"
+          },
+          "result": {
+            "type": "object",
+            "required": [
+              "version",
+              "mode",
+              "start",
+              "snapMeters",
+              "template",
+              "stats",
+              "baseline",
+              "candidates"
+            ],
+            "properties": {
+              "version": {
+                "const": "0.2"
+              },
+              "mode": {
+                "const": "free-loop"
+              },
+              "start": {
+                "$ref": "#/components/schemas/Point"
+              },
+              "snapMeters": {
+                "type": "number"
+              },
+              "template": {
+                "type": "object",
+                "required": [
+                  "width",
+                  "height",
+                  "perimeter"
+                ],
+                "properties": {
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "perimeter": {
+                    "type": "number"
+                  }
+                }
+              },
+              "stats": {
+                "type": "object",
+                "required": [
+                  "placements",
+                  "routed",
+                  "extraRouted",
+                  "valid",
+                  "roads"
+                ],
+                "properties": {
+                  "placements": {
+                    "type": "number"
+                  },
+                  "routed": {
+                    "type": "number"
+                  },
+                  "extraRouted": {
+                    "type": "number"
+                  },
+                  "valid": {
+                    "type": "number"
+                  },
+                  "roads": {
+                    "type": "number"
+                  }
+                }
+              },
+              "baseline": {
+                "type": "object",
+                "required": [
+                  "candidates",
+                  "valid",
+                  "routed"
+                ],
+                "properties": {
+                  "candidates": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "score",
+                        "raw",
+                        "lengthKm"
+                      ],
+                      "properties": {
+                        "score": {
+                          "type": "number"
+                        },
+                        "raw": {
+                          "type": "number"
+                        },
+                        "lengthKm": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  },
+                  "valid": {
+                    "type": "number"
+                  },
+                  "routed": {
+                    "type": "number"
+                  }
+                }
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Candidate"
+                },
+                "maxItems": 5
+              }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "required": [
+              "elapsedMs",
+              "computeMs",
+              "maxSliceMs",
+              "yields",
+              "nodes",
+              "edges",
+              "routing"
+            ],
+            "properties": {
+              "elapsedMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "computeMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "maxSliceMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "yields": {
+                "type": "number",
+                "minimum": 0
+              },
+              "nodes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "edges": {
+                "type": "number",
+                "minimum": 0
+              },
+              "routing": {
+                "type": "object"
+              }
+            }
+          },
+          "roads": {
+            "type": "object",
+            "required": [
+              "release",
+              "manifestHash",
+              "cached"
+            ],
+            "properties": {
+              "release": {
+                "type": "string"
+              },
+              "manifestHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "cached": {
+                "type": "boolean"
+              }
+            }
+          },
+          "timing": {
+            "type": "object",
+            "required": [
+              "roadMs",
+              "calculationMs",
+              "totalMs"
+            ],
+            "properties": {
+              "roadMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "calculationMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "totalMs": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

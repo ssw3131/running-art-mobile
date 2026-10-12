@@ -1,0 +1,10 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select plan(5);
+select has_table('public', 'personal_records', 'personal record migration exists');
+select ok((select relrowsecurity from pg_class where oid='public.personal_records'::regclass), 'RLS is enabled');
+select ok(not has_table_privilege('anon','public.personal_records','SELECT'), 'anonymous records are denied');
+select ok(not has_table_privilege('authenticated','public.personal_records','INSERT'), 'writes require guarded RPC');
+select ok((select not public from storage.buckets where id='personal-records'), 'payload bucket is private');
+select * from finish();
+rollback;

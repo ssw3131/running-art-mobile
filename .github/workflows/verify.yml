@@ -1,0 +1,203 @@
+name: Verify
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      suite:
+        type: choice
+        options: [all, fast, api, android]
+        default: all
+      repetitions:
+        type: choice
+        options: ['1', '10']
+        default: '1'
+
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+env:
+  EXPO_NO_DOTENV: '1'
+  CI: '1'
+
+jobs:
+  scope:
+    runs-on: ubuntu-24.04
+    outputs:
+      full: ${{ steps.scope.outputs.full }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.21.0'
+      - id: scope
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ '${{ github.event_name }}' = workflow_dispatch ] || [ -z "$BASE" ] || [ "$BASE" = 0000000000000000000000000000000000000000 ]; then
+            echo 'full=true' >> "$GITHUB_OUTPUT"
+          else
+            node scripts/qa/scope.mjs "$BASE"
+            node scripts/qa/docs.mjs "$BASE"
+          fi
+
+  fast:
+    needs: scope
+    if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'fast')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - run: npm ci
+      - run: npm run qa:fast
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: fast-${{ github.run_attempt }}
+          path: test-results/fast
+          retention-days: 7
+
+  api:
+    needs: scope
+    if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'api')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/qa/requirements.txt
+      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb
+        with:
+          version: 2.120.0
+      - run: npm ci
+      - run: pip install -r scripts/qa/requirements.txt
+      - run: python scripts/qa/fuzz.py
+      - name: Isolated PostgreSQL, Auth and Storage
+        run: |
+          mkdir -p .cache test-results/integration
+          supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor > test-results/integration/stack.log 2>&1
+          supabase status -o json > .cache/qa-supabase-status.json
+          supabase test db supabase/tests/database > test-results/integration/pgtap.log 2>&1
+          python scripts/qa/postgres.py > test-results/integration/postgres.log 2>&1
+          npm run qa:integration
+      - name: Stop isolated containers
+        if: always()
+        run: |
+          supabase stop --no-backup
+          rm -f .cache/qa-supabase-status.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: api-${{ github.run_attempt }}
+          path: |
+            test-results/fuzz
+            test-results/integration/report.*
+            test-results/integration/supabase-roundtrip.log
+            test-results/integration/pgtap.log
+            test-results/integration/postgres.log
+          retention-days: 7
+
+  android:
+    needs: scope
+    if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'android')
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.repetitions == '10' && 240 || 45 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        api: ${{ fromJSON(github.event_name == 'push' && '[36,29]' || '[36]') }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.21.0'
+          cache: npm
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - run: npm ci
+      - run: python scripts/qa/install-maestro.py
+      - name: Build test APK with no local credentials or test hooks
+        run: |
+          npm run prebuild:android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2
+          cd ..
+          python scripts/qa/check-apk.py android/app/build/outputs/apk/release/app-release.apk
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: ${{ matrix.api }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          avd-name: RunPen_CI
+          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
+          disable-animations: true
+          script: python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
+      - name: Compare reviewed API 36 screens
+        if: matrix.api == 36
+        run: node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json
+      - name: Build screenshot report
+        if: always()
+        run: node scripts/qa/gallery.mjs test-results/android-${{ matrix.api }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: android-${{ matrix.api }}-${{ github.run_attempt }}
+          path: test-results/android-${{ matrix.api }}
+          retention-days: 7
+
+  gate:
+    # A partial manual run must never satisfy the required PR check.
+    name: ${{ github.event_name == 'workflow_dispatch' && 'manual-verification' || 'verification-gate' }}
+    needs: [scope, fast, api, android]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - env:
+          SCOPE: ${{ needs.scope.result }}
+          FULL: ${{ needs.scope.outputs.full }}
+          FAST: ${{ needs.fast.result }}
+          API: ${{ needs.api.result }}
+          ANDROID: ${{ needs.android.result }}
+          SUITE: ${{ github.event_name == 'workflow_dispatch' && inputs.suite || 'all' }}
+        run: |
+          test "$SCOPE" = success
+          if [ "$FULL" = true ]; then
+            if [ "$SUITE" = all ] || [ "$SUITE" = fast ]; then test "$FAST" = success; fi
+            if [ "$SUITE" = all ] || [ "$SUITE" = api ]; then test "$API" = success; fi
+            if [ "$SUITE" = all ] || [ "$SUITE" = android ]; then test "$ANDROID" = success; fi
+          fi
