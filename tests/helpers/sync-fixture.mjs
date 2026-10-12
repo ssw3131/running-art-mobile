@@ -1,12 +1,11 @@
 
 import assert from 'node:assert/strict';
 import { openSqlite } from './sqlite.mjs';
-import { migrateDatabase, migrations } from '../../src/modules/storage/migrations.ts';
+import { migrateDatabase } from '../../src/modules/storage/migrations.ts';
 import { createCourseRepository } from '../../src/modules/courses/repository.ts';
 import { createRunRepository } from '../../src/modules/running/repository.ts';
 import { createSyncRepository } from '../../src/modules/sync/repository.ts';
-import { synchronize, resolveConflict } from '../../src/modules/sync/engine.ts';
-import { validateRemote, decodePayload, digest } from '../../src/modules/sync/model.ts';
+import { synchronize } from '../../src/modules/sync/engine.ts';
 
 const A='11111111-1111-4111-8111-111111111111',B='22222222-2222-4222-8222-222222222222';
 const snapshot=(n=0)=>({schemaVersion:1,engineVersion:'0.2',source:'synthetic',shape:'heart',origin:{lat:0,lng:0},targetKm:1,lengthKm:1,score:90,

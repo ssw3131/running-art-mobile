@@ -5,6 +5,7 @@ import { A, snapshot, device, cloud, sync } from './helpers/sync-fixture.mjs';
 import { resolveConflict } from '../src/modules/sync/engine.ts';
 const seed = Number(process.env.FC_SEED ?? 20261013);
 const parameters = { seed, numRuns: 40, verbose: true, ...(process.env.FC_PATH ? { path: process.env.FC_PATH } : {}) };
+const assertSingleCourse = async d => assert.equal((await d.courses.list()).length, 1, 'duplicate persistence must be caught');
 
 test(`PROPERTY-SYNC-01: generated rename/offline/lost-response/retry sequences (seed ${seed})`, async () => {
   await fc.assert(fc.asyncProperty(fc.array(fc.constantFrom('rename', 'offline', 'lost', 'sync', 'duplicate'), { minLength: 1, maxLength: 35 }), async commands => {
@@ -26,7 +27,7 @@ test(`PROPERTY-SYNC-01: generated rename/offline/lost-response/retry sequences (
           delete remote.hooks.upload; delete remote.hooks.afterCommit;
         }
         assert.equal((await first.courses.get(saved.id)).name, name);
-        assert.equal((await first.courses.list()).length, 1, 'duplicate persistence must be caught');
+        await assertSingleCourse(first);
       }
       await sync(first, remote);
       // A lost commit followed by an offline edit correctly requires an explicit
@@ -40,6 +41,16 @@ test(`PROPERTY-SYNC-01: generated rename/offline/lost-response/retry sequences (
       assert.equal((await first.sync.status(A)).pending, 0);
     } finally { for (const close of cleanup) await close(); }
   }), parameters);
+});
+
+test('STORAGE-PROBE-01: the sequence oracle detects a deliberately persisted duplicate', async t => {
+  const d = await device(t); await d.courses.save(snapshot(), '중복 검출');
+  await assertSingleCourse(d);
+  const row = await d.db.getFirstAsync('SELECT * FROM saved_courses');
+  row.id = 'f'.repeat(32);
+  const columns = Object.keys(row); assert.ok(columns.every(name => /^[a-z_]+$/.test(name)));
+  await d.db.runAsync(`INSERT INTO saved_courses(${columns.join(',')}) VALUES(${columns.map(() => '?').join(',')})`, ...Object.values(row));
+  await assert.rejects(assertSingleCourse(d), /duplicate persistence/);
 });
 
 test(`PROPERTY-RUN-01: repeated pause/resume and duplicate samples preserve unique points (seed ${seed})`, async () => {

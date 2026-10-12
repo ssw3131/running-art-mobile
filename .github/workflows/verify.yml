@@ -150,6 +150,8 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2
+          cd ..
+          python scripts/qa/check-apk.py android/app/build/outputs/apk/release/app-release.apk
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -160,10 +162,11 @@ jobs:
           api-level: ${{ matrix.api }}
           target: google_apis
           arch: x86_64
+          profile: pixel_5
           avd-name: RunPen_CI
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=ko-KR
           disable-animations: true
-          script: python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
+          script: python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '10' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -183,10 +186,11 @@ jobs:
           FAST: ${{ needs.fast.result }}
           API: ${{ needs.api.result }}
           ANDROID: ${{ needs.android.result }}
+          SUITE: ${{ github.event_name == 'workflow_dispatch' && inputs.suite || 'all' }}
         run: |
           test "$SCOPE" = success
           if [ "$FULL" = true ]; then
-            test "$FAST" = success
-            test "$API" = success
-            test "$ANDROID" = success
+            if [ "$SUITE" = all ] || [ "$SUITE" = fast ]; then test "$FAST" = success; fi
+            if [ "$SUITE" = all ] || [ "$SUITE" = api ]; then test "$API" = success; fi
+            if [ "$SUITE" = all ] || [ "$SUITE" = android ]; then test "$ANDROID" = success; fi
           fi

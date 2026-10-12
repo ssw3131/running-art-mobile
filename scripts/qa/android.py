@@ -10,7 +10,7 @@ import json
 import os
 import pathlib
 import platform
-import shutil
+import re
 import subprocess
 import time
 
@@ -30,6 +30,36 @@ spec = importlib.util.spec_from_file_location('s0', ROOT / 'scripts/qa/service-s
 q = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(q)
 q.ADB, q.SERIAL = adb, args.serial
+
+def seek_visible(key):
+    """Use the actual scroll viewport; do not assume a 2340px display."""
+    for _ in range(20):
+        tree = q.capture('current')
+        node = q.find(tree, key)
+        scrolls = [n for n in tree.iter('node') if n.get('scrollable') == 'true' and
+                   'Horizontal' not in n.get('class', '')]
+        bounds = [list(map(int, re.findall(r'\d+', n.get('bounds')))) for n in scrolls]
+        bounds = [b for b in bounds if b[2]-b[0] > 300 and b[3]-b[1] > 220]
+        if not bounds:
+            if node is not None and node.get('enabled') == 'true':
+                b = list(map(int, re.findall(r'\d+', node.get('bounds'))))
+                if b[2] > b[0] and b[3] > b[1]: return
+            raise RuntimeError('No scroll viewport for: ' + key)
+        # Bottom form below a fixed map takes precedence over a large ancestor.
+        left, top, right, bottom = max(bounds, key=lambda b: b[1])
+        tab = q.find(tree, 'tab-home')
+        if tab is not None: bottom = min(bottom, int(re.findall(r'\d+', tab.get('bounds'))[1]))
+        upwards = False
+        if node is not None:
+            x1,y1,x2,y2 = map(int,re.findall(r'\d+',node.get('bounds')))
+            if node.get('enabled') == 'true' and x2>x1 and y2-y1>=30 and top<=y1<y2<=bottom: return
+            upwards = y2 <= top + 10
+        start, end = bottom-45, top+max(50,int((bottom-top)*.22))
+        if upwards: start,end=end,start
+        q.shell('input','swipe',str(right-25),str(start),str(right-25),str(end),'350')
+    raise RuntimeError('Control not reached: ' + key)
+
+q.seek = seek_visible
 avd = q.adb('emu', 'avd', 'name').decode().splitlines()[0]
 assert avd in ['RunningArt_UI_QA', 'RunPen_CI'], f'Unapproved AVD: {avd}'
 args.output.mkdir(parents=True, exist_ok=True)
@@ -37,7 +67,7 @@ args.apk = args.apk.resolve()
 assert args.apk.is_file()
 
 def run(command, **kwargs):
-    subprocess.run([str(part) for part in command], cwd=ROOT, check=True, **kwargs)
+    subprocess.run([str(part) for part in command], cwd=ROOT, check=True, timeout=360, **kwargs)
 
 def build_helper():
     folder = ROOT / '.cache/running-qa'
@@ -64,23 +94,44 @@ environment = {'host': platform.system(), 'api': q.shell('getprop', 'ro.build.ve
                'fingerprint': q.shell('getprop', 'ro.build.fingerprint').decode().strip(), 'size': '1080x2340', 'density': 420,
                'fontScale': 1, 'locale': q.shell('getprop', 'persist.sys.locale').decode().strip()}
 report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+          'dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip()),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(), 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
+
+def save_report():
+    (args.output / 'report.json').write_text(json.dumps(report, indent=2), encoding='utf8')
+
+def preserved_fixture():
+    # Match complete original rows, including timestamps and snapshot content.
+    return {'course': q.query("SELECT * FROM saved_courses WHERE id='" + 'd'*32 + "'"),
+            'note': q.query("SELECT * FROM storage_test_notes WHERE content='S0 preservation fixture'")}
 
 def launch(route=''):
     q.shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///' + route, q.APP)
     time.sleep(3)
 
 def callback():
-    q.tap('tab-courses'); q.seek('distance-3'); q.tap('distance-3'); q.tap('shape-star')
+    q.tap('tab-courses'); q.seek('distance-3'); q.tap('distance-3'); q.seek('shape-star'); q.tap('shape-star')
     launch('auth/callback?error=access_denied&error_description=S0_cancelled')
     assert q.find(q.capture('auth-cancel-callback'), 'tab-account').get('selected') == 'true'
     q.tap('tab-courses'); q.seek('distance-3')
     tree = q.capture('draft-after-callback')
     assert q.find(tree, 'distance-3').get('selected') == 'true'
     assert q.find(tree, 'shape-star').get('selected') == 'true'
+
+def maestro_navigation():
+    run([maestro, '--device', args.serial, 'test', '--format', 'junit', '--output', q.OUT / 'maestro.xml',
+         '--test-output-dir', q.OUT / 'maestro', ROOT / '.maestro/s0-navigation.yaml'],
+        env={**os.environ, 'MAESTRO_CLI_NO_ANALYTICS': 'true', 'MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED': 'true'})
+    # Driver initialization can reset display overrides. Restore and verify the
+    # evidence dimensions before any fixed-size accessibility checks.
+    q.shell('wm','size','1080x2340'); q.shell('wm','density','420')
+    time.sleep(2)
+    q.capture('after-maestro-display')
+    import struct
+    assert struct.unpack('>II', (q.OUT/'after-maestro-display.png').read_bytes()[16:24]) == (1080,2340), 'Unexpected display dimensions'
 
 def saved_restart():
     q.shell('am', 'force-stop', q.APP); launch('courses')
@@ -102,27 +153,40 @@ try:
         if int(environment['api']) >= 33:
             q.shell('pm', 'grant', q.APP, 'android.permission.POST_NOTIFICATIONS')
         launch(); q.snapshot('empty'); q.seed()
-        steps = [('S0-01-maestro', lambda: run([maestro, '--device', args.serial, 'test', '--format', 'junit', '--output', q.OUT / 'maestro.xml', '--test-output-dir', q.OUT / 'maestro', ROOT / '.maestro/s0-navigation.yaml'], env={**os.environ, 'MAESTRO_CLI_NO_ANALYTICS': 'true'})),
+        original_fixture = preserved_fixture()
+        steps = [('S0-01-maestro', maestro_navigation),
                  ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
         if not args.smoke:
-            steps += [('S0-04-save', q.calculation), ('S0-04-restart', saved_restart), ('S0-05-preparation', q.course_preparation),
-                      ('S0-06-gps', q.gps_navigation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled)]
+            # Free GPS must start without a selected course. Preparation remains
+            # selected intentionally, so verify it after the independent GPS run.
+            steps += [('S0-04-save', q.calculation), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
+                      ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled)]
         for scenario, action in steps:
             step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)
             try:
                 print(f'{attempt}: {scenario}', flush=True); action(); step['status'] = 'passed'
+                save_report()
             except Exception as error:
                 step['status'] = 'failed'; step['error'] = str(error)
-                q.capture('failure')
+                try:
+                    failure = q.capture('failure')
+                    if any('System UI isn' in node.get('text', '') for node in failure.iter('node')):
+                        step['status'] = 'environment_failure'
+                except Exception as capture_error:
+                    step['captureError'] = str(capture_error)
                 raise
+        assert preserved_fixture() == original_fixture, 'Original fixture rows changed'
+        result['preservation'] = {'status': 'passed', 'sha256': hashlib.sha256(json.dumps(original_fixture, sort_keys=True).encode()).hexdigest()}
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
-        q.shell('am', 'force-stop', q.APP); launch()
+        # Fixed visual fixtures, independent of the timestamped GPS scenario.
+        q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); launch(); q.seed()
         screens = []
         for tab in ['home', 'run', 'archive', 'account']:
             q.tap('tab-' + tab); q.capture('visual-' + tab)
             screens.append({'id': tab, 'file': 'visual-' + tab + '.png'})
         (q.OUT / 'screens.json').write_text(json.dumps({**report, 'screens': screens}, indent=2), encoding='utf8')
         result['status'] = 'passed'
+        save_report()
 except Exception:
     if report['attempts']: report['attempts'][-1]['status'] = 'failed'
     raise
@@ -134,4 +198,4 @@ finally:
     q.shell('settings', 'put', 'system', 'font_scale', '1.0')
     q.shell('rm', '-f', '/data/local/tmp/running-ui-dump.jar', '/data/local/tmp/running-qa.xml', '/data/local/tmp/local/tmp/running-qa.xml')
     report['status'] = 'passed' if len(report['attempts']) == args.repeat and all(a['status'] == 'passed' for a in report['attempts']) else 'failed'
-    (args.output / 'report.json').write_text(json.dumps(report, indent=2), encoding='utf8')
+    save_report()
