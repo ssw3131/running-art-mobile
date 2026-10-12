@@ -24,10 +24,12 @@ if (process.argv[1]?.endsWith('visual.mjs')) {
   const [baselinePath, actualPath, outputPath] = process.argv.slice(2);
   if (!baselinePath || !actualPath || !outputPath) throw Error('Usage: visual.mjs baseline.json actual.json output-dir');
   mkdirSync(outputPath, { recursive: true });
+  // A failed rerun must never leave a previous successful report in place.
+  writeFileSync(path.join(outputPath, 'report.json'), JSON.stringify({ status: 'running' }));
   const actual = JSON.parse(readFileSync(actualPath)), results = [];
   let baseline;
   if (existsSync(baselinePath)) baseline = JSON.parse(readFileSync(baselinePath));
-  if (!baseline?.reviewed || !isDeepStrictEqual(baseline.environment, actual.environment)) {
+  if (baseline?.reviewed !== true || !isDeepStrictEqual(baseline.environment, actual.environment)) {
     writeFileSync(path.join(outputPath, 'report.json'), JSON.stringify({ status: 'not_run', reason: 'No reviewed baseline for this exact environment', candidate: actualPath }, null, 2));
     throw Error('Visual baseline requires review for this environment');
   }

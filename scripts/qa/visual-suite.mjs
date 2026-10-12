@@ -13,6 +13,10 @@ for (const attempt of attempts) {
   const run = spawnSync(process.execPath, ['scripts/qa/visual.mjs', baseline, actual, out], { encoding: 'utf8' });
   const reportFile = path.join(out, 'report.json');
   const report = existsSync(reportFile) ? JSON.parse(readFileSync(reportFile)) : { status: 'environment_failure', reason: run.stderr };
+  if (run.status !== 0 && !['failed', 'not_run', 'environment_failure'].includes(report.status)) {
+    report.status = 'failed'; report.reason = run.stderr || run.error?.message || 'Visual comparison did not complete';
+    writeFileSync(reportFile, JSON.stringify(report, null, 2));
+  }
   results.push({ attempt, ...report });
   console.log(`${attempt}: ${report.status}`);
 }

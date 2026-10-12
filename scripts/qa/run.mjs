@@ -20,6 +20,8 @@ if (!steps[suite]) throw Error('Expected fast or integration');
 const report = { schemaVersion: 1, suite, startedAt: new Date().toISOString(),
   source: spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).stdout.trim(),
   dirty: Boolean(spawnSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).stdout.trim()),
+  workingTree: spawnSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).stdout.trim().split('\n').filter(Boolean),
+  ciRun: process.env.GITHUB_RUN_ID ?? null,
   fixtureSha256: createHash('sha256').update(readFileSync('assets/route-lab/grid.json')).digest('hex'),
   environment: { platform: process.platform, node: process.version }, retry: 0, steps: [] };
 let failed = false;

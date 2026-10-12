@@ -10,6 +10,15 @@ let body = `<h1>RunPen Android verification</h1><pre>${esc(JSON.stringify(report
 for (const attempt of readdirSync(root).filter(name => /^attempt-\d{2}$/.test(name)).sort()) {
   const visual = read(path.join(root, attempt, 'visual/report.json'));
   body += `<h2>${esc(attempt)}</h2><p>Visual: ${esc(visual?.status ?? 'not_run')}</p>`;
+  const functional = report?.attempts?.find(entry => entry.attempt === Number(attempt.slice(-2)));
+  if (functional) {
+    body += '<ul>';
+    for (const step of functional.steps) {
+      const links = (step.screenshots ?? []).map(file => `<a href="${attempt}/${encodeURIComponent(file)}">${esc(file)}</a>`).join(' · ');
+      body += `<li>${esc(step.id)}: ${esc(step.status)} ${links}</li>`;
+    }
+    body += '</ul>';
+  }
   if (visual?.reason) body += `<p>${esc(visual.reason)}</p>`;
   if (visual?.results) for (const entry of visual.results) {
     body += `<h3>${esc(entry.id)} · ${esc(entry.status)} · ${entry.pixels} pixels</h3><div class="row">`;
@@ -26,5 +35,10 @@ for (const attempt of readdirSync(root).filter(name => /^attempt-\d{2}$/.test(na
     }
     body += '</div>';
   }
+  body += '<details><summary>All evidence: PNG · XML · JSON · JUnit</summary><ul>';
+  for (const file of readdirSync(path.join(root, attempt)).filter(file => /\.(png|xml|json)$/.test(file))) {
+    body += `<li><a href="${attempt}/${encodeURIComponent(file)}">${esc(file)}</a></li>`;
+  }
+  body += '</ul></details>';
 }
 writeFileSync(path.join(root, 'index.html'), `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>RunPen verification</title><style>body{font:16px system-ui;margin:24px;background:#f4f5f7;color:#152a24}pre{white-space:pre-wrap;font-size:12px;max-height:320px;overflow:auto;background:white;padding:16px}.row{display:flex;gap:16px;overflow:auto}figure{margin:0;min-width:220px}img{width:280px;max-width:85vw;border:1px solid #ddd}h2{border-top:1px solid #bbb;padding-top:24px}</style>${body}</html>`);

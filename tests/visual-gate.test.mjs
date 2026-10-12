@@ -20,4 +20,6 @@ test('VISUAL-GATE-01: missing or mismatched baselines cannot report a visual pas
   assert.equal(run().status, 1); assert.equal(report().results[0].status, 'not_run');
   writeFileSync(baseline, JSON.stringify({ ...manifest, reviewed: true }));
   assert.equal(run().status, 0); assert.equal(report().status, 'passed');
+  writeFileSync(path.join(folder, 'screens.json'), JSON.stringify({ ...manifest, screens: [] }));
+  assert.equal(run().status, 1); assert.equal(report().results[0].status, 'failed');
 });

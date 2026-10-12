@@ -13,6 +13,7 @@ import platform
 import re
 import subprocess
 import time
+from datetime import datetime, timezone
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -100,6 +101,7 @@ environment['timezone'] = q.shell('getprop', 'persist.sys.timezone').decode().st
 environment['systemBar'] = 'demo-1200-full-signal-battery100-v1'
 report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
           'dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip()),
+          'startedAt': datetime.now(timezone.utc).isoformat(), 'ciRun': os.environ.get('GITHUB_RUN_ID'),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
           'mode': 'visual-only' if args.visual_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
@@ -172,7 +174,7 @@ try:
     for attempt in range(1, args.repeat + 1):
         q.OUT = args.output / f'attempt-{attempt:02}'
         q.OUT.mkdir(parents=True, exist_ok=True)
-        result = {'attempt': attempt, 'steps': [], 'status': 'running'}; report['attempts'].append(result)
+        result = {'attempt': attempt, 'startedAt': datetime.now(timezone.utc).isoformat(), 'steps': [], 'status': 'running'}; report['attempts'].append(result)
         # This runner accepts only dedicated emulator names above. Never physical.
         q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP)
         for permission in ['ACCESS_FINE_LOCATION', 'ACCESS_COARSE_LOCATION', 'ACCESS_BACKGROUND_LOCATION']:
@@ -191,13 +193,18 @@ try:
         if args.visual_only: steps = []
         for scenario, action in steps:
             step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)
+            previous_images = set(q.OUT.glob('*.png'))
+            started = time.monotonic()
             try:
                 print(f'{attempt}: {scenario}', flush=True); action(); step['status'] = 'passed'
+                step['screenshots'] = sorted(p.name for p in set(q.OUT.glob('*.png')) - previous_images if p.name != 'current.png')
+                step['durationSeconds'] = round(time.monotonic() - started, 3)
                 save_report()
             except Exception as error:
                 step['status'] = 'failed'; step['error'] = str(error)
                 try:
                     failure = q.capture('failure')
+                    step['screenshots'] = ['failure.png']
                     if any('System UI isn' in node.get('text', '') for node in failure.iter('node')):
                         step['status'] = 'environment_failure'
                 except Exception as capture_error:
@@ -210,6 +217,7 @@ try:
         q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); launch(); q.seed()
         capture_visuals()
         result['status'] = 'passed'
+        result['finishedAt'] = datetime.now(timezone.utc).isoformat()
         save_report()
 except Exception:
     if report['attempts']: report['attempts'][-1]['status'] = 'failed'
@@ -225,6 +233,7 @@ finally:
         try: q.shell(*command)
         except Exception as error: cleanup_errors.append({'command': command[:2], 'error': str(error)})
     report['cleanup'] = {'status': 'failed' if cleanup_errors else 'passed', 'errors': cleanup_errors}
+    report['finishedAt'] = datetime.now(timezone.utc).isoformat()
     report['status'] = 'passed' if not cleanup_errors and len(report['attempts']) == args.repeat and all(a['status'] == 'passed' for a in report['attempts']) else 'failed'
     save_report()
     if cleanup_errors: raise RuntimeError('Emulator cleanup incomplete; see report.json')

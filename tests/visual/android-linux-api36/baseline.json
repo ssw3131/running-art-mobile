@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "reviewed": true,
+  "reviewedAt": "2026-10-13T01:30:27.087804+09:00",
+  "review": "S0 common header/footer and typography reviewed against the existing Figma-backed S0 verification; existing body screens are regression references. Account deliberately has no CI auth configuration.",
+  "references": [
+    "docs/quality/service-s0-verification.md",
+    "docs/quality/service-s0-screenshots.html",
+    "https://www.figma.com/design/QYRGII8OdvQB1SrtH3BA08?node-id=2-855"
+  ],
+  "source": "3bf1318d9a1edd4e97aef79cea00ed850883e351",
+  "ciHead": "97602bcef41018b22d1a3d9eab279933aefb7c68",
+  "ciRun": "38275123413",
+  "apkSha256": "b80394314a9190f32b7ac784c7bd2b54d0392ba66c1afdb3408f8b3810292fcf",
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1"
+  },
+  "screens": [
+    {
+      "id": "home",
+      "file": "home.png",
+      "masks": [],
+      "sha256": "db62c138825f4817588151be84388317ec9fac61c765429739ddc0c611eee2c3"
+    },
+    {
+      "id": "run",
+      "file": "run.png",
+      "masks": [],
+      "sha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f"
+    },
+    {
+      "id": "archive",
+      "file": "archive.png",
+      "masks": [],
+      "sha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc"
+    },
+    {
+      "id": "account",
+      "file": "account.png",
+      "masks": [],
+      "sha256": "1e66b0d9e5814c7b97e6f4f2146cbe6753219bd95c0f45129a5ff92959d53041"
+    }
+  ]
+}
