@@ -13,15 +13,16 @@ const dark: AccountColors = { background: '#111A17', surface: '#1D2B24', text: '
 export function useAccountColors(theme: AccountPreferences['theme']) {
   const system = useColorScheme(); return (theme === 'system' ? system : theme) === 'dark' ? dark : lightAccountColors;
 }
-export function AccountPage({ title, colors, children }: PropsWithChildren<{ title: string; colors: AccountColors }>) {
+export function AccountPage({ title, colors, children, embedded = false }: PropsWithChildren<{ title: string; colors: AccountColors; embedded?: boolean }>) {
   const inset = useSafeAreaInsets();
   useFocusEffect(useCallback(() => {
-    setStatusBarStyle(colors === dark ? 'light' : 'dark');
+    // Service headers remain light even when the existing account body is dark.
+    setStatusBarStyle('dark');
     return () => setStatusBarStyle('dark');
-  }, [colors]));
+  }, []));
   return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: colors.background }}>
-    <Stack.Screen options={{ title, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.text }} />
-    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[accountStyles.page, { paddingBottom: Math.max(28, inset.bottom + 20) }]}>{children}</ScrollView>
+    {!embedded && <Stack.Screen options={{ title }} />}
+    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[accountStyles.page, { paddingBottom: embedded ? 28 : Math.max(28, inset.bottom + 20) }]}>{children}</ScrollView>
   </KeyboardAvoidingView>;
 }
 export function AccountCard({ colors, children }: PropsWithChildren<{ colors: AccountColors }>) {

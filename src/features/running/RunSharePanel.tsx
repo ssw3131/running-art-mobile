@@ -4,6 +4,7 @@ import { Link } from 'expo-router';
 import { authentication } from '@/modules/auth/runtime';
 import { runSharing } from '@/modules/run-sharing/runtime';
 import { shareErrorMessage } from '@/modules/run-sharing/model';
+import { ServiceTabLink } from '@/features/service/ServiceTabLink';
 import { RunButton, styles } from './ui';
 
 export default function RunSharePanel({ id, disabled, onBusy }: { id: string; disabled: boolean; onBusy(value: boolean): void }) {
@@ -47,7 +48,7 @@ export default function RunSharePanel({ id, disabled, onBusy }: { id: string; di
   return <View style={styles.card}>
     <Text style={styles.title}>경로 링크 공유</Text>
     <Text style={styles.body}>실제 달린 경로와 출발 당시 계획 코스·원래 도형을 함께 보여줘요. 공유 링크를 가진 사람은 로그인 없이 볼 수 있어요.</Text>
-    {!runSharing ? <Text style={styles.body}>링크 공유 서비스를 준비하고 있어요.</Text> : !owner ? <Link href="/account" style={styles.link}>로그인하고 내 기록 공유하기</Link> : <>
+    {!runSharing ? <Text style={styles.body}>링크 공유 서비스를 준비하고 있어요.</Text> : !owner ? <ServiceTabLink href="/account" style={styles.link}>로그인하고 내 기록 공유하기</ServiceTabLink> : <>
       <Text style={styles.body}>{loading ? '공유 상태를 확인하고 있어요.' : url ? '이 기록의 공유 링크가 있어요.' : '공유하기를 누르면 이 기록의 링크를 만들어요.'}</Text>
       <RunButton id="run-share-link" title={url ? '링크 다시 공유' : '링크로 공유'} disabled={locked} onPress={() => Alert.alert('이 러닝 경로를 공유할까요?', '실제 경로와 계획 코스·원래 도형, 코스 이름·거리·활동 시간이 링크를 가진 사람에게 공개됩니다. 언제든 공유를 중단할 수 있어요.', [
         { text: '취소', style: 'cancel' }, { text: '공유', onPress: () => void act('share') },

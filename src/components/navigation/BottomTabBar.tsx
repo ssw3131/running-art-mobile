@@ -14,7 +14,7 @@ export function BottomTabBar({ value, onChange, tabs = runPenTabs, bottomInset =
   const c = useThemeColors();
   return <View style={{ backgroundColor: c.navigation, paddingTop: 11, paddingBottom: Math.max(16, bottomInset), paddingHorizontal: 30 }}>
     <View style={{ flexDirection: 'row', alignItems: 'stretch', justifyContent: 'space-between', minHeight: 63 }}>
-      {tabs.map(tab => <Pressable key={tab.value} accessibilityRole="tab" accessibilityLabel={tab.label}
+      {tabs.map(tab => <Pressable key={tab.value} testID={`tab-${tab.value}`} accessibilityRole="tab" accessibilityLabel={tab.label}
         accessibilityState={{ selected: value === tab.value, disabled: !!tab.disabled }} disabled={tab.disabled} onPress={() => onChange(tab.value)}
         style={({ pressed }) => ({ flex: 1, minHeight: 50, paddingHorizontal: 2, paddingVertical: 10.5, alignItems: 'center', justifyContent: 'flex-start', gap: 5, opacity: tab.disabled ? 0.45 : pressed ? 0.7 : 1 })}>
         <Icon name={tab.icon} />

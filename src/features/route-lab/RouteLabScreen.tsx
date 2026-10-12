@@ -67,6 +67,7 @@ export default function RouteLabScreen() {
   const [mapReady, setMapReady] = useState(false);
   const [mapMoving, setMapMoving] = useState(false);
   const returningFromSettings = useRef(false);
+  const locatedOnEntry = useRef(false);
   const running = useRef(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const dataset = datasets[datasetId];
@@ -85,7 +86,11 @@ export default function RouteLabScreen() {
     running.current = false;
   }, [jobs, stopTimer]);
   useFocusEffect(useCallback(() => {
-    if (datasetId === 'seoul') void center.locate();
+    // A tab refocus must not replace the user's chosen center with GPS.
+    if (datasetId === 'seoul' && !locatedOnEntry.current) {
+      locatedOnEntry.current = true;
+      void center.locate();
+    }
     const subscription = AppState.addEventListener('change', (next) => {
       if (next !== 'active') cancel('앱이 백그라운드로 이동해 계산을 취소했어요.');
       if (next === 'background') center.beginMove();
@@ -94,7 +99,7 @@ export default function RouteLabScreen() {
         void center.locate(false);
       }
     });
-    return () => { subscription.remove(); center.cancel(); cancel('화면을 나가 계산을 취소했어요.'); };
+    return () => { subscription.remove(); center.beginMove(); setMapMoving(false); cancel('화면을 나가 계산을 취소했어요.'); };
   }, [cancel, center, datasetId]));
 
   const reset = () => {
@@ -160,7 +165,7 @@ export default function RouteLabScreen() {
   };
   const cannotCalculate = (shape === 'custom' && !customTemplate) || (!dataset.synthetic && ((!mapReady && !fixedCenter) || mapMoving || !validCenter || centerState.location.kind === 'loading'));
 
-  return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
+  return <SafeAreaView style={styles.screen} edges={['left', 'right']}>
     <View style={styles.map}>
       {dataset.synthetic || styleUrl ? <MapSurface key={datasetId} styleUrl={styleUrl ?? ''} position={dataset.synthetic ? null : centerState.position} origin={dataset.synthetic ? dataset.input.origin : centerState.center} syntheticRoads={roads} routeOverlay={overlay} terrainOverlay={terrain.overlay} centerSelection={dataset.synthetic ? undefined : {
         target: centerState.cameraTarget,

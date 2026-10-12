@@ -1,7 +1,12 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { AppState, Linking, Platform, Text } from 'react-native';
+import { AppState, Linking, Platform, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FontGate } from '@/theme/FontGate';
+import { ThemeProvider } from '@/theme/ThemeProvider';
+import { AppText, Button } from '@/components/ui';
+import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { authentication } from '@/modules/auth/runtime';
 import { running } from '@/modules/running/runtime';
 import { runErrorMessage } from '@/modules/running/model';
@@ -9,9 +14,15 @@ import { useAuth } from '@/features/auth/use-auth';
 import { personalSync } from '@/modules/sync/runtime';
 import { accountWithdrawal } from '@/modules/account/withdrawal-runtime';
 
+// A cold detail/deep link has a stable service-home destination for Back.
+export const unstable_settings = { initialRouteName: '(tabs)' };
+
 export default function RootLayout() {
   const auth=useAuth();
-  const [recoveryError, setRecoveryError] = useState('');
+  const recoveryScope = auth.ready ? auth.account?.id ?? 'guest' : 'loading';
+  const [recovery, setRecovery] = useState({ scope: '', message: '' });
+  const recoveryError = recovery.scope === recoveryScope ? recovery.message : '';
+  const [recoveryAttempt, setRecoveryAttempt] = useState(0);
   useEffect(() => {
     void authentication.start();
     void accountWithdrawal.start();
@@ -26,18 +37,25 @@ export default function RootLayout() {
   useEffect(() => {
     if (Platform.OS !== 'android' || !auth.ready) return;
     let mounted = true;
-    const recover = () => { void running.monitor().then(() => { if (mounted) setRecoveryError(''); }).catch(error => { if (mounted) setRecoveryError(runErrorMessage(error)); }); };
+    const recover = () => { void running.monitor().then(() => { if (mounted) setRecovery({ scope: recoveryScope, message: '' }); }).catch(error => { if (mounted) setRecovery({ scope: recoveryScope, message: runErrorMessage(error) }); }); };
     recover();
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') recover(); });
     return () => { mounted = false; subscription.remove(); };
-  }, [auth.ready,auth.account?.id]);
+  }, [auth.ready,recoveryScope,recoveryAttempt]);
   return (
-    <>
+    <ThemeProvider><FontGate><SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <StatusBar style="dark" />
-      {!!recoveryError && <Text accessibilityRole="alert" style={{ color: '#A12F2F', padding: 16 }}>러닝 복원: {recoveryError}</Text>}
-      <Stack key={auth.ready?auth.account?.id??'guest':'loading'} screenOptions={{ headerStyle: { backgroundColor: '#F6F5F0' }, headerTintColor: '#183C32' }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="account" options={{ title: '마이페이지' }} />
+      {!!recoveryError && <View style={{ padding: 12, gap: 8 }}>
+        <AppText accessibilityRole="alert" style={{ color: '#B3261E' }}>러닝 복원: {recoveryError}</AppText>
+        <Button label="복원 다시 시도" compact onPress={() => setRecoveryAttempt(value => value + 1)} />
+      </View>}
+      <Stack key={auth.ready?auth.account?.id??'guest':'loading'} screenOptions={{
+        contentStyle: { backgroundColor: '#FFFFFF' },
+        header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back />,
+      }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="service-info" options={{ title: '서비스 안내 및 지원', header: () => <ServiceHeader title="서비스 안내 및 지원" back menu={false} /> }} />
+        <Stack.Screen name="development" options={{ title: '개발 도구' }} />
         <Stack.Screen name="account-profile" options={{ title: '프로필 편집' }} />
         <Stack.Screen name="account-settings" options={{ title: '설정' }} />
         <Stack.Screen name="account-sync" options={{ title: '개인 기록 동기화' }} />
@@ -45,10 +63,7 @@ export default function RootLayout() {
         <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen name="map" options={{ title: '내 주변 지도' }} />
         <Stack.Screen name="storage" options={{ title: '저장소 테스트' }} />
-        <Stack.Screen name="route-lab" options={{ title: '코스 만들기' }} />
-        <Stack.Screen name="courses/index" options={{ title: '저장한 코스' }} />
         <Stack.Screen name="courses/[id]" options={{ title: '코스 상세' }} />
-        <Stack.Screen name="run" options={{ title: '러닝 GPS 기록' }} />
         <Stack.Screen name="guidance" options={{ headerShown: false }} />
         <Stack.Screen name="runs/index" options={{ title: '러닝 기록 목록' }} />
         <Stack.Screen name="runs/[id]" options={{ title: '러닝 상세' }} />
@@ -56,6 +71,6 @@ export default function RootLayout() {
         <Stack.Screen name="road-cache-lab" options={{ title: '영구 도로 캐시' }} />
         <Stack.Screen name="environment" options={{ title: '개발 환경' }} />
       </Stack>
-    </>
+    </SafeAreaView></FontGate></ThemeProvider>
   );
 }

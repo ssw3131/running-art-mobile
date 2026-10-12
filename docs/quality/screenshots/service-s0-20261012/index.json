@@ -1,0 +1,89 @@
+{
+  "screens": [
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/01-home.png",
+      "title": "홈",
+      "verified": "로고·5탭·코스/보관함 진입 표시. 상세 홈 3상태는 S1 후속.",
+      "capturedAt": "2026-10-12T20:50:18+09:00",
+      "sha256": "4d03adb36636cbe409bfc583fa2e1f17dc989e7229cfdc00fcbd386fd714f197"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/02-create-map.png",
+      "title": "코스 생성 · 지도",
+      "verified": "위치 권한 허용 후 실제 지도 표시와 계산 중심을 확인.",
+      "capturedAt": "2026-10-12T20:51:43+09:00",
+      "sha256": "ecc62f586f50ed267228019ea44f682aca074f118e107b7951a38f0ede52c769"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/04-run.png",
+      "title": "실시간 러닝 · 시작 전",
+      "verified": "러닝 시작·위치 설정 진입 표시. 탭 진입만으로 기록하지 않음.",
+      "capturedAt": "2026-10-12T20:51:56+09:00",
+      "sha256": "d7060bdb2a8ef561412a9b699233ce985a0a0991e881f090b0f352cb73f35d86"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/05-archive.png",
+      "title": "기록 보관함",
+      "verified": "검증용 공개 코스 1개 표시·상세 진입·뒤로 복귀 확인.",
+      "capturedAt": "2026-10-12T20:51:59+09:00",
+      "sha256": "d4a0c9ede497241023f9f6aecbc3f0336a3d810661ad9773f73cded546c70a69"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/07-account.png",
+      "title": "마이페이지 · 비로그인",
+      "verified": "소셜 진입·실제 빈 기록 집계·설정 진입 확인. 로그인은 실행하지 않음.",
+      "capturedAt": "2026-10-12T20:52:08+09:00",
+      "sha256": "c4b403ba59b86eb30bd5cc357fde561c49d657e54e3491ab8da54ac1cc8285ca"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/03-create-options.png",
+      "title": "코스 생성 · 조건",
+      "verified": "3km·별 선택 후 다른 탭과 상세를 다녀와도 입력 유지.",
+      "capturedAt": "2026-10-12T20:51:52+09:00",
+      "sha256": "f6e1180494c568cb91017ebb7155af193c785db467ea1b83e5bdcac2cfcf2672"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/06-course-detail.png",
+      "title": "저장 코스 상세",
+      "verified": "공개 QA 순환 코스의 경로·요약 표시와 뒤로 동작 확인.",
+      "capturedAt": "2026-10-12T20:52:03+09:00",
+      "sha256": "3fd9c31fc0a6348b7d202e7650c14aa287aaa513e8036eb04fde0ca64b7ad551"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/08-settings.png",
+      "title": "설정",
+      "verified": "기존 계정 설정 화면 진입·뒤로 복귀 확인. 설정값 미변경.",
+      "capturedAt": "2026-10-12T20:52:15+09:00",
+      "sha256": "e5b1bcdec0678ed2138887cf3b161d5534cd602727c4a4b2d8a528dab76dae4a"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/09-service-info.png",
+      "title": "서비스 안내",
+      "verified": "실제 기능 진입·개발 도구·버전 표시. 상세 콘텐츠는 S6 후속.",
+      "capturedAt": "2026-10-12T20:52:20+09:00",
+      "sha256": "2a37e492b9261469f0f5a6a20012ff82b0ad39a2589733fe2888ab5e5eba111a"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/10-course-preparation.png",
+      "title": "코스 러닝 준비 · 위치 대기",
+      "verified": "선택 코스 유지·반복 탭 복귀 확인. 이 화면은 위치를 다시 받는 중.",
+      "capturedAt": "2026-10-12T20:53:01+09:00",
+      "sha256": "86a7951f624acda306fd541f6ce8be9c31f04c4efab5a9b2fca11b8f4b709880"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/course-preparation-return.png",
+      "title": "코스 러닝 준비 · 위치 확인",
+      "verified": "주입 위치 정확도 ±5m·코스 위 판정·러닝 시작 버튼 활성화 확인.",
+      "capturedAt": "2026-10-12T20:52:54+09:00",
+      "sha256": "5b27cff96c6956cfb4b5e1b399e343082338b02e9345a38dffba7759cf56c29e"
+    },
+    {
+      "file": "docs/quality/screenshots/service-s0-20261012/11-location-permission.png",
+      "title": "위치 권한",
+      "verified": "실제 Android 권한 창. 앱 사용 중 정확한 위치를 허용해 검증.",
+      "capturedAt": "2026-10-12T20:50:28+09:00",
+      "sha256": "4830612cf208995556377d93be640b6147200c2c2af2a4c34a9fdedb07d60cf3"
+    }
+  ],
+  "originalTablesRestored": true
+}
