@@ -28,26 +28,64 @@
     {
       "id": "home",
       "file": "home.png",
-      "masks": [],
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
       "sha256": "db62c138825f4817588151be84388317ec9fac61c765429739ddc0c611eee2c3"
     },
     {
       "id": "run",
       "file": "run.png",
-      "masks": [],
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
       "sha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f"
     },
     {
       "id": "archive",
       "file": "archive.png",
-      "masks": [],
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
       "sha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc"
     },
     {
       "id": "account",
       "file": "account.png",
-      "masks": [],
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
       "sha256": "1e66b0d9e5814c7b97e6f4f2146cbe6753219bd95c0f45129a5ff92959d53041"
     }
-  ]
+  ],
+  "maskReview": {
+    "reviewedAt": "2026-10-13T02:20:59.588540+09:00",
+    "ciRun": "38281173312",
+    "reason": "All four screens have 249 raw differing pixels (23 after pixelmatch AA handling), confined to the system Wi-Fi icon edges at x817..857/y53..85. Product pixels are identical. Keep original PNGs and hashes; exclude only this 41x33 system region.",
+    "originalFailureArtifact": 11762535955
+  }
 }

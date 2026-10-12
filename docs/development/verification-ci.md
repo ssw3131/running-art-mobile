@@ -86,7 +86,7 @@ Android 10의 시스템 SQLite에는 `-json`이 없어 전용 에뮬레이터에
 
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
 
-`scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 기본적으로 마스크를 쓰지 않으며, 필요한 경우 시스템 시계의 작은 영역만 명시적으로 제외할 수 있다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
+`scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 마스크는 근거를 기록한 작은 시스템 시계/Wi-Fi 영역만 허용한다. 현재 기준에는 main 실행에서 네 화면 모두 같은 가장자리 차이가 난 Wi-Fi 아이콘의 41×33px(`x=817,y=53`)만 제외했고 원본 PNG는 유지했다. 마스크의 위치/최대 크기를 검사하며 앱 영역·상태 표시줄 전체 가림은 거부한다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
 
 `node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json`으로 각 회차를 비교하고, `node scripts/qa/gallery.mjs test-results/android-36`으로 기준·현재·차이와 실패 화면을 연결한 `index.html`을 만든다. `--visual-only`는 후보 촬영 전용이며 기능/안정성 통과 횟수에 포함하지 않는다.
 

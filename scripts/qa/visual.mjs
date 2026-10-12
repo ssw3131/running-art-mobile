@@ -9,7 +9,11 @@ export function comparePng(reference, actual, masks = []) {
   const a = PNG.sync.read(reference), b = PNG.sync.read(actual);
   if (a.width !== b.width || a.height !== b.height) throw Error('Image dimensions differ; environment or layout changed');
   for (const mask of masks) {
-    if (mask.reason !== 'system-clock' || mask.x < 0 || mask.y < 0 || mask.width < 1 || mask.height < 1 || mask.x + mask.width > a.width || mask.y + mask.height > Math.min(100, a.height * 0.05)) throw Error('Only a documented system-clock mask inside the status bar is permitted');
+    const bounds = [mask.x, mask.y, mask.width, mask.height];
+    const inStatusBar = bounds.every(Number.isInteger) && mask.x >= 0 && mask.y >= 0 && mask.width > 0 && mask.height > 0 && mask.x + mask.width <= a.width && mask.y + mask.height <= Math.min(100, a.height * 0.05);
+    const clock = mask.reason === 'system-clock' && mask.x + mask.width <= a.width * .3 && mask.width <= 160 && mask.height <= 50;
+    const wifi = mask.reason === 'system-wifi-rasterization' && mask.x >= a.width * .7 && mask.x + mask.width <= a.width * .9 && mask.width <= 48 && mask.height <= 40;
+    if (!inStatusBar || !(clock || wifi)) throw Error('Only a small documented clock or Wi-Fi mask inside the status bar is permitted');
     for (let y = mask.y; y < mask.y + mask.height; y++) for (let x = mask.x; x < mask.x + mask.width; x++) {
       const offset = (y * a.width + x) * 4;
       a.data.fill(0, offset, offset + 4); b.data.fill(0, offset, offset + 4);
@@ -43,7 +47,7 @@ if (process.argv[1]?.endsWith('visual.mjs')) {
     writeFileSync(path.join(outputPath, `${entry.id}-baseline.png`), a);
     writeFileSync(path.join(outputPath, `${entry.id}-current.png`), b);
     writeFileSync(path.join(outputPath, `${entry.id}-diff.png`), result.diff);
-    results.push({ id: entry.id, status: result.pixels ? 'failed' : 'passed', pixels: result.pixels,
+    results.push({ id: entry.id, status: result.pixels ? 'failed' : 'passed', pixels: result.pixels, masks: entry.masks ?? [],
       baselineSha256: createHash('sha256').update(a).digest('hex'), currentSha256: createHash('sha256').update(b).digest('hex') });
   }
   if (actual.screens.length !== baseline.screens.length) throw Error('Unreviewed scenario set');

@@ -27,7 +27,7 @@ DB 원본 테스트는 RLS·Storage 소유권·불변 파일·RPC 검증·재시
 | [Linux 38275123413](https://github.com/ssw3131/running-art-mobile/actions/runs/38275123413) | 빠른/API·전체 S0 9단계·원본 보존·정리 통과. 최초 기준 부재를 not_run으로 탐지해 게이트 실패. 생성된 4개 화면을 검토해 기준 등록 |
 | Windows API 36 연속 실행 | 같은 S0 APK·9단계 × 10회, 재시도 0·90단계 모두 통과. 01:51:37 최종 보고서 생성 |
 | [Linux 38277992141](https://github.com/ssw3131/running-art-mobile/actions/runs/38277992141) | 최신 PR head `94344ec`의 깨끗한 merge checkout에서 빠른/API·S0 전체·원본 보존·정리 통과. 새 빌드/재촬영한 네 화면 모두 차이 0, PNG SHA도 기준과 동일. 전체 게이트 통과 |
-| [main 38281173312](https://github.com/ssw3131/running-art-mobile/actions/runs/38281173312) | CI squash commit `9422128`. API 29는 앱 시나리오 전 시스템 SQLite의 `-json` 미지원으로 실패·정리 통과. API 36은 별도 확인 중 |
+| [main 38281173312](https://github.com/ssw3131/running-art-mobile/actions/runs/38281173312) | CI squash commit `9422128`. 빠른/API·API 36 전체 동작/보존/정리 통과. API 29는 시나리오 전 SQLite `-json` 미지원으로 실패·정리 통과. API 36 시각 비교는 시스템 Wi-Fi 가장자리 23px로 실패 |
 | [문서 PR 38282323384](https://github.com/ssw3131/running-art-mobile/actions/runs/38282323384) | 문서/집계 통과, 앱/API/빠른 검사 생략을 확인. 이후 같은 PR에 Android 10 하니스 수정이 추가돼 전체 검사로 확대 |
 
 Windows 10회 실행은 `7fa78cf` 시점의 하니스에 시나리오 순서·정적 fixture 초기화 보강을 읽어 시작했다. 이후 추가한 Linux 스크롤/보고서/표시줄 고정 보강과 구분하며, 최신 하니스의 Linux 10회 또는 Windows 픽셀 비교 10회 성공을 주장하지 않는다. 같은 APK 해시 `729c60a28efd29dfb6cf857933ee9f9db87b4a81e88535b508a416620fe2992f`와 fixture를 유지한 핵심 동작 안정성 검사다. 완료 뒤 서비스 없음·도우미 없음·글꼴 배율 1.0을 확인하고 전용 에뮬레이터를 종료했다.
@@ -47,6 +47,8 @@ S0 [PR #1](https://github.com/ssw3131/running-art-mobile/pull/1)과 CI [PR #2](h
 코스 생성 지도의 외부 배경은 고정 PNG 비교 대상에 넣지 않고 입력/탭 유지·선택/저장/접근성 동작 증거로 남긴다.
 
 소스/APK/fixture 해시·API·빌드 fingerprint·호스트·해상도·밀도·글꼴 배율·언어·시간대를 기록한다. 촬영 중 상태 표시줄만 공식 데모 모드로 고정하고 다시 해제한다. pixelmatch 0.1·안티앨리어싱 제외로 비교하며 자동 기준 갱신은 없다. 차이 0이 아니면 실패 증거를 검토한다.
+
+main `38281173312`의 네 원본 PNG를 대조한 결과, 각각 원시 차이 249px가 모두 시스템 Wi-Fi 아이콘 가장자리 `x=817..857,y=53..85`에만 있었다(pixelmatch 판정 23px). 앱 영역은 동일했다. 원본 실패 ZIP/보고서는 보존하고 기준 PNG를 바꾸지 않은 채 이 41×33px 시스템 영역만 이유·좌표·실행 번호를 기록해 제외했다. 검토 후 별도 폴더에서 네 화면 차이 0을 확인했으며 독립 재실행으로도 확인한다. 넓은 마스크와 앱 영역 마스크는 거부하고 Wi-Fi 마스크가 있어도 실제 앱 버튼 가림은 탐지하는 검사를 추가했다. 앞선 PR의 마스크 없는 차이 0과 이 후속 판정을 구분한다.
 
 공개 CI에는 합성 자료만 사용한다. 실제 폰 화면/계정/좌표 원본은 로컬 무시 폴더에만 보관한다. 결과 아티팩트는 7일 후 만료되며 실행/판정 요약은 이 문서에 남긴다.
 
