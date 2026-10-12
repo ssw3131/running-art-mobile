@@ -28,7 +28,7 @@ npm run test:properties
 npm run test:api-contract
 ```
 
-`qa:fast`는 타입·린트, 서버 타입·린트, 기존 Node 검사, UI 상태, OpenAPI 최신 여부, PGlite 정책 검사를 순서대로 실행한다. 독립 검사는 실패 후에도 실행해 모든 실패를 남긴다. 결과는 `test-results/fast/report.json`, `report.md`, 시나리오별 로그다. 재시도하지 않는다.
+`qa:fast`는 타입·린트, 서버 타입·린트, 기존 Node 검사, UI 상태, OpenAPI 최신 여부, PGlite 정책 검사를 순서대로 실행한다. 독립 검사는 실패 후에도 실행해 모든 실패를 남긴다. 결과는 `test-results/fast/report.json`, `report.md`, 시나리오별 로그다. 실제 DB 통합 결과는 `test-results/integration/`에 저장한다. 재시도하지 않는다.
 
 fast-check 기본 seed는 `20261013`이다. 실패 출력의 seed와 path를 `FC_SEED`, `FC_PATH`로 지정하면 축소된 실패 순서를 재현한다. 충돌 선택은 사용자 동작으로 모델링하며, 응답 유실 뒤 수정한 기록을 자동으로 덮어쓰는 것을 성공으로 간주하지 않는다.
 
@@ -61,7 +61,9 @@ python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outp
 
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
 
-`scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 시스템 시계의 작은 영역만 명시적으로 가리고, 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
+`scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 기본적으로 마스크를 쓰지 않으며, 필요한 경우 시스템 시계의 작은 영역만 명시적으로 제외할 수 있다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
+
+`node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json`으로 각 회차를 비교하고, `node scripts/qa/gallery.mjs test-results/android-36`으로 기준·현재·차이와 실패 화면을 연결한 `index.html`을 만든다. `--visual-only`는 후보 촬영 전용이며 기능/안정성 통과 횟수에 포함하지 않는다.
 
 기준이 없거나 환경이 다르면 `not_run`으로 기록하고 실패 종료한다. 기준 자동 갱신 명령은 없다. S0 기존 화면은 현재 동작의 회귀 기준이며 전체 Figma 이관 완료가 아니다. 새 기준 이미지는 Figma·기존 승인 화면과 대조해 PR에 등록한다.
 
@@ -69,10 +71,12 @@ python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outp
 
 결과는 passed·failed·environment_failure·not_run으로 구분한다. 소스·APK·fixture 해시, OS/API/화면 크기·배율, 실패 단계, PNG/XML/JUnit/로그를 남긴다. 개인 계정·실제 GPS 원본·서비스 키는 업로드하지 않는다.
 
+PR/main의 집계 이름은 `verification-gate`다. 일부 묶음만 선택한 수동 실행은 `manual-verification`으로 따로 집계하므로 PR 필수 검사 성공을 대신하지 못한다.
+
 필수 CI 게이트로 승격하려면 동일 조건에서 핵심 시나리오가 재시도 없이 10회 연속 통과해야 한다. 환경 장애나 실패 후 성공은 이 이력을 대체하지 못한다. 브랜치 보호는 PR·필수 검사·관리자 적용을 함께 설정하고 직접 push·강제 push·삭제를 제한한다. 1인 개발이므로 타인 리뷰 승인을 강제해 작업을 막지 않는다.
 
 S1부터 정상·빈 상태·로딩·오류, 계약, 저장 내용, 실패 후 재진입, 스크린샷을 기능 PR에 추가한다. S5 공유 웹은 Playwright를 추가할 단계다.
 
 ## 참고
 
-[GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow), [워크플로 이벤트](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows), [Expo UI 검사](https://docs.expo.dev/develop/unit-testing/), [Supabase 로컬 검사](https://supabase.com/docs/guides/local-development/testing/overview), [Schemathesis CLI](https://schemathesis.readthedocs.io/en/stable/reference/cli/).
+[GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow), [워크플로 이벤트](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows), [Expo UI 검사](https://docs.expo.dev/develop/unit-testing/), [Supabase 로컬 검사](https://supabase.com/docs/guides/local-development/testing/overview), [Schemathesis CLI](https://schemathesis.readthedocs.io/en/stable/reference/cli/), [Android 상태 표시줄 고정](https://android.googlesource.com/platform/frameworks/base/+/android16-qpr2-release/packages/SystemUI/docs/demo_mode.md).

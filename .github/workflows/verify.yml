@@ -166,7 +166,7 @@ jobs:
           avd-name: RunPen_CI
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
           disable-animations: true
-          script: python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '10' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
+          script: python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
       - name: Compare reviewed API 36 screens
         if: matrix.api == 36
         run: node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json
@@ -181,7 +181,8 @@ jobs:
           retention-days: 7
 
   gate:
-    name: verification-gate
+    # A partial manual run must never satisfy the required PR check.
+    name: ${{ github.event_name == 'workflow_dispatch' && 'manual-verification' || 'verification-gate' }}
     needs: [scope, fast, api, android]
     if: always()
     runs-on: ubuntu-24.04

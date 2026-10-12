@@ -3,12 +3,14 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 const suite = process.argv[2] ?? 'fast';
-const out = path.resolve(process.env.QA_OUT ?? 'test-results/fast'); mkdirSync(out, { recursive: true });
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const out = path.resolve(process.env.QA_OUT ?? `test-results/${suite}`); mkdirSync(out, { recursive: true });
+const npmCli = process.env.npm_execpath;
+const npm = npmCli ? process.execPath : (process.platform === 'win32' ? 'npm.cmd' : 'npm');
+const npmArgs = script => npmCli ? [npmCli, 'run', script] : ['run', script];
 const steps = {
-  fast: [ ['source', npm, ['run', 'check']], ['server-source', npm, ['run', 'check:server']],
+  fast: [ ['source', npm, npmArgs('check')], ['server-source', npm, npmArgs('check:server')],
     ['logic', process.execPath, ['--test', 'tests/*.test.mjs']],
-    ['components', npm, ['run', 'test:components']],
+    ['components', npm, npmArgs('test:components')],
     ['openapi', process.execPath, ['scripts/qa/openapi.mjs', '--check']],
     ['account-policies', process.execPath, ['scripts/qa/account-server.mjs']],
     ['share-policies', process.execPath, ['scripts/qa/run-sharing-server.mjs']] ],
@@ -23,7 +25,7 @@ const report = { schemaVersion: 1, suite, startedAt: new Date().toISOString(),
 let failed = false;
 for (const [id, command, args] of steps[suite]) {
   const start = Date.now(); console.log(`Running ${id}`);
-  const result = spawnSync(command, args, { encoding: 'utf8', shell: process.platform === 'win32' && command === npm, timeout: 180000, maxBuffer: 16 * 1024 * 1024 });
+  const result = spawnSync(command, args, { encoding: 'utf8', shell: process.platform === 'win32' && command === 'npm.cmd', timeout: 180000, maxBuffer: 16 * 1024 * 1024 });
   const status = result.error ? 'environment_failure' : result.status === 0 ? 'passed' : 'failed';
   writeFileSync(path.join(out, `${id}.log`), (result.stdout ?? '') + (result.stderr ?? '') + (result.error?.message ?? ''));
   report.steps.push({ id, status, exitCode: result.status, durationMs: Date.now() - start, log: `${id}.log` });
