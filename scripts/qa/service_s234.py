@@ -26,9 +26,9 @@ def service_s234(q, launch):
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
     run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
     q.seek('guidance-recenter');q.tap('guidance-recenter');q.seek('guidance-background');q.capture('s4-map-controls')
-    def wait_status(expected):
+    def wait_status(expected, target=run_id):
         for _ in range(20):
-            state=q.query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status']
+            state=q.query(f"SELECT status FROM running_sessions WHERE id='{target}'")[0]['status']
             if state==expected:return
             time.sleep(.5)
         raise AssertionError(f'Run status {state}, expected {expected}; see native control capture')
@@ -56,7 +56,9 @@ def service_s234(q, launch):
     newer=q.query("SELECT * FROM running_sessions WHERE status <> 'completed'")[0]
     assert newer['id']!=run_id and newer['course_outcome']=='active'
     assert q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]==before
-    q.tap('run-finish');q.tap('종료·저장');launch('courses?view=runs');q.capture('s3-monthly-records')
+    q.tap('run-finish');q.tap('종료·저장');wait_status('completed',newer['id'])
+    assert q.find(q.capture('s3-retry-finished'),'run-rechallenge') is not None
+    launch('courses?view=runs');q.capture('s3-monthly-records')
     assert q.find(q.capture('s3-monthly-retry-record'),'run-row-'+run_id) is not None
     (q.OUT/'s234-result.json').write_text(json.dumps({'runId':run_id,'retryId':newer['id'],'oldRunUnchanged':True,'pickerCancel':True,'restoredOptions':restored}),encoding='utf8')
     q.tap('tab-home')
