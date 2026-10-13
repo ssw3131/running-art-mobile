@@ -92,7 +92,7 @@ API 36은 Pixel 5의 프레임워크/SystemUI 오버레이를 명시하고, 시�
 
 10-13 S1 검사에서 API 29의 UI 덤프가 JUnit 성공을 출력한 뒤 비정상 shell 종료 코드를 반환하는 문제가 반복되어 캡처 완료 증명을 추가했다. 각 요청은 새 UUID 토큰을 보내고, Java 도우미는 이전 XML/토큰을 지운 뒤 새 XML이 생성된 경우에만 토큰을 기록한다. 호스트는 JUnit 성공·동일 토큰·실제 XML/PNG 읽기를 모두 확인한다. 이 조건을 충족한 비정상 shell 종료는 `ui-dump-transport.jsonl`과 보고서의 `uiDumpTransportWarnings`에 보존한다. 미완료 실행·이전 토큰·오프라인·실패한 읽기는 계속 실패하며 시나리오를 자동 재시도하지 않는다.
 
-10-14 S234에서 같은 유형의 활성 루트 미준비 캡처 실패가 Windows와 Linux에 남아, Java 도우미의 한 접근성 연결에서 최대 5초·250ms 간격으로 새 XML을 기다린다. 과거/빈 파일 제거와 호출별 UUID 영수증·JUnit 성공·XML/PNG 실제 읽기 조건은 유지한다. `ui-dump-readiness.jsonl`/`uiDumpReadinessWaits`는 준비 대기를, 기존 `uiDumpTransportWarnings`는 완료 후 비정상 shell 종료를 별도로 기록한다. 전체 시나리오 재시도와 혼동하지 않는다. 한계를 넘으면 계속 실패하며, 계층 덤프가 실패해도 독립 PNG·window/activity·logcat을 정리 전에 수집한다. 제품 결함이나 빈 화면을 환경 실패로 자동 분류하지 않는다.
+10-14 S234에서 같은 유형의 활성 루트 미준비 캡처 실패가 Windows와 Linux에 남아, Java 도우미의 한 접근성 연결에서 최대 5초·250ms 간격으로 새 XML을 기다린다. 과거/빈 파일 제거와 호출별 UUID 영수증·JUnit 성공·XML/PNG 실제 읽기 조건은 유지한다. `ui-dump-readiness.jsonl`/`uiDumpReadinessWaits`는 준비 대기를, 기존 `uiDumpTransportWarnings`는 완료 후 비정상 shell 종료를 별도로 기록한다. 전체 시나리오 재시도와 혼동하지 않는다. 한계를 넘으면 계속 실패하며, 계층 덤프가 실패해도 독립 PNG·window/activity·logcat을 정리 전에 수집한다. 제품 결함이나 빈 화면을 환경 실패로 자동 분류하지 않는다. 앱 초기화 후 시드를 넣기 전에는 실제 DB 파일과 필요한 9개 테이블을 최대 30초 읽기 전용으로 확인한다. 도우미가 테이블을 대신 만들지 않으며 부분 스키마·오프라인은 준비 완료로 인정하지 않는다.
 
 `--signup-only`는 가입 진입/복귀·큰 글씨 진단 한 단계와 자료 보존·정리를 실행하고 보고서 모드도 별도로 표기한다. 전체/호환 검사 통과를 대신하지 않으며 PR CI의 기존 전체·smoke 선택은 유지한다. Windows의 임시 드라이브가 부족하면 해당 명령에서만 `TEMP`/`TMP`와 Java `java.io.tmpdir`를 작업 폴더의 임시 경로로 지정한다.
 

@@ -2,7 +2,8 @@
 
 - 기록 생성: 2026-10-13T21:55:06+09:00 (Asia/Seoul)
 - 실행 시작: 2026-10-13T21:55:06+09:00
-- 상태: 진행 중
+- 상태: 완료(PC·격리 Android)
+- 실행 종료: 2026-10-14T02:17:48+09:00
 - 기록 유형: 실행 시작 시 계획 작성
 - 요청·계획 출처: 2026-10-13 사용자 “S2 코스 생성 / S3 보관함 / S4 러닝 합쳐서 한번에 진행, 목표로 등록해서 진행”
 
@@ -18,15 +19,15 @@
 
 ## 실행 결과
 
-진행 중. 기준 main f70f248, 작업 브랜치 feat/course-archive-running. 12도형·1~10km·이미지 입력·월별 기록/사본 재도전·지도/집중/설정/터치 잠금 연결을 구현하고 통합 검사 중이다.
+기준 main f70f248, 작업 브랜치 feat/course-archive-running. 12도형·1~10km·이미지 입력·월별 기록/사본 재도전·지도/집중/설정/터치 잠금 연결을 완료했다. PR #14의 필수 검사를 통과한 뒤 `9831a7cc45c326af8928dd625777f57d3f615c4b`로 squash 병합하고 main 독립 검증도 통과했다. 주요 변경 경로는 src/modules/image-contour, src/modules/route-engine/service-shapes.ts, src/modules/running/archive.ts 및 retry.ts, src/features/course-generation·courses·running과 상세 화면이다.
 
 ## 검증
 
-로직 440개·UI 29개, 실제 OSM 24회 경계 조건/저장/취소 통과. release 빌드 성공. 최신 통합 검사와 Android/CI 진행 중. [검증 상세](../../quality/course-archive-running-20261013.md).
+qa:fast 로직 440개·UI 29개·타입/린트/OpenAPI, Python 10·HTTP 189·격리 DB 2 통과. 실제 OSM 24회 경계 조건/저장/취소·네이티브 10km 계산/저장, release, Windows 전체 13단계와 최종 PR/main API 36 전체 13/API 29 호환 5·원본 보존/정리·4화면 차이 0을 통과했다. 최종 지도 제어 및 360dp/글꼴 1.6배도 검증했다. [검증 상세](../../quality/course-archive-running-20261013.md).
 
 ## 남은 작업과 종료
 
-S2b/S2c/S3/S4 구현 및 통합 검증 진행 중.
+S2b/S2c/S3/S4의 이번 구현·PC/격리 검증 범위는 완료했다. S1 약관/동의 통합, 새 입력 운영 계산 서버 배포, 새 APK 실기기·야외/장시간·다양한 사진 검증은 후속이다. 휴대폰 설치·운영 서버/DB 변경은 하지 않았다. 다음 새 기능은 S5 성취·공유다. 실패 로그와 재검증 기록을 보존하고 시험 자료/도우미·전용 에뮬레이터를 정리했다.
 
 ## 2026-10-13T22:07:31+09:00 사용자 제품 결정
 

@@ -171,6 +171,6 @@
 
 ## 이어서 개발할 때
 
-S2b/S2c·S3·S4를 통합하고 최종 PR/main 검증을 진행 중이다. 한 번의 러닝 완주·종료 후 새 도전과 실제 거리/순위/경사 계약을 적용했다. [통합 계약](../development/course-archive-running.md)·[검증](../quality/course-archive-running-20261013.md)을 기준으로 삼는다. 이후 제품 단위는 S5 성취·공유이며, S1 약관/동의 통합과 실기기·배포 후속은 별도다.
+S2b/S2c·S3·S4를 통합하고 최종 PR/main 필수 검사·Android 전체/호환·자료 보존·화면 비교를 완료했다. 한 번의 러닝 완주·종료 후 새 도전과 실제 거리/순위/경사 계약을 적용했다. [통합 계약](../development/course-archive-running.md)·[검증](../quality/course-archive-running-20261013.md)을 기준으로 삼는다. 이후 제품 단위는 S5 성취·공유이며, S1 약관/동의 통합과 실기기·배포 후속은 별도다.
 
 2026-10-13 S2~S4 통합의 최신 사용자 결정·구현 범위는 [계약](../development/course-archive-running.md)을 따른다. 앞의 여러 날짜 도전/입력 범위 미정 설명은 초기 분석 이력이다.
