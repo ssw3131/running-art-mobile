@@ -1,6 +1,6 @@
 # RunPen — Running Art Mobile
 
-**2026-10-13 S2a 진행 중:** 코스 조건→확인→서버/기기 계산→후보·점선→임시 상세·명시적 저장/GPX/러닝 준비를 연결했다. 기존 9도형·3/5/7km·직접 그리기·엔진/저장 형식을 유지한다. 로직 431개·UI 22개·타입/린트·Python 6개와 생성 집중 흐름을 통과했으며 최종 원본 아이콘/큰 글씨·전체 Android·PR/main 필수 검증은 진행 중이다. S2b 12도형/거리 확대·S2c 이미지 입력은 후속이다. 휴대폰·운영 DB/서버는 변경하지 않았다. [계약](docs/development/course-generation.md)·[검증](docs/quality/course-generation-20261013.md).
+**2026-10-13 S2a 완료(PC·격리 Android):** 조건→확인→서버/기기 계산→후보·점선→상세·명시적 저장/GPX/러닝 준비를 연결했다. 기존 9도형·3/5/7km·직접 그리기와 엔진/저장 형식을 유지한다. 로직 431·UI 22·Python 6·HTTP 182·격리 DB 2, 최종 PR/main API 36 전체 12단계·API 29 호환 5단계·정적 4화면 차이 0·원본 보존/정리를 통과했다. 최신 APK의 실제 강남 서버 계산·동일 후보 저장/러닝 준비도 확인했다. **휴대폰 미설치·서버/운영 DB 배포 없음.** 다음 새 기능은 **S2b 12도형·거리 범위 확대**, S2c 이미지 입력과 S1 약관 게시/동의 통합은 후속이다. [계약](docs/development/course-generation.md)·[검증/실제 화면](docs/quality/course-generation-20261013.md).
 
 **2026-10-13 브랜치·CI 및 S0 휴대폰 후속:** 기능별 작업 브랜치→PR 필수 검사→main squash merge를 적용했다. UI 상태·API 계약/격리 DB·Android 29/36 동작·정적 화면 비교를 자동화했다. S0는 SM-S942N에 기존 3코스/4러닝/1,437좌표/1메모·계정/설정을 보존해 설치·검증했다. [브랜치·검증 운영](docs/development/verification-ci.md)·[CI 실행 결과](docs/quality/verification-ci-20261013.md)·[폰 검증](docs/quality/service-s0-phone-20261013.md)을 아래 과거 보류/미설치 표현보다 우선한다. 다음 기능은 S1 가입/동의·홈 3상태이며 APK·서버 자동 배포는 보류한다.
 
