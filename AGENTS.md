@@ -1,5 +1,7 @@
 # Running Art Mobile — 작업 지침
 
+**2026-10-13 S1 가입·동의 부분 완료:** 홈·마이페이지 가입 안내·실제 소셜 진입·필수 두 동의·서버 회원 상태/버전 이력·기존 계정 대기 이관을 구현하고 격리 검증했다. 로직 420·UI 9·Python 6·HTTP 182·실제 Supabase 통합 2, Windows/Linux API 36 전체 10단계·Linux API 29 호환 4단계·원본 보존/정리 통과. 의도된 홈/마이페이지 두 기준을 검토·갱신해 재비교 4화면 차이 0, 실패 이력 보존. 필수 게이트·병합은 [PR #6](https://github.com/ssw3131/running-art-mobile/pull/6)를 따른다. **운영 DB 이관·약관 게시·폰 설치 미실행**이며 Figma 운영 정보/문안 확정과 배포 이력 대조 후 적용한다. 다음 기능은 홈 3상태. [검증](docs/quality/signup-consent-20261013.md)·[현재 상태](docs/handoff/status.md)를 과거 다음 가입 구현 표현보다 우선한다.
+
 **2026-10-13 CI 도입 완료:** 작업 브랜치→PR→필수 검사→squash merge와 main 보호를 적용했다. 최신 PR 및 main에서 로직 411개·UI 상태 4개·Python 3개·HTTP Fuzz 182·실제 격리 Supabase 왕복/권한, API 36 전체 9단계·정적 4화면 차이 0(검토된 시스템 Wi-Fi 영역만 제외), API 29 호환 3단계·원본 보존/정리를 통과했다. main API 29는 도우미 명령 종료 오류 후 진단 재실행 통과로, 최초 실패 이력을 보존했다. Windows API 36의 동일 S0 APK 핵심 흐름 10회 연속·재시도 0 근거도 보존했다. SM-S942N S0 설치·5탭·기존 3코스/4러닝/1,437좌표/1메모·계정/설정 보존과 정리 완료, USB 분리 가능. 다음 기능은 S1 가입/동의·홈 3상태이며 APK·서버 자동 배포는 보류한다. [실행 기록](docs/history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](docs/development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.
 
 **2026-10-12 S0 완료(PC·격리 API 36):** 기존 앱에 서비스 5탭·공통 상하단 바·홈의 활성 러닝 복귀·상세/안내/개발 경로를 연결했다. 403개·타입/린트·release, 생성 입력/코스 준비/보관함 상태·OAuth 취소·GPS 탭 이동/중단 복원·딥링크/GPX·360dp/큰 글씨/키보드를 검증했다. 시험 원본 해시 보존·빈 QA DB 원복·도우미/서비스 정리 완료. `20261012-service-s0.apk` 준비, **휴대폰 미설치·클라우드 변경 없음**. 다음은 **S1 가입/동의·홈 3상태**이며 기능별 전체 Figma 이관·실기기 후속과 구분한다. [검증](docs/quality/service-s0-verification.md)·[현재 상태](docs/handoff/status.md)를 아래 과거 요약보다 우선한다.
