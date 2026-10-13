@@ -1,1 +1,1 @@
-export { default } from '@/features/route-lab/RouteLabScreen';
+export { default } from '@/features/course-generation/CourseGenerationScreen';

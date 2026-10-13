@@ -5,21 +5,8 @@ import time
 
 
 def seek_shape(q, key, direction):
-    """The generator's shapes scroll horizontally, independently of its form."""
-    for attempt in range(6):
-        tree = q.capture(f'home-{key}-scroll-{attempt}')
-        row = next(n for n in tree.iter('node') if 'HorizontalScrollView' in n.get('class', ''))
-        left, top, right, bottom = map(int, re.findall(r'\d+', row.get('bounds')))
-        node = q.find(tree, key)
-        if node is not None:
-            x1, y1, x2, y2 = map(int, re.findall(r'\d+', node.get('bounds')))
-            if left <= x1 < x2 <= right and x2 - x1 > 60 and top <= y1 < y2 <= bottom:
-                return
-        # Stay away from Android's left/right back-gesture regions.
-        inset = int((right - left) * .2)
-        start, end = (right - inset, left + inset) if direction == 'left' else (left + inset, right - inset)
-        q.shell('input', 'swipe', str(start), str((top + bottom) // 2), str(end), str((top + bottom) // 2), '350')
-    raise RuntimeError('Horizontal shape not reached: ' + key)
+    """S2a uses a wrapping shape grid in the vertical form."""
+    q.seek(key)
 
 
 def verify_home_result(q):
@@ -29,9 +16,9 @@ def verify_home_result(q):
     previous = candidate.get('content-desc')
     assert previous and '1순위' in previous
     q.tap('tab-home'); q.seek('home-shape-fish'); q.tap('home-shape-fish'); q.tap('open-route-lab')
-    seek_above(q, 'calculation-done')
-    tree = q.capture('home-existing-result-notice')
-    assert q.find(tree, '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.') is not None
+    seek_above(q, 'generation-changed')
+    assert q.find(q.capture('home-existing-result-notice'), 'generation-changed') is not None
+    q.tap('추천 코스')
     q.seek('candidate-0')
     candidate = q.find(q.capture('home-existing-result-preserved'), 'candidate-0')
     assert candidate.get('content-desc') == previous

@@ -8,6 +8,8 @@ export type MapSurfaceProps = {
   position: Position | null;
   simulationPosition?: [number, number];
   routeOverlay?: RouteOverlay | null;
+  showTarget?: boolean;
+  routeColors?: { route: string; target: string };
   terrainOverlay?: {
     segments: FeatureCollection<LineString>; direction: FeatureCollection<LineString>;
     origin: [number, number]; selected: [number, number];

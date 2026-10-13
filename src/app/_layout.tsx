@@ -73,6 +73,7 @@ export default function RootLayout() {
         <Stack.Screen name="map" options={{ title: '내 주변 지도' }} />
         <Stack.Screen name="storage" options={{ title: '저장소 테스트' }} />
         <Stack.Screen name="courses/[id]" options={{ title: '코스 상세' }} />
+        <Stack.Screen name="course-candidate" options={{ title: '코스 상세', header: () => <ServiceHeader title="코스 상세" back menu={false} /> }} />
         <Stack.Screen name="guidance" options={{ headerShown: false }} />
         <Stack.Screen name="runs/index" options={{ title: '러닝 기록 목록' }} />
         <Stack.Screen name="runs/[id]" options={{ title: '러닝 상세' }} />
