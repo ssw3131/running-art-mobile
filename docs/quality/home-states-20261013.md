@@ -1,6 +1,6 @@
 # S1 홈 3상태 검증
 
-2026-10-13, 최종 검증 진행 중. [기능 계약](../development/home-states.md)·[실행 계획](../history/executed-plans/2026-10-13-1346-home-states.md)·[PR #8](https://github.com/ssw3131/running-art-mobile/pull/8).
+2026-10-13, 구현·PC/격리 Android·PR/main 필수 검증 완료. [기능 계약](../development/home-states.md)·[실행 계획](../history/executed-plans/2026-10-13-1346-home-states.md)·[PR #8](https://github.com/ssw3131/running-art-mobile/pull/8).
 
 ## 범위
 
@@ -29,7 +29,7 @@ Figma MAIN-1/2/3의 초기·활성 세션 복귀·실제 종료 기록 홈이다
 
 ## 최종 결과·남은 일
 
-수정 release·Windows 전체·Linux API 29/36·정적 화면 검토와 독립 CI·필수 게이트·병합 확인 진행 중. 운영 적용과 휴대폰/TalkBack 통합은 별도 후속이다.
+최종 PR 필수 게이트 통과 후 main `ba32ec2`로 squash 병합했고, [main CI](https://github.com/ssw3131/running-art-mobile/actions/runs/38358116244)도 통과했다. 최종 수치와 최초 실패는 아래 종료 결과·[JSON 근거](home-states-20261013.json)를 따른다. 운영 적용·소셜/휴대폰/TalkBack 통합은 별도 후속이며 다음 새 기능은 S2a 코스 생성 서비스 UI다. 아래 시각별 문단은 당시 이력이다.
 
 ### 14:47 확인
 
@@ -45,3 +45,14 @@ Linux API 36 전체 11단계·자료 보존·정리도 통과(재시도/캡처 �
 이전/현재/차이 PNG를 직접 대조해 Figma 원본 소개 이미지·도형·인사말·스크롤 본문·하단 고정 주 버튼으로 바뀐 것을 확인했다. 작은 화면에서 하단 도형/보관함/가입 안내는 스크롤로 접근한다. 홈 기준 PNG만 갱신하고 다른 세 화면·시스템 Wi-Fi의 기존 작은 마스크·비교 임계값은 유지했다. 화면별 소스·해시·최초 실패를 baseline manifest에 보존했고 재비교 4화면 차이 0이다. 독립 최종 CI는 안내 보완까지 포함해 다시 실행한다.
 
 안내 보완 후 Windows 집중 검사 `home-android-result-final`은 기존 생성 화면의 아래쪽 스크롤을 유지한 상태에서 위쪽 후보를 찾지 못했다. Android XML에서 화면 밖 노드가 생략되는 것을 확인하고 위로 찾는 별도 시험 동작을 추가했다. 제품 후보는 화면에 유지되어 있었고 첫 실패/정리는 보존한다. 후속 통과 여부는 별도 결과로 기록한다.
+
+
+### 최종 확인 — 2026-10-13T16:03:34+09:00
+
+- 최종 Windows 집중 검사 `home-android-result-verified`의 홈·기존 입력·계산/저장·기존 후보 보존·재계산 안내 **3단계 통과**. `home-only` 진단 범위이며 앞서 렌더링 수정본의 전체 11단계 통과와 구분한다. 재시도 0·캡처 경고 0·원본 보존/정리 통과.
+- 최종 APK `build/install/running-art-0.1.0-20261013-home-final.apk`: SHA-256 `1b610b4f93364211a079a06608b826ccda9af6689f98ad12a0ec11680518a130`, appId `com.runningart.mobile.dev`, 기존 서명 SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`. QA hook·시험 원본 자료·.env 파일 미포함과 release appId 검사 통과. **물리 휴대폰에는 설치하지 않았다.**
+- 최종 커밋 `efc3693`의 [PR CI](https://github.com/ssw3131/running-art-mobile/actions/runs/38354188789) attempt 1: API 36은 APK 설치 전 `adb root` 연결 종료(아티팩트 `11792616451`), API 29는 홈 통과 뒤 S0 입력 캡처에서 UIAutomator 45초 시간 초과(아티팩트 `11792966426`)로 실패했다. API 29 정리는 통과했다. 제품 코드·시간 제한·검사 조건 변경 없이 실패한 작업을 **1회 재실행**했다.
+- 같은 커밋의 attempt 2: 로직 427·UI 14·Python 6·HTTP 생성 사례 182·실제 격리 Supabase 통합 2개와 API 36 전체 **11단계**·API 29 호환 **5단계**, 원본 보존/정리·필수 `verification-gate` 통과. Android 보고서 내부 재시도는 각각 0이며 위 workflow 재실행과 구분한다. UI 캡처 종료 경고 API 36 **0건**, API 29 **1건**은 원본에 유지했다. API 29의 1건은 UI dump XML/토큰과 테스트 완료 결과가 유효한 뒤 도우미 종료 코드 134가 반환된 기록이다.
+- 최종 PR의 정적 4화면 차이 **모두 0픽셀**. 검토한 홈 PNG와 기존 Wi-Fi 최소 마스크만 사용했고 허용값은 바꾸지 않았다. 최초 732,762픽셀 실패와 전후 PNG는 이전 아티팩트/기준 manifest에 보존했다.
+- [PR #8](https://github.com/ssw3131/running-art-mobile/pull/8) → main `ba32ec24d5cf2ade8cada458a53473961b66f9cf` 병합 후 [main 전체 CI](https://github.com/ssw3131/running-art-mobile/actions/runs/38358116244)도 통과했다. API 36 11단계·API 29 5단계·원본 보존/정리, 정적 4화면 0픽셀. main 보고서 내부 재시도 API 36/29는 0/0, 캡처 종료 경고는 0/3건이다. 원본 소스/해시/실행 시각은 JSON에 보존했다.
+- 로컬 전용 에뮬레이터의 시험 DB 원복·도우미/토큰 정리·서비스 없음 확인 후 종료했다. 연결된 A7과 사용자 계정/클라우드/약관/DB는 조작하지 않았다. TalkBack 실제 발화·야외 GPS/앱 단독 배터리·추가 소셜/실기기 통합은 별도 후속이다.
