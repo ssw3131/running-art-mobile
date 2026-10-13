@@ -12,6 +12,8 @@ public class RunningUiDump extends UiAutomatorTestCase {
     // Some platform runners resolve their relative output through a nested
     // local/tmp directory. Clear both locations before accepting either one.
     java.io.File nested = new java.io.File("/data/local/tmp/local/tmp/running-qa.xml");
+    java.io.File receipt = new java.io.File("/data/local/tmp/running-qa.token");
+    if (receipt.exists() && !receipt.delete()) throw new Exception("Cannot replace previous dump receipt");
     if (target.exists() && !target.delete()) throw new Exception("Cannot replace previous UI dump");
     if (nested.exists() && !nested.delete()) throw new Exception("Cannot replace nested UI dump");
     Thread.sleep(500);
@@ -24,5 +26,12 @@ public class RunningUiDump extends UiAutomatorTestCase {
       }
     }
     if (!target.isFile() || target.length() == 0) throw new Exception("No fresh UI hierarchy");
+    String token = getParams().getString("runpenDumpToken", "");
+    if (!token.isEmpty()) {
+      if (!token.matches("[a-f0-9]{32}")) throw new Exception("Invalid dump token");
+      try (java.io.OutputStream out = new java.io.FileOutputStream(receipt)) {
+        out.write(token.getBytes("UTF-8"));
+      }
+    }
   }
 }

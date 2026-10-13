@@ -1,5 +1,7 @@
 # 현재 상태와 인수인계
 
+**2026-10-13 S1 가입·동의 부분 완료:** 홈·마이페이지에만 가입 안내, 필수 이용약관·개인정보 두 항목·마케팅 제외, 기존 계정도 동의 대기로 이관하는 계약을 구현했다. 로직 420개·UI 9개·Python 6개·타입/린트·HTTP 182·실제 격리 Supabase 2개·PGlite 이관/권한, Windows/Linux API 36 전체 10단계·Linux API 29 호환 4단계·원본 보존/정리(최종 실행 재시도·캡처 경고 0)를 통과했다. 홈·마이페이지의 의도된 변경을 검토해 기준 두 장만 갱신했고 재비교 4화면 차이 0이다. 필수 게이트·병합 결과는 [PR #6](https://github.com/ssw3131/running-art-mobile/pull/6)를 따른다. **운영 DB/약관 게시·폰 설치는 미실행**이며 Figma 운영 정보·최종 문안 확정과 DB 배포 이력 대조 후 적용한다. 홈 3상태는 다음 기능이다. [구현](../development/signup-consent.md)·[검증](../quality/signup-consent-20261013.md).
+
 **2026-10-13 DB 개선 방향 기록:** [검토안](../planning/database-improvement-direction.md)에 기존 동기화 기반 유지, 다음 DB 배포 전 구조·이력 대조, S1 회원/동의와 S7 상품/권한, 통계·자료 증가 대응을 정리했다. 문서만 추가했으며 DB 변경·운영 조회·배포·CD 구축은 하지 않았다. 다음 제품 작업은 S1을 유지한다.
 
 **2026-10-13 CI 도입 완료:** 작업 브랜치→PR→필수 검사→squash merge와 main 보호를 적용했다. 최신 PR 및 main에서 로직 411개·UI 상태 4개·Python 3개·HTTP Fuzz 182·실제 격리 Supabase 왕복/권한, API 36 전체 9단계·정적 4화면 차이 0(검토된 시스템 Wi-Fi 영역만 제외), API 29 호환 3단계·원본 보존/정리를 통과했다. main API 29는 도우미 명령 종료 오류 후 진단 재실행 통과로, 최초 실패 이력을 보존했다. Windows API 36의 동일 S0 APK 핵심 흐름 10회 연속·재시도 0 근거도 보존했다. SM-S942N S0 설치·5탭·기존 3코스/4러닝/1,437좌표/1메모·계정/설정 보존과 정리 완료, USB 분리 가능. 다음 기능은 S1 가입/동의·홈 3상태이며 APK·서버 자동 배포는 보류한다. [실행 기록](../history/executed-plans/2026-10-12-2354-verification-ci.md)·[운영](../development/verification-ci.md)을 과거 CI 전체 보류 표현보다 우선한다.

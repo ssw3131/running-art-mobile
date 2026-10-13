@@ -38,5 +38,6 @@ export default function HomeScreen() {
     <Button label="코스 설정" testID="open-route-lab" onPress={() => router.navigate('/route-lab')} />
     <Button label="저장한 코스" testID="open-courses" variant="secondary" onPress={() => router.navigate({ pathname: '/courses', params: { view: 'courses' } })} />
     <Button label="러닝 기록 보기" testID="open-runs" variant="secondary" onPress={() => router.navigate({ pathname: '/courses', params: { view: 'runs' } })} />
+    {auth.ready && !auth.account && <Button label="회원가입 · 로그인" testID="home-signup" variant="outline" onPress={() => router.push('/account-entry')} />}
   </ScrollView>;
 }

@@ -38,5 +38,17 @@ try {
   assert.ok(photoReport?.startsWith('PASS:'));
   assert.equal((await db.query('select count(*)::int as count from auth.users')).rows[0].count, 0, 'photo fixtures rolled back');
   console.log(photoReport);
+  // Exercise upgrade from an existing Auth account before adding S1 tables.
+  const legacyOwner = '99999999-9999-4999-8999-999999999999';
+  await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)', [legacyOwner, 'legacy@example.invalid', JSON.stringify({ runpen_nickname: '기존 계정', unrelated: 'keep' })]);
+  const before = (await db.query('select * from auth.users where id=$1', [legacyOwner])).rows;
+  await db.exec(await readFile(new URL('../../supabase/migrations/20261013003500_membership_consent.sql', import.meta.url), 'utf8'));
+  assert.deepEqual((await db.query('select * from auth.users where id=$1', [legacyOwner])).rows, before, 'upgrade preserves Auth identity and metadata');
+  assert.equal((await db.query('select completed_at from public.memberships where owner_id=$1', [legacyOwner])).rows[0].completed_at, null, 'legacy account migrates pending, not auto-consented');
+  await db.query('delete from auth.users where id=$1', [legacyOwner]);
+  const signupResults = await db.exec(await readFile(new URL('../../supabase/tests/membership.sql', import.meta.url), 'utf8'));
+  const signupReport = signupResults.flatMap(r => r.rows).find(r => r.membership_verification)?.membership_verification;
+  assert.ok(signupReport?.startsWith('PASS:')); console.log(signupReport);
+  assert.equal((await db.query('select count(*)::int as count from auth.users')).rows[0].count, 0, 'signup fixtures rolled back');
   console.log('PASS: synthetic fixtures rolled back; no hosted connection');
 } finally { await db.close(); }

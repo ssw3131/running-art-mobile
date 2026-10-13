@@ -23,9 +23,11 @@ parser.add_argument('--serial', required=True)
 parser.add_argument('--apk', required=True, type=pathlib.Path)
 parser.add_argument('--repeat', type=int, default=1)
 parser.add_argument('--smoke', action='store_true')
+parser.add_argument('--signup-only', action='store_true', help='Run only S1 entry and accessibility; never substitutes for full CI')
 parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
+assert not args.signup_only or not (args.smoke or args.visual_only), 'Choose one scenario mode'
 assert args.serial.startswith('emulator-') and args.serial[9:].isdigit(), 'Physical devices are forbidden'
 assert 1 <= args.repeat <= 10
 sdk = pathlib.Path(os.environ.get('ANDROID_HOME', ROOT / '.tools/android-sdk'))
@@ -112,7 +114,7 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'startedAt': datetime.now(timezone.utc).isoformat(), 'ciRun': os.environ.get('GITHUB_RUN_ID'),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
-          'mode': 'visual-only' if args.visual_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
+          'mode': 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
 original_overlays = None
@@ -235,6 +237,33 @@ def saved_restart():
     assert q.find(q.capture('saved-course-restart'), 'course-title') is not None
     q.tap('service-back'); q.tap('tab-home')
 
+
+def signup_entry():
+    # Read-only guest flow: no real social account or product fixtures.
+    # Establish our own start after any previous scenario's configuration reset.
+    launch()
+    q.tap('tab-home'); q.seek('home-signup'); q.tap('home-signup')
+    tree = q.capture('signup-entry')
+    assert q.find(tree, 'signup-entry') is not None
+    assert not any('5회 무료' in n.get('text', '') for n in tree.iter('node'))
+    q.seek('signup-mode'); q.tap('signup-mode'); q.capture('signup-login')
+    q.seek('signup-guest'); q.tap('signup-guest')
+    assert q.find(q.capture('signup-guest-return'), 'tab-home').get('selected') == 'true'
+    q.tap('tab-account'); q.seek('account-signup'); q.tap('account-signup')
+    q.shell('input', 'keyevent', '4')
+    time.sleep(1)
+    assert q.find(q.capture('signup-account-back'), 'tab-account').get('selected') == 'true'
+    try:
+        q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
+        # Configuration changes recreate the activity. Reach the entry through
+        # its real CTA after home is ready, instead of racing a second deep link.
+        launch(); q.seek('home-signup'); q.tap('home-signup')
+        assert q.find(q.capture('signup-large-font'), 'signup-entry') is not None
+        q.seek('signup-guest'); q.tap('signup-guest')
+        assert q.find(q.capture('signup-large-font-return'), 'tab-home').get('selected') == 'true'
+    finally:
+        q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
+
 try:
     for attempt in range(1, args.repeat + 1):
         q.OUT = args.output / f'attempt-{attempt:02}'
@@ -256,6 +285,11 @@ try:
             # selected intentionally, so verify it after the independent GPS run.
             steps += [('S0-04-save', q.calculation), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
                       ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled)]
+        # The original S0 chain deliberately carries draft/navigation state.
+        # S1 returns home and recreates the activity for font/density checks,
+        # so run it after that chain rather than breaking its preconditions.
+        steps += [('S1-01-signup-entry', signup_entry)]
+        if args.signup_only: steps = [('S1-01-signup-entry', signup_entry)]
         if args.visual_only: steps = []
         for scenario, action in steps:
             step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)
@@ -301,7 +335,7 @@ finally:
                     ('settings', 'put', 'system', 'font_scale', '1.0'),
                     ('am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'),
                     ('settings', 'put', 'global', 'sysui_demo_allowed', '0'),
-                    ('rm', '-f', '/data/local/tmp/runpen-qa-query.db', '/data/local/tmp/runpen-qa-query.db-wal', '/data/local/tmp/runpen-qa-query.db-shm', '/data/local/tmp/running-ui-dump.jar', '/data/local/tmp/running-qa.xml', '/data/local/tmp/local/tmp/running-qa.xml')]:
+                    ('rm', '-f', '/data/local/tmp/runpen-qa-query.db', '/data/local/tmp/runpen-qa-query.db-wal', '/data/local/tmp/runpen-qa-query.db-shm', '/data/local/tmp/running-ui-dump.jar', '/data/local/tmp/running-qa.xml', '/data/local/tmp/running-qa.token', '/data/local/tmp/local/tmp/running-qa.xml')]:
         try: q.shell(*command)
         except Exception as error: cleanup_errors.append({'command': command[:2], 'error': str(error)})
     report['cleanup'] = {'status': 'failed' if cleanup_errors else 'passed', 'errors': cleanup_errors}
@@ -316,6 +350,7 @@ finally:
             cleanup_errors.append({'command': ['cmd', 'overlay'], 'error': str(error)})
             report['cleanup']['status'] = 'failed'
     report['finishedAt'] = datetime.now(timezone.utc).isoformat()
+    report['uiDumpTransportWarnings'] = sum(len(p.read_text(encoding='utf8').splitlines()) for p in args.output.glob('attempt-*/ui-dump-transport.jsonl'))
     report['status'] = 'passed' if not cleanup_errors and len(report['attempts']) == args.repeat and all(a['status'] == 'passed' for a in report['attempts']) else 'failed'
     save_report()
     if cleanup_errors: raise RuntimeError('Emulator cleanup incomplete; see report.json')

@@ -7,6 +7,7 @@ import shlex
 import subprocess
 import sys
 import time
+import uuid
 import xml.etree.ElementTree as ET
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -32,8 +33,20 @@ def shell(*args, **kwargs):
 def capture(name):
     assert re.fullmatch(r'[a-z0-9-]+', name)
     for attempt in range(3):
-        result = shell('uiautomator', 'runtest', '/data/local/tmp/running-ui-dump.jar', '/system/framework/android.test.base.jar', '-c', 'RunningUiDump').decode()
-        if 'OK (1 test)' in result:
+        token = uuid.uuid4().hex
+        command = ('uiautomator', 'runtest', '/data/local/tmp/running-ui-dump.jar', '/system/framework/android.test.base.jar', '-e', 'runpenDumpToken', token, '-c', 'RunningUiDump')
+        process = subprocess.run([str(ADB), '-s', SERIAL, 'shell', shlex.join(command)], capture_output=True, timeout=45)
+        result = (process.stdout + process.stderr).decode(errors='replace')
+        if 'OK (1 test)' in result and 'FAILURES!!!' not in result:
+            # API 29 may return a nonzero shell exit after the test has finished.
+            # Require a fresh per-call device receipt as well as JUnit success;
+            # an old XML, partial run, offline emulator or helper failure fails.
+            receipt = shell('cat', '/data/local/tmp/running-qa.token').decode().strip()
+            if receipt != token:
+                raise RuntimeError('UI dump receipt is missing or stale')
+            if process.returncode:
+                with (OUT / 'ui-dump-transport.jsonl').open('a', encoding='utf8') as log:
+                    log.write(json.dumps({'capture': name, 'exitCode': process.returncode, 'token': token, 'output': result}) + '\n')
             break
         if 'No fresh UI hierarchy' not in result or attempt == 2:
             raise RuntimeError(result)

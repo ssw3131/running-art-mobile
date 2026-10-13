@@ -59,7 +59,7 @@ Python 격리 환경에 `scripts/qa/requirements.txt`를 설치하고 `python sc
 
 ## 실제 DB 통합
 
-Docker와 Supabase CLI 2.120.0이 필요하다. 전용 `runpen-ci` 로컬 스택에 네 마이그레이션을 적용하고 pgTAP, 기존 SQL 정책 검사, 실제 Auth·Storage·RPC와 두 빈 SQLite의 전체 내용 왕복을 검사한다. 서비스 키는 로컬 상태 파일에서만 읽고 아티팩트에 올리지 않는다. URL은 loopback만 허용한다.
+Docker와 Supabase CLI 2.120.0이 필요하다. 전용 `runpen-ci` 로컬 스택에 저장소의 전체 마이그레이션을 적용하고 pgTAP, SQL 정책 검사, 실제 Auth·Storage·RPC와 두 빈 SQLite의 전체 내용 왕복을 검사한다. S1 회원/동의의 기존 계정 이관·동시 제출·본인 접근·탈퇴 검사도 포함한다. 서비스 키는 로컬 상태 파일에서만 읽고 아티팩트에 올리지 않는다. URL은 loopback만 허용한다.
 
 ```sh
 supabase start
@@ -82,13 +82,17 @@ python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outp
 
 전용 `RunPen_CI` 또는 `RunningArt_UI_QA` 에뮬레이터만 받으며 물리 폰은 거부한다. 전용 에뮬레이터의 앱 데이터를 매 회 초기화한다. 공개 fixture 생성부터 탭·입력 보존·OAuth 취소·저장/재실행·출발 준비·주입 GPS·중단 복원·GPX 취소·큰 글씨/키보드까지 검사하고, 실패해도 시험 자료와 도우미를 정리한다. 테스트 상태를 주입하는 제품 코드나 별도 앱 ID를 추가하지 않는다. CI APK는 개발 머신의 서명·환경값을 사용하지 않으므로 사용자 폰 설치용으로 배포하지 않는다.
 
-API 36은 위 전체 흐름과 4개 정적 화면 비교를 실행한다. main에서 추가하는 API 29의 `--smoke`는 5탭/메뉴, 상세/뒤로/입력 보존, OAuth 취소 복귀의 3단계와 원본 보존·정리·화면 캡처를 실행한다. API 29의 전체 GPS 회귀나 정적 픽셀 기준 통과로 해석하지 않는다.
+API 36은 위 전체 흐름과 4개 정적 화면 비교를 실행한다. main에서 추가하는 API 29의 `--smoke`는 5탭/메뉴, 상세/뒤로/입력 보존, OAuth 취소 복귀, S1 가입 진입/게스트 복귀/큰 글씨의 4단계와 원본 보존·정리·화면 캡처를 실행한다. API 29의 전체 GPS 회귀나 정적 픽셀 기준 통과로 해석하지 않는다.
 
 Android 10의 시스템 SQLite에는 `-json`이 없어 전용 에뮬레이터에서 [온라인 백업](https://www.sqlite.org/backup.html)으로 WAL까지 일관된 사본을 만든 뒤 호스트 Python으로 조회한다. 문자열/줄바꿈·숫자·NULL 타입을 보존하고 성공/실패 모두 임시 사본을 삭제한다. 제품 앱 DB 구현을 바꾸는 기능이 아니다.
 
 API 36은 Pixel 5의 프레임워크/SystemUI 오버레이를 명시하고, 시스템 UI 프로세스를 갱신한 뒤 실제 시스템 바와 cutout 여백이 정해진 값이 될 때까지 기다린다. Linux 1080×2340 기준은 상단 136px·하단 63px다. Maestro와 배율 검사 뒤에도 다시 적용한다. 촬영 중 여백이 바뀌면 실패하며 원래 오버레이는 정리 단계에서 복원한다. `display-profile.txt`, `display-overlays.txt`, 화면별 display 진단과 `displayGeometry`를 보존한다. 앱 전체를 이동시키는 환경 차이를 이미지 마스크로 숨기지 않는다.
 
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
+
+10-13 S1 검사에서 API 29의 UI 덤프가 JUnit 성공을 출력한 뒤 비정상 shell 종료 코드를 반환하는 문제가 반복되어 캡처 완료 증명을 추가했다. 각 요청은 새 UUID 토큰을 보내고, Java 도우미는 이전 XML/토큰을 지운 뒤 새 XML이 생성된 경우에만 토큰을 기록한다. 호스트는 JUnit 성공·동일 토큰·실제 XML/PNG 읽기를 모두 확인한다. 이 조건을 충족한 비정상 shell 종료는 `ui-dump-transport.jsonl`과 보고서의 `uiDumpTransportWarnings`에 보존한다. 미완료 실행·이전 토큰·오프라인·실패한 읽기는 계속 실패하며 시나리오를 자동 재시도하지 않는다.
+
+`--signup-only`는 가입 진입/복귀·큰 글씨 진단 한 단계와 자료 보존·정리를 실행하고 보고서 모드도 별도로 표기한다. 전체/호환 검사 통과를 대신하지 않으며 PR CI의 기존 전체·smoke 선택은 유지한다. Windows의 임시 드라이브가 부족하면 해당 명령에서만 `TEMP`/`TMP`와 Java `java.io.tmpdir`를 작업 폴더의 임시 경로로 지정한다.
 
 `scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 마스크는 근거를 기록한 작은 시스템 시계/Wi-Fi 영역만 허용한다. 현재 기준에는 main 실행에서 네 화면 모두 같은 가장자리 차이가 난 Wi-Fi 아이콘의 41×33px(`x=817,y=53`)만 제외했고 원본 PNG는 유지했다. 마스크의 위치/최대 크기를 검사하며 앱 영역·상태 표시줄 전체 가림은 거부한다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
 
