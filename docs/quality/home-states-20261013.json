@@ -1,0 +1,1248 @@
+{
+  "schemaVersion": 1,
+  "title": "S1 홈 3상태",
+  "recordedAt": "2026-10-13T16:03:34+09:00",
+  "pullRequest": "https://github.com/ssw3131/running-art-mobile/pull/8",
+  "implementationHead": "efc3693781577a3b8baa73ed9735c5ccbaa6a475",
+  "mainCommit": "ba32ec24d5cf2ade8cada458a53473961b66f9cf",
+  "ci": {
+    "run": "38354188789",
+    "attempt": 2,
+    "environmentRerun": 1,
+    "url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38354188789",
+    "artifacts": {
+      "api36": 11793736746,
+      "api29": 11792859361,
+      "api": 11792421277,
+      "fast": 11791839029
+    }
+  },
+  "counts": {
+    "logic": 427,
+    "components": 14,
+    "python": 6,
+    "httpGeneratedCases": 182,
+    "supabaseIntegration": 2
+  },
+  "windowsFullBeforeFinalNotice": {
+    "status": "passed",
+    "source": "453b39d0b070957765f3a40b08a48a8db1230a65",
+    "dirty": false,
+    "startedAt": "2026-10-13T05:33:02.302546+00:00",
+    "finishedAt": "2026-10-13T05:45:59.684125+00:00",
+    "ciRun": null,
+    "mode": "full",
+    "apkSha256": "6cb04ecab2ee8fc02fbe123b1ecd9da19e8139312516e7f78000a48b85349be6",
+    "environment": {
+      "host": "Windows",
+      "api": "36",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "size": "1080x2340",
+      "density": 420,
+      "fontScale": 1,
+      "locale": "en-US",
+      "timezone": "UTC",
+      "systemBar": "demo-1200-full-signal-battery100-v1",
+      "displayProfile": "pixel_5-overlays-v1"
+    },
+    "retries": 0,
+    "uiDumpTransportWarnings": 0,
+    "cleanup": {
+      "status": "passed",
+      "errors": []
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "startedAt": "2026-10-13T05:33:02.524804+00:00",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed",
+            "screenshots": [
+              "after-maestro-display.png"
+            ],
+            "durationSeconds": 105.859
+          },
+          {
+            "id": "S1-02-home-states",
+            "status": "passed",
+            "screenshots": [
+              "home-history-large-font-archive.png",
+              "home-history-large-font.png",
+              "home-history-offline.png",
+              "home-history.png",
+              "home-initial-top.png",
+              "home-interrupted-return.png",
+              "home-interrupted.png",
+              "home-paused-return.png",
+              "home-paused.png",
+              "home-record-detail.png",
+              "home-shape-applied.png",
+              "home-shape-fish-scroll-0.png",
+              "home-shape-fish-scroll-1.png",
+              "home-shape-star-scroll-0.png",
+              "home-shape-star-scroll-1.png",
+              "home-tab-keeps-edited-shape.png"
+            ],
+            "durationSeconds": 112.562
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed",
+            "screenshots": [
+              "archive-runs.png",
+              "archive-view-after-tab.png",
+              "center-after-tab.png",
+              "center-before-tab.png",
+              "course-detail.png",
+              "draft-after-detail.png",
+              "draft-after-menu-back.png",
+              "draft-after-menu-link.png",
+              "draft-after-system-back.png",
+              "draft-before.png",
+              "system-back-home.png"
+            ],
+            "durationSeconds": 81.579
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed",
+            "screenshots": [
+              "auth-cancel-callback.png",
+              "draft-after-callback.png"
+            ],
+            "durationSeconds": 20.593
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed",
+            "screenshots": [
+              "before-grid.png",
+              "calculation-after-blur.png",
+              "calculation-progress.png",
+              "save-draft-after-tab.png",
+              "save-keyboard.png",
+              "save-list-destination.png"
+            ],
+            "durationSeconds": 85.407
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed",
+            "screenshots": [
+              "saved-course-restart.png"
+            ],
+            "durationSeconds": 15.813
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed",
+            "screenshots": [
+              "gps-cold-recovery.png",
+              "gps-home-banner.png",
+              "gps-result-back.png",
+              "gps-result.png",
+              "gps-resumed.png"
+            ],
+            "durationSeconds": 112.375
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed",
+            "screenshots": [
+              "course-preparation-return.png",
+              "course-preparation-tab.png"
+            ],
+            "durationSeconds": 39.765
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed",
+            "screenshots": [
+              "cold-course-link.png",
+              "cold-link-back.png",
+              "development-back-home.png",
+              "development-environment.png",
+              "development-ui-preview.png",
+              "gpx-chooser.png",
+              "legacy-run-share.png"
+            ],
+            "durationSeconds": 56.563
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed",
+            "screenshots": [
+              "scaled-account.png",
+              "scaled-home.png",
+              "scaled-keyboard.png",
+              "scaled-menu.png"
+            ],
+            "durationSeconds": 45.515
+          },
+          {
+            "id": "S1-01-signup-entry",
+            "status": "passed",
+            "screenshots": [
+              "signup-account-back.png",
+              "signup-entry.png",
+              "signup-guest-return.png",
+              "signup-large-font-return.png",
+              "signup-large-font.png",
+              "signup-login.png"
+            ],
+            "durationSeconds": 52.047
+          }
+        ],
+        "status": "passed",
+        "preservation": {
+          "status": "passed",
+          "sha256": "dcfc1f52a81dab845b1159066a1ea0ef22699e7d8b6214d864e09c8846cf67ea"
+        },
+        "finishedAt": "2026-10-13T05:45:56.334934+00:00"
+      }
+    ]
+  },
+  "windowsFinalTargeted": {
+    "status": "passed",
+    "source": "453b39d0b070957765f3a40b08a48a8db1230a65",
+    "dirty": true,
+    "startedAt": "2026-10-13T05:58:18.017329+00:00",
+    "finishedAt": "2026-10-13T06:04:17.015081+00:00",
+    "ciRun": null,
+    "mode": "home-only",
+    "apkSha256": "1b610b4f93364211a079a06608b826ccda9af6689f98ad12a0ec11680518a130",
+    "environment": {
+      "host": "Windows",
+      "api": "36",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "size": "1080x2340",
+      "density": 420,
+      "fontScale": 1,
+      "locale": "en-US",
+      "timezone": "UTC",
+      "systemBar": "demo-1200-full-signal-battery100-v1",
+      "displayProfile": "pixel_5-overlays-v1"
+    },
+    "retries": 0,
+    "uiDumpTransportWarnings": 0,
+    "cleanup": {
+      "status": "passed",
+      "errors": []
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "startedAt": "2026-10-13T05:58:18.142430+00:00",
+        "steps": [
+          {
+            "id": "S1-02-home-states",
+            "status": "passed",
+            "screenshots": [
+              "home-history-large-font-archive.png",
+              "home-history-large-font.png",
+              "home-history-offline.png",
+              "home-history.png",
+              "home-initial-top.png",
+              "home-interrupted-return.png",
+              "home-interrupted.png",
+              "home-paused-return.png",
+              "home-paused.png",
+              "home-record-detail.png",
+              "home-shape-applied.png",
+              "home-shape-fish-scroll-0.png",
+              "home-shape-fish-scroll-1.png",
+              "home-shape-star-scroll-0.png",
+              "home-shape-star-scroll-1.png",
+              "home-tab-keeps-edited-shape.png"
+            ],
+            "durationSeconds": 116.375
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed",
+            "screenshots": [
+              "archive-runs.png",
+              "archive-view-after-tab.png",
+              "center-after-tab.png",
+              "center-before-tab.png",
+              "course-detail.png",
+              "draft-after-detail.png",
+              "draft-after-menu-back.png",
+              "draft-after-menu-link.png",
+              "draft-after-system-back.png",
+              "draft-before.png",
+              "system-back-home.png"
+            ],
+            "durationSeconds": 87.547
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed",
+            "screenshots": [
+              "before-grid.png",
+              "calculation-after-blur.png",
+              "calculation-progress.png",
+              "home-existing-result-before.png",
+              "home-existing-result-notice.png",
+              "home-existing-result-preserved.png",
+              "save-draft-after-tab.png",
+              "save-keyboard.png",
+              "save-list-destination.png"
+            ],
+            "durationSeconds": 108.891
+          }
+        ],
+        "status": "passed",
+        "preservation": {
+          "status": "passed",
+          "sha256": "e62a49a39fa30f03bc71dbb4fa83706738b4e4d6b207ba9273395ca8d28e1246"
+        },
+        "finishedAt": "2026-10-13T06:04:13.556909+00:00"
+      }
+    ]
+  },
+  "linux36Final": {
+    "status": "passed",
+    "source": "29c516af6ae19789c5e68798ff271300f9ec15dc",
+    "dirty": false,
+    "startedAt": "2026-10-13T06:27:16.783740+00:00",
+    "finishedAt": "2026-10-13T06:38:29.597262+00:00",
+    "ciRun": "38354188789",
+    "mode": "full",
+    "apkSha256": "f6799631b6e8d73198e7863ba914b658bc537518d8ddfc2bc597529a9fd5c3af",
+    "environment": {
+      "host": "Linux",
+      "api": "36",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "size": "1080x2340",
+      "density": 420,
+      "fontScale": 1,
+      "locale": "en-US",
+      "timezone": "UTC",
+      "systemBar": "demo-1200-full-signal-battery100-v1",
+      "displayProfile": "pixel_5-overlays-v1"
+    },
+    "retries": 0,
+    "uiDumpTransportWarnings": 0,
+    "cleanup": {
+      "status": "passed",
+      "errors": []
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "startedAt": "2026-10-13T06:27:16.888701+00:00",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed",
+            "screenshots": [
+              "after-maestro-display.png"
+            ],
+            "durationSeconds": 70.986
+          },
+          {
+            "id": "S1-02-home-states",
+            "status": "passed",
+            "screenshots": [
+              "home-history-large-font-archive.png",
+              "home-history-large-font.png",
+              "home-history-offline.png",
+              "home-history.png",
+              "home-initial-top.png",
+              "home-interrupted-return.png",
+              "home-interrupted.png",
+              "home-paused-return.png",
+              "home-paused.png",
+              "home-record-detail.png",
+              "home-shape-applied.png",
+              "home-shape-fish-scroll-0.png",
+              "home-shape-fish-scroll-1.png",
+              "home-shape-fish-scroll-2.png",
+              "home-shape-star-scroll-0.png",
+              "home-shape-star-scroll-1.png",
+              "home-tab-keeps-edited-shape.png"
+            ],
+            "durationSeconds": 97.224
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed",
+            "screenshots": [
+              "archive-runs.png",
+              "archive-view-after-tab.png",
+              "center-after-tab.png",
+              "center-before-tab.png",
+              "course-detail.png",
+              "draft-after-detail.png",
+              "draft-after-menu-back.png",
+              "draft-after-menu-link.png",
+              "draft-after-system-back.png",
+              "draft-before.png",
+              "system-back-home.png"
+            ],
+            "durationSeconds": 63.472
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed",
+            "screenshots": [
+              "auth-cancel-callback.png",
+              "draft-after-callback.png"
+            ],
+            "durationSeconds": 16.127
+          },
+          {
+            "id": "S0-04-save",
+            "status": "passed",
+            "screenshots": [
+              "before-grid.png",
+              "calculation-after-blur.png",
+              "calculation-progress.png",
+              "home-existing-result-before.png",
+              "home-existing-result-notice.png",
+              "home-existing-result-preserved.png",
+              "save-draft-after-tab.png",
+              "save-keyboard.png",
+              "save-list-destination.png"
+            ],
+            "durationSeconds": 91.265
+          },
+          {
+            "id": "S0-04-restart",
+            "status": "passed",
+            "screenshots": [
+              "saved-course-restart.png"
+            ],
+            "durationSeconds": 13.477
+          },
+          {
+            "id": "S0-06-gps",
+            "status": "passed",
+            "screenshots": [
+              "gps-cold-recovery.png",
+              "gps-home-banner.png",
+              "gps-result-back.png",
+              "gps-result.png",
+              "gps-resumed.png"
+            ],
+            "durationSeconds": 96.868
+          },
+          {
+            "id": "S0-05-preparation",
+            "status": "passed",
+            "screenshots": [
+              "course-preparation-return.png",
+              "course-preparation-tab.png"
+            ],
+            "durationSeconds": 34.413
+          },
+          {
+            "id": "S0-07-deep-link-gpx",
+            "status": "passed",
+            "screenshots": [
+              "cold-course-link.png",
+              "cold-link-back.png",
+              "development-back-home.png",
+              "development-environment.png",
+              "development-ui-preview.png",
+              "gpx-chooser.png",
+              "legacy-run-share.png"
+            ],
+            "durationSeconds": 48.84
+          },
+          {
+            "id": "S0-08-accessibility",
+            "status": "passed",
+            "screenshots": [
+              "scaled-account.png",
+              "scaled-home.png",
+              "scaled-keyboard.png",
+              "scaled-menu.png"
+            ],
+            "durationSeconds": 40.104
+          },
+          {
+            "id": "S1-01-signup-entry",
+            "status": "passed",
+            "screenshots": [
+              "signup-account-back.png",
+              "signup-entry.png",
+              "signup-guest-return.png",
+              "signup-large-font-return.png",
+              "signup-large-font.png",
+              "signup-login.png"
+            ],
+            "durationSeconds": 43.451
+          }
+        ],
+        "status": "passed",
+        "preservation": {
+          "status": "passed",
+          "sha256": "ef3174b92d3c43326e4e3fc361329e22dbdd42dd8682088de895e413f84c6509"
+        },
+        "finishedAt": "2026-10-13T06:38:27.228067+00:00"
+      }
+    ]
+  },
+  "linux29Final": {
+    "status": "passed",
+    "source": "29c516af6ae19789c5e68798ff271300f9ec15dc",
+    "dirty": false,
+    "startedAt": "2026-10-13T06:24:18.147543+00:00",
+    "finishedAt": "2026-10-13T06:28:38.379254+00:00",
+    "ciRun": "38354188789",
+    "mode": "smoke",
+    "apkSha256": "e170dec096eef1f706b20bf56865d39ecfbbb51fad680b641d5e051477b66450",
+    "environment": {
+      "host": "Linux",
+      "api": "29",
+      "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64:10/QSR1.211112.011/13135432:userdebug/dev-keys",
+      "size": "1080x2340",
+      "density": 420,
+      "fontScale": 1,
+      "locale": "en-US",
+      "timezone": "UTC",
+      "systemBar": "demo-1200-full-signal-battery100-v1"
+    },
+    "retries": 0,
+    "uiDumpTransportWarnings": 1,
+    "cleanup": {
+      "status": "passed",
+      "errors": []
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "startedAt": "2026-10-13T06:24:18.240835+00:00",
+        "steps": [
+          {
+            "id": "S0-01-maestro",
+            "status": "passed",
+            "screenshots": [
+              "after-maestro-display.png"
+            ],
+            "durationSeconds": 38.229
+          },
+          {
+            "id": "S1-02-home-states",
+            "status": "passed",
+            "screenshots": [
+              "home-history-large-font-archive.png",
+              "home-history-large-font.png",
+              "home-history-offline.png",
+              "home-history.png",
+              "home-initial-top.png",
+              "home-interrupted-return.png",
+              "home-interrupted.png",
+              "home-paused-return.png",
+              "home-paused.png",
+              "home-record-detail.png",
+              "home-shape-applied.png",
+              "home-shape-fish-scroll-0.png",
+              "home-shape-fish-scroll-1.png",
+              "home-shape-star-scroll-0.png",
+              "home-shape-star-scroll-1.png",
+              "home-tab-keeps-edited-shape.png"
+            ],
+            "durationSeconds": 88.52
+          },
+          {
+            "id": "S0-02-draft",
+            "status": "passed",
+            "screenshots": [
+              "archive-runs.png",
+              "archive-view-after-tab.png",
+              "center-after-tab.png",
+              "center-before-tab.png",
+              "course-detail.png",
+              "draft-after-detail.png",
+              "draft-after-menu-back.png",
+              "draft-after-menu-link.png",
+              "draft-after-system-back.png",
+              "draft-before.png",
+              "system-back-home.png"
+            ],
+            "durationSeconds": 49.357
+          },
+          {
+            "id": "S0-03-oauth-cancel",
+            "status": "passed",
+            "screenshots": [
+              "auth-cancel-callback.png",
+              "draft-after-callback.png"
+            ],
+            "durationSeconds": 14.321
+          },
+          {
+            "id": "S1-01-signup-entry",
+            "status": "passed",
+            "screenshots": [
+              "signup-account-back.png",
+              "signup-entry.png",
+              "signup-guest-return.png",
+              "signup-large-font-return.png",
+              "signup-large-font.png",
+              "signup-login.png"
+            ],
+            "durationSeconds": 40.981
+          }
+        ],
+        "status": "passed",
+        "preservation": {
+          "status": "passed",
+          "sha256": "f643ce19d4e9dce2f83ae9a203924dd5851948e4508f1f05e1572d86f30abe89"
+        },
+        "finishedAt": "2026-10-13T06:28:36.547458+00:00"
+      }
+    ]
+  },
+  "visualFinal": {
+    "status": "passed",
+    "environment": {
+      "host": "Linux",
+      "api": "36",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "size": "1080x2340",
+      "density": 420,
+      "fontScale": 1,
+      "locale": "en-US",
+      "timezone": "UTC",
+      "systemBar": "demo-1200-full-signal-battery100-v1",
+      "displayProfile": "pixel_5-overlays-v1"
+    },
+    "source": "29c516af6ae19789c5e68798ff271300f9ec15dc",
+    "apkSha256": "f6799631b6e8d73198e7863ba914b658bc537518d8ddfc2bc597529a9fd5c3af",
+    "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+    "results": [
+      {
+        "id": "home",
+        "status": "passed",
+        "pixels": 0,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "5d85f6591b9100bd8e29c1335964ab25594250354ae4b3eab17ea3c5c7f431d6",
+        "currentSha256": "5d85f6591b9100bd8e29c1335964ab25594250354ae4b3eab17ea3c5c7f431d6"
+      },
+      {
+        "id": "run",
+        "status": "passed",
+        "pixels": 0,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f",
+        "currentSha256": "4de6f7ce77c810f269f140bb8babfb4b1718218625ef7315d954af475274dcb6"
+      },
+      {
+        "id": "archive",
+        "status": "passed",
+        "pixels": 0,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc",
+        "currentSha256": "f98def8a6582d6d52b79db9835105544b7d24a6be4b8d622c500d31bb71ffe9e"
+      },
+      {
+        "id": "account",
+        "status": "passed",
+        "pixels": 0,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "e0c6b9d701be9c7741595d1e565bb769938196c5b8c56dbfc3ffc322148e789f",
+        "currentSha256": "e0c6b9d701be9c7741595d1e565bb769938196c5b8c56dbfc3ffc322148e789f"
+      }
+    ]
+  },
+  "apk": {
+    "path": "build/install/running-art-0.1.0-20261013-home-final.apk",
+    "sha256": "1b610b4f93364211a079a06608b826ccda9af6689f98ad12a0ec11680518a130",
+    "bytes": 122412003,
+    "applicationId": "com.runningart.mobile.dev",
+    "certificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "physicalPhoneInstalled": false
+  },
+  "failedCiEvidence": [
+    {
+      "run": "38349882565",
+      "api29Artifact": 11790562310,
+      "api36Artifact": 11790828269,
+      "cause": "Horizontal fish control was searched vertically"
+    },
+    {
+      "run": "38351790429",
+      "api36Artifact": 11791971004,
+      "functional": "passed",
+      "cause": "Intentional home visual change: 732762 pixels; other three screens 0"
+    },
+    {
+      "run": "38354188789",
+      "attempt": 1,
+      "api36Artifact": 11792616451,
+      "api29Artifact": 11792966426,
+      "cause36": "ADB root connection closed before APK install",
+      "cause29": "UIAutomator capture timeout after home passed; cleanup passed"
+    }
+  ],
+  "screenshots": "screenshots/home-20261013/manifest.json",
+  "limits": [
+    "No production membership DB or legal publication",
+    "No physical phone installation or new social-login integration",
+    "No multi-day challenges, streak/badges, commerce or fabricated recommendations",
+    "TalkBack speech and outdoor GPS/battery remain separate follow-ups"
+  ],
+  "mainVerification": {
+    "run": "38358116244",
+    "url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38358116244",
+    "artifacts": {
+      "android-36-1": 11794234735,
+      "android-29-1": 11793898542,
+      "api-1": 11793592720,
+      "fast-1": 11793143626
+    },
+    "fast": {
+      "schemaVersion": 1,
+      "suite": "fast",
+      "startedAt": "2026-10-13T06:42:07.630Z",
+      "source": "ba32ec24d5cf2ade8cada458a53473961b66f9cf",
+      "dirty": false,
+      "workingTree": [],
+      "ciRun": "38358116244",
+      "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+      "environment": {
+        "platform": "linux",
+        "node": "v24.21.0"
+      },
+      "retry": 0,
+      "steps": [
+        {
+          "id": "source",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 15154,
+          "log": "source.log"
+        },
+        {
+          "id": "server-source",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 1663,
+          "log": "server-source.log"
+        },
+        {
+          "id": "logic",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 27199,
+          "log": "logic.log"
+        },
+        {
+          "id": "components",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 8796,
+          "log": "components.log"
+        },
+        {
+          "id": "openapi",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 27,
+          "log": "openapi.log"
+        },
+        {
+          "id": "account-policies",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 1489,
+          "log": "account-policies.log"
+        },
+        {
+          "id": "share-policies",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 1452,
+          "log": "share-policies.log"
+        }
+      ],
+      "finishedAt": "2026-10-13T06:43:03.452Z",
+      "status": "passed"
+    },
+    "apiIntegration": {
+      "schemaVersion": 1,
+      "suite": "integration",
+      "startedAt": "2026-10-13T06:43:54.026Z",
+      "source": "ba32ec24d5cf2ade8cada458a53473961b66f9cf",
+      "dirty": false,
+      "workingTree": [],
+      "ciRun": "38358116244",
+      "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+      "environment": {
+        "platform": "linux",
+        "node": "v24.21.0"
+      },
+      "retry": 0,
+      "steps": [
+        {
+          "id": "supabase-roundtrip",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 1284,
+          "log": "supabase-roundtrip.log"
+        }
+      ],
+      "finishedAt": "2026-10-13T06:43:55.337Z",
+      "status": "passed"
+    },
+    "httpGeneratedCasesPassed": 182,
+    "api36": {
+      "schemaVersion": 1,
+      "source": "ba32ec24d5cf2ade8cada458a53473961b66f9cf",
+      "dirty": false,
+      "startedAt": "2026-10-13T06:50:40.744407+00:00",
+      "ciRun": "38358116244",
+      "apkSha256": "49b5e4918f7179846517f56787e562349239ee71daabaa072dda5d65ea25e859",
+      "environment": {
+        "host": "Linux",
+        "api": "36",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "size": "1080x2340",
+        "density": 420,
+        "fontScale": 1,
+        "locale": "en-US",
+        "timezone": "UTC",
+        "systemBar": "demo-1200-full-signal-battery100-v1",
+        "displayProfile": "pixel_5-overlays-v1"
+      },
+      "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+      "mode": "full",
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-13T06:50:40.853924+00:00",
+          "steps": [
+            {
+              "id": "S0-01-maestro",
+              "status": "passed",
+              "screenshots": [
+                "after-maestro-display.png"
+              ],
+              "durationSeconds": 52.815
+            },
+            {
+              "id": "S1-02-home-states",
+              "status": "passed",
+              "screenshots": [
+                "home-history-large-font-archive.png",
+                "home-history-large-font.png",
+                "home-history-offline.png",
+                "home-history.png",
+                "home-initial-top.png",
+                "home-interrupted-return.png",
+                "home-interrupted.png",
+                "home-paused-return.png",
+                "home-paused.png",
+                "home-record-detail.png",
+                "home-shape-applied.png",
+                "home-shape-fish-scroll-0.png",
+                "home-shape-fish-scroll-1.png",
+                "home-shape-star-scroll-0.png",
+                "home-shape-star-scroll-1.png",
+                "home-tab-keeps-edited-shape.png"
+              ],
+              "durationSeconds": 88.403
+            },
+            {
+              "id": "S0-02-draft",
+              "status": "passed",
+              "screenshots": [
+                "archive-runs.png",
+                "archive-view-after-tab.png",
+                "center-after-tab.png",
+                "center-before-tab.png",
+                "course-detail.png",
+                "draft-after-detail.png",
+                "draft-after-menu-back.png",
+                "draft-after-menu-link.png",
+                "draft-after-system-back.png",
+                "draft-before.png",
+                "system-back-home.png"
+              ],
+              "durationSeconds": 59.771
+            },
+            {
+              "id": "S0-03-oauth-cancel",
+              "status": "passed",
+              "screenshots": [
+                "auth-cancel-callback.png",
+                "draft-after-callback.png"
+              ],
+              "durationSeconds": 15.39
+            },
+            {
+              "id": "S0-04-save",
+              "status": "passed",
+              "screenshots": [
+                "before-grid.png",
+                "calculation-after-blur.png",
+                "calculation-progress.png",
+                "home-existing-result-before.png",
+                "home-existing-result-notice.png",
+                "home-existing-result-preserved.png",
+                "save-draft-after-tab.png",
+                "save-keyboard.png",
+                "save-list-destination.png"
+              ],
+              "durationSeconds": 82.018
+            },
+            {
+              "id": "S0-04-restart",
+              "status": "passed",
+              "screenshots": [
+                "saved-course-restart.png"
+              ],
+              "durationSeconds": 12.608
+            },
+            {
+              "id": "S0-06-gps",
+              "status": "passed",
+              "screenshots": [
+                "gps-cold-recovery.png",
+                "gps-home-banner.png",
+                "gps-result-back.png",
+                "gps-result.png",
+                "gps-resumed.png"
+              ],
+              "durationSeconds": 94.471
+            },
+            {
+              "id": "S0-05-preparation",
+              "status": "passed",
+              "screenshots": [
+                "course-preparation-return.png",
+                "course-preparation-tab.png"
+              ],
+              "durationSeconds": 30.402
+            },
+            {
+              "id": "S0-07-deep-link-gpx",
+              "status": "passed",
+              "screenshots": [
+                "cold-course-link.png",
+                "cold-link-back.png",
+                "development-back-home.png",
+                "development-environment.png",
+                "development-ui-preview.png",
+                "gpx-chooser.png",
+                "legacy-run-share.png"
+              ],
+              "durationSeconds": 43.684
+            },
+            {
+              "id": "S0-08-accessibility",
+              "status": "passed",
+              "screenshots": [
+                "scaled-account.png",
+                "scaled-home.png",
+                "scaled-keyboard.png",
+                "scaled-menu.png"
+              ],
+              "durationSeconds": 36.839
+            },
+            {
+              "id": "S1-01-signup-entry",
+              "status": "passed",
+              "screenshots": [
+                "signup-account-back.png",
+                "signup-entry.png",
+                "signup-guest-return.png",
+                "signup-large-font-return.png",
+                "signup-large-font.png",
+                "signup-login.png"
+              ],
+              "durationSeconds": 40.377
+            }
+          ],
+          "status": "passed",
+          "preservation": {
+            "status": "passed",
+            "sha256": "2c38dc98fc795f121f257d29eb1a7adb30706d1c0755578a11929d70c939c182"
+          },
+          "finishedAt": "2026-10-13T07:00:43.749728+00:00"
+        }
+      ],
+      "retries": 0,
+      "displayGeometry": {
+        "statusBar": [
+          0,
+          0,
+          1080,
+          136
+        ],
+        "navigationBar": [
+          0,
+          2277,
+          1080,
+          2340
+        ],
+        "cutoutInsets": [
+          0,
+          136,
+          0,
+          0
+        ]
+      },
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "finishedAt": "2026-10-13T07:00:45.780863+00:00",
+      "uiDumpTransportWarnings": 0,
+      "status": "passed"
+    },
+    "api29": {
+      "schemaVersion": 1,
+      "source": "ba32ec24d5cf2ade8cada458a53473961b66f9cf",
+      "dirty": false,
+      "startedAt": "2026-10-13T06:53:26.232696+00:00",
+      "ciRun": "38358116244",
+      "apkSha256": "932a710259c8ba8ccb1b54598ace5951ffb3220d3dc5e575447e0d5bf10379b9",
+      "environment": {
+        "host": "Linux",
+        "api": "29",
+        "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64:10/QSR1.211112.011/13135432:userdebug/dev-keys",
+        "size": "1080x2340",
+        "density": 420,
+        "fontScale": 1,
+        "locale": "en-US",
+        "timezone": "UTC",
+        "systemBar": "demo-1200-full-signal-battery100-v1"
+      },
+      "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+      "mode": "smoke",
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-13T06:53:26.354977+00:00",
+          "steps": [
+            {
+              "id": "S0-01-maestro",
+              "status": "passed",
+              "screenshots": [
+                "after-maestro-display.png"
+              ],
+              "durationSeconds": 44.542
+            },
+            {
+              "id": "S1-02-home-states",
+              "status": "passed",
+              "screenshots": [
+                "home-history-large-font-archive.png",
+                "home-history-large-font.png",
+                "home-history-offline.png",
+                "home-history.png",
+                "home-initial-top.png",
+                "home-interrupted-return.png",
+                "home-interrupted.png",
+                "home-paused-return.png",
+                "home-paused.png",
+                "home-record-detail.png",
+                "home-shape-applied.png",
+                "home-shape-fish-scroll-0.png",
+                "home-shape-fish-scroll-1.png",
+                "home-shape-star-scroll-0.png",
+                "home-shape-star-scroll-1.png",
+                "home-tab-keeps-edited-shape.png"
+              ],
+              "durationSeconds": 111.203
+            },
+            {
+              "id": "S0-02-draft",
+              "status": "passed",
+              "screenshots": [
+                "archive-runs.png",
+                "archive-view-after-tab.png",
+                "center-after-tab.png",
+                "center-before-tab.png",
+                "course-detail.png",
+                "draft-after-detail.png",
+                "draft-after-menu-back.png",
+                "draft-after-menu-link.png",
+                "draft-after-system-back.png",
+                "draft-before.png",
+                "system-back-home.png"
+              ],
+              "durationSeconds": 71.217
+            },
+            {
+              "id": "S0-03-oauth-cancel",
+              "status": "passed",
+              "screenshots": [
+                "auth-cancel-callback.png",
+                "draft-after-callback.png"
+              ],
+              "durationSeconds": 18.934
+            },
+            {
+              "id": "S1-01-signup-entry",
+              "status": "passed",
+              "screenshots": [
+                "signup-account-back.png",
+                "signup-entry.png",
+                "signup-guest-return.png",
+                "signup-large-font-return.png",
+                "signup-large-font.png",
+                "signup-login.png"
+              ],
+              "durationSeconds": 56.32
+            }
+          ],
+          "status": "passed",
+          "preservation": {
+            "status": "passed",
+            "sha256": "f5b8c015afd3df40c47717f0579c56cdcdf05dc8d1ec9605920a2513de6185bc"
+          },
+          "finishedAt": "2026-10-13T06:59:04.940049+00:00"
+        }
+      ],
+      "retries": 0,
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "finishedAt": "2026-10-13T06:59:09.031718+00:00",
+      "uiDumpTransportWarnings": 3,
+      "status": "passed"
+    },
+    "visual": {
+      "status": "passed",
+      "environment": {
+        "host": "Linux",
+        "api": "36",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "size": "1080x2340",
+        "density": 420,
+        "fontScale": 1,
+        "locale": "en-US",
+        "timezone": "UTC",
+        "systemBar": "demo-1200-full-signal-battery100-v1",
+        "displayProfile": "pixel_5-overlays-v1"
+      },
+      "source": "ba32ec24d5cf2ade8cada458a53473961b66f9cf",
+      "apkSha256": "49b5e4918f7179846517f56787e562349239ee71daabaa072dda5d65ea25e859",
+      "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+      "results": [
+        {
+          "id": "home",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "5d85f6591b9100bd8e29c1335964ab25594250354ae4b3eab17ea3c5c7f431d6",
+          "currentSha256": "5d85f6591b9100bd8e29c1335964ab25594250354ae4b3eab17ea3c5c7f431d6"
+        },
+        {
+          "id": "run",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f",
+          "currentSha256": "4de6f7ce77c810f269f140bb8babfb4b1718218625ef7315d954af475274dcb6"
+        },
+        {
+          "id": "archive",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc",
+          "currentSha256": "f98def8a6582d6d52b79db9835105544b7d24a6be4b8d622c500d31bb71ffe9e"
+        },
+        {
+          "id": "account",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "e0c6b9d701be9c7741595d1e565bb769938196c5b8c56dbfc3ffc322148e789f",
+          "currentSha256": "e0c6b9d701be9c7741595d1e565bb769938196c5b8c56dbfc3ffc322148e789f"
+        }
+      ]
+    },
+    "captureWarnings29": [
+      {
+        "capture": "current",
+        "exitCode": 134,
+        "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.53\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+      },
+      {
+        "capture": "current",
+        "exitCode": 134,
+        "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.652\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+      },
+      {
+        "capture": "current",
+        "exitCode": 139,
+        "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.56\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+      }
+    ]
+  }
+}
