@@ -1,0 +1,189 @@
+{
+  "completedAt": "2026-10-13T17:04:58.412119+09:00",
+  "phone": {
+    "model": "SM-A750N",
+    "android": 10,
+    "api": 29,
+    "installedAt": "2026-10-13T16:46:02+09:00",
+    "apkSha256": "1b610b4f93364211a079a06608b826ccda9af6689f98ad12a0ec11680518a130",
+    "counts": {
+      "courses": 0,
+      "runs": 0,
+      "points": 0,
+      "notes": 0
+    },
+    "baselineEqualsFinal": true,
+    "ui": {
+      "fiveTabs": true,
+      "guestHome": true,
+      "signupEntry": true,
+      "loginMode": true,
+      "guestReturn": true,
+      "fishSelectionTransferred": true,
+      "authAndConsentNotSubmitted": true
+    },
+    "cleanup": {
+      "status": "passed",
+      "dataPreserved": true,
+      "accountAndSettingsPreserved": true,
+      "helperRemoved": true,
+      "internalBackupRemoved": true,
+      "noRunningService": true
+    }
+  },
+  "database": {
+    "migration": "20261013003500_membership_consent.sql",
+    "migrationSha256": "57fb7b1fbaabb73feaba8a0c38cd5075b52d504497ea4d45312f003fe6f1537e",
+    "reconciliation": {
+      "functionBodies": [
+        {
+          "name": "commit_personal_record",
+          "bodyMatches": true
+        },
+        {
+          "name": "personal_account_active",
+          "bodyMatches": true
+        },
+        {
+          "name": "begin_account_deletion",
+          "bodyMatches": true
+        },
+        {
+          "name": "account_deletion_files",
+          "bodyMatches": true
+        },
+        {
+          "name": "validate_run_share_snapshot",
+          "bodyMatches": true
+        },
+        {
+          "name": "publish_run_share",
+          "bodyMatches": true
+        },
+        {
+          "name": "get_run_share",
+          "bodyMatches": true
+        },
+        {
+          "name": "revoke_run_share",
+          "bodyMatches": true
+        },
+        {
+          "name": "read_run_share",
+          "bodyMatches": true
+        },
+        {
+          "name": "remove_run_share_on_record_change",
+          "bodyMatches": true
+        },
+        {
+          "name": "profile_photo_unreferenced",
+          "bodyMatches": true
+        },
+        {
+          "name": "save_account_profile",
+          "bodyMatches": true
+        },
+        {
+          "name": "account_deletion_profile_photos",
+          "bodyMatches": true
+        }
+      ],
+      "manualHistoryTableAbsent": true,
+      "migrationFiles": [
+        {
+          "name": "20261003023000_personal_records.sql",
+          "sha256": "9ae92526dd1b2a7fe088ffe30dadcc1942edffa0b65f2a1724a7d16bf8d1e2cc"
+        },
+        {
+          "name": "20261003111300_account_deletion.sql",
+          "sha256": "46feec143b122833ef13fe73352816fb1b8a6ce7caaf80f5a83c72bae8d2d912"
+        },
+        {
+          "name": "20261004074000_run_shares.sql",
+          "sha256": "cd5d83de67abb9deb35e4e4d9f41d77a2e6b31e650f3fdc4cddf6f20fa9b9c30"
+        },
+        {
+          "name": "20261005040000_profile_photos.sql",
+          "sha256": "285980d33002fa9293b6401c19e1ba376a22623ae88e9b9d53250ab8e7993fa4"
+        }
+      ]
+    },
+    "preservation": {
+      "at": "2026-10-13T07:52:36.232879+00:00",
+      "dataUnchanged": true,
+      "columnsUnchanged": true,
+      "constraintsUnchanged": true,
+      "grantsUnchanged": true,
+      "functionAclUnchanged": true
+    },
+    "existingRows": [
+      {
+        "name": "auth.users",
+        "count": 3,
+        "digest": "213b5d1760c8e009d7baed93dfd287fd"
+      },
+      {
+        "name": "auth.identities",
+        "count": 3,
+        "digest": "fc2e5b7679ca3158072ede6eeadc2917"
+      },
+      {
+        "name": "public.personal_records",
+        "count": 22,
+        "digest": "506bb7b9f7486a85cfb8817bd643166e"
+      },
+      {
+        "name": "public.account_deletions",
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "name": "public.run_shares",
+        "count": 1,
+        "digest": "68fdf53192afe715aae9073154ed04ca"
+      },
+      {
+        "name": "storage.objects",
+        "count": 8,
+        "digest": "661a0bec7ad047cf4027e8876155ede9"
+      },
+      {
+        "name": "storage.buckets",
+        "count": 2,
+        "digest": "f056d203ac7d9c021d1ba69f462ee9f4"
+      }
+    ],
+    "originalFunctionsAndPoliciesUnchanged": true,
+    "newFunctionBodiesMatch": [
+      "preserve_membership_policy",
+      "get_membership_policy",
+      "get_membership",
+      "accept_membership",
+      "initialize_membership"
+    ],
+    "verification": {
+      "at": "2026-10-13T07:54:33.318748+00:00",
+      "status": "passed",
+      "policies": 0,
+      "receipts": 0,
+      "authTrigger": 1,
+      "ownRowsOnly": true,
+      "membershipRls": true,
+      "ownPendingRead": true,
+      "crossOwnerDenied": true,
+      "existingAccounts": 3,
+      "directWritesDenied": true,
+      "pendingMemberships": 3,
+      "anonymousDataDenied": true,
+      "anonymousPolicyNull": true,
+      "missingConsentDenied": true
+    },
+    "http": {
+      "status": 200,
+      "unpublishedPolicyIsNull": true
+    },
+    "cliHistoryRegistered": false,
+    "storageBlobBytesRehashed": false
+  }
+}
