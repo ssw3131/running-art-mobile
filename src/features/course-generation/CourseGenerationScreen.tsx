@@ -1,5 +1,5 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { AppModal, AppText, Button, Tabs, Toggle } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
@@ -41,8 +41,17 @@ export default function CourseGenerationScreen() {
   const choosing = g.tab === 'conditions';
   const busy = g.state.kind === 'running';
   const result = g.completed;
-  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, [auth.account?.id]));
-  const chooseTab = (tab: 'conditions' | 'results') => { g.setTab(tab); scroll.current?.scrollTo({ y: 0, animated: false }); };
+  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, []));
+  const [draftOwner,setDraftOwner]=useState(auth.account?.id);
+  if(draftOwner!==auth.account?.id){
+    setDraftOwner(auth.account?.id);setConfirmation(null);setImageOpen(false);
+  }
+  const chooseTab = (tab: 'conditions' | 'results') => { g.setTab(tab); };
+  useEffect(() => {
+    // Wait for the new form to reach the native scroll view before resetting it.
+    const frame=requestAnimationFrame(()=>scroll.current?.scrollTo({y:0,animated:false}));
+    return ()=>cancelAnimationFrame(frame);
+  },[g.tab]);
   const showConfirmation = () => {
     if (g.cannotCalculate || busy) return;
     setNotice('');

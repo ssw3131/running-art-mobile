@@ -45,7 +45,6 @@ export default function RunDetailScreen() {
     finally{working.current=false;if(request===generation.current)setBusy(false);}
   }
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}><ScrollView contentContainerStyle={styles.content}>
-    <Text style={styles.title}>러닝 상세</Text>
     {!!error && <><Text accessibilityRole="alert" style={styles.error}>{error}</Text><RunButton id="run-detail-retry" title="다시 불러오기" disabled={busy} onPress={() => void refresh()} /></>}
     {run && loadedOwner===owner && <>
       <Text style={styles.body}>{new Date(run.startedAt).toLocaleString('ko-KR')} · {runOutcomeLabel(run)}</Text>

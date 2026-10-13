@@ -67,4 +67,3 @@
 - 같은 계획은 한 파일에 이어 씁니다. 이 목록과 현재 상태도 함께 갱신합니다.
 
 Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절차를 수행합니다. 사람이 직접 기록할 때도 같은 규칙과 [템플릿](../../../.agents/skills/running-art-plan-record/assets/executed-plan-template.md)을 사용합니다. 예약 실행이나 파일 변경 감시 서비스는 아닙니다.
-

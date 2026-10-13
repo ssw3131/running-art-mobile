@@ -6,12 +6,12 @@ from home_states import seek_above
 
 def service_s234(q, launch):
     assert q.SERIAL.startswith('emulator-')
-    q.tap('tab-courses')
+    q.tap('tab-courses');q.tap('조건 설정')
     seek_above(q,'shape-heart')
     for shape in ['dog','person','bone','turtle','icecream','strawberry','cloud','crown']:
         q.seek('shape-'+shape);q.tap('shape-'+shape)
         assert q.find(q.capture('s2b-selected-'+shape),'shape-'+shape).get('selected')=='true'
-    q.seek('distance-10');q.tap('distance-10');q.tap('calculate-route')
+    seek_above(q,'distance-10');q.tap('distance-10');q.tap('calculate-route')
     q.capture('s2b-ten-km-confirm');q.tap('generation-confirm-cancel')
     q.seek('shape-image');q.tap('shape-image');q.capture('s2c-image-entry');q.tap('image-shape-pick')
     q.capture('s2c-system-picker');q.shell('input','keyevent','4');q.tap('image-shape-cancel')
@@ -33,7 +33,7 @@ def service_s234(q, launch):
     x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')));x,y=str((x1+x2)//2),str((y1+y2)//2)
     q.shell('input','swipe',x,y,x,y,'1200');fix();assert q.find(q.capture('s4-touch-unlocked'),'run-pause') is not None
     q.tap('run-pause');assert q.query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status']=='paused'
-    launch();q.tap('tab-run');q.capture('s4-restored-paused')
+    q.shell('am','force-stop',q.APP);launch();q.tap('tab-run');q.capture('s4-restored-paused')
     restored=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
     assert restored=={'voice':False,'background':True,'mode':'focus'}
     q.tap('run-finish');q.tap('종료·저장');q.capture('s3-run-detail')
@@ -45,7 +45,7 @@ def service_s234(q, launch):
     newer=q.query("SELECT * FROM running_sessions WHERE status <> 'completed'")[0]
     assert newer['id']!=run_id and newer['course_outcome']=='active'
     assert q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]==before
-    q.tap('run-finish');q.tap('종료·저장');q.tap('tab-archive');q.tap('러닝 기록');q.capture('s3-monthly-records')
+    q.tap('run-finish');q.tap('종료·저장');launch('courses?view=runs');q.capture('s3-monthly-records')
     assert q.find(q.capture('s3-monthly-retry-record'),'run-row-'+run_id) is not None
     (q.OUT/'s234-result.json').write_text(json.dumps({'runId':run_id,'retryId':newer['id'],'oldRunUnchanged':True,'pickerCancel':True,'restoredOptions':restored}),encoding='utf8')
     q.tap('tab-home')

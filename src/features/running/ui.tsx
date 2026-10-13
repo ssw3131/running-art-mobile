@@ -18,7 +18,7 @@ export function RunStats({ run, now }: { run: Run; now: number }) {
 export const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#FFFFFF' }, content: { padding: 24, gap: 16 },
   title: { color: '#000000', fontSize: 26, fontWeight: '700' }, metric: { color: '#000000', fontSize: 36, fontFamily: fonts.roboto.black, lineHeight:44 },
-  body: { color: '#757575', fontSize: 15, lineHeight: 23 }, card: { backgroundColor: '#FFFFFF', padding: 18, borderRadius: 20, gap: 10 },
+  body: { color: '#757575', fontSize: 15, lineHeight: 23 }, card: { backgroundColor: '#FFFFFF', padding: 18, borderRadius: 20, gap: 10, boxShadow: '0px 0px 5px rgba(0,0,0,0.15)' },
   button: { backgroundColor: '#FB5603', minHeight:50, padding: 14, borderRadius: 30, alignItems: 'center' }, buttonText: { color: '#FFFFFF', fontWeight: '600', fontSize: 16 },
   error: { color: '#A12F2F', lineHeight: 23 }, link: { color: '#FB5603', padding: 12, fontSize: 16 },
 });
