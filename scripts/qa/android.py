@@ -344,6 +344,20 @@ try:
         save_report()
 except Exception as error:
     report['error'] = str(error)
+    # UI hierarchy can itself be unavailable. Capture independent diagnostics
+    # before cleanup so a real blank/ANR/locked screen cannot be called a flake.
+    report['failureDiagnostics'] = []
+    for filename, command in [
+        ('failure-raw.png', ('exec-out', 'screencap', '-p')),
+        ('failure-window.txt', ('shell', 'dumpsys', 'window')),
+        ('failure-activity.txt', ('shell', 'dumpsys', 'activity', 'activities')),
+        ('failure-logcat.txt', ('logcat', '-d', '-t', '800', '-v', 'threadtime')),
+    ]:
+        try:
+            (q.OUT / filename).write_bytes(q.adb(*command))
+            report['failureDiagnostics'].append({'file': filename, 'status': 'saved'})
+        except Exception as diagnostic_error:
+            report['failureDiagnostics'].append({'file': filename, 'error': str(diagnostic_error)})
     try:
         q.capture('failure')
     except Exception as capture_error:
@@ -372,6 +386,7 @@ finally:
             cleanup_errors.append({'command': ['cmd', 'overlay'], 'error': str(error)})
             report['cleanup']['status'] = 'failed'
     report['finishedAt'] = datetime.now(timezone.utc).isoformat()
+    report['uiDumpReadinessWaits'] = sum(len(p.read_text(encoding='utf8').splitlines()) for p in args.output.glob('attempt-*/ui-dump-readiness.jsonl'))
     report['uiDumpTransportWarnings'] = sum(len(p.read_text(encoding='utf8').splitlines()) for p in args.output.glob('attempt-*/ui-dump-transport.jsonl'))
     report['status'] = 'passed' if not cleanup_errors and len(report['attempts']) == args.repeat and all(a['status'] == 'passed' for a in report['attempts']) else 'failed'
     save_report()

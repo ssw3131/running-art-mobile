@@ -32,6 +32,14 @@ class UiDumpTest(unittest.TestCase):
             self.assertEqual(self.capture(folder, code=1).find('node').get('text'), 'fresh')
             self.assertIn('"exitCode": 1', (pathlib.Path(folder) / 'ui-dump-transport.jsonl').read_text())
 
+    def test_root_readiness_wait_is_recorded_but_still_requires_receipt(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output=b'RUNPEN_DUMP_ATTEMPTS=3\nOK (1 test)'
+            self.assertEqual(self.capture(folder, output=output).find('node').get('text'), 'fresh')
+            self.assertIn('"rootAttempts": 3', (pathlib.Path(folder) / 'ui-dump-readiness.jsonl').read_text())
+            with self.assertRaises(RuntimeError):
+                self.capture(folder, output=output, receipt='older')
+
     def test_stale_receipt_or_incomplete_helper_cannot_pass(self):
         with tempfile.TemporaryDirectory() as folder:
             for args in [dict(receipt='older'), dict(code=1, output=b'test started'), dict(output=b'OK (1 test) FAILURES!!!')]:
