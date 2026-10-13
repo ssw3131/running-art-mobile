@@ -22,3 +22,17 @@ test('UI-LIVE-02: touch lock neither changes background tracking nor finishes; a
  await fireEvent(screen.getByTestId('run-touch-unlock'),'accessibilityAction',{nativeEvent:{actionName:'activate'}});expect(screen.queryByTestId('run-touch-unlock')).toBeNull();
  await fireEvent.press(screen.getByTestId('run-finish'));expect(p.onFinish).toHaveBeenCalledTimes(1);
 });
+
+test('UI-LIVE-03: long press keeps the modal until release so the next pause is actionable',async()=>{
+ const p=props();await render(<LiveGuidancePanel {...p}/>);
+ await fireEvent.press(screen.getByTestId('run-guidance-settings'));await fireEvent.press(screen.getByTestId('run-touch-lock'));
+ await fireEvent(screen.getByTestId('run-touch-unlock'),'pressIn');
+ await fireEvent(screen.getByTestId('run-touch-unlock'),'pressOut');
+ expect(screen.getByTestId('run-touch-unlock')).toBeVisible();
+ await fireEvent(screen.getByTestId('run-touch-unlock'),'pressIn');
+ await fireEvent(screen.getByTestId('run-touch-unlock'),'longPress');
+ expect(screen.getByTestId('run-touch-unlock')).toBeVisible();
+ await fireEvent(screen.getByTestId('run-touch-unlock'),'pressOut');
+ expect(screen.queryByTestId('run-touch-unlock')).toBeNull();
+ await fireEvent.press(screen.getByTestId('run-pause'));expect(p.onPauseResume).toHaveBeenCalledTimes(1);
+});

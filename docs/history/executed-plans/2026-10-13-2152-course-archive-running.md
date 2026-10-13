@@ -22,7 +22,7 @@
 
 ## 검증
 
-로직 440개·UI 26개, 실제 OSM 24회 경계 조건/저장/취소 통과. release 빌드 성공. 최신 통합 검사와 Android/CI 진행 중. [검증 상세](../../quality/course-archive-running-20261013.md).
+로직 440개·UI 29개, 실제 OSM 24회 경계 조건/저장/취소 통과. release 빌드 성공. 최신 통합 검사와 Android/CI 진행 중. [검증 상세](../../quality/course-archive-running-20261013.md).
 
 ## 남은 작업과 종료
 

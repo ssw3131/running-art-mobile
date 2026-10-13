@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, View } from 'react-native';
+import { useMemo, useRef, useState } from 'react';
+import { Modal, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, AppModal, Button } from '@/components/ui';
@@ -21,6 +21,9 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   onPauseResume():void; onFinish():void; onPermission():void; error:string;
 }) {
   const c=useThemeColors();
+  const {height}=useWindowDimensions();
+  const compact=height<920;
+  const unlockArmed=useRef(false);
   const [settings,setSettings]=useState(false),[locked,setLocked]=useState(false);
   const state=useMemo(()=>{
     const engine=createRunGuidance(guide.course.snapshot.route,guide.checkpoint);
@@ -45,10 +48,10 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
     <Pressable testID="run-finish" accessibilityRole="button" accessibilityLabel={run.courseOutcome==='arrival-pending'?'완주 확인·저장':'러닝 종료·저장'} disabled={busy} onPress={onFinish} style={{width:70,minHeight:70,padding:10,borderRadius:35,backgroundColor:'#FFFFFF',alignItems:'center',justifyContent:'center',gap:4}}><View accessible={false} style={{width:20,height:20,backgroundColor:navy}}/><AppText variant="label" weight="bold" style={{color:navy}}>종료</AppText></Pressable>
   </View>;
   const instruction=<View style={focus?{gap:10,alignItems:'center'}:card}>
-    <View style={{width:focus?200:64,height:focus?200:64,borderRadius:100,backgroundColor:focus?(weak||paused?'#183653':off?'#A03600':'#026234'):navy,alignItems:'center',justifyContent:'center'}} accessible={false}>
-      {['left','right','uturn'].includes(state.direction)?<Image source={state.direction==='uturn'?require('../../../assets/running/uturn.svg'):require('../../../assets/running/turn-left.svg')} contentFit="contain" style={{width:focus?125:40,height:focus?125:40,transform:state.direction==='right'?[{scaleX:-1}]:undefined}}/>:<AppText style={{fontSize:focus?100:38,lineHeight:focus?125:50,color:'#FFFFFF'}}>{state.direction==='arrival'?'✓':state.direction==='straight'?'↑':'⌖'}</AppText>}
+    <View style={{width:focus?(compact?120:200):64,height:focus?(compact?120:200):64,borderRadius:100,backgroundColor:focus?(weak||paused?'#183653':off?'#A03600':'#026234'):navy,alignItems:'center',justifyContent:'center'}} accessible={false}>
+      {['left','right','uturn'].includes(state.direction)?<Image source={state.direction==='uturn'?require('../../../assets/running/uturn.svg'):require('../../../assets/running/turn-left.svg')} contentFit="contain" style={{width:focus?(compact?76:125):40,height:focus?(compact?76:125):40,transform:state.direction==='right'?[{scaleX:-1}]:undefined}}/>:<AppText style={{fontSize:focus?(compact?60:100):38,lineHeight:focus?(compact?76:125):50,color:'#FFFFFF'}}>{state.direction==='arrival'?'✓':state.direction==='straight'?'↑':'⌖'}</AppText>}
     </View>
-    <AppText testID="run-instruction" weight="bold" style={{color,fontSize:focus?28:20,lineHeight:focus?40:29,textAlign:focus?'center':'left'}}>{state.instruction}</AppText>
+    <AppText testID="run-instruction" weight="bold" style={{color,fontSize:focus?(compact?22:28):20,lineHeight:focus?(compact?30:40):29,textAlign:focus?'center':'left'}}>{state.instruction}</AppText>
     {state.status==='normal'&&['left','right','uturn'].includes(state.direction)&&<AppText testID="run-turn-distance" weight="bold" style={{color,textAlign:'center'}}>약 {Math.max(5,Math.round(state.instructionM/5)*5)}m 앞에서</AppText>}
     {(state.phase==='approach'||state.phase==='return'||off)&&state.returnPath.length>0&&<AppText testID="run-return-distance" style={{color}}>{state.phase==='approach'?'코스 합류까지':'복귀 지점까지'} 약 {Math.round(state.returnM)}m</AppText>}
     {state.navigationError&&<Button compact variant="secondary" testID="run-navigation-retry" label="보행 경로 다시 확인" disabled={busy} onPress={()=>void running.retryNavigation()}/>}
@@ -57,11 +60,11 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   return <SafeAreaView style={{flex:1,backgroundColor:focus?background:c.navigation}} edges={['bottom','left','right']}>
     <ScrollView contentContainerStyle={{flexGrow:1}}>
       {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={guide.course.snapshot.route} state={state} positionLabel="현재 GPS 위치로 지도 이동"/></View>}
-      <View pointerEvents="box-none" style={{flex:1,padding:24,gap:24}}>
-        <View style={focus?{gap:10}:card}>
+      <View pointerEvents="box-none" style={{flex:1,padding:compact?16:24,gap:compact?12:24}}>
+        <View style={focus?{gap:compact?6:10}:card}>
           <AppText testID="run-status" weight="bold" style={{color,textAlign:'center'}}>{title}</AppText>
           <AppText testID="run-course-name" variant="caption" style={{color,textAlign:'center'}}>{guide.course.name}</AppText>
-          {metric(`${distance} km`,focus?64:44,'run-distance')}
+          {metric(`${distance} km`,focus?(compact?48:64):44,'run-distance')}
           <View style={{flexDirection:'row',justifyContent:'space-around',gap:12}}><View style={{flex:1,gap:4}}><AppText variant="label" style={{color,textAlign:'center'}}>남은 거리</AppText>{metric(`${remaining} km`,focus?30:24)}</View><View style={{flex:1,gap:4}}><AppText variant="label" style={{color,textAlign:'center'}}>러닝 시간</AppText>{metric(durationLabel(elapsed),focus?28:24,'run-duration')}</View></View>
           <AppText testID="run-pace" weight="bold" style={{color,textAlign:'center'}}>평균 페이스 {paceLabel(elapsed,run.distanceM)}</AppText>
         </View>
@@ -87,7 +90,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
       <SafeAreaView style={{flex:1,backgroundColor:background,padding:32,justifyContent:'space-around',alignItems:'center'}}>
         <AppText weight="bold" variant="title" style={{color:'#FFFFFF'}}>터치 잠금</AppText>
         <View style={{gap:16}}><AppText style={{color:'#FFFFFF',fontFamily:fonts.roboto.black,fontSize:64,lineHeight:80,textAlign:'center'}}>{distance} km</AppText><AppText style={{color:'#FFFFFF',textAlign:'center'}}>{durationLabel(elapsed)} · {title}</AppText><AppText style={{color:'#FFFFFF',textAlign:'center'}}>{state.instruction}</AppText>{!!error&&<AppText accessibilityRole="alert" style={{color:'#FFFFFF'}}>{error}</AppText>}</View>
-        <Pressable testID="run-touch-unlock" accessibilityRole="button" accessibilityLabel="터치 잠금 해제" accessibilityHint="길게 누르거나 접근성 활성화 동작으로 해제" accessibilityActions={[{name:'activate',label:'잠금 해제'}]} onAccessibilityAction={()=>setLocked(false)} delayLongPress={800} onLongPress={()=>setLocked(false)} style={{padding:24,borderRadius:30,backgroundColor:'#FFFFFF'}}><AppText weight="bold">길게 눌러 잠금 해제</AppText></Pressable>
+        <Pressable testID="run-touch-unlock" accessibilityRole="button" accessibilityLabel="터치 잠금 해제" accessibilityHint="길게 누르거나 접근성 활성화 동작으로 해제" accessibilityActions={[{name:'activate',label:'잠금 해제'}]} onAccessibilityAction={()=>setLocked(false)} delayLongPress={800} onPressIn={()=>{unlockArmed.current=false;}} onLongPress={()=>{unlockArmed.current=true;}} onPressOut={()=>{if(unlockArmed.current){unlockArmed.current=false;setLocked(false);}}} style={{padding:24,borderRadius:30,backgroundColor:'#FFFFFF'}}><AppText weight="bold">길게 눌러 잠금 해제</AppText></Pressable>
       </SafeAreaView>
     </Modal>
   </SafeAreaView>;
