@@ -44,6 +44,7 @@ test('UI-GEN-01: generation requires confirmation, cancel does not compute or lo
   await fireEvent.press(screen.getByTestId('calculate-route'));
   await fireEvent.press(screen.getByTestId('generation-confirm'));
   expect(mockG.start).toHaveBeenCalledTimes(1);
+  expect(mockG.start).toHaveBeenCalledWith({ origin: grid.origin, shape: 'heart', targetKm: 3, customTemplate: undefined });
 });
 
 test('UI-GEN-02: unavailable location or a running job cannot open another generation', async () => {

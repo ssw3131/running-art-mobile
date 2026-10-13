@@ -52,7 +52,7 @@ export default function CourseGenerationScreen() {
     if (!agreed || !sameConditions(agreed, current) || g.cannotCalculate) {
       setNotice('조건이 바뀌었어요. 현재 조건을 다시 확인해 주세요.'); return;
     }
-    g.start(); scroll.current?.scrollTo({ y: 0, animated: false });
+    g.start(agreed); scroll.current?.scrollTo({ y: 0, animated: false });
   };
   const detail = () => {
     if (!result) return;

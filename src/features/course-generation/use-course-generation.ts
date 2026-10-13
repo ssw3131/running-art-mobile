@@ -16,6 +16,7 @@ import { candidateOverlay } from '@/modules/route-engine/geojson';
 import type { Point, ShapeId } from '@/modules/route-engine/types';
 
 import { compareReference } from '@/modules/route-engine/verification';
+import type { GenerationConditions } from './model';
 
 type State = { kind: 'idle' | 'running' | 'cancelled' | 'error' | 'done'; message: string };
 type Completed = LabCalculation & { comparison: string; maxTimerLagMs: number; timerTicks: number };
@@ -109,15 +110,17 @@ export function useCourseGeneration() {
     cancel();
     if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
   };
-  const start = () => {
+  const start = (confirmed?: GenerationConditions) => {
     if (running.current || drawingOpen || (shape === 'custom' && !customTemplate)) return;
     if (!dataset.synthetic && ((!mapReady && !fixedCenter) || mapMoving || !validCenter || centerState.location.kind === 'loading')) return;
     cancel(); setCompleted(null); setSelected(0); setSeconds(0); setTab('results');
     running.current = true;
     setState({ kind: 'running', message: dataset.synthetic ? '도로 데이터를 준비하고 있어요.' : '지도 중심 주변의 도로를 조회하고 있어요.' });
-    const input = { ...dataset.input, origin: dataset.synthetic ? dataset.input.origin : center.get().center, options: { ...dataset.input.options, mode: dataset.synthetic ? 'anchored' as const : 'free-loop' as const, version: '0.2' as const, shape, targetKm,
-      ...(shape === 'custom' && customTemplate ? { customTemplate: customTemplate.map(p => ({ ...p })) } : {}) } };
-    const expected = dataset.synthetic && shape !== 'custom' ? referenceFor(datasetId, input.options) : null;
+    // A late GPS response must not replace the center shown in the confirmation.
+    const requested = confirmed ?? { origin: dataset.synthetic ? dataset.input.origin : center.get().center, shape, targetKm, customTemplate };
+    const input = { ...dataset.input, origin: { ...requested.origin }, options: { ...dataset.input.options, mode: dataset.synthetic ? 'anchored' as const : 'free-loop' as const, version: '0.2' as const, shape: requested.shape, targetKm: requested.targetKm,
+      ...(requested.shape === 'custom' && requested.customTemplate ? { customTemplate: requested.customTemplate.map(p => ({ ...p })) } : {}) } };
+    const expected = dataset.synthetic && requested.shape !== 'custom' ? referenceFor(datasetId, input.options) : null;
     const started = performance.now();
     let lastTick = started, maxTimerLagMs = 0, timerTicks = 0, lastProgress = 0;
     let lastPhase = '';
@@ -143,7 +146,7 @@ export function useCourseGeneration() {
         setSeconds(value.timing.totalMs / 1000);
         const where = value.execution === 'server' ? '서버에서' : value.fallback ? '서버 연결 대신 기기에서' : '기기에서';
         setState({ kind: 'done', message: value.result.candidates.length ? `${where} ${value.result.candidates.length}개 코스를 찾았어요.` : '조건에 맞는 코스가 없어요. 도형이나 거리를 바꿔 보세요.' });
-        console.info('ROUTE_LAB_METRICS', JSON.stringify({ dataset: datasetId, shape, targetKm, ...value.metrics, timing: value.timing, cached: value.cached, roadCache: value.roadCache, maxTimerLagMs, timerTicks, reference: expected ? mismatch ?? 'match' : 'unavailable', candidates: value.result.candidates.length, scores: value.result.candidates.map((c) => c.score.raw) }));
+        console.info('ROUTE_LAB_METRICS', JSON.stringify({ dataset: datasetId, shape: input.options.shape, targetKm: input.options.targetKm, ...value.metrics, timing: value.timing, cached: value.cached, roadCache: value.roadCache, maxTimerLagMs, timerTicks, reference: expected ? mismatch ?? 'match' : 'unavailable', candidates: value.result.candidates.length, scores: value.result.candidates.map((c) => c.score.raw) }));
       },
       error: (error) => { stopTimer(); running.current = false; setState({ kind: 'error', message: error.message }); },
     });
