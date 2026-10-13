@@ -17,6 +17,7 @@
 - PR [#6](https://github.com/ssw3131/running-art-mobile/pull/6) 첫 [CI](https://github.com/ssw3131/running-art-mobile/actions/runs/38330093216)에서 fast와 API 통과. 실제 Auth/RPC의 가입 대기·동시 제출·응답 재전송·타인/익명 접근·탈퇴 이력 삭제, 기존 Auth/Storage/빈 SQLite 왕복 2개 모두 통과.
 - 가입 화면 로딩/미게시/오류/확인된 완료와 사진 준비 중 화면 이탈 후 늦은 결과 폐기·로딩 해제 검사를 추가하여 로컬 UI 9개 통과. 타입/린트도 통과.
 - 하단 안전 여백과 새 캡처 토큰 적용 후 `test-results/signup-android-targeted/`의 Windows API 36 가입 단독 검사 통과. 홈/마이페이지 CTA·로그인 문구 전환·뒤로·게스트 복귀, 360dp/글씨 1.6배의 실제 가입 진입·하단 게스트 복귀, 원본 보존과 정리 통과. 시나리오 재시도 0, 캡처 종료 경고 0. 이 결과는 전체 회귀 통과로 확대하지 않는다.
+- 같은 최종 APK의 `test-results/signup-android-confirmed/`에서 기존 5탭·입력 보존·OAuth 취소·가입의 smoke 4단계와 원본 보존·정리 모두 통과. 재시도/캡처 종료 경고 0, APK SHA-256 `48565dd1ee8d95bd0caa9c35bc70ac41490f4a19f0ffa979fd77c8d547c04d0e`. 전용 에뮬레이터 종료, 사용자 폰 조작 없음.
 
 ## 실패와 수정 이력
 
@@ -26,6 +27,7 @@
 - PNG 수정 후 Windows 진단에서 기본 가입/로그인 전환·홈 게스트 복귀·마이페이지/뒤로 가기를 통과했지만 큰 글씨 진입 검사에 실패했다. `signup-android-png`는 배율 변경과 딥링크가 겹쳐 홈을 촬영했고, `signup-android-final`은 가입 화면을 확인한 뒤 시스템 제스처 영역에서 시작한 스와이프가 런처로 이탈했다. 두 실행의 실패와 정리 통과를 보존한다. 검사 진입을 실제 홈 CTA로 바꾸고, 제품의 가입/동의 화면에 하단 SafeAreaView를 적용해 스크롤 뷰포트와 시스템 내비게이션 영역을 분리했다.
 - 두 번째 [CI](https://github.com/ssw3131/running-art-mobile/actions/runs/38336666119)는 fast/API 통과, API 36은 위 큰 글씨 단계, API 29는 기존 OAuth 취소 단계의 완료된 도우미 종료 코드 때문에 실패했다. API 29에 매번 새 토큰으로 캡처 완료를 증명하는 보완을 추가했다. 미완료/이전 결과를 거부하는 Python 검사까지 총 6개 통과. 종료 코드 이상은 별도 경고 로그에 남긴다.
 - Windows `signup-android-insets`는 C 드라이브 여유 공간 0으로 Maestro 드라이버 임시 파일을 쓰지 못해 중단됐으며 제품 시나리오 실패와 구분한다. 이 작업에서 생성한 qemu 덤프 2개만 해시 검증 후 D 드라이브에 보존하고 C의 해당 원본을 정리했다. 다음 가입 단독 진단은 `TEMP/TMP/java.io.tmpdir`를 D 작업 폴더로 지정했으며 다른 사용자 파일·기존 덤프는 변경하지 않았다.
+- 세 번째 [CI](https://github.com/ssw3131/running-art-mobile/actions/runs/38338657499): API 29 smoke 4단계·자료 보존/정리 통과, 새 토큰으로 검증한 도우미 종료 경고 1건 보존. API 36의 가입도 통과했으나 가입 검사가 홈으로 돌아온 뒤 기존 코스 저장 검사가 이전 화면을 전제로 실행되어 실패했다. 화면/입력을 이어 쓰는 기존 S0 연쇄 검사 뒤로 S1 배율 검사를 옮겼다. 제품 코드를 바꾸거나 기존 검사를 생략하지 않는다.
 
 ## 진행 중·미검증
 

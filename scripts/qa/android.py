@@ -277,12 +277,16 @@ try:
         launch(); q.snapshot('empty'); q.seed()
         original_fixture = preserved_fixture()
         steps = [('S0-01-maestro', maestro_navigation),
-                 ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback), ('S1-01-signup-entry', signup_entry)]
+                 ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
         if not args.smoke:
             # Free GPS must start without a selected course. Preparation remains
             # selected intentionally, so verify it after the independent GPS run.
             steps += [('S0-04-save', q.calculation), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
                       ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled)]
+        # The original S0 chain deliberately carries draft/navigation state.
+        # S1 returns home and recreates the activity for font/density checks,
+        # so run it after that chain rather than breaking its preconditions.
+        steps += [('S1-01-signup-entry', signup_entry)]
         if args.signup_only: steps = [('S1-01-signup-entry', signup_entry)]
         if args.visual_only: steps = []
         for scenario, action in steps:
