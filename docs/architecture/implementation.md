@@ -1,6 +1,6 @@
 # 구현 구조와 데이터 흐름
 
-**2026-10-13 S2a 구현:** `features/course-generation`으로 기존 생성 제어를 옮기고 조건/확인/후보·계정 범위의 임시 상세를 연결했다. 입력과 성공 결과 사본을 분리하며 명시적 저장 후 기존 saved ID로 GPX·러닝 준비를 연다. 엔진·서버·SQLite/동기화 형식은 유지한다. [계약](../development/course-generation.md)·[검증 진행](../quality/course-generation-20261013.md).
+**2026-10-13 S2a 구현:** `features/course-generation`으로 기존 생성 제어를 옮기고 조건/확인/후보·계정 범위의 임시 상세를 연결했다. 입력과 성공 결과 사본을 분리하며 명시적 저장 후 기존 saved ID로 GPX·러닝 준비를 연다. 엔진·서버·SQLite/동기화 형식은 유지한다. [계약](../development/course-generation.md)·[검증 완료](../quality/course-generation-20261013.md).
 
 **2026-10-12 S0 서비스 구조:** `app/(tabs)`는 기존 경로를 유지하는 5탭, `features/service`는 홈·보관함 합성·상세에서 기존 탭 복귀, 루트 Stack은 인증/러닝 감시와 상세/안내/개발 경로를 담당한다. 공통 폰트/테마/상하단 바를 연결했다. 생성 입력·코스 준비 매개변수·활성 러닝은 탭 이동에도 유지한다. 이전 테스트 홈은 `/development`다. [구조](../development/service-navigation.md)·[검증](../quality/service-s0-verification.md).
 
