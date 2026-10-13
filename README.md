@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**2026-10-13 S2a 진행 중:** 코스 조건→확인→서버/기기 계산→후보·점선→임시 상세·명시적 저장/GPX/러닝 준비를 연결했다. 기존 9도형·3/5/7km·직접 그리기·엔진/저장 형식을 유지한다. 로직 431개·UI 22개·타입/린트·Python 6개와 생성 집중 흐름을 통과했으며 최종 원본 아이콘/큰 글씨·전체 Android·PR/main 필수 검증은 진행 중이다. S2b 12도형/거리 확대·S2c 이미지 입력은 후속이다. 휴대폰·운영 DB/서버는 변경하지 않았다. [계약](docs/development/course-generation.md)·[검증](docs/quality/course-generation-20261013.md).
+
 **2026-10-13 브랜치·CI 및 S0 휴대폰 후속:** 기능별 작업 브랜치→PR 필수 검사→main squash merge를 적용했다. UI 상태·API 계약/격리 DB·Android 29/36 동작·정적 화면 비교를 자동화했다. S0는 SM-S942N에 기존 3코스/4러닝/1,437좌표/1메모·계정/설정을 보존해 설치·검증했다. [브랜치·검증 운영](docs/development/verification-ci.md)·[CI 실행 결과](docs/quality/verification-ci-20261013.md)·[폰 검증](docs/quality/service-s0-phone-20261013.md)을 아래 과거 보류/미설치 표현보다 우선한다. 다음 기능은 S1 가입/동의·홈 3상태이며 APK·서버 자동 배포는 보류한다.
 
 **2026-10-12 S0 완료(PC·격리 API 36):** 기존 앱에 서비스 5탭·공통 상하단 바·홈의 활성 러닝 복귀·상세/안내/개발 경로를 연결했다. 403개·타입/린트·release, 생성 입력/코스 준비/보관함 상태·OAuth 취소·GPS 탭 이동/중단 복원·딥링크/GPX·360dp/큰 글씨/키보드를 검증했다. 시험 원본 해시 보존·빈 QA DB 원복·도우미/서비스 정리 완료. `20261012-service-s0.apk` 준비, **휴대폰 미설치·클라우드 변경 없음**. 다음은 **S1 가입/동의·홈 3상태**이며 기능별 전체 Figma 이관·실기기 후속과 구분한다. [구조와 사용 경로](docs/development/service-navigation.md)·[검증](docs/quality/service-s0-verification.md).

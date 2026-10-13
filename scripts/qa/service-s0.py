@@ -139,11 +139,12 @@ def navigation():
     adb('emu', 'geo', 'fix', '127', '37', '0', '10')
     tap('tab-home'); tap('tab-courses')
     assert find(capture('center-after-tab'), 'selected-center').get('text') == center
-    seek('distance-3'); tap('distance-3'); tap('shape-star')
+    seek('distance-3'); tap('distance-3'); seek('shape-star'); tap('shape-star')
     def draft(name):
-        tree = capture(name)
-        assert find(tree, 'distance-3').get('selected') == 'true', name
-        assert find(tree, 'shape-star').get('selected') == 'true', name
+        seek('distance-3')
+        assert find(capture(name + '-distance'), 'distance-3').get('selected') == 'true', name
+        seek('shape-star')
+        assert find(capture(name), 'shape-star').get('selected') == 'true', name
     draft('draft-before')
     tap('tab-account'); tap('service-menu'); tap('service-back'); tap('tab-courses')
     draft('draft-after-menu-back')

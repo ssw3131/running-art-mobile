@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from sqlite_snapshot import query_snapshot
 from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5_geometry
 from home_states import verify_home_states, verify_home_result
+from course_generation import generation_flow, scaled_generation
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -26,10 +27,11 @@ parser.add_argument('--repeat', type=int, default=1)
 parser.add_argument('--smoke', action='store_true')
 parser.add_argument('--signup-only', action='store_true', help='Run only S1 entry and accessibility; never substitutes for full CI')
 parser.add_argument('--home-only', action='store_true', help='Run S1 home and calculation handoff diagnostics; never substitutes for full CI')
+parser.add_argument('--generation-only', action='store_true', help='Run S2a generation and accessibility diagnostics; never substitutes for full CI')
 parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
-assert sum([args.signup_only, args.home_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
+assert sum([args.signup_only, args.home_only, args.generation_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
 assert args.serial.startswith('emulator-') and args.serial[9:].isdigit(), 'Physical devices are forbidden'
 assert 1 <= args.repeat <= 10
 sdk = pathlib.Path(os.environ.get('ANDROID_HOME', ROOT / '.tools/android-sdk'))
@@ -83,8 +85,9 @@ def build_helper():
         (folder / child).mkdir(parents=True, exist_ok=True)
     api = sdk / 'platforms/android-36'
     cp = os.pathsep.join(str(api / item) for item in ['android.jar', 'uiautomator.jar', 'optional/android.test.base.jar'])
-    run(['javac', '-source', '8', '-target', '8', '-cp', cp, '-d', folder / 'ui-classes', ROOT / 'scripts/qa/RunningUiDump.java'])
-    run([sdk / ('build-tools/36.0.0/d8.bat' if os.name == 'nt' else 'build-tools/36.0.0/d8'), '--lib', api / 'android.jar', '--classpath', api / 'uiautomator.jar', '--output', folder / 'ui-dex', folder / 'ui-classes/RunningUiDump.class'])
+    helper_names = ['RunningUiDump', 'DrawingGesture']
+    run(['javac', '-source', '8', '-target', '8', '-cp', cp, '-d', folder / 'ui-classes', *[ROOT / f'scripts/qa/{name}.java' for name in helper_names]])
+    run([sdk / ('build-tools/36.0.0/d8.bat' if os.name == 'nt' else 'build-tools/36.0.0/d8'), '--lib', api / 'android.jar', '--classpath', api / 'uiautomator.jar', '--output', folder / 'ui-dex', *[folder / f'ui-classes/{name}.class' for name in helper_names]])
     run(['jar', 'cf', folder / 'ui-dump.jar', '-C', folder / 'ui-dex', 'classes.dex'])
 
 build_helper()
@@ -116,7 +119,7 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'startedAt': datetime.now(timezone.utc).isoformat(), 'ciRun': os.environ.get('GITHUB_RUN_ID'),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
-          'mode': 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-only' if args.home_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
+          'mode': 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
 original_overlays = None
@@ -214,9 +217,9 @@ def callback():
     launch('auth/callback?error=access_denied&error_description=S0_cancelled')
     assert q.find(q.capture('auth-cancel-callback'), 'tab-account').get('selected') == 'true'
     q.tap('tab-courses'); q.seek('distance-3')
-    tree = q.capture('draft-after-callback')
-    assert q.find(tree, 'distance-3').get('selected') == 'true'
-    assert q.find(tree, 'shape-star').get('selected') == 'true'
+    assert q.find(q.capture('draft-after-callback-distance'), 'distance-3').get('selected') == 'true'
+    q.seek('shape-star')
+    assert q.find(q.capture('draft-after-callback'), 'shape-star').get('selected') == 'true'
 
 def maestro_navigation():
     run([maestro, '--device', args.serial, 'test', '--format', 'junit', '--output', q.OUT / 'maestro.xml',
@@ -268,7 +271,7 @@ def signup_entry():
 
 
 def save_and_home():
-    q.calculation()
+    generation_flow(q)
     verify_home_result(q)
 
 try:
@@ -291,7 +294,8 @@ try:
             # Free GPS must start without a selected course. Preparation remains
             # selected intentionally, so verify it after the independent GPS run.
             steps += [('S0-04-save', save_and_home), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
-                      ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled)]
+                      ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled),
+                      ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         # The original S0 chain deliberately carries draft/navigation state.
         # S1 returns home and recreates the activity for font/density checks,
         # so run it after that chain rather than breaking its preconditions.
@@ -299,6 +303,8 @@ try:
         if args.signup_only: steps = [('S1-01-signup-entry', signup_entry)]
         if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
                                    ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
+        if args.generation_only: steps = [('S2a-01-generation', lambda: generation_flow(q)),
+                                         ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         if args.visual_only: steps = []
         for scenario, action in steps:
             step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)
