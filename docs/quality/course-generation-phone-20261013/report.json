@@ -1,0 +1,426 @@
+{
+  "status": "passed",
+  "verifiedAt": "2026-10-13T21:32:00+09:00",
+  "device": {
+    "model": "SM-S942N",
+    "android": "17",
+    "api": 37
+  },
+  "installation": {
+    "at": "2026-10-13T21:17:49.386224+09:00",
+    "apkSha256": "1588a9231146303d4bf0ca27c19164dbe1b27ef1aae0b83ba2bfa0c76dc76147"
+  },
+  "sourceCommit": "0289499d9f19946f3fe8a9ea4b1286433ccdea62",
+  "productMainCommit": "b5987079ac6d2d3fc4ff4f5c03085f654ea71fc9",
+  "apkBefore": "729c60a28efd29dfb6cf857933ee9f9db87b4a81e88535b508a416620fe2992f",
+  "dataBefore": {
+    "saved_courses": "3:5d60985a10271c63f0cc7ca75868b83798f0f0b8c0c6f4a819ce0b4a92008e8a",
+    "running_sessions": "5:d0c81efadd7d3cf5ffddcae514c5157e306224831d692c8daea2dfbcf5336a1f",
+    "running_points": "1659:eccc015172223b3f90741e3988d960786510213df03fba295de0445a233a25ee",
+    "storage_test_notes": "1:c30c777c63fa7efd60cbec6bd4d09ed534a62aaa8d49c458e3c2630e05798067",
+    "tests": [],
+    "remainingSynthetic": {
+      "saved_courses": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "running_sessions": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "running_points": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "sync_deletions": 0,
+    "sync_conflicts": 0
+  },
+  "dataAfter": {
+    "saved_courses": "3:5d60985a10271c63f0cc7ca75868b83798f0f0b8c0c6f4a819ce0b4a92008e8a",
+    "running_sessions": "5:d0c81efadd7d3cf5ffddcae514c5157e306224831d692c8daea2dfbcf5336a1f",
+    "running_points": "1659:eccc015172223b3f90741e3988d960786510213df03fba295de0445a233a25ee",
+    "storage_test_notes": "1:c30c777c63fa7efd60cbec6bd4d09ed534a62aaa8d49c458e3c2630e05798067",
+    "tests": [],
+    "remainingSynthetic": {
+      "saved_courses": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "running_sessions": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "running_points": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "sync_deletions": 0,
+    "sync_conflicts": 0
+  },
+  "generation": {
+    "selected": "2순위 · 4.90 km",
+    "timing": "전체 소요 14.56초 · 서버 계산",
+    "candidates": [
+      "1순위 · 5.07 km",
+      "2순위 · 4.90 km",
+      "3순위 · 5.31 km",
+      "4순위 · 5.12 km",
+      "5순위 · 4.80 km"
+    ],
+    "publicOrigin": {
+      "lat": 37.4979,
+      "lng": 127.0276
+    },
+    "targetToggle": true
+  },
+  "testCourse": {
+    "kind": "course",
+    "id": "7abc33e97e4001de20914abfa490a695",
+    "name": "QA phone S2a 20261013",
+    "schema": 2,
+    "remoteVersion": 1,
+    "dirty": 0,
+    "snapshotHash": "0bbbc69f217a0082afc1b38320c2186ea1d78f850f5f241034dc57a523ea2d48"
+  },
+  "sameSnapshotAsIsolatedQa": true,
+  "testCourseRemoved": true,
+  "accountPreserved": true,
+  "settingsPreserved": true,
+  "sync": {
+    "before": "ON, pending 0",
+    "after": "ON, pending 0",
+    "testUploadRemoteVersion": 1,
+    "testDeletionSent": 1
+  },
+  "keyboard": {
+    "inputBottom": 1324,
+    "keyboardTop": 1372
+  },
+  "cleanup": {
+    "status": "passed",
+    "dataPreserved": true,
+    "accountAndSettingsPreserved": true,
+    "helperRemoved": true,
+    "internalBackupRemoved": true,
+    "noRunningService": true
+  },
+  "harnessFailures": [
+    "Sandbox ADB could not access host daemon; approved host execution succeeded.",
+    "First drawing completion scroll overshot clipped shape row.",
+    "Offscreen shape absent from hierarchy required reversing at scroll boundary.",
+    "Caption height 54px failed a 60px harness threshold; corrected to 30px."
+  ],
+  "limitations": [
+    "No new outdoor GPS, long lock/battery, TalkBack speech, or actual OAuth/consent submission.",
+    "GPX chooser cancelled; no external recipient file receipt tested. Standard app GPX cache retention remains; helper/backups/test DB course removed.",
+    "S2a was installed only on the connected SM-S942N; A7 retains S1.",
+    "No new APK build or server/schema deployment; ordinary app test-course sync was exercised."
+  ],
+  "privateEvidenceRoot": ".cache/s2a-phone-20261013",
+  "privateEvidenceHashes": [
+    {
+      "file": "baseline.json",
+      "sha256": "85af5eab23a03362b6f539daec86bf27d02eb8e8e5912eca6dff2bac7d9b6fec"
+    },
+    {
+      "file": "baseline.txt",
+      "sha256": "d7fbc9039384ac01fec6a4fe49561e32ec8a45e94ba92675551471dd60479e71"
+    },
+    {
+      "file": "installed.json",
+      "sha256": "85af5eab23a03362b6f539daec86bf27d02eb8e8e5912eca6dff2bac7d9b6fec"
+    },
+    {
+      "file": "installed.txt",
+      "sha256": "d7fbc9039384ac01fec6a4fe49561e32ec8a45e94ba92675551471dd60479e71"
+    },
+    {
+      "file": "final.json",
+      "sha256": "85af5eab23a03362b6f539daec86bf27d02eb8e8e5912eca6dff2bac7d9b6fec"
+    },
+    {
+      "file": "final.txt",
+      "sha256": "d7fbc9039384ac01fec6a4fe49561e32ec8a45e94ba92675551471dd60479e71"
+    },
+    {
+      "file": "baseline-account.json",
+      "sha256": "28ee37c00c5a8720d8c1875310d8bac4a569b5e86663966a8d0289daa59e2dd0"
+    },
+    {
+      "file": "baseline-account.png",
+      "sha256": "9ea9f6c76bdb894d6dc54f785b8aa93a3aa2a5fda9836a7f46daa6f8bc3ab0e1"
+    },
+    {
+      "file": "baseline-account.xml",
+      "sha256": "4b5fcd4af9f34921f742ffde9f2f0f9c8c2bb26b620cfea62aded3ecb1b4ff76"
+    },
+    {
+      "file": "installed-account.json",
+      "sha256": "28ee37c00c5a8720d8c1875310d8bac4a569b5e86663966a8d0289daa59e2dd0"
+    },
+    {
+      "file": "installed-account.png",
+      "sha256": "6abefe4cb312be31664ffc82032905b4ec012ff84fbde57057e85791d37694d8"
+    },
+    {
+      "file": "installed-account.xml",
+      "sha256": "8f59b1e41dd3d6049b9f4f84cb1be28d0bb22a08c85ba071d7c71919d7c714cb"
+    },
+    {
+      "file": "final-account.json",
+      "sha256": "28ee37c00c5a8720d8c1875310d8bac4a569b5e86663966a8d0289daa59e2dd0"
+    },
+    {
+      "file": "final-account.png",
+      "sha256": "4e485e79f97346caebd8ec8dd812c5608d31210df396b5d2f787975f83ffa5e9"
+    },
+    {
+      "file": "final-account.xml",
+      "sha256": "8f59b1e41dd3d6049b9f4f84cb1be28d0bb22a08c85ba071d7c71919d7c714cb"
+    },
+    {
+      "file": "installed-settings.txt",
+      "sha256": "9f236328db4b06c3d52b54a2a4877908236212c8d35b9820462c9909506580af"
+    },
+    {
+      "file": "final-settings.txt",
+      "sha256": "9f236328db4b06c3d52b54a2a4877908236212c8d35b9820462c9909506580af"
+    },
+    {
+      "file": "cleanup.json",
+      "sha256": "7b96c0cfdf2576b1c143f5506a133252c3355c84306e8ff36d0eecf89d251fe2"
+    },
+    {
+      "file": "after-save.json",
+      "sha256": "4cecc8d21c1e2a03d912c615aacc1fa9d7f0e011b6ea02252dcfc9583c204f24"
+    },
+    {
+      "file": "after-save.txt",
+      "sha256": "7f12f32461654aff514f4574422a95d9ab1d0d8ce87650ac6c29b704771af69b"
+    },
+    {
+      "file": "sync-before.png",
+      "sha256": "e8591c9a0870733c0da44f250c8a786b25d0fa77d3ca4e50b6369a8b959b35e9"
+    },
+    {
+      "file": "sync-before.xml",
+      "sha256": "5995f7067bc958971f8beb74a268bd538b804d56b1c6e92ccc3bfd64e584dcaf"
+    },
+    {
+      "file": "sync-after-delete.png",
+      "sha256": "17a5a718a2e97b25b31ca759d36d6ab61c9a66518281db3d47bb448791b7d9c3"
+    },
+    {
+      "file": "sync-after-delete.xml",
+      "sha256": "2c95057349416117140d0d76de00e4df3c7f27e5634389cb18f00de266ed468b"
+    },
+    {
+      "file": "server-confirm.png",
+      "sha256": "19fee03e8e42431d9b2624b7333e2e63e43870173b666308a1253fc439264a71"
+    },
+    {
+      "file": "server-confirm.xml",
+      "sha256": "10ae1640bb97d6ae325c8e50e3381d6fc6ddb775de4661c7f27e9cd21c26081f"
+    },
+    {
+      "file": "server-result-map.png",
+      "sha256": "4ff4f6e0cb25d98b52e827038d6c273ff870f6d6fe007c2b3aeb7fb400bfb5f8"
+    },
+    {
+      "file": "server-result-map.xml",
+      "sha256": "7511d15686970bd5866cd6f67ece874a68fb208d7d9c66e0ffaaa99b8c56ea99"
+    },
+    {
+      "file": "server-selected-final.png",
+      "sha256": "c2287850369a88f4c980d2d45680b6f6d2b6f04def5f4b7ab307bc2fc6e4be4f"
+    },
+    {
+      "file": "server-selected-final.xml",
+      "sha256": "add6990efb7caa75e9b8973317006addc4331997fb4bb473bc671ad3fca1dfe5"
+    },
+    {
+      "file": "server-timing.png",
+      "sha256": "1491642c06b38131f2bf6fcfe3405aef8ca08dbabac2f20a70aea82af4dfb095"
+    },
+    {
+      "file": "server-timing.xml",
+      "sha256": "0214f77db39bb95e63652c5e1a75d49826267904a3105864f0d3a2d3b7b0b7be"
+    },
+    {
+      "file": "target-off.png",
+      "sha256": "87d804761649416f75e9f2c8de711d6224d971c92d6b7d942730613d957c2b3b"
+    },
+    {
+      "file": "target-off.xml",
+      "sha256": "0237da2941e42e1b1e652b4bcc7c3f2f444f60251bcc30ebee70d5bbfa4d27bb"
+    },
+    {
+      "file": "detail-top.png",
+      "sha256": "24746396dbd923f9a9dcc5a238a2cf4b7800e4e4b68e9355cecbf872f4a7dcfb"
+    },
+    {
+      "file": "detail-top.xml",
+      "sha256": "9ed2484177ecd78410cc445c7597853ced1635ff4a029ff5d257a243603a1e9f"
+    },
+    {
+      "file": "name-keyboard.png",
+      "sha256": "4c194943ef9a15a692f881009749c50cbcf5b289b28fd5908366b32961483e43"
+    },
+    {
+      "file": "name-keyboard.xml",
+      "sha256": "138753da15b470bbc8ba79b7cd38f1adb193b4ffd8106c6c4a00ff17849c6cba"
+    },
+    {
+      "file": "name-restored.png",
+      "sha256": "3de1787de0afefecd2521cd19c5af863c5dbb78b5535a75d7c5c4d1348dc5224"
+    },
+    {
+      "file": "name-restored.xml",
+      "sha256": "b6b5d612bac63aef63c7093ff737f2b2bc0073909a4f3121ce888c24d7c44f62"
+    },
+    {
+      "file": "saved-first.png",
+      "sha256": "897e2b1122dc31d7e47f13e1b63375d25b12a32d0bde2c5a7b21cc2629a0328a"
+    },
+    {
+      "file": "saved-first.xml",
+      "sha256": "fbff86c1c67005f15a0142b1f840cb41913e81a2525e6ec7e6c5dcf2f73cb58b"
+    },
+    {
+      "file": "saved-duplicate.png",
+      "sha256": "bc05e34a5a4e16832d6b63fc7107a933a130bcc9f6a35928c802e5bc74728b41"
+    },
+    {
+      "file": "saved-duplicate.xml",
+      "sha256": "96e42c432ef3e475fd6e5e913590f37811c1b7f464760c1ca5bffdb0be15aff9"
+    },
+    {
+      "file": "gpx-chooser.png",
+      "sha256": "aaf3aec07a9f394be3af8caca402497a9c424ff7f01bd313898e59decb32d7c1"
+    },
+    {
+      "file": "gpx-chooser.xml",
+      "sha256": "98c977c186896ca734a2f5922d35b6a5c5244a1976ad9711d0c5093dc95d2db1"
+    },
+    {
+      "file": "gpx-cancelled.png",
+      "sha256": "25d8d9a0818e5f241566c32c43dbf1c434e2df241a333692d5839b10346e7592"
+    },
+    {
+      "file": "gpx-cancelled.xml",
+      "sha256": "a35ff772f5ba65c30f6c6062d9620bd3189c327cc52d48362ddd40a63f76b92c"
+    },
+    {
+      "file": "run-preparation.png",
+      "sha256": "0eeb52ddd7601819a7c17138b0dcd9b2ef59ddac699af2923be9998435cf4884"
+    },
+    {
+      "file": "run-preparation.xml",
+      "sha256": "e582bddb0311e6cb0752f5c52b99386178e2a03c75ca4156be16fdb2585d0c8f"
+    },
+    {
+      "file": "changed-input-notice.png",
+      "sha256": "857373ecc04fe79f7208e46fc881e95519a497aac9d69b231d457ff58f096883"
+    },
+    {
+      "file": "changed-input-notice.xml",
+      "sha256": "0afa25a6c6f22694ed38d3e80913ae4679e8286f5894ef2ef59bffb86f6d448e"
+    },
+    {
+      "file": "previous-result-retained.png",
+      "sha256": "a662e4b7132b4c621165430865eed8c70ddff97b849320de0c812812a9391c6a"
+    },
+    {
+      "file": "previous-result-retained.xml",
+      "sha256": "918acdc2cb611ad5797665b5cdf974a80fb7ca6267da2abee0e73c5b78aeb8e7"
+    },
+    {
+      "file": "saved-name-retained.png",
+      "sha256": "98542dcfa30db23d5a1af2cc82d6ad0a6b5cd7df0a3a1d021eeccf1d6d0f65f4"
+    },
+    {
+      "file": "saved-name-retained.xml",
+      "sha256": "d9ba940294d717e1724bbf8cfef4e86c9f97763752bb72c7c85762be1b283a88"
+    },
+    {
+      "file": "saved-list.png",
+      "sha256": "a3739ffc3e248d2846eb8038b8c1fefcebb09cf65a03a142feea6a16c9ff11f3"
+    },
+    {
+      "file": "saved-list.xml",
+      "sha256": "5aeeedc8d713132cc34ac513b539712334f2938a95c8d09d57f5e731300ab028"
+    },
+    {
+      "file": "saved-detail-restarted.png",
+      "sha256": "1a464f491ef0e9f940640f6de6e5ce0b05d6d77148a5d967f68e4584f92b17fa"
+    },
+    {
+      "file": "saved-detail-restarted.xml",
+      "sha256": "5d3e4c557a7a42e6f5ac2e446e9cee9864ad43ccc42b2c9422f5230bb7cbb082"
+    },
+    {
+      "file": "delete-confirm.png",
+      "sha256": "d22cb97ea1311df36205610e5bf17560db12f672baf9a9a3991436bb4da0b490"
+    },
+    {
+      "file": "delete-confirm.xml",
+      "sha256": "fbb4e7c7f6ecbb93fb7e90e015d59eb9c1e028ac4ca8aadbfa8164d6b1d8b4f3"
+    },
+    {
+      "file": "deleted-list.png",
+      "sha256": "bcf52168ca4fd89f4dbc6447d10f029b6f66ec92859bc62990b301b640a23184"
+    },
+    {
+      "file": "deleted-list.xml",
+      "sha256": "799c751f9b024f97f49e656705d8f8944b2f0204074af6b130d6fa01cd572e87"
+    },
+    {
+      "file": "s2a-drawing-empty.png",
+      "sha256": "011307e6d6914a17ce87c022980920a92943ef2aa1491191fe50772438e2289b"
+    },
+    {
+      "file": "s2a-drawing-empty.xml",
+      "sha256": "b97a5277ec3a4272e30dc6c3e3aa303232d9148cf14385b7dd05dd771ebf9b21"
+    },
+    {
+      "file": "s2a-drawing-applied.png",
+      "sha256": "213828c683f669490504132680ced5c8fb881ac216c8f0b9e5c6e89a5b4e8d29"
+    },
+    {
+      "file": "s2a-drawing-applied.xml",
+      "sha256": "2c143cd3217c5f583784ac64b3b6b2346cffe2d8a6f38f54b6e8f5a7797178e0"
+    },
+    {
+      "file": "s2a-drawing-cancel-restored.png",
+      "sha256": "d6e3eaefec38e317784bf5139f5a8d7fc177194d4a5bff8bbf14e1c480e187dd"
+    },
+    {
+      "file": "s2a-drawing-cancel-restored.xml",
+      "sha256": "0447a5124020e26918e7f9b46df54a1337e63097f4b0d4130600ac209bd6d7a4"
+    },
+    {
+      "file": "confirm-cancelled.png",
+      "sha256": "ec7b5a6f0fd50e28b94d54c88c5a7b56b78fe215645af0db4e6eb0231a42ba4a"
+    },
+    {
+      "file": "confirm-cancelled.xml",
+      "sha256": "4effab3d31397350063ffadaa0ec35cceb5959f1680b0ca94989096ce69e4b36"
+    },
+    {
+      "file": "cancel-after-tab.png",
+      "sha256": "a69ea02979a313dfa2415e428406c052001631d87f155bbf6e115796781a758e"
+    },
+    {
+      "file": "cancel-after-tab.xml",
+      "sha256": "9b51deebd477a721082765b69a4357b17faefc7b4c1d7ba3b7bfeb1b1d5f83ed"
+    }
+  ]
+}

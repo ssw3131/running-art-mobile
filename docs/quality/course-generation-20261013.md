@@ -1,5 +1,7 @@
 # S2a 코스 생성 서비스 UI 검증
 
+**2026-10-13 21:32 S2a 휴대폰 후속 완료:** SM-S942N(Android 17)에 21:17:49 최신 APK를 자료 유지 설치했다. 5탭·직접 그리기·확인/탭 취소·강남 서버 14.56초/5후보·2순위 저장/중복 방지/GPX·러닝 준비·조건 수정/재시작을 확인했다. 시험 코스 업로드/삭제 동기화와 기존 3코스·5러닝·1,659좌표·1메모 해시·로그인/설정 보존, 도우미·내부 복구본 정리 완료. 서비스 없음·USB 분리 가능. A7 S2a·야외/장시간은 후속이며 다음 새 기능은 S2b다. [폰 검증](course-generation-phone-20261013.md)을 아래 휴대폰 미설치 표현보다 우선한다.
+
 최종 갱신 2026-10-13T19:53:08+09:00. 목표 범위 완료(PC·격리 Android). [기능 계약](../development/course-generation.md)·[실행 계획](../history/executed-plans/2026-10-13-1747-course-generation-ui.md)·[정제 결과 JSON](course-generation-20261013.json)·[실제 화면 12장](course-generation-screenshots.html)·[원본 SVG 9개 출처·치수·해시](course-generation-assets.json).
 
 ## 구현과 검증 범위
