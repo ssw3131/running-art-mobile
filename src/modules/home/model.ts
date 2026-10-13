@@ -1,4 +1,5 @@
 import type { Run } from '../running/model.ts';
+import { fromByteArray } from 'base64-js';
 
 export type HomePath = [number, number][];
 export type HomeRun = { run: Run; paths: HomePath[] };
@@ -36,5 +37,8 @@ export function homePathSvg(paths: HomePath[], color: string) {
     const p = xy(path[0]);
     return `<polyline points="${path.map(point => xy(point).map(v => v.toFixed(2)).join(',')).join(' ')}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${color}"/>`;
   }).join('');
-  return `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">${lines}</svg>`)}`;
+  // expo-image's Android data-URL loader decodes all data URLs as Base64.
+  // This SVG contains only ASCII numeric coordinates and theme colors.
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">${lines}</svg>`;
+  return `data:image/svg+xml;base64,${fromByteArray(Uint8Array.from(svg, char => char.charCodeAt(0)))}`;
 }

@@ -76,7 +76,9 @@ test('home preserves active recovery when guidance is corrupt; real GPS segments
   const active = (await f.home.read(NOW)).active;
   assert.equal(active.guidanceError, true); assert.equal(active.progress, null); assert.equal(active.run.status, 'interrupted');
   assert.deepEqual(active.paths.map(path => path.length), [2, 2]);
-  const svg = decodeURIComponent(homePathSvg(active.paths, '#FC5602'));
+  const uri = homePathSvg(active.paths, '#FC5602');
+  assert.ok(uri.startsWith('data:image/svg+xml;base64,'));
+  const svg = Buffer.from(uri.split(',')[1], 'base64').toString('utf8');
   assert.equal((svg.match(/<polyline/g) ?? []).length, 2);
 });
 

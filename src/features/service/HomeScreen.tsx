@@ -22,9 +22,10 @@ const openCourses = () => router.navigate({ pathname: '/courses', params: { view
 
 function PathPreview({ paths, label, large = false }: { paths: HomePath[]; label: string; large?: boolean }) {
   const c = useThemeColors(), uri = useMemo(() => homePathSvg(paths, c.selected), [paths, c.selected]);
+  const [failedUri, setFailedUri] = useState<string | null>(null);
   return <View accessible accessibilityLabel={label} style={[styles.preview, { backgroundColor: c.navigation, aspectRatio: large ? 1.5 : 1 }]}>
-    {uri ? <Image source={{ uri }} contentFit="contain" style={StyleSheet.absoluteFill} accessible={false} />
-      : <AppText variant="caption" style={{ color: c.muted, textAlign: 'center', padding: 12 }}>저장된 경로가 없어요</AppText>}
+    {uri && uri !== failedUri ? <Image source={{ uri }} contentFit="contain" style={StyleSheet.absoluteFill} accessible={false} onError={() => setFailedUri(uri)} />
+      : <AppText variant="caption" style={{ color: c.muted, textAlign: 'center', padding: 12 }}>{uri ? '경로 미리보기를 표시하지 못했어요' : '저장된 경로가 없어요'}</AppText>}
   </View>;
 }
 
@@ -167,6 +168,6 @@ const styles = StyleSheet.create({
   activeMetrics: { flexDirection: 'row', gap: 16, flexWrap: 'wrap' }, progress: { height: 19, borderRadius: 22, overflow: 'hidden' },
   stats: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 12 }, stat: { flexGrow: 1, flexBasis: 145, borderRadius: 14, padding: 12, gap: 10 },
   statHeading: { flexDirection: 'row', gap: 4, alignItems: 'center' },
-  recent: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, recentCard: { flexGrow: 1, flexBasis: 105, maxWidth: 220, gap: 4 },
+  recent: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, recentCard: { flexGrow: 1, flexBasis: 105, maxWidth: 124, gap: 4 },
   quickLinks: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: space.md }, loading: { paddingVertical: 32, alignItems: 'center', gap: 12 },
 });

@@ -30,6 +30,8 @@ export function useHome() {
     const timer = setInterval(() => void refresh(), 2000);
     const listener = AppState.addEventListener('change', next => { if (next === 'active') void refresh(); });
     return () => { current = false; clearInterval(timer); listener.remove(); };
+  // Explicit retry re-enters the focused load lifecycle, including its cleanup.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner, attempt]));
   // Hide the preceding account's data in the very render that changes ownership.
   return { ...(owner !== null && state.owner === owner ? state : { owner: '', data: null, error: '' }), retry: () => setAttempt(value => value + 1) };
