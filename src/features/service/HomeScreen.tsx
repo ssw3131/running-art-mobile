@@ -29,7 +29,7 @@ function PathPreview({ paths, label, large = false }: { paths: HomePath[]; label
   </View>;
 }
 
-function InitialHome({ shape, setShape }: { shape: 'heart' | 'fish'; setShape(value: 'heart' | 'fish'): void }) {
+function InitialHome({ shape, setShape }: { shape: 'heart' | 'fish' | 'dog'; setShape(value: 'heart' | 'fish' | 'dog'): void }) {
   const c = useThemeColors();
   return <>
     <AppText variant="heading" weight="medium">오늘은 어떤 그림을 달릴까요?</AppText>
@@ -43,14 +43,13 @@ function InitialHome({ shape, setShape }: { shape: 'heart' | 'fish'; setShape(va
     </View>
     <View style={styles.shapes}>
       {(Object.keys(shapeAssets) as (keyof typeof shapeAssets)[]).map(id => {
-        const asset = shapeAssets[id], selected = shape === id, unavailable = id === 'dog';
-        return <Pressable key={id} testID={`home-shape-${id}`} accessibilityRole="button" accessibilityLabel={`${asset.name}${unavailable ? ', 준비 중' : ''}`}
-          accessibilityState={{ selected, disabled: unavailable }} disabled={unavailable} onPress={() => { if (id !== 'dog') setShape(id); }}
+        const asset = shapeAssets[id], selected = shape === id;
+        return <Pressable key={id} testID={`home-shape-${id}`} accessibilityRole="button" accessibilityLabel={asset.name}
+          accessibilityState={{ selected }} onPress={() => { setShape(id); }}
           style={[styles.shape, { borderColor: selected ? c.selected : c.outline }]}>
           <View style={{ width: 45, height: 38 }}><Image source={asset.source} accessible={false} contentFit="contain"
             style={{ position: 'absolute', width: asset.width, height: asset.height, left: (45 - asset.width) / 2, top: (38 - asset.height) / 2 }} /></View>
           <AppText weight="bold" style={{ color: selected ? c.selected : c.muted, fontSize: 18 }}>{asset.name}</AppText>
-          {unavailable && <AppText variant="caption" style={{ color: c.muted }}>준비 중</AppText>}
         </Pressable>;
       })}
     </View>
@@ -131,7 +130,7 @@ function HistoryHome({ data }: { data: HomeData }) {
 export default function HomeScreen() {
   const auth = useAuth(), c = useThemeColors(), { data, error, retry } = useHome();
   const scroll = useRef<ScrollView>(null);
-  const [shape, setShape] = useState<'heart' | 'fish'>('heart');
+  const [shape, setShape] = useState<'heart' | 'fish' | 'dog'>('heart');
   useFocusEffect(useCallback(() => { scroll.current?.scrollTo({ y: 0, animated: false }); }, []));
   const kind = data ? homeKind(data) : null;
   return <View style={{ flex: 1, backgroundColor: c.background }}><ScrollView ref={scroll} testID="service-home" contentContainerStyle={styles.content}>

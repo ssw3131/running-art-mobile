@@ -5,6 +5,15 @@ import { View } from 'react-native';
 import { templateFor } from '@/modules/route-engine/engine';
 
 const assets = {
+  dog: { source: require('../../../assets/generation/dog.svg'), width: 38.0044, height: 39.9973 },
+  person: { source: require('../../../assets/generation/person.svg'), width: 44.0063, height: 43.0002 },
+  bone: { source: require('../../../assets/generation/bone.svg'), width: 46.0007, height: 25 },
+  turtle: { source: require('../../../assets/generation/turtle.svg'), width: 48.0001, height: 28.9999 },
+  icecream: { source: require('../../../assets/generation/icecream.svg'), width: 35.9999, height: 41 },
+  strawberry: { source: require('../../../assets/generation/strawberry.svg'), width: 38, height: 38.0002 },
+  cloud: { source: require('../../../assets/generation/cloud.svg'), width: 50.0017, height: 27.0006 },
+  crown: { source: require('../../../assets/generation/crown.svg'), width: 52, height: 27 },
+  image: { source: require('../../../assets/generation/image.svg'), width: 20, height: 20 },
   heart: { source: require('../../../assets/generation/heart.svg'), width: 40.0004, height: 34.0002 },
   star: { source: require('../../../assets/generation/star.svg'), width: 42.0003, height: 39 },
   cat: { source: require('../../../assets/generation/cat.svg'), width: 38.0479, height: 43.0035 },
@@ -24,7 +33,7 @@ export function GenerationIcon({ name }: { name: keyof typeof assets }) {
   // Figma's star/cat/fish layers have a mirrored parent; preserve the original SVG dimensions.
   return <View accessible={false} style={{ width: asset.width, height: asset.height }}>
     <Image source={asset.source} contentFit="contain" accessible={false} style={{ width: asset.width, height: asset.height,
-      transform: name === 'star' || name === 'cat' || name === 'fish' ? [{ scaleX: -1 }] : undefined }} />
+      transform: ['star', 'cat', 'fish', 'dog', 'person', 'bone', 'turtle', 'icecream', 'strawberry', 'cloud', 'crown'].includes(name) ? [{ scaleX: -1 }] : undefined }} />
   </View>;
 }
 

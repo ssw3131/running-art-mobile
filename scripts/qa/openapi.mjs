@@ -1,5 +1,7 @@
 // Source of the published contract. Does not change the production HTTP handler.
 import { readFileSync, writeFileSync } from 'node:fs';
+import { SHAPES } from '../../src/modules/route-engine/engine.ts';
+import { GENERATION_DISTANCES } from '../../src/modules/route-engine/service-shapes.ts';
 const number = { type: 'number' }, nonnegative = { type: 'number', minimum: 0 };
 const object = properties => ({ type: 'object', required: Object.keys(properties), properties });
 const ref = name => ({ $ref: `#/components/schemas/${name}` });
@@ -30,8 +32,8 @@ const schemas = {
 };
 schemas.Request.properties.options = {
   ...object({ version: { const: '0.2' }, mode: { const: 'free-loop' },
-    shape: { enum: ['heart','star','cat','rabbit','house','diamond','bolt','fish','arrow','custom'] },
-    targetKm: { enum: [3,5,7] }, radiusKm: { const: 2 } }),
+    shape: { enum: [...SHAPES.map(shape => shape.id), 'custom'] },
+    targetKm: { enum: GENERATION_DISTANCES }, radiusKm: { const: 2 } }),
   allOf: [{ if: { properties: { shape: { const: 'custom' } } }, then: {
     required: ['customTemplate'], properties: { customTemplate: array(object({ x: { type: 'number', minimum: -10, maximum: 10 }, y: { type: 'number', minimum: -10, maximum: 10 } }), { minItems: 4, maxItems: 49 }) },
   }, else: { not: { required: ['customTemplate'] } } }],

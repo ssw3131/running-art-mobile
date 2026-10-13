@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { AppText as Text } from '@/components/ui';
+import { fonts } from '@/theme/tokens';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { durationLabel, elapsedMs, paceLabel, type Run } from '@/modules/running/model';
 
 export function RunButton({ title, onPress, disabled, id }: { title: string; onPress(): void; disabled?: boolean; id: string }) {
@@ -11,13 +13,12 @@ export function RunStats({ run, now }: { run: Run; now: number }) {
     <Text style={styles.metric} testID="run-distance">{(run.distanceM / 1000).toFixed(2)} km</Text>
     <Text style={styles.body} testID="run-duration">활동 시간 {durationLabel(elapsed)}</Text>
     <Text style={styles.body} testID="run-pace">평균 페이스 {paceLabel(elapsed, run.distanceM)}</Text>
-    <Text style={styles.body}>저장한 위치 {run.pointCount}개 · 제외한 위치 {run.rejectedCount}개</Text>
   </View>;
 }
 export const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F6F5F0' }, content: { padding: 20, gap: 16 },
-  title: { color: '#183C32', fontSize: 26, fontWeight: '700' }, metric: { color: '#183C32', fontSize: 32, fontWeight: '700' },
-  body: { color: '#57675F', fontSize: 15, lineHeight: 23 }, card: { backgroundColor: '#FFFFFF', padding: 18, borderRadius: 16, gap: 10 },
-  button: { backgroundColor: '#183C32', padding: 16, borderRadius: 12, alignItems: 'center' }, buttonText: { color: '#FFFFFF', fontWeight: '600', fontSize: 16 },
-  error: { color: '#A12F2F', lineHeight: 23 }, link: { color: '#23694C', padding: 12, fontSize: 16 },
+  screen: { flex: 1, backgroundColor: '#FFFFFF' }, content: { padding: 24, gap: 16 },
+  title: { color: '#000000', fontSize: 26, fontWeight: '700' }, metric: { color: '#000000', fontSize: 36, fontFamily: fonts.roboto.black, lineHeight:44 },
+  body: { color: '#757575', fontSize: 15, lineHeight: 23 }, card: { backgroundColor: '#FFFFFF', padding: 18, borderRadius: 20, gap: 10 },
+  button: { backgroundColor: '#FB5603', minHeight:50, padding: 14, borderRadius: 30, alignItems: 'center' }, buttonText: { color: '#FFFFFF', fontWeight: '600', fontSize: 16 },
+  error: { color: '#A12F2F', lineHeight: 23 }, link: { color: '#FB5603', padding: 12, fontSize: 16 },
 });

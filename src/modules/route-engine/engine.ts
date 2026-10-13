@@ -3,6 +3,8 @@
 // routing storage/cache avoids repeated work; generators expose cancellation points.
 import type { Point, Origin, Tags, OsmElement, GraphNode, GraphEdge, Graph, SearchOptions, ProgressCallback, Steps, Placement, EvaluatedCandidate, Usage, Score, SearchResult } from './types.ts';
 
+import { SERVICE_SHAPES, serviceTemplate } from './service-shapes.ts';
+
 function point(x: number, y: number): Point {
   return { x, y };
 }
@@ -64,6 +66,7 @@ const SHAPES = [
   {id:'fish',name:'물고기',description:'각진 몸통과 꼬리를 한 바퀴로 잇는 윤곽',added:true},
   {id:'arrow',name:'화살표',description:'격자 도로에 맞추기 쉬운 직선 중심의 윤곽',added:true}
 ];
+SHAPES.push(...SERVICE_SHAPES.filter(shape => !SHAPES.some(old => old.id === shape.id)).map(shape => ({ ...shape, description: `${shape.name} 윤곽을 따라 만드는 코스`, added: true })));
 const polygonTemplates: Record<string, number[][]> = {
   house:[[0,-1.2],[1.1,-0.25],[1.1,1],[-1.1,1],[-1.1,-0.25],[0,-1.2]],
   diamond:[[0,-1.2],[1,0],[0,1.2],[-1,0],[0,-1.2]],
@@ -76,6 +79,8 @@ function templateFor(name: string): Point[] {
   const factory=factories[name];
   if(factory) return factory();
   if(polygonTemplates[name]) return polygonTemplates[name].map(([x,y])=>point(x,y));
+  const service = serviceTemplate(name);
+  if (service) return service;
   throw new Error('지원하지 않는 도형입니다.');
 }
 

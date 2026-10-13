@@ -14,6 +14,10 @@ export function createCourseRepository(db: StorageDatabase, now = Date.now, scop
     const result = tail.then(task); tail = result.catch(() => {}); return result;
   }
   return {
+    count() {
+      const owner=scope();
+      return queue(async()=> (await db.getFirstAsync<{count:number}>('SELECT COUNT(*) AS count FROM saved_courses WHERE owner_id=?',owner))?.count ?? 0);
+    },
     async save(value: CourseSnapshot, name: string): Promise<{ id: string; created: boolean }> {
       const { snapshot, json, hash } = encodeSnapshot(value), title = courseName(name);
       const owner = scope();

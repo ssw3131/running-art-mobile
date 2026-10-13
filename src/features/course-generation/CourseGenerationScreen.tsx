@@ -10,13 +10,14 @@ import { courseShapes } from '@/modules/courses/model';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import { roadLocations } from '@/modules/road-data/supply-config';
-import { SHAPES } from '@/modules/route-engine/engine';
+import { SERVICE_SHAPES, GENERATION_DISTANCES } from '@/modules/route-engine/service-shapes';
 import type { ShapeId } from '@/modules/route-engine/types';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
 import { candidateDrafts, centerLabel, sameConditions, type GenerationConditions } from './model';
-import { GenerationIcon, LegacyShapeIcon } from './GenerationIcon';
+import { GenerationIcon } from './GenerationIcon';
 import { MapCredits } from './MapCredits';
+import ImageShapeEditor from './ImageShapeEditor';
 import { locationMessage, useCourseGeneration } from './use-course-generation';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
@@ -31,6 +32,7 @@ export default function CourseGenerationScreen() {
   const scroll = useRef<ScrollView>(null), generateButton = useRef<View>(null);
   const [confirmation, setConfirmation] = useState<GenerationConditions | null>(null);
   const [showTarget, setShowTarget] = useState(true), [optionsOpen, setOptionsOpen] = useState(false);
+  const [imageOpen, setImageOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const current: GenerationConditions = { origin: g.dataset.synthetic ? g.dataset.input.origin : g.centerState.center,
     shape: g.shape, targetKm: g.targetKm, customTemplate: g.customTemplate };
@@ -39,7 +41,7 @@ export default function CourseGenerationScreen() {
   const choosing = g.tab === 'conditions';
   const busy = g.state.kind === 'running';
   const result = g.completed;
-  useFocusEffect(useCallback(() => () => { setConfirmation(null); }, [setConfirmation]));
+  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, [auth.account?.id]));
   const chooseTab = (tab: 'conditions' | 'results') => { g.setTab(tab); scroll.current?.scrollTo({ y: 0, animated: false }); };
   const showConfirmation = () => {
     if (g.cannotCalculate || busy) return;
@@ -84,6 +86,7 @@ export default function CourseGenerationScreen() {
     {busy && <><AppText variant="caption">{g.seconds.toFixed(1)}초</AppText><Button compact variant="outline" label="취소" testID="cancel-route" onPress={() => g.cancel()} /></>}
   </View>;
   return <View style={[styles.screen, { backgroundColor: c.background }]} testID="course-generation">
+    {imageOpen && <ImageShapeEditor onCancel={() => setImageOpen(false)} onApply={points => { g.changeSearch(); g.setCustomTemplate(points); g.setShape('custom'); setImageOpen(false); }} />}
     <Tabs options={[{ value: 'conditions', label: '조건 설정' }, { value: 'results', label: '추천 코스' }]}
       value={g.tab} onChange={value => chooseTab(value as 'conditions' | 'results')} />
     <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
@@ -101,19 +104,19 @@ export default function CourseGenerationScreen() {
         <AppText variant="caption" style={{ color: c.subtle }}>지도 중심 주변 2km에서 코스를 찾아요. 실제 출발 지점은 러닝 준비에서 선택해요.</AppText>
         <AppText variant="heading" weight="bold" style={styles.section}>2. 목표 러닝 거리</AppText>
         <AppText family="roboto" weight="black" variant="metric" style={{ textAlign: 'center' }}>{g.targetKm}<AppText weight="black" variant="heading"> km</AppText></AppText>
-        <View style={styles.row}>{[3, 5, 7].map(km => <Choice key={km} id={`distance-${km}`} label={`${km} km`} selected={g.targetKm === km} onPress={() => { g.changeSearch(); g.setTargetKm(km); }} />)}</View>
+        <View style={[styles.row, { flexWrap: 'wrap' }]}>{GENERATION_DISTANCES.map(km => <Choice key={km} id={`distance-${km}`} label={`${km} km`} selected={g.targetKm === km} onPress={() => { g.changeSearch(); g.setTargetKm(km); }} />)}</View>
         <AppText variant="heading" weight="bold" style={styles.section}>3. 코스 모양</AppText>
-        <View style={styles.shapes}>{SHAPES.map(shape => <Pressable key={shape.id} testID={`shape-${shape.id}`} accessibilityRole="button"
+        <View style={styles.shapes}>{SERVICE_SHAPES.map(shape => <Pressable key={shape.id} testID={`shape-${shape.id}`} accessibilityRole="button"
           accessibilityLabel={shape.name} accessibilityState={{ selected: g.shape === shape.id }} onPress={() => { g.changeSearch(); g.setShape(shape.id as ShapeId); }}
           style={[styles.shape, { width: shapeWidth, borderColor: g.shape === shape.id ? c.selected : c.border, backgroundColor: g.shape === shape.id ? '#FFF0E8' : c.surface }]}>
-          <View style={styles.shapeIcon}>{['heart', 'star', 'cat', 'fish'].includes(shape.id)
-            ? <GenerationIcon name={shape.id as 'heart' | 'star' | 'cat' | 'fish'} /> : <LegacyShapeIcon shape={shape.id} />}</View>
+          <View style={styles.shapeIcon}><GenerationIcon name={shape.id} /></View>
           <AppText variant="label" weight="bold" style={{ color: g.shape === shape.id ? c.selected : c.subtle, textAlign: 'center' }}>{shape.name}</AppText>
         </Pressable>)}</View>
         <Button variant="outline" testID="shape-custom" label="도형 직접 그리기" leading={<GenerationIcon name="draw" />}
           onPress={() => { g.changeSearch(); g.setDrawingOpen(true); }} />
+        <Button variant="outline" testID="shape-image" label="도형 이미지 업로드하기" leading={<GenerationIcon name="image" />} onPress={() => { g.changeSearch(); setImageOpen(true); }} />
         {g.shape === 'custom' && g.customTemplate && <View testID="selected-custom-shape" style={styles.row}>
-          <DrawingPreview template={g.customTemplate} /><AppText style={{ flex: 1 }} variant="label">직접 그린 도형을 사용해요. 다시 눌러 수정할 수 있어요.</AppText></View>}
+          <DrawingPreview template={g.customTemplate} /><AppText style={{ flex: 1 }} variant="label">사용자 도형을 사용해요. 직접 그리기에서 수정할 수 있어요.</AppText></View>}
         <Button variant="outline" compact label={optionsOpen ? '계산 설정 닫기' : '계산 방식 · 오프라인 설정'} onPress={() => setOptionsOpen(value => !value)} testID="generation-options" />
         {optionsOpen && <View style={styles.sectionBox}>
           <View style={styles.row}>{[{ device: false, label: '서버 계산' }, { device: true, label: '기기 계산·도로 저장' }].map(item =>

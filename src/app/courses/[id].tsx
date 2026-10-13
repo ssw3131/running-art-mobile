@@ -2,8 +2,11 @@ import { Link, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { openServiceTab } from '@/features/service/open-service-tab';
 import { ServiceTabLink } from '@/features/service/ServiceTabLink';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Image, Keyboard, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Keyboard, Linking, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppText as Text } from '@/components/ui';
+import { useAuth } from '@/features/auth/use-auth';
+import { fonts } from '@/theme/tokens';
 import { getStorage } from '@/modules/storage/database';
 import { COURSE_NAME_MAX, CourseError, courseErrorMessage, courseShapes, savedCourseOverlay, type SavedCourse } from '@/modules/courses/model';
 import MapSurface from '@/modules/map/MapSurface';
@@ -17,6 +20,8 @@ import { useTerrain } from '@/features/terrain/use-terrain';
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const emptyRoads = { type: 'FeatureCollection' as const, features: [] };
 export default function CourseScreen() {
+  const auth=useAuth(), owner=auth.ready?auth.account?.id??'':null;
+  const [loadedOwner,setLoadedOwner]=useState<string|null>(null);
   const { id } = useLocalSearchParams<{ id: string }>();
   const [course, setCourse] = useState<SavedCourse | null>(null), [name, setName] = useState('');
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
@@ -40,28 +45,29 @@ export default function CourseScreen() {
   const terrain = useTerrain(course?.source === 'osm' && !simulation ? course.snapshot.route : undefined);
   const supported = Platform.OS !== 'web';
   const refresh = useCallback(async () => {
-    const request = ++generation.current; setBusy(true); setError(''); setNotice(''); setCourse(null); setCanDelete(false); setBackground(false); setSimulation(false);
+    const request = ++generation.current; setBusy(true); setError(''); setNotice(''); setCourse(null); setLoadedOwner(owner); setCanDelete(false); setBackground(false); setSimulation(false);
     try {
-      const loaded = await (await getStorage()).courses.get(id);
-      if (request === generation.current) { setCourse(loaded); setName(loaded.name); setCanDelete(true); }
+      const db=await getStorage(); if(request!==generation.current)return;
+      const loaded = await db.courses.get(id);
+      if (request === generation.current) { setCourse(loaded); setLoadedOwner(owner); setName(loaded.name); setCanDelete(true); }
     } catch (cause) {
       if (request === generation.current) {
         setError(courseErrorMessage(cause));
         setCanDelete(cause instanceof CourseError && (cause.code === 'corrupt' || cause.code === 'newer-format'));
       }
     } finally { if (request === generation.current) setBusy(false); }
-  }, [id]);
+  }, [id,owner]);
   useFocusEffect(useCallback(() => {
-    if (supported) void refresh();
+    if (supported && owner!==null) void refresh();
     return () => { generation.current++; exportController.current?.abort(); };
-  }, [refresh, supported]));
+  }, [refresh, supported,owner]));
   async function rename() {
     if (inFlight.current || !course) return;
     inFlight.current = true; const request = generation.current;
     setBusy(true); setError(''); setNotice('');
     let committed = false;
     try {
-      const repository = (await getStorage()).courses;
+      const repository = (await getStorage()).courses; if(request!==generation.current)return;
       await repository.rename(id, name); committed = true;
       const loaded = await repository.get(id);
       if (request === generation.current) { setCourse(loaded); setName(loaded.name); setNotice('코스 이름을 바꿨어요.'); }
@@ -73,7 +79,7 @@ export default function CourseScreen() {
     if (inFlight.current) return;
     inFlight.current = true; const request = generation.current; setBusy(true); setError('');
     try {
-      await (await getStorage()).courses.remove(id);
+      const db=await getStorage(); if(request!==generation.current)return; await db.courses.remove(id);
       if (request === generation.current) openServiceTab({ pathname: '/courses', params: { view: 'courses' } });
     } catch (cause) { if (request === generation.current) setError(courseErrorMessage(cause)); }
     finally { inFlight.current = false; if (request === generation.current) setBusy(false); }
@@ -101,10 +107,10 @@ export default function CourseScreen() {
       {busy && <ActivityIndicator color="#183C32" />}
       {!!error && <Text testID="course-detail-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}
       {!!notice && <Text testID="course-detail-notice" accessibilityLiveRegion="polite">{notice}</Text>}
-      {course && <>
+      {course && loadedOwner===owner && <>
         <Text testID="course-title" style={styles.title}>{course.name}</Text>
-        <Text style={styles.description}>{courseShapes[course.shape]} · {course.lengthKm.toFixed(2)}km · {course.score}점</Text>
-        <Text style={styles.description}>목표 {course.targetKm}km · 계산 버전 {course.snapshot.engineVersion}</Text>
+        <Text style={styles.description}>{courseShapes[course.shape]} · {course.lengthKm.toFixed(2)} km</Text>
+        <Text style={styles.description}>목표 거리 {course.targetKm} km</Text>
         <Text style={styles.description}>{course.source === 'synthetic' ? '가상 테스트 코스 · 실제 달릴 길이 아니에요.' : '저장한 OSM 도로 코스예요.'} 경로를 다시 계산하지 않고 저장 자료를 표시해요.</Text>
         {!simulation && <><View style={styles.map}><MapSurface styleUrl={background ? styleUrl ?? '' : ''} position={null} origin={course.snapshot.origin}
           routeOverlay={overlay} terrainOverlay={terrain.overlay} syntheticRoads={background ? undefined : emptyRoads} /></View>
@@ -121,7 +127,7 @@ export default function CourseScreen() {
         <Text style={styles.small}>계산 기준 {course.snapshot.origin.lat.toFixed(5)}, {course.snapshot.origin.lng.toFixed(5)}</Text>
         <Text style={styles.small}>순환 코스 어디서든 출발하고 원하는 방향으로 한 바퀴 달려요. 코스 밖에서는 보행 도로로 합류해요.</Text>
         {course.source === 'osm' && <ServiceTabLink href={{ pathname: '/run', params: { courseId: course.id } }} asChild><Pressable testID="course-run" accessibilityRole="button" style={styles.button}><Text>이 코스로 러닝 준비</Text></Pressable></ServiceTabLink>}
-        <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')} · 점수는 후보 비교용이며 일치율이 아니에요.</Text>
+        <Text style={styles.small}>저장 {new Date(course.createdAt).toLocaleString('ko-KR')}</Text>
         <Pressable testID="course-simulation-toggle" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => { setBackground(false); setSimulation(value => !value); }}><Text>{simulation ? '시뮬레이션 닫기' : '코스 시뮬레이션 시작'}</Text></Pressable>
         {simulation && <SimulationPanel key={`${course.id}-${course.updatedAt}`} snapshot={course.snapshot} />}
         <Link href={{ pathname: '/guidance', params: { courseId: course.id } }} asChild>
@@ -135,18 +141,18 @@ export default function CourseScreen() {
         <Pressable testID="course-rename" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void rename()}><Text>이름 변경 저장</Text></Pressable>
       </>}
       {supported && <Pressable accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => void refresh()}><Text>다시 읽기</Text></Pressable>}
-      {canDelete && <Pressable testID="course-delete" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => Alert.alert('코스를 삭제할까요?', '코스가 기기에서 삭제됩니다. 계정에 연결한 코스는 다음 동기화 때 서버와 다른 기기에서도 삭제됩니다. 삭제한 코스는 복원할 수 없어요.', [
+      {canDelete && loadedOwner===owner && <Pressable testID="course-delete" accessibilityRole="button" disabled={busy} style={styles.button} onPress={() => Alert.alert('코스를 삭제할까요?', '코스가 기기에서 삭제됩니다. 계정에 연결한 코스는 다음 동기화 때 서버와 다른 기기에서도 삭제됩니다. 과거 러닝 기록과 그 안에 저장된 코스 사본은 유지됩니다.', [
         { text: '취소', style: 'cancel' }, { text: '삭제', style: 'destructive', onPress: () => void remove() },
       ])}><Text style={styles.error}>코스 삭제</Text></Pressable>}
       <ServiceTabLink href={{ pathname: '/courses', params: { view: 'courses' } }} style={styles.link}>저장한 코스 목록</ServiceTabLink>
     </ScrollView>
   </SafeAreaView>;
 }
-const styles = StyleSheet.create({ screen: { flex: 1, backgroundColor: '#F6F5F0' }, content: { padding: 20, gap: 14 },
-  title: { fontSize: 26, fontWeight: '700', color: '#183C32' }, description: { color: '#57675F', fontSize: 15, lineHeight: 23 },
-  small: { color: '#57675F', fontSize: 12, lineHeight: 19 }, map: { height: 300, borderRadius: 12, overflow: 'hidden' },
-  button: { padding: 14, borderRadius: 10, backgroundColor: '#E8EDE7', alignItems: 'center' },
-  input: { borderWidth: 1, borderColor: '#8B9C90', padding: 14, borderRadius: 10, color: '#183C32' },
-  error: { color: '#A12F2F', lineHeight: 22 }, link: { color: '#23694C', padding: 10 },
+const styles = StyleSheet.create({ screen: { flex: 1, backgroundColor: '#FFFFFF' }, content: { padding: 24, gap: 16 },
+  title: { fontSize: 24, fontFamily: fonts.noto.black, color: '#000000' }, description: { color: '#757575', fontSize: 15, lineHeight: 23 },
+  small: { color: '#757575', fontSize: 12, lineHeight: 19 }, map: { height: 400, borderRadius: 20, overflow: 'hidden' },
+  button: { padding: 14, borderRadius: 10, backgroundColor: '#F4F6FA', alignItems: 'center' },
+  input: { borderWidth: 1, borderColor: '#8B9C90', padding: 14, borderRadius: 10, color: '#000000' },
+  error: { color: '#A12F2F', lineHeight: 22 }, link: { color: '#FB5603', padding: 10 },
   credits: { flexDirection: 'row', alignItems: 'center', gap: 10 }, logo: { width: 60, height: 16 },
 });

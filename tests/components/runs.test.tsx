@@ -1,3 +1,4 @@
+jest.mock('../../src/features/auth/use-auth', () => ({ useAuth: () => ({ready:true,account:null}) }));
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import RunsScreen from '../../src/features/running/RunsScreen';

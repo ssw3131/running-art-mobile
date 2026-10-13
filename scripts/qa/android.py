@@ -18,6 +18,7 @@ from sqlite_snapshot import query_snapshot
 from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5_geometry
 from home_states import verify_home_states, verify_home_result
 from course_generation import generation_flow, scaled_generation
+from service_s234 import service_s234
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -294,7 +295,7 @@ try:
             # Free GPS must start without a selected course. Preparation remains
             # selected intentionally, so verify it after the independent GPS run.
             steps += [('S0-04-save', save_and_home), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
-                      ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled),
+                      ('S0-05-preparation', q.course_preparation), ('S234-01-integrated', lambda: service_s234(q, launch)), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled),
                       ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         # The original S0 chain deliberately carries draft/navigation state.
         # S1 returns home and recreates the activity for font/density checks,

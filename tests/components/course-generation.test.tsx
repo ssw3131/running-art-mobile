@@ -1,3 +1,4 @@
+jest.mock('../../src/modules/image-contour/picker',()=>({pickContourImage:jest.fn()}));
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import CourseGenerationScreen from '../../src/features/course-generation/CourseGenerationScreen';

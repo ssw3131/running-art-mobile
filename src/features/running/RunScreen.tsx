@@ -1,7 +1,9 @@
 import { Link, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, AppState, Linking, Platform, ScrollView, Text } from 'react-native';
+import { ActivityIndicator, Alert, AppState, Linking, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppText as Text } from '@/components/ui';
+import { useAuth } from '@/features/auth/use-auth';
 import { getStorage } from '@/modules/storage/database';
 import { running } from '@/modules/running/runtime';
 import { MAX_GAP_MS, runErrorMessage, statusLabel, type Run, type RunPoint } from '@/modules/running/model';
@@ -13,6 +15,8 @@ import type { GuidanceOptions, RunGuidance } from '@/modules/running/guidance';
 import { guidanceNative } from '@/modules/guidance/native';
 
 export default function RunScreen() {
+  const auth=useAuth(),owner=auth.ready?auth.account?.id??'':null;
+  const [loadedOwner,setLoadedOwner]=useState<string|null>(null);
   const params = useLocalSearchParams<{ courseId?: string }>();
   const courseId = typeof params.courseId === 'string' ? params.courseId : undefined;
   const [guide, setGuide] = useState<RunGuidance | null>(null);
@@ -27,11 +31,12 @@ export default function RunScreen() {
     const path = key !== revision.current ? (active ? await repo.points(active.id) : []) : null;
     const guidance = active?.courseId ? await repo.guidance(active.id) : null;
     if (request !== generation.current) return;
-    setRun(active); setGuide(guidance); setNow(Date.now()); setReady(true);
+    setRun(active); setGuide(guidance); setLoadedOwner(owner); setNow(Date.now()); setReady(true);
     if (path) { setPoints(path); revision.current = key; }
-  }, []);
+  }, [owner]);
   useFocusEffect(useCallback(() => {
-    if (!supported) return;
+    if (!supported || owner===null) return;
+    setReady(false);setRun(null);setGuide(null);setError(''); revision.current='';
     setBusy(working.current);
     const request = ++generation.current;
     let polling = false, ticks = 0;
@@ -40,6 +45,7 @@ export default function RunScreen() {
       polling = true;
       try {
         if (ticks++ % 5 === 0) await running.monitor();
+        if(request!==generation.current)return;
         await refresh();
         if (request === generation.current && running.error()) setError(running.error()!);
       } catch (cause) { if (request === generation.current) setError(runErrorMessage(cause)); }
@@ -48,7 +54,7 @@ export default function RunScreen() {
     void poll(); const timer = setInterval(() => void poll(), 1000);
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') { ticks = 0; void poll(); } });
     return () => { generation.current++; running.cancelPreparation(); clearInterval(timer); subscription.remove(); };
-  }, [refresh, supported]));
+  }, [refresh, supported,owner]));
   async function act(action: () => Promise<unknown>) {
     if (working.current) return;
     working.current = true; setBusy(true); setError('');
@@ -70,7 +76,7 @@ export default function RunScreen() {
   function finish() {
     if (!run) return;
     const id = run.id;
-    Alert.alert(run.courseOutcome === 'arrival-pending' ? '완주 기록을 저장할까요?' : '러닝을 종료할까요?', '현재까지 기록을 저장합니다. 동기화를 켜둔 계정의 기록은 연결되면 서버에도 저장됩니다.', [
+    Alert.alert(run.courseOutcome === 'arrival-pending' ? '완주 기록을 저장할까요?' : '러닝을 종료할까요?', '현재까지 기록을 저장합니다. 종료 후에는 새 도전으로 시작하며, 여러 날의 기록을 합쳐 완주로 인정하지 않아요. 동기화를 켜둔 계정은 연결되면 서버에도 저장됩니다.', [
       { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.setParams({ courseId: undefined }); router.push({ pathname: '/runs/[id]', params: { id } }); }) },
     ]);
   }
@@ -78,6 +84,8 @@ export default function RunScreen() {
     if (!run) return;
     void act(async () => { await (await getStorage()).runs.setGuidanceOptions(run.id, value); if (!value.voice) guidanceNative?.silenceLive(); });
   }
+  const permission=()=>void Linking.openSettings().catch(()=>setError('앱 설정을 열지 못했어요. 기기 설정에서 위치 권한을 확인해 주세요.'));
+  if(run && guide && loadedOwner===owner) return <LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPermission={permission} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/>;
   const last = points[points.length - 1];
   return <SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>{guide || courseId ? '코스 러닝' : '러닝 기록'}</Text>
@@ -87,12 +95,11 @@ export default function RunScreen() {
       {busy && !run && courseId && <RunButton title="합류 경로 준비 취소" id="run-preparation-cancel" onPress={() => running.cancelPreparation()} />}
       {!!error && <Text testID="run-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}
       {!ready && <RunButton title="다시 불러오기" id="run-retry" disabled={busy} onPress={() => void act(async () => { await running.recover(); await refresh(); })} />}
-      {run && <>
+      {run && loadedOwner===owner && <>
         {courseId && courseId !== run.courseId && <Text style={styles.body}>이미 진행 중인 러닝이 있어요. 먼저 이 기록을 재개하거나 종료해 주세요.</Text>}
         <Text style={styles.title} testID="run-status">{statusLabel[run.status]}</Text>
         {!!run.reason && <Text style={styles.error}>{run.reason}</Text>}
         <RunStats run={run} now={now} />
-        {guide && <LiveGuidancePanel run={run} guide={guide} points={points} now={now} busy={busy} onOptions={options} />}
         {run.status === 'running' && <Text testID="run-signal" style={styles.body}>{!last || now - last.timestamp > MAX_GAP_MS ? 'GPS 신호를 기다리고 있어요. 하늘이 열린 곳으로 이동해 주세요. 공백 구간은 거리에 더하지 않아요.' : `GPS 수신 중 · 마지막 정확도 ±${Math.round(last.accuracy!)}m`}</Text>}
         {!guide && <><RunPath points={points} /><Text style={styles.body}>배경 지도 없이 저장한 궤적을 표시해요. 일시정지·GPS 공백은 선을 끊어 표시합니다.</Text></>}
       </>}
