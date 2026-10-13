@@ -50,6 +50,7 @@
 | 개발 | [영구 도로 캐시](development/road-cache.md) | SQLite 저장·오프라인 조회·취소·손상 복구·용량·별도 검증 화면 |
 | 계획 | [단계별 개발](planning/roadmap.md) | 순서와 완료 조건 |
 | 계획 | [모바일 독립 서버 전략](planning/server-strategy.md) | 테스트 프로젝트 분리, 도로 공급·회원·커뮤니티 구성, 무료 출시와 유료화 후속 범위 |
+| 계획 | [Supabase DB 개선 방향](planning/database-improvement-direction.md) | 검토안: 적용 이력 대조·S1 동의·S7 권한·통계와 자료 증가 대응, 미구현 |
 | 계획 | [서버 서비스와 가입 준비 안내](planning/cloud-services-and-accounts.md) | Cloudflare·Supabase·MapTiler 역할, AWS 비교, 서버 이전, 지금과 출시 전 계정 준비 |
 | 계획 | [도로 공급과 지도 비용 및 라이선스 핵심 정리](planning/roads-maps-costs-licensing-summary.md) | 속도 원인·전국 도로·압축/갱신·R2 요금·지도 교체·OSM 이용 조건 |
 | 개발 | [브랜치·CI 운영](development/verification-ci.md) | PR 필수 검사·트리거·재현 명령·화면 기준 검토 |
