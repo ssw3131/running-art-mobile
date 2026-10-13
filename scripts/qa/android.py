@@ -19,6 +19,7 @@ from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5
 from home_states import verify_home_states, verify_home_result
 from course_generation import generation_flow, scaled_generation
 from service_s234 import service_s234
+from storage_readiness import wait_for_storage
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -292,7 +293,7 @@ try:
             q.shell('pm', 'grant', q.APP, 'android.permission.' + permission)
         if int(environment['api']) >= 33:
             q.shell('pm', 'grant', q.APP, 'android.permission.POST_NOTIFICATIONS')
-        launch(); q.snapshot('empty'); q.seed()
+        launch(); wait_for_storage(q); q.snapshot('empty'); q.seed()
         original_fixture = preserved_fixture()
         steps = [('S0-01-maestro', maestro_navigation), ('S1-02-home-states', lambda: verify_home_states(q, launch)),
                  ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
@@ -337,7 +338,7 @@ try:
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
         pin_display(q.OUT)
         # Fixed visual fixtures, independent of the timestamped GPS scenario.
-        q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); launch(); q.seed()
+        q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); launch(); wait_for_storage(q); q.seed()
         capture_visuals()
         result['status'] = 'passed'
         result['finishedAt'] = datetime.now(timezone.utc).isoformat()
