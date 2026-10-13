@@ -235,6 +235,29 @@ def saved_restart():
     assert q.find(q.capture('saved-course-restart'), 'course-title') is not None
     q.tap('service-back'); q.tap('tab-home')
 
+
+def signup_entry():
+    # Read-only guest flow: no real social account or product fixtures.
+    q.tap('tab-home'); q.seek('home-signup'); q.tap('home-signup')
+    tree = q.capture('signup-entry')
+    assert q.find(tree, 'signup-entry') is not None
+    assert not any('5회 무료' in n.get('text', '') for n in tree.iter('node'))
+    q.seek('signup-mode'); q.tap('signup-mode'); q.capture('signup-login')
+    q.seek('signup-guest'); q.tap('signup-guest')
+    assert q.find(q.capture('signup-guest-return'), 'tab-home').get('selected') == 'true'
+    q.tap('tab-account'); q.seek('account-signup'); q.tap('account-signup')
+    q.shell('input', 'keyevent', '4')
+    time.sleep(1)
+    assert q.find(q.capture('signup-account-back'), 'tab-account').get('selected') == 'true'
+    try:
+        q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
+        launch('account-entry')
+        q.capture('signup-large-font')
+        q.seek('signup-guest'); q.tap('signup-guest')
+        assert q.find(q.capture('signup-large-font-return'), 'tab-home').get('selected') == 'true'
+    finally:
+        q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
+
 try:
     for attempt in range(1, args.repeat + 1):
         q.OUT = args.output / f'attempt-{attempt:02}'
@@ -250,7 +273,7 @@ try:
         launch(); q.snapshot('empty'); q.seed()
         original_fixture = preserved_fixture()
         steps = [('S0-01-maestro', maestro_navigation),
-                 ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
+                 ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback), ('S1-01-signup-entry', signup_entry)]
         if not args.smoke:
             # Free GPS must start without a selected course. Preparation remains
             # selected intentionally, so verify it after the independent GPS run.

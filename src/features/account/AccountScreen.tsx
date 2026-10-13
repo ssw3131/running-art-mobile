@@ -9,9 +9,11 @@ import { signInProviderLabels } from '@/modules/auth/providers';
 import { accountWithdrawal } from '@/modules/account/withdrawal-runtime';
 import { useAccountData } from '@/features/account/use-account';
 import { AccountButton, AccountCard, AccountPage, AccountRow, ProfileAvatar, accountStyles as s, useAccountColors } from '@/features/account/ui';
+import { useMembership } from '@/features/membership/use-membership';
 
 export default function AccountScreen() {
   const auth = useAuth(), data = useAccountData();
+  const registration = useMembership();
   const withdrawal = useSyncExternalStore(accountWithdrawal.subscribe, accountWithdrawal.getSnapshot, accountWithdrawal.getSnapshot);
   const sync = useSyncExternalStore(personalSync.subscribe, personalSync.getSnapshot, personalSync.getSnapshot);
   const colors = useAccountColors(data.preferences.theme);
@@ -30,8 +32,10 @@ export default function AccountScreen() {
       {auth.account ? <>
         <Text style={[s.body, { color: colors.muted }]}>연결 계정 · {auth.account.providers.map(providerLabel).join(', ') || '소셜 계정'}</Text>
         <AccountButton id="edit-profile" title="프로필 편집" colors={colors} disabled={auth.busy} secondary onPress={() => router.push('/account-profile')} />
+        {registration.owner === auth.account.id && registration.status !== 'complete' && <AccountButton id="account-consent" title="가입 정보 · 약관 확인" colors={colors} secondary onPress={() => router.push('/account-signup')} />}
       </> : <>
         <Text style={[s.body, { color: colors.muted }]}>로그인 없이도 기기에 코스와 러닝 기록을 저장할 수 있어요. 로그인 후 동기화를 선택하면 내 기록을 서버에 보관하고 복원할 수 있습니다.</Text>
+        <AccountButton id="account-signup" title="회원가입 · 로그인 안내" colors={colors} secondary disabled={!auth.ready || auth.busy} onPress={() => router.push('/account-entry')} />
         {auth.providers.map(provider => <AccountButton key={provider} id={`${provider.replace('custom:', '')}-sign-in`}
           title={`${signInProviderLabels[provider]}로 계속하기`} colors={colors} disabled={disabled}
           onPress={() => { void authentication.signIn(provider); }} />)}

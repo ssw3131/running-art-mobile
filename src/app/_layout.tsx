@@ -13,6 +13,8 @@ import { runErrorMessage } from '@/modules/running/model';
 import { useAuth } from '@/features/auth/use-auth';
 import { personalSync } from '@/modules/sync/runtime';
 import { accountWithdrawal } from '@/modules/account/withdrawal-runtime';
+import { membership } from '@/modules/membership/runtime';
+import { MembershipPrompt } from '@/features/membership/MembershipPrompt';
 
 // A cold detail/deep link has a stable service-home destination for Back.
 export const unstable_settings = { initialRouteName: '(tabs)' };
@@ -25,13 +27,18 @@ export default function RootLayout() {
   const [recoveryAttempt, setRecoveryAttempt] = useState(0);
   useEffect(() => {
     void authentication.start();
+    membership.start();
     void accountWithdrawal.start();
     personalSync.start();
     personalSync.setActive(AppState.currentState==='active');
     authentication.setActive(AppState.currentState === 'active');
     const links = Linking.addEventListener('url', ({ url }) => { void authentication.handleUrl(url); });
     void Linking.getInitialURL().then(url => { if (url) return authentication.handleUrl(url); }).catch(() => undefined);
-    const lifecycle = AppState.addEventListener('change', state => {authentication.setActive(state === 'active');personalSync.setActive(state==='active');});
+    const lifecycle = AppState.addEventListener('change', state => {
+      authentication.setActive(state === 'active'); personalSync.setActive(state === 'active');
+      // Returning from the photo picker must not reset the open consent form.
+      if (state === 'active' && membership.getSnapshot().status !== 'required') void membership.reload();
+    });
     return () => { links.remove(); lifecycle.remove(); authentication.setActive(false);personalSync.setActive(false); };
   }, []);
   useEffect(() => {
@@ -57,6 +64,8 @@ export default function RootLayout() {
         <Stack.Screen name="service-info" options={{ title: '서비스 안내 및 지원', header: () => <ServiceHeader title="서비스 안내 및 지원" back menu={false} /> }} />
         <Stack.Screen name="development" options={{ title: '개발 도구' }} />
         <Stack.Screen name="account-profile" options={{ title: '프로필 편집' }} />
+        <Stack.Screen name="account-entry" options={{ title: '가입 · 로그인' }} />
+        <Stack.Screen name="account-signup" options={{ title: '가입 정보 · 약관 동의' }} />
         <Stack.Screen name="account-settings" options={{ title: '설정' }} />
         <Stack.Screen name="account-sync" options={{ title: '개인 기록 동기화' }} />
         <Stack.Screen name="account-withdraw" options={{ title: '회원 탈퇴' }} />
@@ -71,6 +80,7 @@ export default function RootLayout() {
         <Stack.Screen name="road-cache-lab" options={{ title: '영구 도로 캐시' }} />
         <Stack.Screen name="environment" options={{ title: '개발 환경' }} />
       </Stack>
+      <MembershipPrompt />
     </SafeAreaView></FontGate></ThemeProvider>
   );
 }

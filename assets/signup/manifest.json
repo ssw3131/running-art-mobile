@@ -1,0 +1,56 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "nodes": [
+    "253:7200",
+    "253:7124",
+    "229:2153"
+  ],
+  "assets": [
+    {
+      "name": "avatar-presets.png",
+      "bytes": 1697021,
+      "sha256": "37a540b2f8a01f1912033e777616b3360db9d3cb25fae29024c66230772d04c9",
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "name": "brand-name.png",
+      "bytes": 719873,
+      "sha256": "fad9ff94848b8dad4c7359f0346e6c02bf0db0245021661ba0aba3f92b71c0ca",
+      "width": 2172,
+      "height": 724
+    },
+    {
+      "name": "brand-runner.png",
+      "bytes": 477925,
+      "sha256": "fc0d48aa7b9c7cc26222ca90326eac23c4399a218e0fe8e02da10323db679824",
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "name": "gallery.svg",
+      "bytes": 766,
+      "sha256": "62c684e25b9110cd29144ff9eac4e9e310695e6f37023b55c31a1d0a9d147c01"
+    },
+    {
+      "name": "google.svg",
+      "bytes": 11059,
+      "sha256": "f414e6433fd35051e9cf46a0596414e0b4001f2f345083855b34430bddf0b5fb"
+    },
+    {
+      "name": "kakao.svg",
+      "bytes": 572,
+      "sha256": "e1edf5dfa882ce76ce4ab3a5bedf0fc977ff2782e7e60c3395ae42df436d539e"
+    },
+    {
+      "name": "lock.svg",
+      "bytes": 1182,
+      "sha256": "ec3d503adb8964fe678caa27e3e3fe6d93ad5e225432d25853ed4acc839ec49f"
+    },
+    {
+      "name": "naver.svg",
+      "bytes": 354,
+      "sha256": "4e24b753ace9ee68c14c794f81d3e32674879a68c2258b641c060fcf20a50e95"
+    }
+  ]
+}
