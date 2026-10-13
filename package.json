@@ -8,6 +8,7 @@
     "@maplibre/maplibre-react-native": "11.4.0",
     "@noble/hashes": "2.0.1",
     "@supabase/supabase-js": "2.117.2",
+    "base64-js": "1.5.1",
     "expo": "~57.0.25",
     "expo-constants": "~57.0.19",
     "expo-crypto": "~57.0.3",

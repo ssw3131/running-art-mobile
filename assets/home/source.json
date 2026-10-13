@@ -1,0 +1,59 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "queriedAt": "2026-10-13",
+  "frames": [
+    "2:855",
+    "2:1168",
+    "5:73"
+  ],
+  "assets": [
+    {
+      "file": "intro.png",
+      "node": "2:1059",
+      "bytes": 2559110,
+      "sha256": "1177ba08edace800c9b4e42d9bc119b594c52238bcae3d85423dffe7fac25a77"
+    },
+    {
+      "file": "heart.svg",
+      "node": "I248:3827;248:3449;248:3775",
+      "bytes": 598,
+      "sha256": "70d336dfdbb257b4d645c32cc8f788effe393242a2eed46d9f3b24ab0ffb5fec"
+    },
+    {
+      "file": "fish.svg",
+      "node": "I248:3827;248:4002;248:3822",
+      "bytes": 1704,
+      "sha256": "3dfb2b9a32dea348340a55dc75b3dae99908b97aed7139e2920ecc57a9492432"
+    },
+    {
+      "file": "dog.svg",
+      "node": "I248:3827;248:4017;248:3822",
+      "bytes": 3382,
+      "sha256": "8f87f16235acc3558ce69a7c0be18091ab582aca7286d1fbb89c5db2cf31bb64"
+    },
+    {
+      "file": "calendar.svg",
+      "node": "6:67",
+      "bytes": 543,
+      "sha256": "0e5dd5a0becab5c820b6996078779717c057d61d221318bca941e4de7ee369d3"
+    },
+    {
+      "file": "sneaker.svg",
+      "node": "5:148",
+      "bytes": 2637,
+      "sha256": "0a101beb24fa4b2ea46abdb37861afe5ffb0d4c3957454b707c3a3efb2730ba9"
+    },
+    {
+      "file": "trophy.svg",
+      "node": "8:111",
+      "bytes": 1718,
+      "sha256": "fe6d4efe397c15c752c3a7110d3e23c96a019641487c932ad781c229ee8c1f38"
+    },
+    {
+      "file": "more.png",
+      "node": "2:1078",
+      "bytes": 261,
+      "sha256": "ab912ceff97c2d1aade367fbc4dc760684ecfc2a0f717cd1344e9beba4a093e2"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, AppState, Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -43,6 +43,8 @@ function locationMessage(state: CenterState) {
 }
 
 export default function RouteLabScreen() {
+  const homeParams = useLocalSearchParams<{ homeShape?: string; homeRequest?: string }>();
+  const appliedHomeRequest = useRef<string | undefined>(undefined);
   const [datasetId, setDatasetId] = useState<DatasetId>('seoul');
   const [diagnostics, setDiagnostics] = useState(false);
   const [shape, setShape] = useState<ShapeId>('heart');
@@ -85,6 +87,13 @@ export default function RouteLabScreen() {
     if (running.current) setState({ kind: 'cancelled', message });
     running.current = false;
   }, [jobs, stopTimer]);
+  useFocusEffect(useCallback(() => {
+    if (!homeParams.homeRequest || homeParams.homeRequest === appliedHomeRequest.current) return;
+    appliedHomeRequest.current = homeParams.homeRequest;
+    if (homeParams.homeShape !== 'heart' && homeParams.homeShape !== 'fish') return;
+    cancel(); setShape(homeParams.homeShape); setDrawingOpen(false);
+    if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
+  }, [homeParams.homeRequest, homeParams.homeShape, cancel, completed]));
   useFocusEffect(useCallback(() => {
     // A tab refocus must not replace the user's chosen center with GPS.
     if (datasetId === 'seoul' && !locatedOnEntry.current) {
