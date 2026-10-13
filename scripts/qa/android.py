@@ -16,6 +16,7 @@ import time
 from datetime import datetime, timezone
 from sqlite_snapshot import query_snapshot
 from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5_geometry
+from home_states import verify_home_states
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -278,7 +279,7 @@ try:
             q.shell('pm', 'grant', q.APP, 'android.permission.POST_NOTIFICATIONS')
         launch(); q.snapshot('empty'); q.seed()
         original_fixture = preserved_fixture()
-        steps = [('S0-01-maestro', maestro_navigation),
+        steps = [('S0-01-maestro', maestro_navigation), ('S1-02-home-states', lambda: verify_home_states(q, launch)),
                  ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
         if not args.smoke:
             # Free GPS must start without a selected course. Preparation remains

@@ -66,6 +66,8 @@ def find(tree, key):
 
 
 def tap(key):
+    if key in ['open-courses', 'open-runs']:
+        seek(key)
     tree = capture('current')
     n = find(tree, key)
     if n is None:
