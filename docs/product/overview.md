@@ -1,6 +1,6 @@
 # RunPen 모바일 제품 기획
 
-최종 전체 분석: **2026-10-11**, 구현 상태 갱신: **2026-10-14**. S0·S1 기반에 S2b/S2c·S3·S4를 통합했다. 로직/컴포넌트·격리 DB/API, Windows/Linux Android 전체 13단계와 자료 보존을 확인했으며 최종 PR/main 검증을 진행한다. S1 약관/동의 통합·CLI 이력표 등록, 실기기/운영 배포와 S5~S8은 후속이다. 전체 서비스 출시 완료와 구분한다. [현재 상태](../handoff/status.md)·[통합 계약](../development/course-archive-running.md).
+최종 전체 분석: **2026-10-11**, 구현 상태 갱신: **2026-10-14**. S0·S1 기반에 S2b/S2c·S3·S4를 통합했다. 로직/컴포넌트·격리 DB/API, Windows/Linux Android 전체 13단계와 자료 보존을 확인했으며 최종 PR/main API 36 전체 13단계·API 29 호환 5단계·4화면 차이 0까지 확인했다. S1 약관/동의 통합·CLI 이력표 등록, 실기기/운영 배포와 S5~S8은 후속이다. 전체 서비스 출시 완료와 구분한다. [현재 상태](../handoff/status.md)·[통합 계약](../development/course-archive-running.md).
 
 ## 이후 작업의 기준
 
