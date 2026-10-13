@@ -7,7 +7,9 @@ import { radius, size } from '@/theme/tokens';
 const providers = {
   kakao: { name: '카카오', background: '#FEE500', color: '#191919', source: require('../../../assets/signup/kakao.svg'), width: 26, height: 25 },
   'custom:naver': { name: '네이버', background: '#03A94D', color: '#FFFFFF', source: require('../../../assets/signup/naver.svg'), width: 22, height: 22 },
-  google: { name: 'Google', background: '#FFFFFF', color: '#191919', source: require('../../../assets/signup/google.svg'), width: 26.4565, height: 26.3695 },
+  // The original filtered SVG triggers emulator graphics crashes. Use its
+  // unchanged Figma PNG export so gradients do not execute in the Android GPU.
+  google: { name: 'Google', background: '#FFFFFF', color: '#191919', source: require('../../../assets/signup/google.png'), width: 26.4565, height: 26.3695 },
 };
 export function SocialButton({ provider, signup, disabled, busy, onPress }: {
   provider: SignInProvider; signup: boolean; disabled: boolean; busy: boolean; onPress(): void;

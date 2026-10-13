@@ -30,11 +30,11 @@ function SignupEditor() {
   const [picture, setPicture] = useState<ProfileInput['picture']>(auth.account?.picture ?? 'provider');
   const [photo, setPhoto] = useState<PreparedProfilePhoto | null>(null), [message, setMessage] = useState('');
   const [working, setWorking] = useState(false);
-  const photoRef = useRef<PreparedProfilePhoto | null>(null), lock = useRef(false), focused = useRef(false);
+  const photoRef = useRef<PreparedProfilePhoto | null>(null), lock = useRef(false), focused = useRef(false), mounted = useRef(true);
   const uploaded = useProfilePhoto(owner, picture === 'uploaded' && !photo ? auth.account?.photoPath : null);
   const photoUrl = picture === 'uploaded' ? photo?.uri ?? uploaded : picture === 'provider' ? auth.account?.avatarUrl : null;
   useFocusEffect(useCallback(() => { focused.current = true; return () => { focused.current = false; }; }, []));
-  useEffect(() => () => discardProfilePhoto(photoRef.current), []);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; discardProfilePhoto(photoRef.current); }; }, []);
   const alive = () => focused.current && !!owner && authentication.getSnapshot().account?.id === owner;
   const replacePhoto = (next: PreparedProfilePhoto | null) => { discardProfilePhoto(photoRef.current); photoRef.current = next; setPhoto(next); };
   const choose = async (preset?: number) => {
@@ -45,7 +45,7 @@ function SignupEditor() {
       if (!alive()) { discardProfilePhoto(next); return; }
       if (next) { replacePhoto(next); setPicture('uploaded'); }
     } catch (error) { if (alive()) setMessage(error instanceof StorageError ? error.message : '사진을 준비하지 못했어요. 다시 선택해 주세요.'); }
-    finally { lock.current = false; if (focused.current) setWorking(false); }
+    finally { lock.current = false; if (mounted.current) setWorking(false); }
   };
   const complete = async () => {
     const policy = registration.policy;
@@ -62,7 +62,7 @@ function SignupEditor() {
       const saved = await membership.accept({ policyId: policy.id, terms: true, privacy: true });
       if (saved && alive()) openServiceTab('/account');
     } catch (error) { if (alive()) setMessage(error instanceof StorageError ? error.message : '가입 정보를 저장하지 못했어요. 다시 시도해 주세요.'); }
-    finally { lock.current = false; if (focused.current) setWorking(false); }
+    finally { lock.current = false; if (mounted.current) setWorking(false); }
   };
   const busy = working || auth.busy || registration.busy;
   const body = !auth.account ? <Button label="로그인하고 계속하기" onPress={() => router.replace('/account-entry')} />

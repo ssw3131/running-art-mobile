@@ -14,6 +14,14 @@
 - PGlite: 기존 Auth 계정을 마이그레이션 전에 생성한 뒤 원래 전체 행 보존·가입 대기 이관 확인. SQL의 게시/필수/버전/요청 중복/타인/익명/탈퇴/RLS·메타데이터 보존과 시험 rollback 통과.
 - `npm run qa:fast` (`test-results/signup-fast/`): 타입·린트/서버 검사, 로직 419개, UI 7개, OpenAPI, 계정/공유 정책 전체 통과. 후속 검토에서 서버의 구버전 동의 거절 후 최신 본문 조회 검사 1개를 추가했다.
 - 추가 회귀를 포함한 가입 로직 9개와 Python 3개 통과. Android x86_64 release 빌드 통과(격리 QA용, 사용자 폰 배포본 아님).
+- PR [#6](https://github.com/ssw3131/running-art-mobile/pull/6) 첫 [CI](https://github.com/ssw3131/running-art-mobile/actions/runs/38330093216)에서 fast와 API 통과. 실제 Auth/RPC의 가입 대기·동시 제출·응답 재전송·타인/익명 접근·탈퇴 이력 삭제, 기존 Auth/Storage/빈 SQLite 왕복 2개 모두 통과.
+- 가입 화면 로딩/미게시/오류/확인된 완료와 사진 준비 중 화면 이탈 후 늦은 결과 폐기·로딩 해제 검사를 추가하여 로컬 UI 9개 통과. 타입/린트도 통과.
+
+## 실패와 수정 이력
+
+- 첫 Windows API 36 smoke와 첫 PR API 36은 가입 화면 진입 중 에뮬레이터 프로세스 종료로 실패했다. ADB offline 때문에 그 실행의 정리도 실패로 보존했다. Windows 직접 재현과 Vulkan 비활성 진단에서도 동일 종료를 확인했으며 Windows 이벤트 1000의 qemu 예외 코드는 `0xc0000005`였다. 앱 내부 완료로 간주하거나 최초 결과를 덮어쓰지 않았다.
+- Google 원본 SVG의 필터/그라데이션을 실행하는 경로를 Figma 원본 `248:3048`의 4배 PNG 내보내기로 바꾸었다. 원본 SVG/PNG·출처·해시는 함께 보존한다. 같은 API 36/Vulkan 기본 설정에서 수정 APK의 실제 가입 화면 진입과 캡처가 정상 동작했다. 후속 smoke는 별도 `test-results/signup-android-png/`에 기록한다.
+- 첫 PR API 29는 가입 버튼을 누르기 **전** UI 덤프 도우미가 `OK (1 test)`를 출력한 뒤 비정상 종료 코드를 반환해 실패했다. 앱의 가입 성공/실패로 분류하지 않으며 원본 아티팩트 `11782448192`를 보존한다. 해당 실행의 자료 정리는 통과했다. 검사 기준/재시도 정책은 낮추지 않았다.
 
 ## 진행 중·미검증
 

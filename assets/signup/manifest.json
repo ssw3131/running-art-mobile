@@ -51,6 +51,14 @@
       "name": "naver.svg",
       "bytes": 354,
       "sha256": "4e24b753ace9ee68c14c794f81d3e32674879a68c2258b641c060fcf20a50e95"
+    },
+    {
+      "name": "google.png",
+      "bytes": 8871,
+      "sha256": "0baac7a2a187426d8cfd4952d59c5371ab59709ec0602fe54524692726aaeee2",
+      "sourceNode": "248:3048",
+      "exportScale": 4,
+      "reason": "Figma original PNG render for Android SVG graphics compatibility"
     }
   ]
 }

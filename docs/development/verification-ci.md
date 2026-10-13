@@ -59,7 +59,7 @@ Python 격리 환경에 `scripts/qa/requirements.txt`를 설치하고 `python sc
 
 ## 실제 DB 통합
 
-Docker와 Supabase CLI 2.120.0이 필요하다. 전용 `runpen-ci` 로컬 스택에 네 마이그레이션을 적용하고 pgTAP, 기존 SQL 정책 검사, 실제 Auth·Storage·RPC와 두 빈 SQLite의 전체 내용 왕복을 검사한다. 서비스 키는 로컬 상태 파일에서만 읽고 아티팩트에 올리지 않는다. URL은 loopback만 허용한다.
+Docker와 Supabase CLI 2.120.0이 필요하다. 전용 `runpen-ci` 로컬 스택에 저장소의 전체 마이그레이션을 적용하고 pgTAP, SQL 정책 검사, 실제 Auth·Storage·RPC와 두 빈 SQLite의 전체 내용 왕복을 검사한다. S1 회원/동의의 기존 계정 이관·동시 제출·본인 접근·탈퇴 검사도 포함한다. 서비스 키는 로컬 상태 파일에서만 읽고 아티팩트에 올리지 않는다. URL은 loopback만 허용한다.
 
 ```sh
 supabase start
@@ -82,7 +82,7 @@ python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outp
 
 전용 `RunPen_CI` 또는 `RunningArt_UI_QA` 에뮬레이터만 받으며 물리 폰은 거부한다. 전용 에뮬레이터의 앱 데이터를 매 회 초기화한다. 공개 fixture 생성부터 탭·입력 보존·OAuth 취소·저장/재실행·출발 준비·주입 GPS·중단 복원·GPX 취소·큰 글씨/키보드까지 검사하고, 실패해도 시험 자료와 도우미를 정리한다. 테스트 상태를 주입하는 제품 코드나 별도 앱 ID를 추가하지 않는다. CI APK는 개발 머신의 서명·환경값을 사용하지 않으므로 사용자 폰 설치용으로 배포하지 않는다.
 
-API 36은 위 전체 흐름과 4개 정적 화면 비교를 실행한다. main에서 추가하는 API 29의 `--smoke`는 5탭/메뉴, 상세/뒤로/입력 보존, OAuth 취소 복귀의 3단계와 원본 보존·정리·화면 캡처를 실행한다. API 29의 전체 GPS 회귀나 정적 픽셀 기준 통과로 해석하지 않는다.
+API 36은 위 전체 흐름과 4개 정적 화면 비교를 실행한다. main에서 추가하는 API 29의 `--smoke`는 5탭/메뉴, 상세/뒤로/입력 보존, OAuth 취소 복귀, S1 가입 진입/게스트 복귀/큰 글씨의 4단계와 원본 보존·정리·화면 캡처를 실행한다. API 29의 전체 GPS 회귀나 정적 픽셀 기준 통과로 해석하지 않는다.
 
 Android 10의 시스템 SQLite에는 `-json`이 없어 전용 에뮬레이터에서 [온라인 백업](https://www.sqlite.org/backup.html)으로 WAL까지 일관된 사본을 만든 뒤 호스트 Python으로 조회한다. 문자열/줄바꿈·숫자·NULL 타입을 보존하고 성공/실패 모두 임시 사본을 삭제한다. 제품 앱 DB 구현을 바꾸는 기능이 아니다.
 

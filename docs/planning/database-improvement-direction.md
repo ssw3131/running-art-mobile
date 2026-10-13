@@ -22,7 +22,7 @@
 
 닉네임·사진 표시용 계정 메타데이터와 가입 완료·동의 이력의 책임을 분리한다. 회원 상태와 동의는 서버가 관리하는 테이블·함수로 설계하고, 사용자 수정 가능한 계정 메타데이터를 서비스 권한의 근거로 사용하지 않는다. [Supabase 접근 권한 지침](https://supabase.com/docs/guides/database/postgres/row-level-security)
 
-S1에서 구체화할 항목은 다음과 같다. 테이블명과 최종 스키마는 아직 확정하지 않는다.
+아래는 최초 S1 검토 항목이다. **10-13 가입 우선 구현에서 `memberships`·`membership_consents`·`membership_policies`와 RPC/기존 계정 대기 이관을 구체화했다.** [구현 계약](../development/signup-consent.md)·[검증](../quality/signup-consent-20261013.md). 운영 구조/이력 대조와 실제 DB 적용·최종 약관 게시는 후속이며, 이 문서만으로 운영 DB가 변경된 것은 아니다.
 
 - 계정별 가입 진행·완료 상태와 중단 후 재진입 처리.
 - 약관 종류·버전, 필수·선택 구분, 동의 또는 철회 상태와 서버 기록 시각. 보관·삭제 정책은 제품 결정과 함께 확정한다.
