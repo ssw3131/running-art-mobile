@@ -26,7 +26,9 @@ test('UI-HOME-01: loading/error are distinct from initial, explicit retry shows 
   await fireEvent.press(screen.getByTestId('home-shape-fish'));
   await fireEvent.press(screen.getByTestId('open-route-lab'));
   expect(mockNavigate.mock.lastCall?.[0]).toMatchObject({ pathname: '/route-lab', params: { homeShape: 'fish' } });
-  expect(screen.getByTestId('home-shape-dog')).toBeDisabled();
+  expect(screen.getByTestId('home-shape-dog')).toBeEnabled();
+  await fireEvent.press(screen.getByTestId('home-shape-dog'));await fireEvent.press(screen.getByTestId('open-route-lab'));
+  expect(mockNavigate.mock.lastCall?.[0]).toMatchObject({pathname:'/route-lab',params:{homeShape:'dog'}});
 });
 
 test('UI-HOME-02: active has priority, percentage is independent of distance and action only navigates', async () => {

@@ -16,15 +16,28 @@ public class RunningUiDump extends UiAutomatorTestCase {
     if (receipt.exists() && !receipt.delete()) throw new Exception("Cannot replace previous dump receipt");
     if (target.exists() && !target.delete()) throw new Exception("Cannot replace previous UI dump");
     if (nested.exists() && !nested.delete()) throw new Exception("Cannot replace nested UI dump");
+    // dumpWindowHierarchy silently returns when the new accessibility
+    // connection has no active root. Poll on the SAME connection, bounded;
+    // reconnecting every 500ms can keep restarting that readiness period.
     Thread.sleep(500);
-    getUiDevice().dumpWindowHierarchy("running-qa.xml");
-    if (!target.isFile() && nested.isFile()) {
-      try (java.io.InputStream in = new java.io.FileInputStream(nested);
-           java.io.OutputStream out = new java.io.FileOutputStream(target)) {
-        byte[] buffer = new byte[8192]; int size;
-        while ((size = in.read(buffer)) != -1) out.write(buffer, 0, size);
+    long deadline = android.os.SystemClock.uptimeMillis() + 5000;
+    int attempts = 0;
+    do {
+      attempts++;
+      getUiDevice().dumpWindowHierarchy("running-qa.xml");
+      if (!target.isFile() && nested.isFile()) {
+        try (java.io.InputStream in = new java.io.FileInputStream(nested);
+             java.io.OutputStream out = new java.io.FileOutputStream(target)) {
+          byte[] buffer = new byte[8192]; int size;
+          while ((size = in.read(buffer)) != -1) out.write(buffer, 0, size);
+        }
       }
-    }
+      if (target.isFile() && target.length() > 0) break;
+      if (target.exists() && !target.delete()) throw new Exception("Cannot remove empty dump");
+      if (nested.exists() && !nested.delete()) throw new Exception("Cannot remove empty nested dump");
+      Thread.sleep(250);
+    } while (android.os.SystemClock.uptimeMillis() < deadline);
+    System.out.println("RUNPEN_DUMP_ATTEMPTS=" + attempts);
     if (!target.isFile() || target.length() == 0) throw new Exception("No fresh UI hierarchy");
     String token = getParams().getString("runpenDumpToken", "");
     if (!token.isEmpty()) {

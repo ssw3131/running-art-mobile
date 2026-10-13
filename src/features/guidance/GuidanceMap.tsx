@@ -9,7 +9,7 @@ import type { GuidanceState } from '@/modules/guidance/engine';
 const basicStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#EDEFEA' } }] };
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const line = (coordinates: Coordinate[]) => ({ type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates } });
-export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean }) {
+export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true, recenterAtBottom = false }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean; recenterAtBottom?: boolean }) {
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
   const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
@@ -48,7 +48,7 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
         <Layer id="guidance-dot" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#147FC1', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 4 }} />
       </GeoJSONSource>}
     </Map>
-    <Pressable testID="guidance-recenter" accessibilityLabel={positionLabel} accessibilityRole="button" style={styles.recenter} onPress={() => setFollow(true)}><Text style={styles.cross}>◎</Text></Pressable>
+    <Pressable testID="guidance-recenter" accessibilityLabel={positionLabel} accessibilityRole="button" style={[styles.recenter,recenterAtBottom&&{top:undefined,bottom:44}]} onPress={() => setFollow(true)}><Text style={styles.cross}>◎</Text></Pressable>
     <View style={styles.credits}>
       <Text style={styles.credit}>{online ? '© OpenStreetMap contributors' : '배경 지도 없이 경로 표시'}</Text>
       {online && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/')}><Image source={require('@/assets/images/maptiler-logo.png')} style={{ width: 60, height: 16 }} resizeMode="contain" /></Pressable>}

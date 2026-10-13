@@ -37,6 +37,12 @@ def capture(name):
         command = ('uiautomator', 'runtest', '/data/local/tmp/running-ui-dump.jar', '/system/framework/android.test.base.jar', '-e', 'runpenDumpToken', token, '-c', 'RunningUiDump')
         process = subprocess.run([str(ADB), '-s', SERIAL, 'shell', shlex.join(command)], capture_output=True, timeout=45)
         result = (process.stdout + process.stderr).decode(errors='replace')
+        readiness = re.search(r'RUNPEN_DUMP_ATTEMPTS=(\d+)', result)
+        if (readiness and int(readiness.group(1)) > 1) or 'No fresh UI hierarchy' in result:
+            with (OUT / 'ui-dump-readiness.jsonl').open('a', encoding='utf8') as log:
+                log.write(json.dumps({'capture': name, 'connectionAttempt': attempt + 1,
+                    'rootAttempts': int(readiness.group(1)) if readiness else None,
+                    'freshHierarchy': 'OK (1 test)' in result and 'FAILURES!!!' not in result}) + '\n')
         if 'OK (1 test)' in result and 'FAILURES!!!' not in result:
             # API 29 may return a nonzero shell exit after the test has finished.
             # Require a fresh per-call device receipt as well as JUnit success;

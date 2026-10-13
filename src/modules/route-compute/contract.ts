@@ -3,6 +3,8 @@ import type { Origin, SearchOptions } from '../route-engine/types.ts';
 import type { Calculation } from '../route-engine/runner.ts';
 import { nationalRegionId } from '../road-data/national-format.ts';
 
+import { isGenerationDistance } from '../route-engine/service-shapes.ts';
+
 export const COMPUTE_CONTRACT = 'runpen-routes-v1';
 export const MAX_REQUEST_BYTES = 16384;
 export const MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
@@ -16,7 +18,7 @@ export function parseComputeRequest(value: unknown): ComputeRequest {
   if (!value || typeof value !== 'object') return fail();
   const data = value as ComputeRequest, o = data.options;
   if (data.contract !== COMPUTE_CONTRACT || !data.origin || !Number.isFinite(data.origin.lat) || !Number.isFinite(data.origin.lng) ||
-    !o || o.version !== '0.2' || o.mode !== 'free-loop' || ![3, 5, 7].includes(o.targetKm) || o.radiusKm !== 2 ||
+    !o || o.version !== '0.2' || o.mode !== 'free-loop' || !isGenerationDistance(o.targetKm) || o.radiusKm !== 2 ||
     typeof data.refresh !== 'boolean') return fail();
   nationalRegionId(data.origin);
   if (o.shape === 'custom') validateCustomTemplate(o.customTemplate!);

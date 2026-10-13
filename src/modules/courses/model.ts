@@ -9,6 +9,7 @@ export const COURSE_NAME_MAX = 80;
 export const COURSE_JSON_MAX = 2 * 1024 * 1024;
 export const COURSE_POINTS_MAX = 20000;
 export const courseShapes: Record<ShapeId, string> = {
+  dog: '강아지', person: '사람', bone: '뼈다귀', turtle: '거북이', icecream: '아이스크림', strawberry: '딸기', cloud: '구름', crown: '왕관',
   heart: '하트', star: '별', cat: '고양이', rabbit: '토끼', house: '집', diamond: '다이아몬드', bolt: '번개', fish: '물고기', arrow: '화살표', custom: '직접 그린 도형',
 };
 export type CourseSnapshot = {
