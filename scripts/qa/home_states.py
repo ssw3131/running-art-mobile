@@ -22,6 +22,38 @@ def seek_shape(q, key, direction):
     raise RuntimeError('Horizontal shape not reached: ' + key)
 
 
+def verify_home_result(q):
+    """Changing the next shape must preserve and identify the previous result."""
+    q.tap('tab-courses'); seek_above(q, 'candidate-0')
+    candidate = q.find(q.capture('home-existing-result-before'), 'candidate-0')
+    previous = candidate.get('content-desc')
+    assert previous and '1순위' in previous
+    q.tap('tab-home'); q.seek('home-shape-fish'); q.tap('home-shape-fish'); q.tap('open-route-lab')
+    seek_above(q, 'calculation-done')
+    tree = q.capture('home-existing-result-notice')
+    assert q.find(tree, '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.') is not None
+    q.seek('candidate-0')
+    candidate = q.find(q.capture('home-existing-result-preserved'), 'candidate-0')
+    assert candidate.get('content-desc') == previous
+
+
+def seek_above(q, key):
+    """Return up a retained form; offscreen nodes may be absent from Android XML."""
+    for _ in range(16):
+        tree = q.capture('current')
+        scrolls = [n for n in tree.iter('node') if n.get('scrollable') == 'true' and 'Horizontal' not in n.get('class', '')]
+        bounds = [list(map(int, re.findall(r'\d+', n.get('bounds')))) for n in scrolls]
+        left, top, right, bottom = max(bounds, key=lambda b: b[1])
+        node = q.find(tree, key)
+        if node is not None:
+            x1, y1, x2, y2 = map(int, re.findall(r'\d+', node.get('bounds')))
+            if x2 > x1 and y2 - y1 >= 30 and top <= y1 < y2 <= bottom:
+                return
+        x, height = (left + right) // 2, bottom - top
+        q.shell('input', 'swipe', str(x), str(top + int(height * .2)), str(x), str(top + int(height * .8)), '350')
+    raise RuntimeError('Control above retained scroll not reached: ' + key)
+
+
 def verify_home_states(q, launch):
     run_id = '9' * 32
     assert not q.query(f"SELECT id FROM running_sessions WHERE id='{run_id}'")

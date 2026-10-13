@@ -92,7 +92,8 @@ export default function RouteLabScreen() {
     appliedHomeRequest.current = homeParams.homeRequest;
     if (homeParams.homeShape !== 'heart' && homeParams.homeShape !== 'fish') return;
     cancel(); setShape(homeParams.homeShape); setDrawingOpen(false);
-  }, [homeParams.homeRequest, homeParams.homeShape, cancel]));
+    if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
+  }, [homeParams.homeRequest, homeParams.homeShape, cancel, completed]));
   useFocusEffect(useCallback(() => {
     // A tab refocus must not replace the user's chosen center with GPS.
     if (datasetId === 'seoul' && !locatedOnEntry.current) {

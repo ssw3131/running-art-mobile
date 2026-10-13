@@ -16,7 +16,7 @@ import time
 from datetime import datetime, timezone
 from sqlite_snapshot import query_snapshot
 from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5_geometry
-from home_states import verify_home_states
+from home_states import verify_home_states, verify_home_result
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -25,7 +25,7 @@ parser.add_argument('--apk', required=True, type=pathlib.Path)
 parser.add_argument('--repeat', type=int, default=1)
 parser.add_argument('--smoke', action='store_true')
 parser.add_argument('--signup-only', action='store_true', help='Run only S1 entry and accessibility; never substitutes for full CI')
-parser.add_argument('--home-only', action='store_true', help='Run only S1 home diagnostics; never substitutes for full CI')
+parser.add_argument('--home-only', action='store_true', help='Run S1 home and calculation handoff diagnostics; never substitutes for full CI')
 parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
@@ -266,6 +266,11 @@ def signup_entry():
     finally:
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
 
+
+def save_and_home():
+    q.calculation()
+    verify_home_result(q)
+
 try:
     for attempt in range(1, args.repeat + 1):
         q.OUT = args.output / f'attempt-{attempt:02}'
@@ -285,14 +290,15 @@ try:
         if not args.smoke:
             # Free GPS must start without a selected course. Preparation remains
             # selected intentionally, so verify it after the independent GPS run.
-            steps += [('S0-04-save', q.calculation), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
+            steps += [('S0-04-save', save_and_home), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
                       ('S0-05-preparation', q.course_preparation), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled)]
         # The original S0 chain deliberately carries draft/navigation state.
         # S1 returns home and recreates the activity for font/density checks,
         # so run it after that chain rather than breaking its preconditions.
         steps += [('S1-01-signup-entry', signup_entry)]
         if args.signup_only: steps = [('S1-01-signup-entry', signup_entry)]
-        if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch))]
+        if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
+                                   ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
         if args.visual_only: steps = []
         for scenario, action in steps:
             step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)

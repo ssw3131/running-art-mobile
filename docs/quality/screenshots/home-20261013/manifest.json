@@ -1,0 +1,47 @@
+{
+  "apkSha256": "6cb04ecab2ee8fc02fbe123b1ecd9da19e8139312516e7f78000a48b85349be6",
+  "environment": "Windows API 36 RunningArt_UI_QA",
+  "data": "Synthetic guest QA rows; not user records",
+  "screens": [
+    {
+      "file": "home-initial-top.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-initial-top.png",
+      "sha256": "eb6bc2d1a83f9478c865ca4bde6051d78a3adfce816fb9d62d323d5d371828ff"
+    },
+    {
+      "file": "home-shape-applied.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-shape-applied.png",
+      "sha256": "8d16d82c45340d1e80f9907ce54e467dbd73ae1db9d9f7504c3df4cd8c5cae54"
+    },
+    {
+      "file": "home-paused.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-paused.png",
+      "sha256": "d46f98c8fd450173226b25864d1afdc916fbcc6e11233c9b4a673e96b2892df3"
+    },
+    {
+      "file": "home-interrupted.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-interrupted.png",
+      "sha256": "ab54f6b42802a300b1466bc39de0abc1cc6bbf1d83243c924c6760c689f8df54"
+    },
+    {
+      "file": "home-history.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-history.png",
+      "sha256": "b5bdafab17cb0e32e4ff238d91ea754492c3c2c6277830165cfbae7d8ca6a9fa"
+    },
+    {
+      "file": "home-record-detail.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-record-detail.png",
+      "sha256": "1520ca1391c4ca5cff13a0dd294abb44b4e63d7b1e401168bca0a2c80beef58e"
+    },
+    {
+      "file": "home-history-offline.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-history-offline.png",
+      "sha256": "ffb8b1fd3701227dab376b016c6c4ab8dc967d2189032f658318a900002084af"
+    },
+    {
+      "file": "home-history-large-font.png",
+      "source": "test-results/home-android-36-final/attempt-01/home-history-large-font.png",
+      "sha256": "7d43da90b790f593c820a3c7c5865c435e084891b0a51bc9abb1075a97facc4f"
+    }
+  ]
+}
