@@ -240,6 +240,8 @@ def saved_restart():
 
 def signup_entry():
     # Read-only guest flow: no real social account or product fixtures.
+    # Establish our own start after any previous scenario's configuration reset.
+    launch()
     q.tap('tab-home'); q.seek('home-signup'); q.tap('home-signup')
     tree = q.capture('signup-entry')
     assert q.find(tree, 'signup-entry') is not None
