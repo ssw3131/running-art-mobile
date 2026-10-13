@@ -1,14 +1,15 @@
 {
   "schemaVersion": 1,
   "reviewed": true,
-  "reviewedAt": "2026-10-13T14:56:34.295881+09:00",
-  "review": "S0 common header/footer and typography reviewed against the existing Figma-backed S0 verification; existing body screens are regression references. Account deliberately has no CI auth configuration. S1: reviewed the new guest signup CTA on home and account, including the resulting account content shift. Only those two PNGs were replaced; run/archive and all masks remain unchanged. Per-screen provenance records mixed source versions. S1 home states: only home was replaced after direct original/current/diff review. Initial home uses original Figma illustration and shapes, personalized greeting, scrollable body and fixed course CTA; lower controls are reached by scrolling. Other screens and comparison masks/tolerances are unchanged.",
+  "reviewedAt": "2026-10-14T00:06:22.914341+09:00",
+  "review": "S0 common header/footer and typography reviewed against the existing Figma-backed S0 verification; existing body screens are regression references. Account deliberately has no CI auth configuration. S1: reviewed the new guest signup CTA on home and account, including the resulting account content shift. Only those two PNGs were replaced; run/archive and all masks remain unchanged. Per-screen provenance records mixed source versions. S1 home states: only home was replaced after direct original/current/diff review. Initial home uses original Figma illustration and shapes, personalized greeting, scrollable body and fixed course CTA; lower controls are reached by scrolling. Other screens and comparison masks/tolerances are unchanged. S234: Directly reviewed baseline/current/diff for home, run and archive after all 13 Linux API 36 functional steps, fixture preservation and cleanup passed. Home removes the dog unavailable caption after enabling the dog selector, reducing the common selector-row height; differences are confined to the three original shape icons. Run adopts shared white/black/gray/orange typography and rounded buttons. Archive adds the saved count and shape thumbnail, removes the raw score, and presents actual distance/date in a white card. Account has zero differing pixels and is unchanged. No masks, thresholds, environment or assertions changed.",
   "references": [
     "docs/quality/service-s0-verification.md",
     "docs/quality/service-s0-screenshots.html",
     "https://www.figma.com/design/QYRGII8OdvQB1SrtH3BA08?node-id=2-855",
     "docs/quality/signup-consent-20261013.md",
-    "docs/quality/home-states-20261013.md"
+    "docs/quality/home-states-20261013.md",
+    "docs/quality/course-archive-running-20261013.md"
   ],
   "source": "3bf1318d9a1edd4e97aef79cea00ed850883e351",
   "ciHead": "97602bcef41018b22d1a3d9eab279933aefb7c68",
@@ -40,12 +41,14 @@
           "height": 33
         }
       ],
-      "sha256": "5d85f6591b9100bd8e29c1335964ab25594250354ae4b3eab17ea3c5c7f431d6",
+      "sha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7",
       "provenance": {
-        "ciRun": "38351790429",
-        "ciHead": "453b39d0b070957765f3a40b08a48a8db1230a65",
-        "source": "2ef49c411b691fd7c28296fb8a601ff33fec091b",
-        "apkSha256": "94d9493270c3cbb80ae5e5740331ad9ff2216eaeb079d982e62802de533f0a09"
+        "ciRun": "38412089257",
+        "ciAttempt": 2,
+        "artifact": 11825745317,
+        "ciHead": "2a59107f33b5a14f5930a483e7c1df06ace21589",
+        "source": "3d3a5f490c190c4bb7497395c9f620927af0c6e4",
+        "apkSha256": "4dd4a49756530504a4c038bdb9a239be3db197c60de6c4a32bc0b9aa0a650f30"
       }
     },
     {
@@ -60,12 +63,14 @@
           "height": 33
         }
       ],
-      "sha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f",
+      "sha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
       "provenance": {
-        "ciRun": "38275123413",
-        "ciHead": "97602bcef41018b22d1a3d9eab279933aefb7c68",
-        "source": "3bf1318d9a1edd4e97aef79cea00ed850883e351",
-        "apkSha256": "b80394314a9190f32b7ac784c7bd2b54d0392ba66c1afdb3408f8b3810292fcf"
+        "ciRun": "38412089257",
+        "ciAttempt": 2,
+        "artifact": 11825745317,
+        "ciHead": "2a59107f33b5a14f5930a483e7c1df06ace21589",
+        "source": "3d3a5f490c190c4bb7497395c9f620927af0c6e4",
+        "apkSha256": "4dd4a49756530504a4c038bdb9a239be3db197c60de6c4a32bc0b9aa0a650f30"
       }
     },
     {
@@ -80,12 +85,14 @@
           "height": 33
         }
       ],
-      "sha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc",
+      "sha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
       "provenance": {
-        "ciRun": "38275123413",
-        "ciHead": "97602bcef41018b22d1a3d9eab279933aefb7c68",
-        "source": "3bf1318d9a1edd4e97aef79cea00ed850883e351",
-        "apkSha256": "b80394314a9190f32b7ac784c7bd2b54d0392ba66c1afdb3408f8b3810292fcf"
+        "ciRun": "38412089257",
+        "ciAttempt": 2,
+        "artifact": 11825745317,
+        "ciHead": "2a59107f33b5a14f5930a483e7c1df06ace21589",
+        "source": "3d3a5f490c190c4bb7497395c9f620927af0c6e4",
+        "apkSha256": "4dd4a49756530504a4c038bdb9a239be3db197c60de6c4a32bc0b9aa0a650f30"
       }
     },
     {
@@ -243,6 +250,141 @@
         ],
         "baselineSha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc",
         "currentSha256": "f98def8a6582d6d52b79db9835105544b7d24a6be4b8d622c500d31bb71ffe9e"
+      },
+      {
+        "id": "account",
+        "status": "passed",
+        "pixels": 0,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "e0c6b9d701be9c7741595d1e565bb769938196c5b8c56dbfc3ffc322148e789f",
+        "currentSha256": "e0c6b9d701be9c7741595d1e565bb769938196c5b8c56dbfc3ffc322148e789f"
+      }
+    ]
+  },
+  "s234Review": {
+    "reviewedAt": "2026-10-14T00:06:22.914341+09:00",
+    "ciRun": "38412089257",
+    "ciAttempt": 2,
+    "artifact": 11825745317,
+    "reason": "Directly reviewed baseline/current/diff for home, run and archive after all 13 Linux API 36 functional steps, fixture preservation and cleanup passed. Home removes the dog unavailable caption after enabling the dog selector, reducing the common selector-row height; differences are confined to the three original shape icons. Run adopts shared white/black/gray/orange typography and rounded buttons. Archive adds the saved count and shape thumbnail, removes the raw score, and presents actual distance/date in a white card. Account has zero differing pixels and is unchanged. No masks, thresholds, environment or assertions changed.",
+    "previousScreens": [
+      {
+        "id": "home",
+        "file": "home.png",
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "sha256": "5d85f6591b9100bd8e29c1335964ab25594250354ae4b3eab17ea3c5c7f431d6",
+        "provenance": {
+          "ciRun": "38351790429",
+          "ciHead": "453b39d0b070957765f3a40b08a48a8db1230a65",
+          "source": "2ef49c411b691fd7c28296fb8a601ff33fec091b",
+          "apkSha256": "94d9493270c3cbb80ae5e5740331ad9ff2216eaeb079d982e62802de533f0a09"
+        }
+      },
+      {
+        "id": "run",
+        "file": "run.png",
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "sha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f",
+        "provenance": {
+          "ciRun": "38275123413",
+          "ciHead": "97602bcef41018b22d1a3d9eab279933aefb7c68",
+          "source": "3bf1318d9a1edd4e97aef79cea00ed850883e351",
+          "apkSha256": "b80394314a9190f32b7ac784c7bd2b54d0392ba66c1afdb3408f8b3810292fcf"
+        }
+      },
+      {
+        "id": "archive",
+        "file": "archive.png",
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "sha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc",
+        "provenance": {
+          "ciRun": "38275123413",
+          "ciHead": "97602bcef41018b22d1a3d9eab279933aefb7c68",
+          "source": "3bf1318d9a1edd4e97aef79cea00ed850883e351",
+          "apkSha256": "b80394314a9190f32b7ac784c7bd2b54d0392ba66c1afdb3408f8b3810292fcf"
+        }
+      }
+    ],
+    "originalResults": [
+      {
+        "id": "home",
+        "status": "failed",
+        "pixels": 12315,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "5d85f6591b9100bd8e29c1335964ab25594250354ae4b3eab17ea3c5c7f431d6",
+        "currentSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7"
+      },
+      {
+        "id": "run",
+        "status": "failed",
+        "pixels": 360013,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "8abbcd5b418136cb488676da4565db7c3df0cc2538604555a7e194f34739ab6f",
+        "currentSha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91"
+      },
+      {
+        "id": "archive",
+        "status": "failed",
+        "pixels": 181105,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "cbafdf641611b08670b57662be8a3adc80213ce357a4e46306242213147ec4dc",
+        "currentSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448"
       },
       {
         "id": "account",

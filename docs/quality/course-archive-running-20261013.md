@@ -51,3 +51,22 @@
 ## 다음 검사와 범위
 
 최신 qa:fast 전체·Python 6개·HTTP 189개와 독립 release 빌드를 통과했다. 격리 API 36 전체 흐름(새 S234 통합 시나리오 포함)·화면 대조·PR/main 필수 CI를 진행한다. 운영 서버/DB와 휴대폰 설치는 실행하지 않았다. 야외 GPS·새 APK 장시간 잠금/배터리·다양한 실제 사진 입력은 여기서 완료로 표시하지 않는다.
+
+
+## Android 경계 조건과 독립 CI 이력
+
+- `test-results/s234-diagnostic-4/report.json`: 새 S234 통합과 준비 화면 2단계, 원본 fixture 보존·정리 통과. 사진 선택/자르기/윤곽 적용, 지도/집중, 음성/백그라운드 설정, 긴 터치 해제 뒤 일시정지, 강제 종료/옵션 복원, 종료→원본 보존→별도 재도전→월별 목록을 실제 앱에서 확인했다.
+- `test-results/s234-native-ten-km/report.json`: Android API 36 에뮬레이터에서 서울 강남 실제 OSM·반경 2km·강아지·목표 10km·명시적 기기 계산. 앱 내부 전체 소요 62.04초, 저장 실제 길이 10.320274743km·경로 470점. 화면과 저장 target=10/shape=dog/source=osm 일치, 시험 자료 정리 통과. 휴대폰 성능이나 다른 지역 성공률로 일반화하지 않는다.
+- `test-results/s234-full-final/report.json`: 앞 8단계 통과 후 재도전이 실제 새 러닝으로 시작됐으나, 마지막 종료 버튼을 읽기 전 UIAutomator가 3회 `No fresh UI hierarchy`를 반환하여 전체는 실패다. 직후 실패 캡처에는 정상 러닝 화면이 있었고 확인한 logcat에는 앱 충돌이 없었다. 정리는 통과했다. 같은 APK의 별도 `s234-full-recheck`에서 전체를 재검사한다. 실패를 지우거나 제품 검증 완료로 세지 않는다.
+- PR #14, CI [38408325604](https://github.com/ssw3131/running-art-mobile/actions/runs/38408325604): fast/API/API 29 통과. API 36은 새 S234의 이전 `seek_above(shape-heart)` 방향 가정에서 실패했고, 실제 위치를 양방향으로 찾도록 고쳤다.
+- CI [38412089257](https://github.com/ssw3131/running-art-mobile/actions/runs/38412089257), 첫 시도: fast/API/API 29 통과. API 36은 NDK 27.1 다운로드 파일의 `Archive is not a ZIP archive`로 빌드 전 환경 실패했다. 앱/검사 코드는 바꾸지 않고 해당 작업만 재실행했다. 최초 로그 `test-results/ci-job-115346832026.log`를 보존했다.
+
+
+## 10-14 최종 기능·화면 검토
+
+- 같은 `2a59107` APK의 Windows `s234-full-recheck`: 전체 13단계·원본 해시 보존·정리 통과, 캡처 종료 경고 0. 앞선 캡처 실패는 그대로 보존했다.
+- CI 38412089257 시도 2의 Linux API 36: 전체 13단계·원본 보존·정리 통과. 초기 기준 비교는 home 12,315 / run 360,013 / archive 181,105 / account 0 픽셀 차이였다. 세 화면의 baseline/current/diff를 직접 확인했다. 홈은 강아지 활성화로 ‘준비 중’ 문구가 없어져 같은 행의 도형 위치가 바뀌었다. 러닝은 공통 폰트/색/둥근 버튼, 보관함은 개수·실제 거리·도형/날짜 카드로 바뀌었다.
+- Linux 원본 artifact `11825745317`의 home/run/archive 세 PNG만 교체했다. account·환경·마스크·비교 허용 오차는 그대로다. 이전 해시/출처와 검토 이유는 baseline.json의 s234Review에 남겼다. 재비교 `test-results/s234-reviewed-visual/report.json`의 네 화면 차이는 모두 0이다. 최종 새 PR/main 실행에서도 독립 비교를 확인해야 한다.
+- 지도 정보 카드가 기존 현재 위치/배경 전환·출처 영역을 가리는 점을 발견했다. 지도 내용 아래에 제어 공간을 두고 현재 위치 버튼을 같은 하단 영역으로 옮겼다. 기본 GuidanceMap의 다른 사용처 위치는 유지했다. 타입/린트·UI 29개와 최신 APK의 `s234-map-controls` 준비/S234 통합·원본 보존·정리를 통과했다. 실제 지도·현재 위치 버튼·OpenStreetMap/MapTiler 출처와 배경 전환이 함께 보이는 캡처를 확인했다.
+
+- 최신 지도 보완 APK의 `s234-large-running`: 360dp·글꼴 1.6배에서 집중 안내 스크롤·고정 설정/재개/종료·설정·터치 잠금/길게 눌러 해제·종료와 정리를 통과했다. 안내와 잠금 화면 캡처를 직접 확인했다. 확대 시 안내는 줄바꿈되며 스크롤로 접근하고 종료 버튼은 고정 영역에 남는다. 실기기 접근성/야외 검증과는 구분한다.

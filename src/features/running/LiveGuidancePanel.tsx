@@ -21,7 +21,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   onPauseResume():void; onFinish():void; onPermission():void; error:string;
 }) {
   const c=useThemeColors();
-  const {height}=useWindowDimensions();
+  const {height,fontScale}=useWindowDimensions();
   const compact=height<920;
   const unlockArmed=useRef(false);
   const [settings,setSettings]=useState(false),[locked,setLocked]=useState(false);
@@ -59,8 +59,8 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   </View>;
   return <SafeAreaView style={{flex:1,backgroundColor:focus?background:c.navigation}} edges={['bottom','left','right']}>
     <ScrollView contentContainerStyle={{flexGrow:1}}>
-      {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={guide.course.snapshot.route} state={state} positionLabel="현재 GPS 위치로 지도 이동"/></View>}
-      <View pointerEvents="box-none" style={{flex:1,padding:compact?16:24,gap:compact?12:24}}>
+      {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={guide.course.snapshot.route} state={state} positionLabel="현재 GPS 위치로 지도 이동" recenterAtBottom/></View>}
+      <View pointerEvents="box-none" style={{flex:1,padding:compact?16:24,paddingBottom:focus?(compact?16:24):Math.max(100,80*fontScale),gap:compact?12:24}}>
         <View style={focus?{gap:compact?6:10}:card}>
           <AppText testID="run-status" weight="bold" style={{color,textAlign:'center'}}>{title}</AppText>
           <AppText testID="run-course-name" variant="caption" style={{color,textAlign:'center'}}>{guide.course.name}</AppText>

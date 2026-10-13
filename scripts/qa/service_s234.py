@@ -25,6 +25,7 @@ def service_s234(q, launch):
     fix();q.seek('run-course-start');q.tap('run-course-start');q.tap('계속');fix(5)
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
     run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
+    q.seek('guidance-recenter');q.tap('guidance-recenter');q.seek('guidance-background');q.capture('s4-map-controls')
     def wait_status(expected):
         for _ in range(20):
             state=q.query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status']
