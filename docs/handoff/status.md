@@ -1,6 +1,6 @@
 # 현재 상태와 인수인계
 
-**2026-10-13 S1 가입·동의 부분 완료:** 홈·마이페이지에만 가입 안내, 필수 이용약관·개인정보 두 항목·마케팅 제외, 기존 계정도 동의 대기로 이관하는 계약을 구현했다. 로직 420개·UI 9개·Python 6개·타입/린트·HTTP 182·실제 격리 Supabase 2개·PGlite 이관/권한, Windows/Linux API 36 전체 10단계·Linux API 29 호환 4단계·원본 보존/정리(최종 실행 재시도·캡처 경고 0)를 통과했다. 홈·마이페이지의 의도된 변경을 검토해 기준 두 장만 갱신했고 재비교 4화면 차이 0이다. 필수 게이트·병합 결과는 [PR #6](https://github.com/ssw3131/running-art-mobile/pull/6)를 따른다. **운영 DB/약관 게시·폰 설치는 미실행**이며 Figma 운영 정보·최종 문안 확정과 DB 배포 이력 대조 후 적용한다. 홈 3상태는 다음 기능이다. [구현](../development/signup-consent.md)·[검증](../quality/signup-consent-20261013.md).
+**2026-10-13 S1 가입·동의 부분 완료:** 홈·마이페이지에만 가입 안내, 필수 이용약관·개인정보 두 항목·마케팅 제외, 기존 계정도 동의 대기로 이관하는 계약을 구현했다. 로직 420개·UI 9개·Python 6개·타입/린트·HTTP 182·실제 격리 Supabase 2개·PGlite 이관/권한, Windows/Linux API 36 전체 10단계·Linux API 29 호환 4단계·원본 보존/정리(재시도 0, 최종 API 29의 캡처 종료 경고 1건 보존)를 통과했다. 홈·마이페이지의 의도된 변경을 검토해 기준 두 장만 갱신했고 독립 최종 CI의 4화면 차이 0이다. [PR #6](https://github.com/ssw3131/running-art-mobile/pull/6)의 필수 게이트 통과 후 main `5ce262f`로 squash 병합했다. **운영 DB/약관 게시·폰 설치는 미실행**이며 Figma 운영 정보·최종 문안 확정과 DB 배포 이력 대조 후 적용한다. 홈 3상태는 다음 기능이다. [구현](../development/signup-consent.md)·[검증](../quality/signup-consent-20261013.md).
 
 **2026-10-13 DB 개선 방향 기록:** [검토안](../planning/database-improvement-direction.md)에 기존 동기화 기반 유지, 다음 DB 배포 전 구조·이력 대조, S1 회원/동의와 S7 상품/권한, 통계·자료 증가 대응을 정리했다. 문서만 추가했으며 DB 변경·운영 조회·배포·CD 구축은 하지 않았다. 다음 제품 작업은 S1을 유지한다.
 

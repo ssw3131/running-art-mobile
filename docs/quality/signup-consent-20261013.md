@@ -1,12 +1,30 @@
 # S1 가입·동의 검증
 
-2026-10-13, 구현·격리 검증 완료, 운영 적용 후속. [실행 계획](../history/executed-plans/2026-10-13-0934-signup-consent.md)·[기능 계약](../development/signup-consent.md). 최종 필수 게이트와 병합 결과는 [PR #6](https://github.com/ssw3131/running-art-mobile/pull/6)에서 확인한다.
+2026-10-13, 구현·격리 검증 완료, 운영 적용 후속. [실행 계획](../history/executed-plans/2026-10-13-0934-signup-consent.md)·[기능 계약](../development/signup-consent.md). [PR #6](https://github.com/ssw3131/running-art-mobile/pull/6)의 최종 필수 게이트 통과 후 `5ce262f`로 squash 병합했다.
 
 ## 이번 범위
 
 홈·마이페이지의 가입 안내, 실제 3종 소셜 로그인 재사용, 닉네임/사진·필수 동의 두 항목·약관 버전, 기존 계정의 동의 대기 이관, 서버 가입 상태/동의 이력과 실패 재시도다. 홈 3상태와 상품/보너스·운영 약관 게시·사용자 폰 설치는 포함하지 않는다.
 
 ## 확인한 결과
+
+### 최종 필수 CI
+
+[실행 `38342639262`](https://github.com/ssw3131/running-art-mobile/actions/runs/38342639262), PR head `35512a4`, 검사 임시 병합 소스 `18036f17`에서 fast·API·Android 29/36·`verification-gate` 모두 통과했다.
+
+| 검사 | 결과 |
+| --- | --- |
+| 빠른 검사 | 로직 420개·UI 9개·타입/린트·정책 통과 |
+| API | HTTP 생성 182개·pgTAP/정책 SQL·실제 Auth/Storage/RPC/빈 SQLite 통합 2개 통과 |
+| API 36 | 전체 10단계·원본 보존·정리 통과, 재시도 0·캡처 종료 경고 0 |
+| API 29 | 호환 4단계·원본 보존·정리 통과, 재시도 0·캡처 종료 경고 1 |
+| 정적 4화면 | 갱신한 기준으로 독립 재실행, 홈·러닝·보관함·마이페이지 각각 차이 0 |
+
+API 29 경고는 UI 덤프가 `OK (1 test)`와 해당 요청의 새 토큰을 저장한 후 종료 코드 139를 반환한 1건이다. 실제 XML/PNG를 읽어 확인했고 시나리오 재시도는 하지 않았다. `.cache/signup-qa/android-29-final/attempt-01/ui-dump-transport.jsonl`에 출력·토큰·종료 코드를 보존했다. 미완료/오래된 캡처를 허용하지 않는 Python 6개도 양쪽 빌드 단계에서 통과했다.
+
+원본 아티팩트는 fast `11787935842`, API `11787786078`, Android 29 `11788500352`, Android 36 `11788096691`이며 `.cache/signup-qa/{fast,api,android-29,android-36}-final/`에 보존했다. 최종 CI APK SHA-256은 API 36 `a1f7b02b05178c5a579e2b3eafb9a230709a30819169b99b746b34e54f3fc06f`, API 29 `3011f2053e1acd31e80df3d5bd85cd85273158720cc2fe79f770ff16a5589c65`다. 이 PR 통과를 main에서 별도로 실행되는 전체 회귀 완료로 주장하지 않는다.
+
+### 구현과 중간 검증
 
 - Figma 가입 `253:7200`, 로그인 `253:7124`, 동의 `229:2153` 컨텍스트/스크린샷 및 약관 `47:7114/7118/7122` 원문 재조회. [약관 원문](../product/figma-policy-source-20261013.json)과 원본 자산/해시 보존.
 - 초기 가입 로직 8개: 필수 동의·닉네임·이메일 없음, 미게시 정책, 재전송 ID의 재시작 보존·중복 제출, 계정 전환 늦은 응답 제거, 저장소 실패, 정책 변경, 온라인 복귀, 실제 Supabase SDK 계약 통과.
