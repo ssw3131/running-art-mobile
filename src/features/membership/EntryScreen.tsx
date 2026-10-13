@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { authentication } from '@/modules/auth/runtime';
@@ -15,7 +16,7 @@ export default function EntryScreen() {
   const params = useLocalSearchParams<{ mode?: string }>();
   const [signup, setSignup] = useState(params.mode !== 'login');
   const [provider, setProvider] = useState<SignInProvider | null>(null);
-  return <ScrollView testID="signup-entry" contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 26, paddingTop: 28, paddingBottom: 40, gap: 30, width: '100%', maxWidth: 464, alignSelf: 'center' }}>
+  return <SafeAreaView edges={['bottom']} style={{ flex: 1 }}><ScrollView testID="signup-entry" contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 26, paddingTop: 28, paddingBottom: 40, gap: 30, width: '100%', maxWidth: 464, alignSelf: 'center' }}>
     <SignupBrand />
     <View style={{ gap: 15, alignItems: 'center' }}>
       <AppText variant={signup ? 'title' : 'heading'} weight={signup ? 'black' : 'medium'} style={{ textAlign: 'center' }}>{signup ? 'RunPen 회원 가입' : '나의 러닝을 작품으로 간직하세요'}</AppText>
@@ -32,5 +33,5 @@ export default function EntryScreen() {
     {!auth.configured && <AppText accessibilityRole="alert">이 버전에서는 로그인을 연결할 수 없어요. 기존 기능은 게스트로 이용할 수 있어요.</AppText>}
     <Button testID="signup-mode" label={signup ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 회원가입'} variant="outline" compact disabled={auth.busy} onPress={() => setSignup(!signup)} />
     <Button testID="signup-guest" label={auth.account ? '마이페이지로 돌아가기' : '게스트로 입장하기'} variant="outline" disabled={auth.busy} onPress={() => openServiceTab(auth.account ? '/account' : '/')} />
-  </ScrollView>;
+  </ScrollView></SafeAreaView>;
 }

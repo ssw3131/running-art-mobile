@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { useProfilePhoto } from '@/features/account/use-profile-photo';
@@ -98,9 +99,9 @@ function SignupEditor() {
       <Button label="가입 상태 다시 확인" onPress={() => { void membership.reload(); }} />
       <Button label="마이페이지로 돌아가기" variant="outline" onPress={() => openServiceTab('/account')} />
     </View>;
-  return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+  return <SafeAreaView edges={['bottom']} style={{ flex: 1 }}><KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
     <ScrollView testID="signup-details" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 30, paddingTop: 24, paddingBottom: 40, gap: 30, width: '100%', maxWidth: 440, alignSelf: 'center' }}>
       <SignupBrand />{body}
     </ScrollView>
-  </KeyboardAvoidingView>;
+  </KeyboardAvoidingView></SafeAreaView>;
 }
