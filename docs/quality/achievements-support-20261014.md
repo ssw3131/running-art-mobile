@@ -30,7 +30,7 @@
 | 실행 | 결과 |
 | --- | --- |
 | `s56-fast-03` | 타입/린트·서버·로직 451개·UI 33개·OpenAPI·PGlite 계정/지원/공유 정책 모두 통과 |
-| `s56-fast-04` | 추가 오류/경계 검사를 포함해 타입/린트·서버·로직 452개·Jest 38개(UI/네이티브 경계)·OpenAPI·PGlite 정책 모두 통과. 제품 소스는 그대로이며 추가 검사의 원격 CI 반영은 후속 |
+| `s56-fast-04` | 추가 오류/경계 검사를 포함해 타입/린트·서버·로직 452개·Jest 38개(UI/네이티브 경계)·OpenAPI·PGlite 정책 모두 통과. [원본 보고서](assets/achievements-support-20261014/local-fast-04-report.json)의 dirty 목록은 이후 `3ac2fbd`에 저장한 검사/문서 변경이며 제품 소스는 그대로다. 추가 검사의 원격 CI 반영은 후속 |
 | Python QA | 10개 통과. sandbox 임시 디렉터리 접근 실패 후 작업 폴더의 전용 TEMP로 실행 |
 | Expo doctor | 20/21. 기존 Expo 11개 패키지의 최신 patch 권고 유지, 새 view-shot 5.1.0 호환 확인 |
 | `s56-build-02` | release 성공, 초기 네이티브 캡처 검증용 |
