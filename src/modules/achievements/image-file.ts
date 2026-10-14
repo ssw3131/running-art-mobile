@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system/legacy';
+import { Directory, File } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 /** Retain handed-off PNGs for a day: a receiving app can still be reading them. */
@@ -26,10 +27,12 @@ export async function saveCardFile(uri: string, assertCurrent: () => void): Prom
   assertCurrent();
   const access = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
   assertCurrent(); if (!access.granted) return 'cancelled';
-  const bytes = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+  const bytes = await new File(uri).bytes();
   assertCurrent();
-  const target = await FileSystem.StorageAccessFramework.createFileAsync(access.directoryUri, `RunPen-${Date.now()}.png`, 'image/png');
-  try { assertCurrent(); await FileSystem.writeAsStringAsync(target, bytes, { encoding: FileSystem.EncodingType.Base64 }); }
-  catch (error) { await FileSystem.deleteAsync(target, { idempotent: true }).catch(() => {}); throw error; }
+  // Legacy SAF writes accept only the externalstorage authority. Directory/File
+  // also support the Downloads provider returned by Android 10's folder picker.
+  const target = new Directory(access.directoryUri).createFile(`RunPen-${Date.now()}.png`, 'image/png');
+  try { assertCurrent(); target.write(bytes); }
+  catch (error) { try { target.delete(); } catch {} throw error; }
   return 'saved';
 }
