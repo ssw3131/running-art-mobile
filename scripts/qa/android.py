@@ -312,7 +312,9 @@ try:
         # S1 returns home and recreates the activity for font/density checks,
         # so run it after that chain rather than breaking its preconditions.
         steps += [('S1-01-signup-entry', signup_entry)]
-        if not args.smoke: steps += [('S56-01-achievements-support', lambda: service_s56(q, launch))]
+        # Native PNG capture, SAF and theme behavior also need the API 29
+        # compatibility run; a modern-Android-only pass is insufficient.
+        steps += [('S56-01-achievements-support', lambda: service_s56(q, launch))]
         if args.signup_only: steps = [('S1-01-signup-entry', signup_entry)]
         if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
                                    ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
