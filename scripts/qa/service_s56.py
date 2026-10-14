@@ -31,7 +31,13 @@ def service_s56(q, launch):
         story=q.adb('exec-out','cat',folder+names[0]);assert struct.unpack('>II',story[16:24])==(1080,1920)
         (q.OUT/'s5-card-story.png').write_bytes(story)
         q.tap('card-share');q.capture('s5-system-share');q.shell('input','keyevent','4')
-        q.seek('card-save');q.tap('card-save');q.capture('s5-system-save');q.shell('input','keyevent','4')
+        q.seek('card-save');q.tap('card-save');q.capture('s5-system-save')
+        # DocumentsUI remembers Pictures across app-data resets. Back can first
+        # navigate to its parent; require a real return to the card before continuing.
+        for _ in range(3):
+            q.shell('input','keyevent','4')
+            if q.find(q.capture('s5-save-cancel-return'),'card-save') is not None: break
+        else: raise RuntimeError('Document picker did not return after cancellation')
         q.seek('card-save');q.tap('card-save');q.tap('Pictures');q.tap('USE THIS FOLDER');q.tap('android:id/button1')
         q.capture('s5-file-saved')
         created=set(q.shell('ls','-1',pictures).decode().splitlines())-original_pictures
@@ -63,6 +69,10 @@ def service_s56(q, launch):
         launch('run-result?id='+run_id);q.seek('run-result-share');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
         (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':False,'saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True}),encoding='utf8')
+    except Exception:
+        try: q.capture('s56-action-failure')
+        except Exception: pass
+        raise
     finally:
         q.shell('am','force-stop',q.APP)
         for name in set(q.shell('ls','-1',pictures).decode().splitlines())-original_pictures:
