@@ -3,6 +3,7 @@ import { StorageError } from '../storage/types.ts';
 import { serialDatabase } from '../storage/serial-database.ts';
 import { ownerId, type OwnerScope } from '../sync/ownership.ts';
 import { columns } from '../running/repository.ts';
+import { readAchievements } from '../achievements/repository.ts';
 import type { Run } from '../running/model.ts';
 import { guidanceColumns, readRunGuidance, type GuidanceRow } from '../running/guidance.ts';
 import { courseProgress, homeMonth, type HomeActive, type HomeData, type HomePath } from './model.ts';
@@ -51,8 +52,9 @@ export function createHomeRepository(database: StorageDatabase, scope: OwnerScop
       }
       const recent = [];
       for (const recentRun of recentRuns) recent.push({ run: recentRun, paths: await trace(tx, recentRun) });
+      const achievements = await readAchievements(tx, owner, now);
       check();
-      result = { owner, monthStart: month.start, monthEnd: month.end, monthlyDistanceM: summary?.distance ?? 0, runCount: summary?.count ?? 0, active, recent };
+      result = { owner, monthStart: month.start, monthEnd: month.end, monthlyDistanceM: summary?.distance ?? 0, runCount: summary?.count ?? 0, active, recent, currentStreak: achievements.currentStreak };
     });
     check(); return result;
   } };

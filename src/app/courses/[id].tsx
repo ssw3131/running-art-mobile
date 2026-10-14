@@ -16,10 +16,16 @@ import { exportErrorMessage } from '@/modules/courses/export';
 import SimulationPanel from '@/features/courses/SimulationPanel';
 import TerrainPanel from '@/features/terrain/TerrainPanel';
 import { useTerrain } from '@/features/terrain/use-terrain';
+import { useThemeColors } from '@/theme/ThemeProvider';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const emptyRoads = { type: 'FeatureCollection' as const, features: [] };
 export default function CourseScreen() {
+  const c = useThemeColors();
+  const styles = { ...baseStyles, screen: { ...baseStyles.screen, backgroundColor: c.background },
+    title: { ...baseStyles.title, color: c.text }, description: { ...baseStyles.description, color: c.muted },
+    small: { ...baseStyles.small, color: c.muted }, button: { ...baseStyles.button, backgroundColor: c.navigation },
+    input: { ...baseStyles.input, color: c.text, borderColor: c.border }, error: { ...baseStyles.error, color: c.danger }, link: { ...baseStyles.link, color: c.selected } };
   const auth=useAuth(), owner=auth.ready?auth.account?.id??'':null;
   const [loadedOwner,setLoadedOwner]=useState<string|null>(null);
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -148,7 +154,7 @@ export default function CourseScreen() {
     </ScrollView>
   </SafeAreaView>;
 }
-const styles = StyleSheet.create({ screen: { flex: 1, backgroundColor: '#FFFFFF' }, content: { padding: 24, gap: 16 },
+const baseStyles = StyleSheet.create({ screen: { flex: 1, backgroundColor: '#FFFFFF' }, content: { padding: 24, gap: 16 },
   title: { fontSize: 24, fontFamily: fonts.noto.black, color: '#000000' }, description: { color: '#757575', fontSize: 15, lineHeight: 23 },
   small: { color: '#757575', fontSize: 12, lineHeight: 19 }, map: { height: 400, borderRadius: 20, overflow: 'hidden' },
   button: { padding: 14, borderRadius: 10, backgroundColor: '#F4F6FA', alignItems: 'center' },

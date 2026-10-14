@@ -10,10 +10,13 @@ import { accountWithdrawal } from '@/modules/account/withdrawal-runtime';
 import { useAccountData } from '@/features/account/use-account';
 import { AccountButton, AccountCard, AccountPage, AccountRow, ProfileAvatar, accountStyles as s, useAccountColors } from '@/features/account/ui';
 import { useMembership } from '@/features/membership/use-membership';
+import { useAchievements } from '@/features/achievements/use-achievements';
+import { Badges } from '@/features/achievements/Badges';
 
 export default function AccountScreen() {
   const auth = useAuth(), data = useAccountData();
   const registration = useMembership();
+  const achievements = useAchievements();
   const withdrawal = useSyncExternalStore(accountWithdrawal.subscribe, accountWithdrawal.getSnapshot, accountWithdrawal.getSnapshot);
   const sync = useSyncExternalStore(personalSync.subscribe, personalSync.getSnapshot, personalSync.getSnapshot);
   const colors = useAccountColors(data.preferences.theme);
@@ -56,6 +59,17 @@ export default function AccountScreen() {
       {!!data.error && <><Text accessibilityRole="alert" style={[s.body, { color: colors.danger }]}>{data.error}</Text><AccountButton id="account-retry" title="다시 불러오기" colors={colors} onPress={data.reload} /></>}
       <AccountRow id="account-runs" title="러닝 기록 보기" colors={colors} onPress={() => router.push('/runs')} />
       <AccountRow id="account-courses" title="저장한 코스" detail={data.statistics ? `${data.statistics.courses}개` : undefined} colors={colors} onPress={() => router.navigate({ pathname: '/courses', params: { view: 'courses' } })} />
+    </AccountCard>
+    <AccountCard colors={colors}>
+      <Text style={[s.heading, { color: colors.text }]}>내 완주 배지</Text>
+      {achievements.data ? <>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 18 }}>
+          {stat('현재 연속 러닝', `${achievements.data.currentStreak}일`)}
+          {stat('최장 연속 러닝', `${achievements.data.longestStreak}일`)}
+        </View>
+        <Badges badges={achievements.data.badges} />
+        <Text style={[s.caption, { color: colors.muted }]}>실제 이동 거리가 있는 종료 러닝의 시작일을 기기 달력으로 셉니다. 어제 달렸다면 오늘까지 연속일을 이어갈 수 있어요.</Text>
+      </> : achievements.error ? <><Text accessibilityRole="alert" style={[s.body, { color: colors.danger }]}>{achievements.error}</Text><AccountButton id="achievements-retry" title="배지 다시 확인" colors={colors} onPress={achievements.retry} /></> : <ActivityIndicator accessibilityLabel="배지 집계 중" color={colors.accent} />}
     </AccountCard>
     <AccountCard colors={colors}>
       {auth.account && <AccountRow id="account-sync" title="개인 기록 동기화" detail="전송 상태 · 기기 기록 연결 · 충돌 해결" colors={colors} onPress={() => router.push('/account-sync')} />}

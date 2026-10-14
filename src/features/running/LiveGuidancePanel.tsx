@@ -15,12 +15,13 @@ import { useThemeColors } from '@/theme/ThemeProvider';
 import { fonts } from '@/theme/tokens';
 
 const navy='#0D213C';
-const card={backgroundColor:'#FFFFFF',borderRadius:20,padding:20,gap:12,boxShadow:'0px 0px 10px rgba(0,0,0,0.2)'} as const;
+const cardBase={borderRadius:20,padding:20,gap:12,boxShadow:'0px 0px 10px rgba(0,0,0,0.2)'} as const;
 export default function LiveGuidancePanel({ run, guide, points, now, busy, onOptions, onPauseResume, onFinish, onPermission, error }: {
   run: Run; guide: RunGuidance; points: RunPoint[]; now: number; busy: boolean; onOptions(value: GuidanceOptions): void;
   onPauseResume():void; onFinish():void; onPermission():void; error:string;
 }) {
   const c=useThemeColors();
+  const card={...cardBase,backgroundColor:c.surface};
   const {height,fontScale}=useWindowDimensions();
   const compact=height<920;
   const unlockArmed=useRef(false);
@@ -68,8 +69,8 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
           <View style={{flexDirection:'row',justifyContent:'space-around',gap:12}}><View style={{flex:1,gap:4}}><AppText variant="label" style={{color,textAlign:'center'}}>남은 거리</AppText>{metric(`${remaining} km`,focus?30:24)}</View><View style={{flex:1,gap:4}}><AppText variant="label" style={{color,textAlign:'center'}}>러닝 시간</AppText>{metric(durationLabel(elapsed),focus?28:24,'run-duration')}</View></View>
           <AppText testID="run-pace" weight="bold" style={{color,textAlign:'center'}}>평균 페이스 {paceLabel(elapsed,run.distanceM)}</AppText>
         </View>
-        {!!error&&<AppText testID="run-error" accessibilityRole="alert" style={{padding:12,backgroundColor:'#FFFFFF',color:c.danger,borderRadius:10}}>{error}</AppText>}
-        {!!run.reason&&<AppText style={{padding:12,backgroundColor:'#FFFFFF',color:c.danger}}>{run.reason}</AppText>}
+        {!!error&&<AppText testID="run-error" accessibilityRole="alert" style={{padding:12,backgroundColor:c.surface,color:c.danger,borderRadius:10}}>{error}</AppText>}
+        {!!run.reason&&<AppText style={{padding:12,backgroundColor:c.surface,color:c.danger}}>{run.reason}</AppText>}
         <View pointerEvents="box-none" style={{flex:1,minHeight:focus?0:100}}/>
         {instruction}
         {weak&&<AppText testID="run-signal" style={{color:focus?'#FFFFFF':navy,backgroundColor:focus?undefined:'#FFFFFF'}}>하늘이 열린 곳에서 GPS를 확인해 주세요. 공백 구간은 거리에 더하지 않아요.</AppText>}
@@ -90,7 +91,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
       <SafeAreaView style={{flex:1,backgroundColor:background,padding:32,justifyContent:'space-around',alignItems:'center'}}>
         <AppText weight="bold" variant="title" style={{color:'#FFFFFF'}}>터치 잠금</AppText>
         <View style={{gap:16}}><AppText style={{color:'#FFFFFF',fontFamily:fonts.roboto.black,fontSize:64,lineHeight:80,textAlign:'center'}}>{distance} km</AppText><AppText style={{color:'#FFFFFF',textAlign:'center'}}>{durationLabel(elapsed)} · {title}</AppText><AppText style={{color:'#FFFFFF',textAlign:'center'}}>{state.instruction}</AppText>{!!error&&<AppText accessibilityRole="alert" style={{color:'#FFFFFF'}}>{error}</AppText>}</View>
-        <Pressable testID="run-touch-unlock" accessibilityRole="button" accessibilityLabel="터치 잠금 해제" accessibilityHint="길게 누르거나 접근성 활성화 동작으로 해제" accessibilityActions={[{name:'activate',label:'잠금 해제'}]} onAccessibilityAction={()=>setLocked(false)} delayLongPress={800} onPressIn={()=>{unlockArmed.current=false;}} onLongPress={()=>{unlockArmed.current=true;}} onPressOut={()=>{if(unlockArmed.current){unlockArmed.current=false;setLocked(false);}}} style={{padding:24,borderRadius:30,backgroundColor:'#FFFFFF'}}><AppText weight="bold">길게 눌러 잠금 해제</AppText></Pressable>
+        <Pressable testID="run-touch-unlock" accessibilityRole="button" accessibilityLabel="터치 잠금 해제" accessibilityHint="길게 누르거나 접근성 활성화 동작으로 해제" accessibilityActions={[{name:'activate',label:'잠금 해제'}]} onAccessibilityAction={()=>setLocked(false)} delayLongPress={800} onPressIn={()=>{unlockArmed.current=false;}} onLongPress={()=>{unlockArmed.current=true;}} onPressOut={()=>{if(unlockArmed.current){unlockArmed.current=false;setLocked(false);}}} style={{padding:24,borderRadius:30,backgroundColor:'#FFFFFF'}}><AppText weight="bold" style={{color:navy}}>길게 눌러 잠금 해제</AppText></Pressable>
       </SafeAreaView>
     </Modal>
   </SafeAreaView>;

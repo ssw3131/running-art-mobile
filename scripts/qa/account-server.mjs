@@ -51,4 +51,9 @@ try {
   assert.ok(signupReport?.startsWith('PASS:')); console.log(signupReport);
   assert.equal((await db.query('select count(*)::int as count from auth.users')).rows[0].count, 0, 'signup fixtures rolled back');
   console.log('PASS: synthetic fixtures rolled back; no hosted connection');
+  await db.exec(await readFile(new URL('../../supabase/migrations/20261014003000_service_support.sql', import.meta.url), 'utf8'));
+  const supportResults = await db.exec(await readFile(new URL('../../supabase/tests/service_support.sql', import.meta.url), 'utf8'));
+  const supportReport = supportResults.flatMap(r => r.rows).find(r => r.service_support_verification)?.service_support_verification;
+  assert.ok(supportReport?.startsWith('PASS:')); console.log(supportReport);
+  assert.equal((await db.query('select count(*)::int as count from auth.users')).rows[0].count, 0, 'support fixtures rolled back');
 } finally { await db.close(); }

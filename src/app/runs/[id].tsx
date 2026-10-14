@@ -12,9 +12,10 @@ import { getStorage } from '@/modules/storage/database';
 import { RunError, runErrorMessage, type Run, type RunPoint } from '@/modules/running/model';
 import RunPath from '@/features/running/RunPath';
 import RunSharePanel from '@/features/running/RunSharePanel';
-import { RunButton, RunStats, styles } from '@/features/running/ui';
+import { RunButton, RunStats, useRunStyles } from '@/features/running/ui';
 
 export default function RunDetailScreen() {
+  const styles = useRunStyles();
   const auth=useAuth(),owner=auth.ready?auth.account?.id??'':null;
   const [loadedOwner,setLoadedOwner]=useState<string|null>(null);
   const params = useLocalSearchParams<{ id: string }>(); const id = typeof params.id === 'string' ? params.id : '';
@@ -51,6 +52,7 @@ export default function RunDetailScreen() {
       {run.courseId && <Text testID="run-course-result" style={styles.title}>{run.courseName} · {runOutcomeLabel(run)}</Text>}
       <RunPath points={points} />
       <RunStats run={run} now={run.checkpointAt} />
+      {run.status === 'completed' && <RunButton id="run-result" title="러닝 결과 · 배지 · 이미지 공유" disabled={busy} onPress={() => router.push({ pathname: '/run-result', params: { id } })} />}
       {!!run.reason && <Text style={styles.body}>{run.reason}</Text>}
       <Text style={styles.body}>저장된 GPS 궤적입니다. 일시정지·GPS 공백은 연결하지 않아요. 활동 시간에는 일시정지를 제외하고 GPS를 기다린 시간이 포함됩니다.</Text>
       {run.status === 'completed' && run.courseId && <><RunButton id="run-rechallenge" title="이 코스 저장·재도전" disabled={busy} onPress={()=>void retry()}/><Text style={styles.body}>러닝 당시 코스 사본을 보관함에 저장하고 새 도전을 준비해요. 이전 기록의 거리와 완주 여부는 바뀌지 않아요.</Text></>}

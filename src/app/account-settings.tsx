@@ -40,14 +40,14 @@ export default function AccountSettingsScreen() {
   };
   const toggle = (id: string, title: string, detail: string, key: 'voice' | 'background') => <View style={{ gap: 8 }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={[s.rowTitle, { flex: 1, color: colors.text }]}>{title}</Text>
-      <Switch testID={id} accessibilityLabel={title} disabled={busy || !data.ready} value={data.preferences.guidance[key]} trackColor={{ true: '#608567' }} onValueChange={value => { void save({ ...data.preferences, guidance: { ...data.preferences.guidance, [key]: value } }); }} /></View>
+      <Switch testID={id} accessibilityLabel={title} disabled={busy || !data.ready} value={data.preferences.guidance[key]} trackColor={{ true: colors.accent }} onValueChange={value => { void save({ ...data.preferences, guidance: { ...data.preferences.guidance, [key]: value } }); }} /></View>
     <Text style={[s.caption, { color: colors.muted }]}>{detail}</Text>
   </View>;
   return <AccountPage title="설정" colors={colors}>
     {!!data.error && <AccountCard colors={colors}><Text accessibilityRole="alert" style={[s.body, { color: colors.danger }]}>{data.error}</Text><AccountButton id="settings-retry" title="다시 불러오기" colors={colors} onPress={data.reload} /></AccountCard>}
     <AccountCard colors={colors}>
-      <Text style={[s.heading, { color: colors.text }]}>계정 화면 테마</Text>
-      <Text style={[s.caption, { color: colors.muted }]}>마이페이지·프로필·설정 화면에 적용합니다.</Text>
+      <Text style={[s.heading, { color: colors.text }]}>앱 · 지도 테마</Text>
+      <Text style={[s.caption, { color: colors.muted }]}>서비스 화면과 배경 지도에 적용합니다. 공유 이미지 카드는 선택한 카드 디자인을 유지해요.</Text>
       {(['system', 'light', 'dark'] as const).map(theme => <AccountButton key={theme} id={`theme-${theme}`} title={`${({ system: '기기 설정 따르기', light: '밝게', dark: '어둡게' })[theme]}${data.preferences.theme === theme ? ' · 선택됨' : ''}`}
         colors={colors} secondary={data.preferences.theme !== theme} disabled={busy || !data.ready} onPress={() => { void save({ ...data.preferences, theme }); }} />)}
     </AccountCard>

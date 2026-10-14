@@ -1,25 +1,20 @@
-import { Stack, useFocusEffect } from 'expo-router';
-import { useCallback, useState, type PropsWithChildren } from 'react';
-import { setStatusBarStyle } from 'expo-status-bar';
+import { Stack } from 'expo-router';
+import { useState, type PropsWithChildren } from 'react';
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { AccountPreferences } from '@/modules/account/model';
 import type { Account } from '@/modules/auth/controller';
 import { useProfilePhoto } from './use-profile-photo';
+import { colors as light, darkColors, fonts } from '@/theme/tokens';
 
-export const lightAccountColors = { background: '#F6F5F0', surface: '#FFFFFF', text: '#183C32', muted: '#57675F', border: '#D9E2DA', accent: '#183C32', onAccent: '#FFFFFF', danger: '#A12F2F' };
-export type AccountColors = typeof lightAccountColors;
-const dark: AccountColors = { background: '#111A17', surface: '#1D2B24', text: '#EFF6EF', muted: '#B3C5B9', border: '#3F5448', accent: '#B4DFB7', onAccent: '#13261B', danger: '#FFB2AC' };
+export const lightAccountColors = { background: light.background, surface: light.surface, text: light.text, muted: light.muted, border: light.divider, accent: light.action, onAccent: light.onAction, danger: light.danger };
+export type AccountColors = { [K in keyof typeof lightAccountColors]: string };
+const dark: AccountColors = { background: darkColors.background, surface: darkColors.surface, text: darkColors.text, muted: darkColors.muted, border: darkColors.divider, accent: darkColors.action, onAccent: darkColors.onAction, danger: darkColors.danger };
 export function useAccountColors(theme: AccountPreferences['theme']) {
   const system = useColorScheme(); return (theme === 'system' ? system : theme) === 'dark' ? dark : lightAccountColors;
 }
 export function AccountPage({ title, colors, children, embedded = false }: PropsWithChildren<{ title: string; colors: AccountColors; embedded?: boolean }>) {
   const inset = useSafeAreaInsets();
-  useFocusEffect(useCallback(() => {
-    // Service headers remain light even when the existing account body is dark.
-    setStatusBarStyle('dark');
-    return () => setStatusBarStyle('dark');
-  }, []));
   return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: colors.background }}>
     {!embedded && <Stack.Screen options={{ title }} />}
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[accountStyles.page, { paddingBottom: embedded ? 28 : Math.max(28, inset.bottom + 20) }]}>{children}</ScrollView>
@@ -42,27 +37,27 @@ export function AccountRow({ title, detail, onPress, colors, id, danger = false,
     <Text accessibilityElementsHidden style={{ color: colors.muted, fontSize: 24 }}>›</Text>
   </Pressable>;
 }
-export function ProfileAvatar({ account, colors, picture = account?.picture, preview }: { account: Account | null; colors: AccountColors; picture?: Account['picture']; preview?: string }) {
+export function ProfileAvatar({ account, colors, picture = account?.picture, preview, size = 76 }: { account: Account | null; colors: AccountColors; picture?: Account['picture']; preview?: string; size?: number }) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const uploaded = useProfilePhoto(account?.id, picture === 'uploaded' && !preview ? account?.photoPath : null);
   const url = picture === 'provider' ? account?.avatarUrl : picture === 'uploaded' ? preview ?? uploaded : null;
-  return <View style={[accountStyles.avatar, { backgroundColor: colors.background, borderColor: colors.border }]}>
-    {url && failedUrl !== url ? <Image accessibilityLabel="프로필 사진" source={{ uri: url }} style={accountStyles.avatarImage} onError={() => setFailedUrl(url)} />
+  return <View style={[accountStyles.avatar, { backgroundColor: colors.background, borderColor: colors.border, width: size, height: size, borderRadius: size / 2 }]}>
+    {url && failedUrl !== url ? <Image accessibilityLabel="프로필 사진" source={{ uri: url }} style={{ width: size, height: size }} onError={() => setFailedUrl(url)} />
       : <Text accessibilityLabel="프로필 기본 이미지" style={{ color: colors.text, fontSize: 30, fontWeight: '700' }}>{[...(account?.name ?? 'R')][0]}</Text>}
   </View>;
 }
 export const accountStyles = StyleSheet.create({
   page: { flexGrow: 1, padding: 20, gap: 20, width: '100%', maxWidth: 680, alignSelf: 'center' },
-  card: { borderRadius: 22, padding: 20, gap: 16, borderWidth: 1 },
-  title: { fontSize: 25, lineHeight: 33, fontWeight: '700' },
-  heading: { fontSize: 19, lineHeight: 27, fontWeight: '700' },
-  body: { fontSize: 15, lineHeight: 24 },
-  caption: { fontSize: 13, lineHeight: 20 },
+  card: { borderRadius: 20, padding: 18, gap: 16, borderWidth: 1 },
+  title: { fontSize: 24, lineHeight: 35, fontFamily: fonts.noto.bold },
+  heading: { fontSize: 20, lineHeight: 29, fontFamily: fonts.noto.bold },
+  body: { fontSize: 16, lineHeight: 24, fontFamily: fonts.noto.regular },
+  caption: { fontSize: 13, lineHeight: 20, fontFamily: fonts.noto.regular },
   row: { minHeight: 64, paddingVertical: 13, flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: StyleSheet.hairlineWidth },
-  rowTitle: { fontSize: 16, lineHeight: 24, fontWeight: '600' },
-  button: { minHeight: 52, paddingHorizontal: 18, paddingVertical: 14, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  buttonText: { fontSize: 16, lineHeight: 24, fontWeight: '600', textAlign: 'center' },
+  rowTitle: { fontSize: 16, lineHeight: 24, fontFamily: fonts.noto.bold },
+  button: { minHeight: 60, paddingHorizontal: 18, paddingVertical: 14, borderRadius: 30, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  buttonText: { fontSize: 16, lineHeight: 24, fontFamily: fonts.noto.bold, textAlign: 'center' },
   avatar: { height: 76, width: 76, borderRadius: 38, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
   avatarImage: { height: 76, width: 76 },
-  input: { minHeight: 54, borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 18 },
+  input: { minHeight: 54, borderWidth: 1, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 12, fontSize: 18, fontFamily: fonts.noto.regular },
 });

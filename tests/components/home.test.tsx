@@ -9,7 +9,7 @@ jest.mock('../../src/features/auth/use-auth', () => ({ useAuth: () => mockAuth }
 jest.mock('../../src/modules/storage/database', () => ({ getStorage: async () => ({ home: { read: () => mockRead() } }) }));
 jest.mock('expo-router', () => ({ router: { navigate: (...args: any[]) => mockNavigate(...args), push: (...args: any[]) => mockPush(...args) },
   useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]) }));
-const data = (owner = '') => ({ owner, monthStart: 0, monthEnd: 1, monthlyDistanceM: 3200, runCount: 0, active: null, recent: [] });
+const data = (owner = '') => ({ owner, monthStart: 0, monthEnd: 1, monthlyDistanceM: 3200, runCount: 0, currentStreak: 0, active: null, recent: [] });
 const run = { id: 'a'.repeat(32), status: 'completed', distanceM: 3200, activeMs: 100000, startedAt: 1000, courseName: null };
 beforeEach(() => { jest.useFakeTimers(); mockAuth = { ready: true, account: null }; mockRead.mockReset(); mockNavigate.mockReset(); mockPush.mockReset(); AppState.currentState = 'active'; });
 afterEach(() => { jest.useRealTimers(); });

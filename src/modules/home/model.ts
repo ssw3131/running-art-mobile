@@ -7,6 +7,7 @@ export type HomeActive = HomeRun & { progress: number | null; totalM: number | n
 export type HomeData = {
   owner: string; monthStart: number; monthEnd: number; monthlyDistanceM: number; runCount: number;
   active: HomeActive | null; recent: HomeRun[];
+  currentStreak: number;
 };
 export type HomeKind = 'initial' | 'active' | 'history';
 export const homeKind = (data: HomeData): HomeKind => data.active ? 'active' : data.runCount > 0 ? 'history' : 'initial';
@@ -29,8 +30,8 @@ export function homePathSvg(paths: HomePath[], color: string) {
   if (!points.length) return null;
   const latitude = points.reduce((sum, p) => sum + p[1], 0) / points.length;
   const ratio = Math.cos(latitude * Math.PI / 180);
-  const xs = points.map(p => p[0] * ratio), ys = points.map(p => -p[1]);
-  const minX = Math.min(...xs), minY = Math.min(...ys), width = Math.max(...xs) - minX, height = Math.max(...ys) - minY;
+  const bounds = points.reduce((b, p) => ({ minX: Math.min(b.minX, p[0] * ratio), maxX: Math.max(b.maxX, p[0] * ratio), minY: Math.min(b.minY, -p[1]), maxY: Math.max(b.maxY, -p[1]) }), { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity });
+  const { minX, minY } = bounds, width = bounds.maxX - minX, height = bounds.maxY - minY;
   const scale = 168 / Math.max(width, height, 0.00001);
   const xy = (p: [number, number]) => [(p[0] * ratio - minX - width / 2) * scale + 100, (-p[1] - minY - height / 2) * scale + 100];
   const lines = paths.map(path => path.filter(p => p.every(Number.isFinite))).filter(path => path.length).map(path => {

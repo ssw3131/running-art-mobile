@@ -19,6 +19,7 @@ from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5
 from home_states import verify_home_states, verify_home_result
 from course_generation import generation_flow, scaled_generation
 from service_s234 import service_s234
+from service_s56 import service_s56
 from storage_readiness import wait_for_storage
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -30,11 +31,12 @@ parser.add_argument('--smoke', action='store_true')
 parser.add_argument('--signup-only', action='store_true', help='Run only S1 entry and accessibility; never substitutes for full CI')
 parser.add_argument('--home-only', action='store_true', help='Run S1 home and calculation handoff diagnostics; never substitutes for full CI')
 parser.add_argument('--service-only', action='store_true', help='Diagnose S234 integration only; never substitutes for full CI')
+parser.add_argument('--achievements-only', action='store_true', help='Diagnose S5/S6 only; never substitutes for full CI')
 parser.add_argument('--generation-only', action='store_true', help='Run S2a generation and accessibility diagnostics; never substitutes for full CI')
 parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
-assert sum([args.signup_only, args.home_only, args.generation_only, args.service_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
+assert sum([args.signup_only, args.home_only, args.generation_only, args.service_only, args.achievements_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
 assert args.serial.startswith('emulator-') and args.serial[9:].isdigit(), 'Physical devices are forbidden'
 assert 1 <= args.repeat <= 10
 sdk = pathlib.Path(os.environ.get('ANDROID_HOME', ROOT / '.tools/android-sdk'))
@@ -71,9 +73,12 @@ def seek_visible(key):
             x1,y1,x2,y2 = map(int,re.findall(r'\d+',node.get('bounds')))
             if node.get('enabled') == 'true' and x2>x1 and y2-y1>=30 and top<=y1<y2<=bottom: return
             upwards = y2 <= top + 10
-        start, end = bottom-45, top+max(50,int((bottom-top)*.22))
+        # Edge-to-edge screens include the system gesture strip in these bounds.
+        # Keep both ends and the horizontal position inside the content viewport.
+        start, end = bottom-max(96,int((bottom-top)*.18)), top+max(96,int((bottom-top)*.22))
         if upwards: start,end=end,start
-        q.shell('input','swipe',str(right-25),str(start),str(right-25),str(end),'350')
+        x = (left + right) // 2
+        q.shell('input','swipe',str(x),str(start),str(x),str(end),'350')
     raise RuntimeError('Control not reached: ' + key)
 
 q.seek = seek_visible
@@ -126,7 +131,7 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'startedAt': datetime.now(timezone.utc).isoformat(), 'ciRun': os.environ.get('GITHUB_RUN_ID'),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
-          'mode': 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
+          'mode': 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
 original_overlays = None
@@ -307,12 +312,14 @@ try:
         # S1 returns home and recreates the activity for font/density checks,
         # so run it after that chain rather than breaking its preconditions.
         steps += [('S1-01-signup-entry', signup_entry)]
+        if not args.smoke: steps += [('S56-01-achievements-support', lambda: service_s56(q, launch))]
         if args.signup_only: steps = [('S1-01-signup-entry', signup_entry)]
         if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
                                    ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
         if args.generation_only: steps = [('S2a-01-generation', lambda: generation_flow(q)),
                                          ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         if args.service_only: steps = [('S0-05-preparation', q.course_preparation), ('S234-01-integrated', lambda: service_s234(q, launch))]
+        if args.achievements_only: steps = [('S56-01-achievements-support', lambda: service_s56(q, launch))]
         if args.visual_only: steps = []
         for scenario, action in steps:
             step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)
