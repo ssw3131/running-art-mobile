@@ -12,6 +12,11 @@ def service_s56(q, launch):
     preferences=q.query("SELECT * FROM account_preferences WHERE owner_id=''")
     pictures='/sdcard/Pictures'
     original_pictures=set(q.shell('ls','-1',pictures).decode().splitlines())
+    cache=f'/data/user/0/{q.APP}/cache/'
+    notice_cache=cache+'runpen-notices.json'
+    original_notice=q.adb('exec-out','cat',notice_cache) if 'runpen-notices.json' in q.shell('ls','-1',cache).decode().splitlines() else None
+    wifi=q.shell('settings','get','global','wifi_on').decode().strip()
+    mobile=q.shell('settings','get','global','mobile_data').decode().strip()
     now=int(time.time()*1000)
     literal=lambda v: "'"+str(v).replace("'","''")+"'"
     q.shell('am','force-stop',q.APP)
@@ -57,7 +62,23 @@ def service_s56(q, launch):
         q.seek('support-guide');q.tap('support-guide');q.capture('s6-guide');q.tap('service-back')
         q.seek('support-faq');q.tap('support-faq');q.seek('faq-gps');q.tap('faq-gps');q.capture('s6-faq');q.tap('service-back')
         q.seek('support-inquiry');q.tap('support-inquiry');q.seek('inquiry-sign-in');q.capture('s6-inquiry-guest');q.tap('service-back')
-        q.seek('support-notices');q.tap('support-notices');q.capture('s6-notices');q.tap('service-back')
+        # Exercise the app's real last-good cache with an explicitly synthetic
+        # publication. No production notice or product fixture hook is used.
+        fixture=q.OUT/'s56-notice-fixture.json'
+        fixture.write_text(json.dumps({'fetchedAt':now-1000,'notices':[{'id':'s56-qa','title':'격리 검증용 공지',
+            'body':'이 공지는 격리 에뮬레이터의 저장본 검증에만 사용합니다. 운영 게시물이 아닙니다.',
+            'category':'검증','publishedAt':'2026-10-01T00:00:00Z'}]},ensure_ascii=False),encoding='utf8')
+        q.adb('push',str(fixture),notice_cache)
+        q.shell('svc','wifi','disable');q.shell('svc','data','disable')
+        q.seek('support-notices');q.tap('support-notices');q.seek('notice-s56-qa')
+        assert any('오프라인 저장본' in n.get('text','') for n in q.capture('s6-notices').iter('node'))
+        q.tap('notice-s56-qa')
+        detail=q.capture('s6-notice-detail')
+        assert any('운영 게시물이 아닙니다.' in n.get('text','') for n in detail.iter('node'))
+        assert any('오프라인 저장본' in n.get('text','') for n in detail.iter('node'))
+        q.seek('목록으로 돌아가기');q.tap('목록으로 돌아가기');q.seek('notice-s56-qa');q.capture('s6-notice-back')
+        q.tap('service-back')
+        q.shell('svc','wifi','disable' if wifi=='0' else 'enable');q.shell('svc','data','disable' if mobile=='0' else 'enable')
         launch('account-settings');q.seek('theme-dark');q.tap('theme-dark');q.capture('s6-theme-dark')
         q.shell('am','force-stop',q.APP);launch('account-settings');q.seek('theme-dark');q.capture('s6-theme-restarted')
         assert '선택됨' in q.find(q.capture('current'),'theme-dark').get('content-desc','') or any('어둡게 · 선택됨' in n.get('text','') for n in q.capture('current').iter('node'))
@@ -68,13 +89,19 @@ def service_s56(q, launch):
         q.shell('am','force-stop',q.APP)
         launch('run-result?id='+run_id);q.seek('run-result-share');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
-        (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':False,'saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True}),encoding='utf8')
+        (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':False,'saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
     except Exception:
         try: q.capture('s56-action-failure')
         except Exception: pass
         raise
     finally:
         q.shell('am','force-stop',q.APP)
+        if original_notice is None: q.shell('rm','-f',notice_cache)
+        else:
+            restore=q.OUT/'s56-notice-cache-restore.json';restore.write_bytes(original_notice)
+            q.adb('push',str(restore),notice_cache)
+            assert q.adb('exec-out','cat',notice_cache)==original_notice
+        q.shell('svc','wifi','disable' if wifi=='0' else 'enable');q.shell('svc','data','disable' if mobile=='0' else 'enable')
         for name in set(q.shell('ls','-1',pictures).decode().splitlines())-original_pictures:
             if name.startswith('RunPen-') and name.endswith('.png') and '/' not in name:
                 q.shell('rm',pictures+'/'+name)

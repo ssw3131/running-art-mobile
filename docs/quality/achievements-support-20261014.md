@@ -58,3 +58,7 @@
 APK: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,958,127바이트. SHA-256 `0b6691341f49e220c501ed6e81d23bb5c6266d31e917407a02a2dc7b8f0a7e7a`. 동일 앱 ID·release·시험 훅 미포함 검사를 통과했고 기존 S2a APK와 서명 SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`가 같다. 설치 안내/해시는 같은 폴더에 있다. 휴대폰 설치·외부 APK 배포는 하지 않았다.
 
 수정한 메뉴를 포함한 `s56-smoke-01`도 5단계·원본 보존·정리 통과(준비 대기/전송 경고 0)했다. [호환 흐름 보고서](assets/achievements-support-20261014/local-smoke-report.json). 새 경로에서 중심/거리/도형·탭 상태 유지와 OAuth 취소/가입 안내를 확인했다.
+
+수정본 CI `38495705327`의 API 29는 소개 화면의 화면 밖 CTA를 찾는 검사에서 실패했다(artifact `11864472412`). 실제 UI XML은 버튼을 `[0,0][0,0]`으로 반환했으며 기존 검사 도구가 이를 위쪽으로 해석해 위로만 스크롤했다. 위치가 없는 요소는 방향 판단에서 제외하고, testID 없는 본문도 스크롤 이동 판정에 포함하도록 수정했다. 원본 실패 화면/로그와 정리 통과·준비 대기 2건/전송 경고 2건을 보존한다. API 36 전체 흐름은 같은 실행에서 계속 진행 중이다.
+
+`s56-android-07`은 실제 저장 공지의 오프라인 목록→상세→목록 복귀를 추가해 S5/S6 전체·원본 보존·정리 통과(준비/전송 경고 0)했다. 공유 PNG 두 해시는 06과 같다. [보고서](assets/achievements-support-20261014/local-notice-report.json)·[저장 공지 목록](assets/achievements-support-20261014/s6-notices.png)·[상세](assets/achievements-support-20261014/s6-notice-detail.png)·[복귀](assets/achievements-support-20261014/s6-notice-back.png). 시험 공지는 격리 기기 캐시만 사용했으며 운영 서버에 게시하지 않았다. 파일·네트워크 원복을 확인했다.

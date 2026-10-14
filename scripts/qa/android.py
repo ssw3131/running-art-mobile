@@ -66,13 +66,19 @@ def seek_visible(key):
         left, top, right, bottom = max(bounds, key=lambda b: b[1])
         tab = q.find(tree, 'tab-home')
         if tab is not None: bottom = min(bottom, int(re.findall(r'\d+', tab.get('bounds'))[1]))
-        signature=tuple((n.get('resource-id'),n.get('bounds')) for n in tree.iter('node') if n.get('resource-id'))
+        # Text-only support screens can keep every testID fixed while scrolling.
+        # Include visible semantic nodes so movement is not mistaken for an edge.
+        signature=tuple((n.get('resource-id'),n.get('text'),n.get('content-desc'),n.get('bounds'))
+                        for n in tree.iter('node') if any(n.get(k) for k in ('resource-id','text','content-desc'))
+                        and n.get('bounds') != '[0,0][0,0]')
         if signature==previous: upwards=not upwards
         previous=signature
         if node is not None:
             x1,y1,x2,y2 = map(int,re.findall(r'\d+',node.get('bounds')))
             if node.get('enabled') == 'true' and x2>x1 and y2-y1>=30 and top<=y1<y2<=bottom: return
-            upwards = y2 <= top + 10
+            # API 29 exposes clipped buttons at [0,0][0,0]. Their position is
+            # unknown, so retain the search direction instead of forcing up.
+            if x2>x1 and y2>y1: upwards = y2 <= top + 10
         # Edge-to-edge screens include the system gesture strip in these bounds.
         # Keep both ends and the horizontal position inside the content viewport.
         start, end = bottom-max(96,int((bottom-top)*.18)), top+max(96,int((bottom-top)*.22))
