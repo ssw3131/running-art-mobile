@@ -4,7 +4,7 @@
 
 **2026-10-13 21:32 S2a 휴대폰 후속 완료:** SM-S942N(Android 17)에 21:17:49 최신 APK를 자료 유지 설치했다. 5탭·직접 그리기·확인/탭 취소·강남 서버 14.56초/5후보·2순위 저장/중복 방지/GPX·러닝 준비·조건 수정/재시작을 확인했다. 시험 코스 업로드/삭제 동기화와 기존 3코스·5러닝·1,659좌표·1메모 해시·로그인/설정 보존, 도우미·내부 복구본 정리 완료. 서비스 없음·USB 분리 가능. A7 S2a·야외/장시간은 후속이며 다음 새 기능은 S2b다. [폰 검증](../quality/course-generation-phone-20261013.md)을 아래 휴대폰 미설치 표현보다 우선한다.
 
-작성: 2026-10-11, 상태 갱신: 2026-10-13. **S0·CI, S1 가입·동의 구현/홈 3상태와 저사양폰·회원 DB 적용, S2a 코스 생성 UI를 완료했다. 현재 S2b/S2c/S3/S4를 사용자 통합 목표로 구현하고 검증 중이다. S1 약관 게시/동의 통합·CLI 이력표 등록, S5~S8은 후속이다. [통합 계약](../development/course-archive-running.md)·[진행 검증](../quality/course-archive-running-20261013.md).** [가입·동의 검증](../quality/signup-consent-20261013.md)·[S0 검증](../quality/service-s0-verification.md). 기존 기능 개발·공통 UI 완료를 기반으로 실제 서비스 화면/동작을 단계적으로 연결한다. 전체 출시 필수 범위와 일정은 미확정이다.
+작성: 2026-10-11, 상태 갱신: 2026-10-14. **S0·CI, S1 가입·동의 구현/홈 3상태와 저사양폰·회원 DB 적용, S2~S4의 PC·격리 Android 통합을 완료했다. 현재 사용자 목표 S5·S6를 구현해 검증 중이다. S1 약관 게시/동의 통합·CLI 이력표 등록과 S6 운영자 정보/운영 적용, S7~S8은 후속이다. [S2~S4 검증](../quality/course-archive-running-20261013.md)·[S5·S6 계약](../development/achievements-support.md)·[S5·S6 검증](../quality/achievements-support-20261014.md).** [가입·동의 검증](../quality/signup-consent-20261013.md)·[S0 검증](../quality/service-s0-verification.md). 기존 기능 개발·공통 UI 완료를 기반으로 실제 서비스 화면/동작을 단계적으로 연결한다. 전체 출시 필수 범위와 일정은 미확정이다.
 
 먼저 [제품 개요](../product/overview.md) → [화면별 분석](../product/figma-service-analysis.md) → [현재 비즈니스 모델](../product/business-model.md) → [현재 상태](../handoff/status.md)를 읽는다. 이전 결정을 다시 묻지 않고 결정 목록 D-01~D-15의 해당 미정 항목만 구체화한다.
 

@@ -43,3 +43,18 @@
 최초 API 29는 S0 탭/홈 뒤 과거 서비스 메뉴의 ‘코스 만들기’ 바로가기를 찾던 검사에서 실패했다. S6 메뉴는 소개/사용법/FAQ/문의/공지로 바뀌었으므로 실제 ‘서비스 소개 → 코스 생성하러 가기’ 경로에서 기존 중심/거리/도형 보존을 검증하도록 갱신했다. 아래로 이동한 개발 도구도 스크롤 후 진입한다. 기존 보존/뒤로 가기 assertions는 유지했다. API 29 artifact `11863223467`·실패 로그와 정리 통과, 준비 대기 1건/전송 경고 1건을 보존한다.
 
 최초 API 36도 같은 과거 메뉴 버튼 탐색에서 실패했다. artifact `11863132573`와 첫 로그를 보존했으며 두 API 모두 갱신한 경로로 재검증한다.
+
+## 검토한 실제 화면과 APK
+
+최종 Windows API 36의 [원본 보고서](assets/achievements-support-20261014/local-report.json)를 보관한다. 보고서의 dirty는 당시 QA/문서 후속 편집 상태이며 제품 소스는 `57599bc`다. 아래 PNG는 같은 `s56-android-06` 실행에서 가져왔다.
+
+| 결과/공유 | 계정/지원 |
+| --- | --- |
+| [완주 결과](assets/achievements-support-20261014/s5-result.png) | [서비스 메뉴](assets/achievements-support-20261014/s6-menu.png) |
+| [글꼴 1.6배](assets/achievements-support-20261014/s5-result-large-font.png) | [서비스 소개](assets/achievements-support-20261014/s6-about.png) |
+| [9:16 미리보기](assets/achievements-support-20261014/s5-story-preview.png) | [다크 테마 재시작](assets/achievements-support-20261014/s6-theme-restarted.png) |
+| [4:5 닉네임·날짜 숨김](assets/achievements-support-20261014/s5-feed-preview.png) | |
+
+APK: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,958,127바이트. SHA-256 `0b6691341f49e220c501ed6e81d23bb5c6266d31e917407a02a2dc7b8f0a7e7a`. 동일 앱 ID·release·시험 훅 미포함 검사를 통과했고 기존 S2a APK와 서명 SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`가 같다. 설치 안내/해시는 같은 폴더에 있다. 휴대폰 설치·외부 APK 배포는 하지 않았다.
+
+수정한 메뉴를 포함한 `s56-smoke-01`도 5단계·원본 보존·정리 통과(준비 대기/전송 경고 0)했다. [호환 흐름 보고서](assets/achievements-support-20261014/local-smoke-report.json). 새 경로에서 중심/거리/도형·탭 상태 유지와 OAuth 취소/가입 안내를 확인했다.
