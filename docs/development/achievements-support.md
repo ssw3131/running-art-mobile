@@ -1,6 +1,6 @@
 # S5 성취·공유 / S6 계정·지원 계약
 
-2026-10-14 구현 중. 검증·배포 상태는 [실행 기록](../history/executed-plans/2026-10-14-0908-achievements-service.md)을 따른다.
+2026-10-14 구현 후 검증 중. [검증/실패 이력](../quality/achievements-support-20261014.md)·[실행 기록](../history/executed-plans/2026-10-14-0908-achievements-service.md)을 따른다. 운영 문의·공지 SQL과 약관은 미배포다.
 
 ## 성취
 
