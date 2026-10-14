@@ -20,3 +20,14 @@ test('planned outline is labelled and never exposes stored course name; long tra
  assert.ok(cardContent(run,null,points,'러너',defaultCardOptions).pathUri);
  assert.throws(()=>cardContent({...run,status:'running'},null,[],'러너',defaultCardOptions),/completed/);
 });
+
+test('card content handles Korean/English names, long durations, and tiny or zero distance',()=>{
+ const extended={...run,activeMs:(123*3600+45*60+6)*1000,distanceM:1};
+ for(const name of ['한글러너'.repeat(8),'VeryLongEnglishRunnerName']){
+  const card=cardContent(extended,null,[],name,defaultCardOptions);
+  assert.equal([...card.nickname].length,20);
+  assert.equal(card.duration,'123:45:06');assert.equal(card.distance,'0.00 km');assert.equal(card.pace,'—');
+ }
+ const empty=cardContent({...run,activeMs:0,distanceM:0},null,[],'\n\u200b',defaultCardOptions);
+ assert.equal(empty.nickname,'러너');assert.equal(empty.duration,'00:00:00');assert.equal(empty.pace,'—');
+});
