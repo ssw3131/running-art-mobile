@@ -40,7 +40,7 @@ export default function AccountSettingsScreen() {
   };
   const toggle = (id: string, title: string, detail: string, key: 'voice' | 'background') => <View style={{ gap: 8 }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={[s.rowTitle, { flex: 1, color: colors.text }]}>{title}</Text>
-      <Switch testID={id} accessibilityLabel={title} disabled={busy || !data.ready} value={data.preferences.guidance[key]} trackColor={{ true: colors.accent }} onValueChange={value => { void save({ ...data.preferences, guidance: { ...data.preferences.guidance, [key]: value } }); }} /></View>
+      <Switch testID={id} accessibilityLabel={title} disabled={busy || !data.ready} value={data.preferences.guidance[key]} trackColor={{ false: colors.border, true: colors.accent }} thumbColor="#FFFFFF" onValueChange={value => { void save({ ...data.preferences, guidance: { ...data.preferences.guidance, [key]: value } }); }} /></View>
     <Text style={[s.caption, { color: colors.muted }]}>{detail}</Text>
   </View>;
   return <AccountPage title="설정" colors={colors}>
