@@ -62,3 +62,11 @@ APK: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,95
 수정본 CI `38495705327`의 API 29는 소개 화면의 화면 밖 CTA를 찾는 검사에서 실패했다(artifact `11864472412`). 실제 UI XML은 버튼을 `[0,0][0,0]`으로 반환했으며 기존 검사 도구가 이를 위쪽으로 해석해 위로만 스크롤했다. 위치가 없는 요소는 방향 판단에서 제외하고, testID 없는 본문도 스크롤 이동 판정에 포함하도록 수정했다. 원본 실패 화면/로그와 정리 통과·준비 대기 2건/전송 경고 2건을 보존한다. API 36 전체 흐름은 같은 실행에서 계속 진행 중이다.
 
 `s56-android-07`은 실제 저장 공지의 오프라인 목록→상세→목록 복귀를 추가해 S5/S6 전체·원본 보존·정리 통과(준비/전송 경고 0)했다. 공유 PNG 두 해시는 06과 같다. [보고서](assets/achievements-support-20261014/local-notice-report.json)·[저장 공지 목록](assets/achievements-support-20261014/s6-notices.png)·[상세](assets/achievements-support-20261014/s6-notice-detail.png)·[복귀](assets/achievements-support-20261014/s6-notice-back.png). 시험 공지는 격리 기기 캐시만 사용했으며 운영 서버에 게시하지 않았다. 파일·네트워크 원복을 확인했다.
+
+## 전체 API 36·화면 기준 검토 — 11:02
+
+수정본 CI `38495705327`, merge source `15eb73bfcee06a031ae70a68a3fb9e47f71da503`, API 36 APK `4c8e4236b928fddb892a3b04f8b9c19544185182183166400a4edafa21d8ae98`: **전체 14단계·원본 보존·정리 통과**. 캡처 준비 대기 2건/전송 경고 0건을 보존한다. [원본 보고서](assets/achievements-support-20261014/ci-full-02-report.json). API 29 실패와 정적 화면 실패가 있어 이 CI 전체를 성공으로 쓰지 않는다.
+
+시각 비교는 홈·러닝·보관함 0픽셀, 마이페이지 237,545픽셀 차이였다. [이전 화면](assets/achievements-support-20261014/review-account-baseline.png)·[현재 화면](assets/achievements-support-20261014/review-account-current.png)·[차이](assets/achievements-support-20261014/review-account-diff.png)·[원본 비교](assets/achievements-support-20261014/review-report.json)를 직접 검토했다. 차이는 S6의 공통 Noto 글꼴·흰색/검정/회색/주황 팔레트·둥근 버튼·내용 간격과 일치한다. 비로그인 안내·CI 인증 설정 없음·실제 0 통계는 유지된다. 마이페이지 PNG 한 장만 갱신하고 출처와 이전 기준을 manifest에 기록했다. 나머지 PNG·기존 시스템 Wi-Fi 마스크·비교 허용치·환경은 바꾸지 않았다.
+
+같은 캡처의 검토 후 재비교는 4화면 0픽셀이다. 이는 새 독립 CI 통과를 대신하지 않는다. API 29의 0좌표/본문 이동 수정은 실패 XML 재생에서 이전 코드 실패·수정 코드 통과를 확인했고, 실제 다음 CI에서는 확대된 S5/S6 포함 6단계를 검증한다. 공지 저장본 검사는 로컬 07에서 통과했으며 다음 전체 CI에도 포함한다.
