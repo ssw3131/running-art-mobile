@@ -15,7 +15,7 @@
 | 완주 배지·중복/복원·삭제 재집계·연속일 | `achievements.test.mjs`의 실제 SQLite 소유권/원본 불변 및 집계 검사, `UI-S5-01/02`, 실제 APK 결과→배지→기록 진입. 칼로리 제외/닉네임·날짜 기본 표시는 사용자 결정대로 확인 |
 | PNG 두 비율·미리보기와 실제 파일 일치·OS 공유/취소 | Windows API 36 `s56-android-06/07` 실제 PNG 바이트/해상도와 저장·공유창 확인. Android 10 호환 검사는 수정본 CI 대기이며 성공으로 세지 않음 |
 | 긴 이름·시간·작은 수치, 저장/공유 실패·계정 변경 | 카드 데이터의 한글/영문 20자·123시간·1m/0m 검사와 `achievement-export.test.tsx` 5개 추가 검사 통과. 후자는 네이티브 경계 모의 실패 주입으로 부분 파일 삭제·재시도·계정 변경 중단·공유 실패를 검사하며 실제 OS 저장 성공 검사를 대체하지 않음 |
-| 기존 링크 수신/공유 중단·AI 호출 제외 | 기존 링크/서버 권한 검사와 CI `S0-08-links-gpx` 유지. 이미지 카드는 기기 캡처·좌표 정규화만 사용하며 링크와 공개 범위를 구분. 실제 외부 링크 운영 근거는 [기존 공유 검증](run-link-sharing-verification.md), 이번 새 실기기 수신 검증으로 주장하지 않음 |
+| 기존 링크 수신/공유 중단·AI 호출 제외 | 기존 링크/서버 권한 검사와 CI `S0-07-deep-link-gpx` 유지. 이미지 카드는 기기 캡처·좌표 정규화만 사용하며 링크와 공개 범위를 구분. 실제 외부 링크 운영 근거는 [기존 공유 검증](run-link-sharing-verification.md), 이번 새 실기기 수신 검증으로 주장하지 않음 |
 | 계정·사진·탈퇴·기기 자료 보관 | 기존 `account`, `profile-photo`, `account-withdrawal`, `account-deletion` 검사와 실제 격리 Auth/Storage 통합 유지. 운영 계정/실제 폰의 변경 화면 후속은 미실행 |
 | 앱/지도 테마·재시작·접근성 | 실제 APK의 테마 변경/재시작·360dp/글꼴 1.6배 및 전체 GPS 회귀. 제품 지도 설정은 같은 테마를 사용. 실제 폰 야외·장시간 검증과 구분 |
 | 소개/사용법/FAQ·공지 목록/상세/오프라인 | 번들 콘텐츠·UI 상태 검사, 실제 APK `s56-android-07` 캐시/네트워크 OFF·목록 복귀. 시험 공지는 격리 캐시만 사용, 운영 공지 미게시 |
@@ -73,7 +73,7 @@
 | [9:16 미리보기](assets/achievements-support-20261014/s5-story-preview.png) | [다크 테마 재시작](assets/achievements-support-20261014/s6-theme-restarted.png) |
 | [4:5 닉네임·날짜 숨김](assets/achievements-support-20261014/s5-feed-preview.png) | |
 
-APK: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,958,127바이트. SHA-256 `0b6691341f49e220c501ed6e81d23bb5c6266d31e917407a02a2dc7b8f0a7e7a`. 동일 앱 ID·release·시험 훅 미포함 검사를 통과했고 기존 S2a APK와 서명 SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`가 같다. 설치 안내/해시는 같은 폴더에 있다. 휴대폰 설치·외부 APK 배포는 하지 않았다.
+이전 `s56-build-06` APK: 126,958,127바이트, SHA-256 `0b6691341f49e220c501ed6e81d23bb5c6266d31e917407a02a2dc7b8f0a7e7a`. 동일 앱 ID·release·시험 훅 미포함 검사를 통과했고 기존 S2a APK와 서명 SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`가 같다. 이후 확인한 Android 10 Downloads 결함으로 이 파일을 `.cache/s56-build-06.apk`에 보존하고 아래 수정 APK로 전달본을 교체했다. 휴대폰 설치·외부 APK 배포는 하지 않았다.
 
 수정한 메뉴를 포함한 `s56-smoke-01`도 5단계·원본 보존·정리 통과(준비 대기/전송 경고 0)했다. [호환 흐름 보고서](assets/achievements-support-20261014/local-smoke-report.json). 새 경로에서 중심/거리/도형·탭 상태 유지와 OAuth 취소/가입 안내를 확인했다.
 
@@ -96,3 +96,21 @@ APK: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,95
 최초 로그 `.cache/s56-ci-android36-third.log`, artifact `11864933804`(482바이트, 시나리오 보고서 없이 gallery만 생성)를 보존했다. API 29는 계속 실행 중이며 해당 작업을 취소하지 않는다. 같은 head의 실패 작업만 진단 재실행하고 최초 실패와 결과를 구분한다.
 
 11:19 API 29도 종료했다. 기존 5단계는 모두 통과했고 추가 S5/S6에서 실제 스토리 PNG·공유창·저장 취소 뒤 `Pictures` 탐색이 실패했다. artifact `11866075172`의 정리 전 화면/XML은 Android 10 DocumentsUI의 `Downloads` 및 `ALLOW ACCESS TO "DOWNLOADS"` 버튼(`android:id/button1`)을 보여준다. Android 16의 내부 저장소/Pictures 시작을 가정한 검사 경로 오류다. API 29는 관측된 Downloads를 허용하고 실제 `/sdcard/Download`에 쓴 PNG 바이트를 미리보기와 비교하도록 수정했다. API 36의 Pictures 경로와 파일 일치/원본 보존/정리 assertions는 유지한다. 첫 실행의 원본 해시 복원·정리 통과, 준비 대기/전송 경고 0건을 보존한다. API 29 수정이 필요해 같은 head 단순 재실행 대신 수정 커밋의 전체 CI로 두 API를 다시 검증한다.
+
+## Android 10 Downloads 실제 저장 실패 — 11:41
+
+수정본 `38500625886`, head `97b4662`, API 29 merge source `b82178278b1ae009f5f1b79035d400fffe2400fb`: 기존 5단계 통과 뒤 폴더 허용까지 진행했지만 S5 이미지 저장이 실제로 실패했다. artifact `11865593530`의 [실패 화면](assets/achievements-support-20261014/ci29-save-failure.png)은 앱의 저장 오류 메시지를 보여준다. [선택창](assets/achievements-support-20261014/ci29-save-destination.png)·[실패 보고서](assets/achievements-support-20261014/ci29-save-failure-report.json)를 보관한다. 검사 경로 오류로 분류하지 않는다. 원본 해시 복원·정리 통과, 준비 대기 0/전송 경고 1건을 보존한다.
+
+네이티브 로그의 선택 URI는 `com.android.providers.downloads.documents`다. 설치된 Expo FileSystem 57.0.7의 `legacy/FileSystemLegacyModule.kt`는 `Uri.isSAFUri`를 `com.android.externalstorage` 호스트로 제한해 해당 폴더의 생성/쓰기를 거부한다. 같은 패키지의 새 `FileSystemPath.kt`는 `DocumentsContract.isDocumentUri/isTreeUri`를 확인한다. 이미지 저장만 `Directory.createFile`·`File.bytes/write/delete`로 전환해 사용자가 선택한 제공자를 그대로 처리하고, 폴더 선택·계정 변경 확인·미리보기 바이트·실패한 대상 파일 정리는 유지했다. [공식 파일 API](https://docs.expo.dev/versions/latest/sdk/filesystem/)와 설치된 SDK 소스를 함께 대조했다.
+
+수정 후 오류/계정 변경 검사 5개와 타입/린트 통과. 새 APK `s56-build-07` 및 로컬 API 29 환경을 준비 중이며 실제 네이티브 저장 성공은 아직 확인하지 않았다. 앞서 준비한 `s56-build-06` APK는 이 Downloads 결함이 있는 이전 파일로, 최종 전달본은 수정 후 재검증하여 교체한다.
+
+## Downloads 수정 실제 검증·APK 갱신 — 11:54
+
+제품 수정 소스 `1bfbd7d`, `s56-build-07` release 성공(2분 3초), 동일 앱 ID/서명·시험 훅 미포함 통과. 새 전용 `RunPen_CI` API 29·`emulator-5560`에서 `s56-android29-01`의 S5/S6·원본 보존·정리 모두 통과했다. 재시도/캡처 준비 대기/전송 경고 0건. 실제 Downloads PNG와 미리보기의 바이트 일치, 두 비율/기본값/숨김·취소/공유창, 배지 기록·지원·공지 오프라인 상세/복귀·테마 재시작·360dp/글꼴 1.6배를 확인했다. [원본 보고서](assets/achievements-support-20261014/local-api29-report.json)·[카드 결과](assets/achievements-support-20261014/local-api29-card-result.json)·[실제 저장 성공](assets/achievements-support-20261014/local-api29-file-saved.png). dirty 목록에는 이후 위 제품 커밋에 저장한 수정과 검사/문서가 포함된다. 시험 자료/도우미 정리 뒤 전용 에뮬레이터를 종료했다. 물리 폰은 조작하지 않았다.
+
+같은 수정본의 `s56-fast-05`도 로직 452·Jest 38·타입/린트·서버·OpenAPI·PGlite 정책 모두 통과했다. [원본 보고서](assets/achievements-support-20261014/local-fast-05-report.json). 새 제품 소스의 최종 PR/main Android 전체 CI는 후속이다.
+
+현재 설치용 파일: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,957,759바이트, SHA-256 `83f4e7f568d408da5eb1bdee7ac06e331dfa11c1c8f64b2258e3f4510447375c`. 기존과 같은 서명 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`, arm64-v8a/x86_64. 해시/설치 안내도 갱신했다. 아직 휴대폰 설치·외부 공개·운영 SQL/약관 적용은 하지 않았다.
+
+같은 시각 이전 소스 CI `38500625886`의 API 36은 전체 14단계·원본 보존·정리와 4화면 시각 비교를 통과했다. 준비/전송 경고 0건. [기능 보고서](assets/achievements-support-20261014/ci-full-04-report.json)·[시각 보고서](assets/achievements-support-20261014/ci-visual-04-report.json). API 29 제품 실패 때문에 전체 게이트는 실패이며, 이 API 36 결과는 Downloads 수정 후 소스의 통과를 대신하지 않는다. 수정본과 오류 검사를 포함한 다음 PR CI에서 두 API를 함께 확인한다.
