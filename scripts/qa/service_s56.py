@@ -10,8 +10,9 @@ def service_s56(q, launch):
     entry=json.loads((q.ROOT/'.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
     before=q.snapshot('s56-before')
     preferences=q.query("SELECT * FROM account_preferences WHERE owner_id=''")
-    pictures='/sdcard/Pictures'
-    original_pictures=set(q.shell('ls','-1',pictures).decode().splitlines())
+    api=int(q.shell('getprop','ro.build.version.sdk').decode().strip())
+    export_folder='/sdcard/Download' if api<30 else '/sdcard/Pictures'
+    original_exports=set(q.shell('ls','-1',export_folder).decode().splitlines())
     cache=f'/data/user/0/{q.APP}/cache/'
     notice_cache=cache+'runpen-notices.json'
     original_notice=q.adb('exec-out','cat',notice_cache) if 'runpen-notices.json' in q.shell('ls','-1',cache).decode().splitlines() else None
@@ -43,11 +44,20 @@ def service_s56(q, launch):
             q.shell('input','keyevent','4')
             if q.find(q.capture('s5-save-cancel-return'),'card-save') is not None: break
         else: raise RuntimeError('Document picker did not return after cancellation')
-        q.seek('card-save');q.tap('card-save');q.tap('Pictures');q.tap('USE THIS FOLDER');q.tap('android:id/button1')
+        q.seek('card-save');q.tap('card-save')
+        if api<30:
+            # API 29 starts at Downloads and exposes an ALLOW ACCESS button.
+            # Keep the observed folder and verify the actual exported bytes there.
+            picker=q.capture('s5-save-destination')
+            assert q.find(picker,'ALLOW ACCESS TO "DOWNLOADS"') is not None
+            q.tap('android:id/button1')
+        else:
+            q.tap('Pictures');q.tap('USE THIS FOLDER')
+        q.tap('android:id/button1')
         q.capture('s5-file-saved')
-        created=set(q.shell('ls','-1',pictures).decode().splitlines())-original_pictures
+        created=set(q.shell('ls','-1',export_folder).decode().splitlines())-original_exports
         assert len(created)==1 and next(iter(created)).startswith('RunPen-')
-        exported=q.adb('exec-out','cat',pictures+'/'+next(iter(created)))
+        exported=q.adb('exec-out','cat',export_folder+'/'+next(iter(created)))
         assert exported==story,'Saved file differs from the preview'
         q.seek('card-format');q.tap('card-format');q.tap('피드 4:5 · 1080×1350')
         q.seek('card-nickname');q.tap('card-nickname');q.tap('card-date')
@@ -102,9 +112,9 @@ def service_s56(q, launch):
             q.adb('push',str(restore),notice_cache)
             assert q.adb('exec-out','cat',notice_cache)==original_notice
         q.shell('svc','wifi','disable' if wifi=='0' else 'enable');q.shell('svc','data','disable' if mobile=='0' else 'enable')
-        for name in set(q.shell('ls','-1',pictures).decode().splitlines())-original_pictures:
+        for name in set(q.shell('ls','-1',export_folder).decode().splitlines())-original_exports:
             if name.startswith('RunPen-') and name.endswith('.png') and '/' not in name:
-                q.shell('rm',pictures+'/'+name)
+                q.shell('rm',export_folder+'/'+name)
         q.shell('sqlite3',q.DB,f"DELETE FROM running_sessions WHERE id='{run_id}'; DELETE FROM account_preferences WHERE owner_id='';")
         for row in preferences:
             q.shell('sqlite3',q.DB,'INSERT INTO account_preferences(owner_id,preferences_json,updated_at) VALUES('+','.join(map(literal,[row['owner_id'],row['preferences_json'],row['updated_at']]))+');')

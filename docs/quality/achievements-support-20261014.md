@@ -70,3 +70,11 @@ APK: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,95
 시각 비교는 홈·러닝·보관함 0픽셀, 마이페이지 237,545픽셀 차이였다. [이전 화면](assets/achievements-support-20261014/review-account-baseline.png)·[현재 화면](assets/achievements-support-20261014/review-account-current.png)·[차이](assets/achievements-support-20261014/review-account-diff.png)·[원본 비교](assets/achievements-support-20261014/review-report.json)를 직접 검토했다. 차이는 S6의 공통 Noto 글꼴·흰색/검정/회색/주황 팔레트·둥근 버튼·내용 간격과 일치한다. 비로그인 안내·CI 인증 설정 없음·실제 0 통계는 유지된다. 마이페이지 PNG 한 장만 갱신하고 출처와 이전 기준을 manifest에 기록했다. 나머지 PNG·기존 시스템 Wi-Fi 마스크·비교 허용치·환경은 바꾸지 않았다.
 
 같은 캡처의 검토 후 재비교는 4화면 0픽셀이다. 이는 새 독립 CI 통과를 대신하지 않는다. API 29의 0좌표/본문 이동 수정은 실패 XML 재생에서 이전 코드 실패·수정 코드 통과를 확인했고, 실제 다음 CI에서는 확대된 S5/S6 포함 6단계를 검증한다. 공지 저장본 검사는 로컬 07에서 통과했으며 다음 전체 CI에도 포함한다.
+
+## 최종 수정본 CI 초기화 실패 — 11:12
+
+[38498980182](https://github.com/ssw3131/running-art-mobile/actions/runs/38498980182), head `ff0f143`: fast/API 통과. API 36 job `115641204367`은 release 빌드 성공 뒤 시나리오 시작 전 `adb root`에서 `unable to connect for root: closed`로 종료했다. `scripts/qa/android.py:114`의 초기 연결 실패이며 앱 설치·14단계·시각 비교는 실행되지 않았다. 환경 초기화 실패로 기록하며 기능 통과나 원본 보존/정리 통과로 세지 않는다. 러너의 에뮬레이터 종료는 확인했다.
+
+최초 로그 `.cache/s56-ci-android36-third.log`, artifact `11864933804`(482바이트, 시나리오 보고서 없이 gallery만 생성)를 보존했다. API 29는 계속 실행 중이며 해당 작업을 취소하지 않는다. 같은 head의 실패 작업만 진단 재실행하고 최초 실패와 결과를 구분한다.
+
+11:19 API 29도 종료했다. 기존 5단계는 모두 통과했고 추가 S5/S6에서 실제 스토리 PNG·공유창·저장 취소 뒤 `Pictures` 탐색이 실패했다. artifact `11866075172`의 정리 전 화면/XML은 Android 10 DocumentsUI의 `Downloads` 및 `ALLOW ACCESS TO "DOWNLOADS"` 버튼(`android:id/button1`)을 보여준다. Android 16의 내부 저장소/Pictures 시작을 가정한 검사 경로 오류다. API 29는 관측된 Downloads를 허용하고 실제 `/sdcard/Download`에 쓴 PNG 바이트를 미리보기와 비교하도록 수정했다. API 36의 Pictures 경로와 파일 일치/원본 보존/정리 assertions는 유지한다. 첫 실행의 원본 해시 복원·정리 통과, 준비 대기/전송 경고 0건을 보존한다. API 29 수정이 필요해 같은 head 단순 재실행 대신 수정 커밋의 전체 CI로 두 API를 다시 검증한다.
