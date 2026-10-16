@@ -1,5 +1,7 @@
 # S5·S6 성취·공유와 계정·지원 검증
 
+**2026-10-16 23:25 휴대폰 후속:** A7(Android 10) 자료 유지 설치·성취/PNG/게스트 지원·원본 보존/정리를 완료했다. 공지·세 정책의 운영 조회 오류와 실제 동의/문의 미검증은 별도다. [최신 폰 검증](achievements-support-phone-20261016.md)을 아래 PC/격리 검증 당시의 휴대폰 미설치 기록보다 우선한다.
+
 상태: 2026-10-16 최종 PR 검증·main 병합 완료. main 전체 CI 통과. API 36 첫 Maestro 시간 초과 후 같은 소스 1회 진단 재실행 통과, 최초 실패 보존. 운영 정책/문의 적용은 대기. [구현 계약](../development/achievements-support.md)·[실행 계획과 실패 이력](../history/executed-plans/2026-10-14-0908-achievements-service.md).
 
 ## 범위

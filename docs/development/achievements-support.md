@@ -1,5 +1,7 @@
 # S5 성취·공유 / S6 계정·지원 계약
 
+**2026-10-16 23:25 휴대폰 후속:** A7(Android 10) 자료 유지 설치·성취/PNG/게스트 지원·원본 보존/정리를 완료했다. 공지·세 정책의 운영 조회 오류와 실제 동의/문의 미검증은 별도다. [최신 폰 검증](../quality/achievements-support-phone-20261016.md)을 아래 PC/격리 검증 당시의 휴대폰 미설치 기록보다 우선한다.
+
 2026-10-16 최종 PR/main 전체 검증과 main `6e08dcd` 병합 완료. main API 36 첫 Maestro 시간 초과 후 같은 소스 1회 진단 재실행 통과, 최초 실패 보존. [검증/실패 이력](../quality/achievements-support-20261014.md)·[실행 기록](../history/executed-plans/2026-10-14-0908-achievements-service.md)을 따른다. 운영 문의·공지 SQL과 약관은 미배포다.
 
 ## 성취
