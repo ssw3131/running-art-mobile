@@ -1,6 +1,6 @@
 # S5·S6 성취·공유와 계정·지원 검증
 
-상태: 2026-10-14 검증 진행 중. [구현 계약](../development/achievements-support.md)·[실행 계획과 실패 이력](../history/executed-plans/2026-10-14-0908-achievements-service.md).
+상태: 2026-10-16 최종 PR 검증·main 병합 완료, main 전체 CI 진행 중. 운영 정책/문의 적용은 대기. [구현 계약](../development/achievements-support.md)·[실행 계획과 실패 이력](../history/executed-plans/2026-10-14-0908-achievements-service.md).
 
 ## 범위
 
@@ -114,3 +114,17 @@
 현재 설치용 파일: `build/install/running-art-0.1.0-20261014-achievements-service.apk`, 126,957,759바이트, SHA-256 `83f4e7f568d408da5eb1bdee7ac06e331dfa11c1c8f64b2258e3f4510447375c`. 기존과 같은 서명 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`, arm64-v8a/x86_64. 해시/설치 안내도 갱신했다. 아직 휴대폰 설치·외부 공개·운영 SQL/약관 적용은 하지 않았다.
 
 같은 시각 이전 소스 CI `38500625886`의 API 36은 전체 14단계·원본 보존·정리와 4화면 시각 비교를 통과했다. 준비/전송 경고 0건. [기능 보고서](assets/achievements-support-20261014/ci-full-04-report.json)·[시각 보고서](assets/achievements-support-20261014/ci-visual-04-report.json). API 29 제품 실패 때문에 전체 게이트는 실패이며, 이 API 36 결과는 Downloads 수정 후 소스의 통과를 대신하지 않는다. 수정본과 오류 검사를 포함한 다음 PR CI에서 두 API를 함께 확인한다.
+
+## 최종 PR 통과·main 병합 — 2026-10-16
+
+10-16에 [최종 PR CI 38503796425](https://github.com/ssw3131/running-art-mobile/actions/runs/38503796425)의 완료 결과를 다시 조회했다. 실행 소스 `a4a61dd7c60789f4cbec3fbe20776feb769649d4`는 최종 PR head `10d1a48`의 merge ref다. 전체 필수 게이트 통과, PR head/base 일치·mergeable clean을 확인한 뒤 [PR #16](https://github.com/ssw3131/running-art-mobile/pull/16)을 main `6e08dcd2e0ad7624d13c51548e4f13ab57a30553`로 squash 병합했다.
+
+| 검증 | 최종 결과/원본 근거 |
+| --- | --- |
+| 빠른 검사 | 로직 452·Jest 38·타입/린트·서버·OpenAPI·정책 통과. [보고서](assets/achievements-support-20261014/pr-final-fast-report.json) |
+| 실제 격리 DB | 기존 개인 자료/회원과 신규 지원을 합친 PostgreSQL/Auth/Storage 통합 3개 통과. [보고서](assets/achievements-support-20261014/pr-final-db-report.json) |
+| API 36 | 전체 14단계·원본 보존·정리 통과. 준비 대기 4/전송 경고 0, 시나리오 재시도 0. [보고서](assets/achievements-support-20261014/pr-final-api36-report.json) |
+| API 29 | S5/S6 포함 6단계·원본 보존·정리 통과. 준비 대기 1/전송 경고 1, 시나리오 재시도 0. [보고서](assets/achievements-support-20261014/pr-final-api29-report.json) |
+| 시각 비교 | 기존 시스템 Wi-Fi 마스크를 유지한 홈·러닝·보관함·마이페이지 모두 0픽셀. [보고서](assets/achievements-support-20261014/pr-final-visual-report.json) |
+
+병합 후 [main CI 38903902335](https://github.com/ssw3131/running-art-mobile/actions/runs/38903902335)를 실행 중이다. PR 통과를 main 통과로 대신하지 않는다. 운영자/문의 연락처·시행일과 정책 결정/게시·운영 SQL 적용·실제 동의/문의 통합은 계속 남아 있다. 휴대폰 설치·운영 서버 변경은 없다.

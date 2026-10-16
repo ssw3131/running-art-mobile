@@ -1,6 +1,6 @@
 # S5 성취·공유 / S6 계정·지원 계약
 
-2026-10-14 구현 후 검증 중. [검증/실패 이력](../quality/achievements-support-20261014.md)·[실행 기록](../history/executed-plans/2026-10-14-0908-achievements-service.md)을 따른다. 운영 문의·공지 SQL과 약관은 미배포다.
+2026-10-16 최종 PR 검증과 main `6e08dcd` 병합 완료, main 전체 CI 진행 중. [검증/실패 이력](../quality/achievements-support-20261014.md)·[실행 기록](../history/executed-plans/2026-10-14-0908-achievements-service.md)을 따른다. 운영 문의·공지 SQL과 약관은 미배포다.
 
 ## 성취
 
