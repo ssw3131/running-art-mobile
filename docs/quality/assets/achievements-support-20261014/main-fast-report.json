@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "suite": "fast",
+  "startedAt": "2026-10-16T12:55:37.697Z",
+  "source": "6e08dcd2e0ad7624d13c51548e4f13ab57a30553",
+  "dirty": false,
+  "workingTree": [],
+  "ciRun": "38903902335",
+  "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+  "environment": {
+    "platform": "linux",
+    "node": "v24.21.0"
+  },
+  "retry": 0,
+  "steps": [
+    {
+      "id": "source",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 15943,
+      "log": "source.log"
+    },
+    {
+      "id": "server-source",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 1577,
+      "log": "server-source.log"
+    },
+    {
+      "id": "logic",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 25996,
+      "log": "logic.log"
+    },
+    {
+      "id": "components",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 9640,
+      "log": "components.log"
+    },
+    {
+      "id": "openapi",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 86,
+      "log": "openapi.log"
+    },
+    {
+      "id": "account-policies",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 1607,
+      "log": "account-policies.log"
+    },
+    {
+      "id": "share-policies",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 1593,
+      "log": "share-policies.log"
+    }
+  ],
+  "finishedAt": "2026-10-16T12:56:34.365Z",
+  "status": "passed"
+}

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "source": "6e08dcd2e0ad7624d13c51548e4f13ab57a30553",
+  "dirty": false,
+  "startedAt": "2026-10-16T13:06:49.838090+00:00",
+  "ciRun": "38903902335",
+  "apkSha256": "c6a21ce6bd804b9a6bc39b367340fbd5be037f4737d2fb23dfe759bc102efac3",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "full",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-10-16T13:06:49.970017+00:00",
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "failed",
+          "error": "Command '['/home/runner/work/running-art-mobile/running-art-mobile/.tools/maestro-2.11.0/maestro/bin/maestro', '--device', 'emulator-5554', 'test', '--format', 'junit', '--output', 'test-results/android-36/attempt-01/maestro.xml', '--test-output-dir', 'test-results/android-36/attempt-01/maestro', '/home/runner/work/running-art-mobile/running-art-mobile/.maestro/s0-navigation.yaml']' timed out after 359.99998820999997 seconds",
+          "captureError": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_RESULT: shortMsg=java.lang.IllegalStateException\nINSTRUMENTATION_RESULT: longMsg=UiAutomationService android.accessibilityservice.IAccessibilityServiceClient$Stub$Proxy@ee6257already registered!\nINSTRUMENTATION_CODE: 0\n"
+        }
+      ],
+      "status": "failed"
+    }
+  ],
+  "retries": 0,
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "error": "Command '['/home/runner/work/running-art-mobile/running-art-mobile/.tools/maestro-2.11.0/maestro/bin/maestro', '--device', 'emulator-5554', 'test', '--format', 'junit', '--output', 'test-results/android-36/attempt-01/maestro.xml', '--test-output-dir', 'test-results/android-36/attempt-01/maestro', '/home/runner/work/running-art-mobile/running-art-mobile/.maestro/s0-navigation.yaml']' timed out after 359.99998820999997 seconds",
+  "failureDiagnostics": [
+    {
+      "file": "failure-raw.png",
+      "status": "saved"
+    },
+    {
+      "file": "failure-window.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-activity.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-logcat.txt",
+      "status": "saved"
+    }
+  ],
+  "captureError": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_RESULT: shortMsg=java.lang.IllegalStateException\nINSTRUMENTATION_RESULT: longMsg=UiAutomationService android.accessibilityservice.IAccessibilityServiceClient$Stub$Proxy@ee6257already registered!\nINSTRUMENTATION_CODE: 0\n",
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-10-16T13:13:23.518416+00:00",
+  "uiDumpReadinessWaits": 0,
+  "uiDumpTransportWarnings": 0,
+  "status": "failed"
+}

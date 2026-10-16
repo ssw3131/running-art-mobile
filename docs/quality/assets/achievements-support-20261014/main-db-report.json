@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "suite": "integration",
+  "startedAt": "2026-10-16T12:57:26.414Z",
+  "source": "6e08dcd2e0ad7624d13c51548e4f13ab57a30553",
+  "dirty": false,
+  "workingTree": [],
+  "ciRun": "38903902335",
+  "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+  "environment": {
+    "platform": "linux",
+    "node": "v24.21.0"
+  },
+  "retry": 0,
+  "steps": [
+    {
+      "id": "supabase-roundtrip",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 1209,
+      "log": "supabase-roundtrip.log"
+    }
+  ],
+  "finishedAt": "2026-10-16T12:57:27.727Z",
+  "status": "passed"
+}

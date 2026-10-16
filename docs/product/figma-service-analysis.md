@@ -2,6 +2,8 @@
 
 기준일: 2026-10-11. [제품 개요](overview.md)와 [현재 비즈니스 모델](business-model.md)을 함께 읽는다. **기존 기술 기능을 재사용해 실제 서비스 흐름을 만드는 분석**이다. 아래 “필요”는 신규 구현 요구이지 완료 보고가 아니다.
 
+**2026-10-16 구현 상태:** S5 성취·PNG 공유와 S6 계정·지원 화면을 구현하고 최종 PR 검증 후 main에 병합했다. main 전체 CI는 진행 중이다. 아래 UI 의도/기반/필요는 최초 분석이며, 현재 완료 범위는 [계약](../development/achievements-support.md)·[검증](../quality/achievements-support-20261014.md)을 따른다. D-11/D-14는 사용자 확정대로 적용했고 칼로리는 제외했다. 운영자 정보·정책 확정과 실제 운영 적용은 남아 있다. 이번 상태 갱신은 Figma 원본을 새로 전수 조회했다는 뜻이 아니다.
+
 ## 조회 범위와 해석
 
 [UI 원본](https://www.figma.com/design/QYRGII8OdvQB1SrtH3BA08?node-id=0-1)의 최상위 화면/상태 41프레임, 상품 비교표 1개, 구역 표제 9개와 페이지 TEXT 996개 전체를 [조회 JSON](figma-ui-inventory-20261011.json)에 보존했다. prototype은 [152개 반응 노드·133개 화면 연결](figma-prototype-links-20261011.json)을 확인했다. component는 [완료된 공통 UI](../development/common-ui.md)를 재사용하며 보관함 페이지는 새 요구사항으로 편입하지 않는다.
@@ -171,6 +173,6 @@
 
 ## 이어서 개발할 때
 
-S2b/S2c·S3·S4를 통합하고 최종 PR/main 필수 검사·Android 전체/호환·자료 보존·화면 비교를 완료했다. 한 번의 러닝 완주·종료 후 새 도전과 실제 거리/순위/경사 계약을 적용했다. [통합 계약](../development/course-archive-running.md)·[검증](../quality/course-archive-running-20261013.md)을 기준으로 삼는다. 이후 제품 단위는 S5 성취·공유이며, S1 약관/동의 통합과 실기기·배포 후속은 별도다.
+S2b/S2c·S3·S4 통합에 이어 S5 성취·공유와 S6 계정·지원 화면을 main에 반영했다. 한 번의 러닝 완주·종료 후 새 도전, 실제 기록의 성취 재집계와 사용자 공유 기본값을 유지한다. [S2~S4 계약](../development/course-archive-running.md)·[S5·S6 계약](../development/achievements-support.md)·[최신 검증](../quality/achievements-support-20261014.md)을 기준으로 삼는다. 현재 후속은 main 검증 마무리와 S1/S6의 [정책·운영 결정/적용](policy-reconciliation-20261014.md)이며 실기기·배포 및 S7/S8은 별도 범위다.
 
 2026-10-13 S2~S4 통합의 최신 사용자 결정·구현 범위는 [계약](../development/course-archive-running.md)을 따른다. 앞의 여러 날짜 도전/입력 범위 미정 설명은 초기 분석 이력이다.

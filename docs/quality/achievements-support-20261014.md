@@ -1,6 +1,6 @@
 # S5·S6 성취·공유와 계정·지원 검증
 
-상태: 2026-10-16 최종 PR 검증·main 병합 완료, main 전체 CI 진행 중. 운영 정책/문의 적용은 대기. [구현 계약](../development/achievements-support.md)·[실행 계획과 실패 이력](../history/executed-plans/2026-10-14-0908-achievements-service.md).
+상태: 2026-10-16 최종 PR 검증·main 병합 완료. main API 29/빠른 검사/DB 통과, API 36 첫 Maestro 시간 초과 후 동일 소스 진단 재실행 중. 운영 정책/문의 적용은 대기. [구현 계약](../development/achievements-support.md)·[실행 계획과 실패 이력](../history/executed-plans/2026-10-14-0908-achievements-service.md).
 
 ## 범위
 
@@ -128,3 +128,11 @@
 | 시각 비교 | 기존 시스템 Wi-Fi 마스크를 유지한 홈·러닝·보관함·마이페이지 모두 0픽셀. [보고서](assets/achievements-support-20261014/pr-final-visual-report.json) |
 
 병합 후 [main CI 38903902335](https://github.com/ssw3131/running-art-mobile/actions/runs/38903902335)를 실행 중이다. PR 통과를 main 통과로 대신하지 않는다. 운영자/문의 연락처·시행일과 정책 결정/게시·운영 SQL 적용·실제 동의/문의 통합은 계속 남아 있다. 휴대폰 설치·운영 서버 변경은 없다.
+
+## main 첫 실행 결과·진단 재실행 — 2026-10-16
+
+main `6e08dcd`의 빠른 검사와 DB/API는 통과했다. 로직 452·Jest 38·실제 격리 DB 3개를 로그와 [빠른 검사 보고서](assets/achievements-support-20261014/main-fast-report.json)·[DB 보고서](assets/achievements-support-20261014/main-db-report.json)로 확인했다. API 29는 S5/S6 포함 6단계·원본 보존·정리 통과, 시나리오 재시도 0·준비 대기 0·전송 경고 2건이다. [API 29 보고서](assets/achievements-support-20261014/main-api29-report.json), APK SHA-256 `b4c0a9a48850675cbe06044ccbdb855c9f06a388a3a0125f4b4e299689fcb487`.
+
+API 36 job `116982659485`는 release 빌드 뒤 첫 `S0-01-maestro`의 `Launch app` 명령이 360초를 넘겨 실패했다. Maestro 로그는 실행 명령 시작까지만 남았고, [실패 원본 화면](assets/achievements-support-20261014/main-api36-first-failure.png)에는 홈이 표시되어 앱 MainActivity가 전면이었다. 후속 캡처는 `UiAutomationService ... already registered!`로 실패했다. 이 근거만으로 앱 정상/도구 근본 원인을 확정하지 않으며 첫 실행의 기능·보존 통과로 세지 않는다. 정리만 통과했다. [실패 보고서](assets/achievements-support-20261014/main-api36-first-failure-report.json), artifact `12047948095`와 전체 로그 `.cache/s56-main-android36-01.log`를 보존했다.
+
+같은 main SHA의 실패 작업만 진단 재실행을 요청했다. API 29·빠른 검사·DB/API의 기존 통과는 유지하며 전체 게이트와 API 36의 후속 결과는 아직 대기다. 재실행 성공 시에도 최초 실패를 지우거나 무재시도 전체 CI라고 기록하지 않는다.
