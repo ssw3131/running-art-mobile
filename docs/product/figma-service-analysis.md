@@ -2,7 +2,7 @@
 
 기준일: 2026-10-11. [제품 개요](overview.md)와 [현재 비즈니스 모델](business-model.md)을 함께 읽는다. **기존 기술 기능을 재사용해 실제 서비스 흐름을 만드는 분석**이다. 아래 “필요”는 신규 구현 요구이지 완료 보고가 아니다.
 
-**2026-10-16 구현 상태:** S5 성취·PNG 공유와 S6 계정·지원 화면을 구현하고 최종 PR 검증 후 main에 병합했다. main 전체 CI는 진행 중이다. 아래 UI 의도/기반/필요는 최초 분석이며, 현재 완료 범위는 [계약](../development/achievements-support.md)·[검증](../quality/achievements-support-20261014.md)을 따른다. D-11/D-14는 사용자 확정대로 적용했고 칼로리는 제외했다. 운영자 정보·정책 확정과 실제 운영 적용은 남아 있다. 이번 상태 갱신은 Figma 원본을 새로 전수 조회했다는 뜻이 아니다.
+**2026-10-16 구현 상태:** S5 성취·PNG 공유와 S6 계정·지원 화면을 구현하고 최종 PR 검증 후 main에 병합했다. main 전체 CI도 통과했으며 API 36 첫 시간 초과와 1회 진단 재실행 이력을 보존했다. 아래 UI 의도/기반/필요는 최초 분석이며, 현재 완료 범위는 [계약](../development/achievements-support.md)·[검증](../quality/achievements-support-20261014.md)을 따른다. D-11/D-14는 사용자 확정대로 적용했고 칼로리는 제외했다. 운영자 정보·정책 확정과 실제 운영 적용은 남아 있다. 이번 상태 갱신은 Figma 원본을 새로 전수 조회했다는 뜻이 아니다.
 
 ## 조회 범위와 해석
 
@@ -173,6 +173,6 @@
 
 ## 이어서 개발할 때
 
-S2b/S2c·S3·S4 통합에 이어 S5 성취·공유와 S6 계정·지원 화면을 main에 반영했다. 한 번의 러닝 완주·종료 후 새 도전, 실제 기록의 성취 재집계와 사용자 공유 기본값을 유지한다. [S2~S4 계약](../development/course-archive-running.md)·[S5·S6 계약](../development/achievements-support.md)·[최신 검증](../quality/achievements-support-20261014.md)을 기준으로 삼는다. 현재 후속은 main 검증 마무리와 S1/S6의 [정책·운영 결정/적용](policy-reconciliation-20261014.md)이며 실기기·배포 및 S7/S8은 별도 범위다.
+S2b/S2c·S3·S4 통합에 이어 S5 성취·공유와 S6 계정·지원 화면을 main에 반영했다. 한 번의 러닝 완주·종료 후 새 도전, 실제 기록의 성취 재집계와 사용자 공유 기본값을 유지한다. [S2~S4 계약](../development/course-archive-running.md)·[S5·S6 계약](../development/achievements-support.md)·[최신 검증](../quality/achievements-support-20261014.md)을 기준으로 삼는다. 현재 후속은 S1/S6의 [정책·운영 결정/적용](policy-reconciliation-20261014.md)이며 실기기·배포 및 S7/S8은 별도 범위다.
 
 2026-10-13 S2~S4 통합의 최신 사용자 결정·구현 범위는 [계약](../development/course-archive-running.md)을 따른다. 앞의 여러 날짜 도전/입력 범위 미정 설명은 초기 분석 이력이다.

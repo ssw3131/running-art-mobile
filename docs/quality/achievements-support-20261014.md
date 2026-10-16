@@ -1,6 +1,6 @@
 # S5·S6 성취·공유와 계정·지원 검증
 
-상태: 2026-10-16 최종 PR 검증·main 병합 완료. main API 29/빠른 검사/DB 통과, API 36 첫 Maestro 시간 초과 후 동일 소스 진단 재실행 중. 운영 정책/문의 적용은 대기. [구현 계약](../development/achievements-support.md)·[실행 계획과 실패 이력](../history/executed-plans/2026-10-14-0908-achievements-service.md).
+상태: 2026-10-16 최종 PR 검증·main 병합 완료. main 전체 CI 통과. API 36 첫 Maestro 시간 초과 후 같은 소스 1회 진단 재실행 통과, 최초 실패 보존. 운영 정책/문의 적용은 대기. [구현 계약](../development/achievements-support.md)·[실행 계획과 실패 이력](../history/executed-plans/2026-10-14-0908-achievements-service.md).
 
 ## 범위
 
@@ -8,12 +8,12 @@
 
 기존 계정·사진·탈퇴·러닝·동기화와 같은 앱 ID/서명을 사용한다. 운영자/문의 이메일/시행일은 답변 대기다. 운영 SQL·약관 게시·휴대폰 설치를 수행하지 않았다. 문의 접수·공지는 신규 RPC를 적용한 환경이 필요하며 운영 완료로 분류하지 않는다.
 
-## 완료 조건 대조 — 11:30 기준
+## 완료 조건 대조 — 2026-10-16 기준
 
 | 조건 | 현재 근거와 남은 범위 |
 | --- | --- |
 | 완주 배지·중복/복원·삭제 재집계·연속일 | `achievements.test.mjs`의 실제 SQLite 소유권/원본 불변 및 집계 검사, `UI-S5-01/02`, 실제 APK 결과→배지→기록 진입. 칼로리 제외/닉네임·날짜 기본 표시는 사용자 결정대로 확인 |
-| PNG 두 비율·미리보기와 실제 파일 일치·OS 공유/취소 | Windows API 36 `s56-android-06/07` 실제 PNG 바이트/해상도와 저장·공유창 확인. Android 10 호환 검사는 수정본 CI 대기이며 성공으로 세지 않음 |
+| PNG 두 비율·미리보기와 실제 파일 일치·OS 공유/취소 | 수정 APK의 로컬 API 29, 최종 PR/main API 36/29에서 실제 PNG 바이트/해상도·저장·공유창/취소 통과. main API 36은 첫 Maestro 시간 초과 후 같은 소스 1회 진단 재실행 결과 |
 | 긴 이름·시간·작은 수치, 저장/공유 실패·계정 변경 | 카드 데이터의 한글/영문 20자·123시간·1m/0m 검사와 `achievement-export.test.tsx` 5개 추가 검사 통과. 후자는 네이티브 경계 모의 실패 주입으로 부분 파일 삭제·재시도·계정 변경 중단·공유 실패를 검사하며 실제 OS 저장 성공 검사를 대체하지 않음 |
 | 기존 링크 수신/공유 중단·AI 호출 제외 | 기존 링크/서버 권한 검사와 CI `S0-07-deep-link-gpx` 유지. 이미지 카드는 기기 캡처·좌표 정규화만 사용하며 링크와 공개 범위를 구분. 실제 외부 링크 운영 근거는 [기존 공유 검증](run-link-sharing-verification.md), 이번 새 실기기 수신 검증으로 주장하지 않음 |
 | 계정·사진·탈퇴·기기 자료 보관 | 기존 `account`, `profile-photo`, `account-withdrawal`, `account-deletion` 검사와 실제 격리 Auth/Storage 통합 유지. 운영 계정/실제 폰의 변경 화면 후속은 미실행 |
@@ -21,9 +21,9 @@
 | 소개/사용법/FAQ·공지 목록/상세/오프라인 | 번들 콘텐츠·UI 상태 검사, 실제 APK `s56-android-07` 캐시/네트워크 OFF·목록 복귀. 시험 공지는 격리 캐시만 사용, 운영 공지 미게시 |
 | 문의 실제 저장·중복·실패/재전송·선택 이메일 | 로컬 controller/정책 검사 및 실제 격리 `DB-SUPPORT-01` 통과. 운영 SQL·담당/회신 채널·보유 기간 확정과 운영 접수 검증은 남음 |
 | 정책 정합성·운영 정보·최신 문안 | [기술 대조/교체 초안](../product/policy-reconciliation-20261014.md) 작성. 운영자/연락처/시행일·최종 문안과 실제 게시/필수 동의 통합은 미완료 |
-| PR/main·APK·인수인계 | 동일 ID/서명 APK 준비. PR #16의 최종 필수 게이트·병합/main 전체 검사와 최종 상태 갱신은 진행 중. 휴대폰 설치·운영 배포는 미실행 |
+| PR/main·APK·인수인계 | 동일 ID/서명 APK `83f4e7f…` 준비. 제품 소스 `1bfbd7d`와 main `6e08dcd`의 차이는 문서/검증 자료뿐임을 확인. PR #16 최종 필수 게이트·병합과 main 전체 검증 완료. 인수인계는 [문서 PR #17](https://github.com/ssw3131/running-art-mobile/pull/17)에 기록. 휴대폰 설치·운영 배포는 미실행 |
 
-추가 오류 검사는 처음 두 번 Jest 실행 준비에서 sandbox `realpath EPERM`으로 시작하지 못했다. 동일 작업 폴더 TEMP를 사용한 승인된 로컬 실행에서 5개 통과했다. 제품 소스/APK 변경 없이 검사만 보완했으며 현재 실행 중인 CI(`38500625886`, head `97b4662`)에는 이 추가 검사가 아직 포함되지 않는다.
+추가 오류 검사는 처음 두 번 Jest 실행 준비에서 sandbox `realpath EPERM`으로 시작하지 못했다. 동일 작업 폴더 TEMP를 사용한 승인된 로컬 실행에서 5개 통과했다. 당시 실행 중이던 CI(`38500625886`, head `97b4662`)에는 추가 검사가 미포함이었으며, 이후 최종 PR과 main의 Jest 38개 통과에 포함됐다.
 
 ## 로컬 검사
 
@@ -136,3 +136,18 @@ main `6e08dcd`의 빠른 검사와 DB/API는 통과했다. 로직 452·Jest 38·
 API 36 job `116982659485`는 release 빌드 뒤 첫 `S0-01-maestro`의 `Launch app` 명령이 360초를 넘겨 실패했다. Maestro 로그는 실행 명령 시작까지만 남았고, [실패 원본 화면](assets/achievements-support-20261014/main-api36-first-failure.png)에는 홈이 표시되어 앱 MainActivity가 전면이었다. 후속 캡처는 `UiAutomationService ... already registered!`로 실패했다. 이 근거만으로 앱 정상/도구 근본 원인을 확정하지 않으며 첫 실행의 기능·보존 통과로 세지 않는다. 정리만 통과했다. [실패 보고서](assets/achievements-support-20261014/main-api36-first-failure-report.json), artifact `12047948095`와 전체 로그 `.cache/s56-main-android36-01.log`를 보존했다.
 
 같은 main SHA의 실패 작업만 진단 재실행을 요청했다. API 29·빠른 검사·DB/API의 기존 통과는 유지하며 전체 게이트와 API 36의 후속 결과는 아직 대기다. 재실행 성공 시에도 최초 실패를 지우거나 무재시도 전체 CI라고 기록하지 않는다.
+
+## main 최종 검증 — 2026-10-16 22:43
+
+[main CI 38903902335의 2차 실행](https://github.com/ssw3131/running-art-mobile/actions/runs/38903902335/attempts/2)에서 API 36과 전체 필수 게이트가 통과했다. 제품 소스는 첫 실행과 같은 `6e08dcd2e0ad7624d13c51548e4f13ab57a30553`이며 제품/검사 코드나 기준을 바꾸지 않았다. 최초 실패가 있는 전체 CI를 무재시도 성공으로 표현하지 않는다.
+
+| 검증 | 최종 결과 |
+| --- | --- |
+| API 36 재실행 | 전체 14단계·원본 보존·정리 통과. 실행 내부 재시도 0·준비 대기 0·전송 경고 0. [보고서](assets/achievements-support-20261014/main-api36-report.json) |
+| API 29 첫 실행 | 전체 6단계·원본 보존·정리 통과. 실행 내부 재시도 0·준비 대기 0·전송 경고 2. [보고서](assets/achievements-support-20261014/main-api29-report.json) |
+| 화면 비교 | 기존 Wi-Fi 영역 마스크를 유지한 홈·러닝·보관함·마이페이지 모두 0픽셀. [보고서](assets/achievements-support-20261014/main-visual-report.json) |
+| 빠른 검사/DB | 첫 실행의 로직 452·Jest 38·타입/린트·서버·OpenAPI·정책·실제 격리 DB 3개 통과 유지. [빠른 검사](assets/achievements-support-20261014/main-fast-report.json)·[DB](assets/achievements-support-20261014/main-db-report.json) |
+
+API 36 최종 artifact `12050370613`, APK SHA-256 `8bfc99c57ca787e5d9bbf3d4abb2f48844d0472dd8cde9e3ecf9dc6c4e2efd5f`. 설치용 로컬 APK는 위의 `83f4e7f…`이며 CI 격리 APK와 구분한다. 로컬 APK 제품 소스 `1bfbd7d`와 main `6e08dcd` 사이에는 문서/검증 자료 차이만 있음을 확인했다.
+
+기술 구현·PC/격리 Android·PR/main 검증은 완료했으며 [인수인계 PR #17](https://github.com/ssw3131/running-art-mobile/pull/17)에 근거를 모았다. 운영자/연락처/시행일·최종 정책 확정, 지원 SQL·정책 게시·실제 동의/문의 통합은 미완료다. 휴대폰 설치와 운영 서버/DB 변경은 하지 않았다.
