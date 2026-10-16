@@ -1,6 +1,6 @@
 # S5 성취·공유 / S6 계정·지원 계약
 
-2026-10-14 구현 후 검증 중. [검증/실패 이력](../quality/achievements-support-20261014.md)·[실행 기록](../history/executed-plans/2026-10-14-0908-achievements-service.md)을 따른다. 운영 문의·공지 SQL과 약관은 미배포다.
+2026-10-16 최종 PR/main 전체 검증과 main `6e08dcd` 병합 완료. main API 36 첫 Maestro 시간 초과 후 같은 소스 1회 진단 재실행 통과, 최초 실패 보존. [검증/실패 이력](../quality/achievements-support-20261014.md)·[실행 기록](../history/executed-plans/2026-10-14-0908-achievements-service.md)을 따른다. 운영 문의·공지 SQL과 약관은 미배포다.
 
 ## 성취
 

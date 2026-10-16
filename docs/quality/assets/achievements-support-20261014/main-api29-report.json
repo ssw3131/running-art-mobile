@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "source": "6e08dcd2e0ad7624d13c51548e4f13ab57a30553",
+  "dirty": false,
+  "startedAt": "2026-10-16T13:05:34.961673+00:00",
+  "ciRun": "38903902335",
+  "apkSha256": "b4c0a9a48850675cbe06044ccbdb855c9f06a388a3a0125f4b4e299689fcb487",
+  "environment": {
+    "host": "Linux",
+    "api": "29",
+    "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64:10/QSR1.211112.011/13135432:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "smoke",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-10-16T13:05:35.069163+00:00",
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "screenshots": [
+            "after-maestro-display.png"
+          ],
+          "durationSeconds": 40.436
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "screenshots": [
+            "home-history-large-font-archive.png",
+            "home-history-large-font.png",
+            "home-history-offline.png",
+            "home-history.png",
+            "home-initial-top.png",
+            "home-interrupted-return.png",
+            "home-interrupted.png",
+            "home-paused-return.png",
+            "home-paused.png",
+            "home-record-detail.png",
+            "home-shape-applied.png",
+            "home-tab-keeps-edited-shape.png"
+          ],
+          "durationSeconds": 94.883
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "screenshots": [
+            "archive-runs.png",
+            "archive-view-after-tab.png",
+            "center-after-tab.png",
+            "center-before-tab.png",
+            "course-detail.png",
+            "draft-after-detail-distance.png",
+            "draft-after-detail.png",
+            "draft-after-menu-back-distance.png",
+            "draft-after-menu-back.png",
+            "draft-after-menu-link-distance.png",
+            "draft-after-menu-link.png",
+            "draft-after-system-back-distance.png",
+            "draft-after-system-back.png",
+            "draft-before-distance.png",
+            "draft-before.png",
+            "system-back-home.png"
+          ],
+          "durationSeconds": 76.705
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "screenshots": [
+            "auth-cancel-callback.png",
+            "draft-after-callback-distance.png",
+            "draft-after-callback.png"
+          ],
+          "durationSeconds": 16.112
+        },
+        {
+          "id": "S1-01-signup-entry",
+          "status": "passed",
+          "screenshots": [
+            "signup-account-back.png",
+            "signup-entry.png",
+            "signup-guest-return.png",
+            "signup-large-font-return.png",
+            "signup-large-font.png",
+            "signup-login.png"
+          ],
+          "durationSeconds": 42.9
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "screenshots": [
+            "s5-account-badge.png",
+            "s5-badge-record.png",
+            "s5-card-feed-private.png",
+            "s5-card-options.png",
+            "s5-card-story.png",
+            "s5-feed-preview.png",
+            "s5-file-saved.png",
+            "s5-result-large-font.png",
+            "s5-result.png",
+            "s5-save-cancel-return.png",
+            "s5-save-destination.png",
+            "s5-story-preview.png",
+            "s5-system-save.png",
+            "s5-system-share.png",
+            "s6-about.png",
+            "s6-faq.png",
+            "s6-guide.png",
+            "s6-inquiry-guest.png",
+            "s6-menu-large-font.png",
+            "s6-menu.png",
+            "s6-notice-back.png",
+            "s6-notice-detail.png",
+            "s6-notices.png",
+            "s6-theme-dark.png",
+            "s6-theme-restarted.png"
+          ],
+          "durationSeconds": 150.07
+        }
+      ],
+      "status": "passed",
+      "preservation": {
+        "status": "passed",
+        "sha256": "76c3d9140898cb26c9e3c0c0187b58396c44710da895b604f7e4c84b5d527d84"
+      },
+      "finishedAt": "2026-10-16T13:13:03.654189+00:00"
+    }
+  ],
+  "retries": 0,
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-10-16T13:13:06.057218+00:00",
+  "uiDumpReadinessWaits": 0,
+  "uiDumpTransportWarnings": 2,
+  "status": "passed"
+}
