@@ -1,0 +1,84 @@
+{
+  "status": "passed",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "source": "b82178278b1ae009f5f1b79035d400fffe2400fb",
+  "apkSha256": "83d407046975f87c9413e216b2f9c1c06140561e4fb8259c42fabe940e9166d7",
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "results": [
+    {
+      "id": "home",
+      "status": "passed",
+      "pixels": 0,
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
+      "baselineSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7",
+      "currentSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7"
+    },
+    {
+      "id": "run",
+      "status": "passed",
+      "pixels": 0,
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
+      "baselineSha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
+      "currentSha256": "75b6c85ccd45998971dca0e7dc9665cddfffdda7cba9ba99d6b06254c223f70b"
+    },
+    {
+      "id": "archive",
+      "status": "passed",
+      "pixels": 0,
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
+      "baselineSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+      "currentSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448"
+    },
+    {
+      "id": "account",
+      "status": "passed",
+      "pixels": 0,
+      "masks": [
+        {
+          "reason": "system-wifi-rasterization",
+          "x": 817,
+          "y": 53,
+          "width": 41,
+          "height": 33
+        }
+      ],
+      "baselineSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8",
+      "currentSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "retrieved": "2026-10-14",
+  "nodes": [
+    "36:6724",
+    "36:6573",
+    "46:7098",
+    "48:7340",
+    "46:7103",
+    "49:7894",
+    "46:7108"
+  ],
+  "assets": [
+    {
+      "name": "faq.svg",
+      "bytes": 926,
+      "sha256": "1661509a9f68d81ad2b7757209b0319928ad3768d877c40c4fcb3775f1e1f50f"
+    },
+    {
+      "name": "guide-scenes.png",
+      "bytes": 1766890,
+      "sha256": "46ce5afc929607068e0cda5b6c3596ec8bf5bab645c16bbb786afe24792afd0c",
+      "width": 731,
+      "height": 2152
+    },
+    {
+      "name": "guide.svg",
+      "bytes": 754,
+      "sha256": "3008c55071b1c35206125bcaefe7e80e90cde810f42f23d6504a1c723ee2ada0"
+    },
+    {
+      "name": "inquiry.svg",
+      "bytes": 629,
+      "sha256": "8ca4d9e08d2ab8fd78db6d955cda2e8d241272c090cece54af389de42001367f"
+    },
+    {
+      "name": "intro.png",
+      "bytes": 2048921,
+      "sha256": "e6e9ef0e6ade7250e4a35963181abfeed6c3f0da2a8fc75cadebf461e2473d7a",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "name": "location.svg",
+      "bytes": 1029,
+      "sha256": "9a3188d6ecb50bb8dd8beaa2fb30e74b407cd1e8b3b6692306e76d0bb79dbcc1"
+    },
+    {
+      "name": "notice.svg",
+      "bytes": 532,
+      "sha256": "e0d8c92bb5c4bc836ae99d950e5f6c8e2f7fc3f88126d8c7cd79e1c32e222c84"
+    },
+    {
+      "name": "privacy.svg",
+      "bytes": 1186,
+      "sha256": "019cc3bbba4f23cb258abeb3725d70abc9ef0b827269f7bc3e9da5c64f5dbee5"
+    },
+    {
+      "name": "scenes.png",
+      "bytes": 2041326,
+      "sha256": "659e5b3303b8b018bb93bbe498a73d4f8f6d160ffff2519023f84d34b57ebdc7",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "name": "terms.svg",
+      "bytes": 848,
+      "sha256": "09153f238d61ce91de5570b4f04ce23d926cc9c75c25f435ed853629eb32089c"
+    },
+    {
+      "name": "withdraw-warning.svg",
+      "bytes": 1618,
+      "sha256": "afa00efcd85f0d99d6a71c9bb62d22470dad641dfa6e8b70c36aed3ea8ab7beb"
+    }
+  ]
+}

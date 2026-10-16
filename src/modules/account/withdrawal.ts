@@ -40,6 +40,7 @@ export function createWithdrawalController(deps: {
   const finish = async (value: Intent, repository: WithdrawalRepository) => {
     await repository.retainAsGuest(value.owner);
     await deps.clearSession(value.owner);
+    await deps.storage.removeItem(`runpen.inquiry.${value.owner}`);
     // SQLite's retained marker makes cleanup retries safe after receipt expiry.
     await deps.storage.removeItem(WITHDRAWAL_KEY);
     intent = null;

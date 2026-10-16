@@ -5,9 +5,10 @@ import { authentication } from '@/modules/auth/runtime';
 import { runSharing } from '@/modules/run-sharing/runtime';
 import { shareErrorMessage } from '@/modules/run-sharing/model';
 import { ServiceTabLink } from '@/features/service/ServiceTabLink';
-import { RunButton, styles } from './ui';
+import { RunButton, useRunStyles } from './ui';
 
 export default function RunSharePanel({ id, disabled, onBusy }: { id: string; disabled: boolean; onBusy(value: boolean): void }) {
+  const styles = useRunStyles();
   const account = useSyncExternalStore(authentication.subscribe, authentication.getSnapshot).account;
   const owner = account?.id ?? '';
   const [state, setState] = useState<{ key: string; url: string | null; message: string }>({ key: '', url: null, message: '' });

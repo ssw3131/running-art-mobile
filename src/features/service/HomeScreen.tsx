@@ -102,6 +102,7 @@ function HistoryHome({ data }: { data: HomeData }) {
   return <>
     <AppText variant="heading" weight="medium">오늘도 멋지게 달려요!</AppText>
     <AppText variant="label" style={{ color: c.muted }}>달리는 순간, 더 특별한 하루가 됩니다.</AppText>
+    <AppText testID="home-streak" weight="bold" style={{ color: c.selected }}>현재 {data.currentStreak}일 연속 러닝</AppText>
     <View style={styles.stats}>
       {[{ label: '최근 러닝 기록', value: km(latest.run.distanceM), detail: date(latest.run.startedAt), icon: require('../../../assets/home/sneaker.svg'), size: 20 },
         { label: '이번 달 달린 거리', value: km(data.monthlyDistanceM), detail: `${new Date(data.monthStart).getMonth() + 1}월 누적`, icon: require('../../../assets/home/trophy.svg'), size: 16 }].map(stat =>

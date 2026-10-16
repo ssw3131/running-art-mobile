@@ -11,9 +11,10 @@ import type { Fix } from '@/modules/running/model';
 import { defaultAccountPreferences } from '@/modules/account/model';
 import { planApproach } from '@/modules/running/navigation';
 import type { ApproachPlan } from '@/modules/running/approach';
-import { RunButton, styles } from './ui';
+import { RunButton, useRunStyles } from './ui';
 
 export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(): void }) {
+  const styles = useRunStyles();
   const [course, setCourse] = useState<RunCourse | null>(null), [fix, setFix] = useState<Fix | null>(null);
   const [error, setError] = useState(''), [now, setNow] = useState(0);
   const [plan,setPlan]=useState<ApproachPlan|null>(null),[planning,setPlanning]=useState(false);

@@ -47,7 +47,7 @@ def service_s234(q, launch):
     q.shell('am','force-stop',q.APP);launch();q.tap('tab-run');q.capture('s4-restored-paused')
     restored=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
     assert restored=={'voice':False,'background':True,'mode':'focus'}
-    q.tap('run-finish');q.tap('종료·저장');q.capture('s3-run-detail')
+    q.tap('run-finish');q.tap('종료·저장');q.seek('result-detail');q.tap('result-detail');q.capture('s3-run-detail')
     before=q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]
     assert before['status']=='completed' and before['course_outcome']=='stopped'
     q.seek('run-rechallenge');q.tap('run-rechallenge');fix();q.seek('run-course-start')
@@ -57,6 +57,7 @@ def service_s234(q, launch):
     assert newer['id']!=run_id and newer['course_outcome']=='active'
     assert q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]==before
     q.tap('run-finish');q.tap('종료·저장');wait_status('completed',newer['id'])
+    q.seek('result-detail');q.tap('result-detail')
     assert q.find(q.capture('s3-retry-finished'),'run-rechallenge') is not None
     launch('courses?view=runs');q.capture('s3-monthly-records')
     assert q.find(q.capture('s3-monthly-retry-record'),'run-row-'+run_id) is not None

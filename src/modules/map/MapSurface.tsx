@@ -5,6 +5,8 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import type { MapSurfaceProps as Props } from './types';
 import { centerFromMap } from './coordinates';
 import { hideMapBuildings } from './buildings';
+import { themedMapStyle } from './config';
+import { useThemeColors } from '@/theme/ThemeProvider';
 
 const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
@@ -162,8 +164,10 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terr
 }
 
 export default function MapSurface(props: Props) {
+  const c = useThemeColors();
   const [attempt, setAttempt] = useState(0);
-  return <MapAttempt key={`${props.styleUrl}-${attempt}`} {...props} onRetry={() => setAttempt((value) => value + 1)} />;
+  const styleUrl = themedMapStyle(props.styleUrl, c.background === '#121212');
+  return <MapAttempt key={`${styleUrl}-${attempt}`} {...props} styleUrl={styleUrl} onRetry={() => setAttempt((value) => value + 1)} />;
 }
 
 const styles = StyleSheet.create({

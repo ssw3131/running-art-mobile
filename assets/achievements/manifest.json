@@ -1,0 +1,62 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "retrieved": "2026-10-14",
+  "nodes": [
+    "30:4603",
+    "49:8352",
+    "145:14024"
+  ],
+  "assets": [
+    {
+      "name": "brand-name.png",
+      "bytes": 81923,
+      "sha256": "4186c8e4d44134262368e0faf537bce2f3c5ff8fa00299bc819c60c0e69c8237",
+      "width": 1024,
+      "height": 342
+    },
+    {
+      "name": "brand-runner.png",
+      "bytes": 80165,
+      "sha256": "9544ecca1fffdc04f2413af67004ce8abec3a1f0a3b414171dc60402f689f1d2",
+      "width": 1024,
+      "height": 512
+    },
+    {
+      "name": "confetti.png",
+      "bytes": 111251,
+      "sha256": "cd51decd488d545179fefe23b71157feb1a6c4da535d986fd455941fa4f4b7a1",
+      "width": 740,
+      "height": 493
+    },
+    {
+      "name": "distance.svg",
+      "bytes": 2657,
+      "sha256": "6f70db15347441abf29678c3538b635c51abe0f886ff3039f3506a5d17998228"
+    },
+    {
+      "name": "pace.svg",
+      "bytes": 1663,
+      "sha256": "062e025ead04f7fb40cfb3f2001d9d8d4b34efafe680401178c79dfac1c872d7"
+    },
+    {
+      "name": "sparkle.svg",
+      "bytes": 1669,
+      "sha256": "87576a0d525fcdec1f31d62dfbaef9a65766110f1c78eb38404c482edfca896a"
+    },
+    {
+      "name": "sparkles.svg",
+      "bytes": 1818,
+      "sha256": "259269922fae1fda0d400cf94c975a908112d39bcf5030e8f7deccf2ca72c87a"
+    },
+    {
+      "name": "timer.svg",
+      "bytes": 891,
+      "sha256": "000b0df855c0d491b9162775e35a8a93891dad2bd3ab504c84daba9c3d797dc3"
+    },
+    {
+      "name": "trophy.svg",
+      "bytes": 1591,
+      "sha256": "5bfac2fd2f372085b31fb9769708ef7295f7a91cc77b3b9c882c856245f1a5b2"
+    }
+  ]
+}

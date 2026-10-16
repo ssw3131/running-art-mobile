@@ -3,6 +3,8 @@ import { StorageError } from '../storage/types.ts';
 import { serialDatabase } from '../storage/serial-database.ts';
 import { ownerId, type OwnerScope } from '../sync/ownership.ts';
 import { defaultAccountPreferences, validatePreferences, type AccountPreferences, type AccountStatistics } from './model.ts';
+import { readAchievements } from '../achievements/repository.ts';
+import { preferencesEvents } from './preferences-events.ts';
 
 export function createAccountRepository(db: StorageDatabase, scope: OwnerScope, now = Date.now) {
   db = serialDatabase(db);
@@ -24,13 +26,12 @@ export function createAccountRepository(db: StorageDatabase, scope: OwnerScope, 
       return transaction(async (tx, owner) => {
         await tx.runAsync('INSERT INTO account_preferences(owner_id,preferences_json,updated_at) VALUES(?,?,?) ON CONFLICT(owner_id) DO UPDATE SET preferences_json=excluded.preferences_json,updated_at=excluded.updated_at', owner, JSON.stringify(preferences), now());
         return preferences;
-      });
+      }).then(saved => { preferencesEvents.changed(); return saved; });
     },
     statistics: () => transaction(async (tx, owner): Promise<AccountStatistics> => {
       const courses = await tx.getFirstAsync<{ count: number }>('SELECT count(*) count FROM saved_courses WHERE owner_id=?', owner);
-      const runs = await tx.getFirstAsync<{ count: number; finished: number; distance: number; duration: number }>(
-        "SELECT count(*) count,coalesce(sum(CASE WHEN course_outcome='finished' THEN 1 ELSE 0 END),0) finished,coalesce(sum(distance_m),0) distance,coalesce(sum(active_ms),0) duration FROM running_sessions WHERE owner_id=? AND status='completed'", owner);
-      return { courses: courses?.count ?? 0, runs: runs?.count ?? 0, finishedCourses: runs?.finished ?? 0, distanceM: runs?.distance ?? 0, activeMs: runs?.duration ?? 0 };
+      const totals = await readAchievements(tx, owner, now());
+      return { courses: courses?.count ?? 0, runs: totals.runs, finishedCourses: totals.finishedCourses, distanceM: totals.distanceM, activeMs: totals.activeMs };
     }),
   };
 }

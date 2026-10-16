@@ -5,6 +5,7 @@ import { AppState, Linking, Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontGate } from '@/theme/FontGate';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { useServiceTheme } from '@/theme/use-service-theme';
 import { AppText, Button } from '@/components/ui';
 import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { authentication } from '@/modules/auth/runtime';
@@ -21,6 +22,7 @@ export const unstable_settings = { initialRouteName: '(tabs)' };
 
 export default function RootLayout() {
   const auth=useAuth();
+  const theme = useServiceTheme();
   const recoveryScope = auth.ready ? auth.account?.id ?? 'guest' : 'loading';
   const [recovery, setRecovery] = useState({ scope: '', message: '' });
   const recoveryError = recovery.scope === recoveryScope ? recovery.message : '';
@@ -50,14 +52,14 @@ export default function RootLayout() {
     return () => { mounted = false; subscription.remove(); };
   }, [auth.ready,recoveryScope,recoveryAttempt]);
   return (
-    <ThemeProvider><FontGate><SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <StatusBar style="dark" />
+    <ThemeProvider palette={theme.palette}><FontGate><SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: theme.palette.background }}>
+      <StatusBar style={theme.dark ? 'light' : 'dark'} />
       {!!recoveryError && <View style={{ padding: 12, gap: 8 }}>
-        <AppText accessibilityRole="alert" style={{ color: '#B3261E' }}>러닝 복원: {recoveryError}</AppText>
+        <AppText accessibilityRole="alert" style={{ color: theme.palette.danger }}>러닝 복원: {recoveryError}</AppText>
         <Button label="복원 다시 시도" compact onPress={() => setRecoveryAttempt(value => value + 1)} />
       </View>}
       <Stack key={auth.ready?auth.account?.id??'guest':'loading'} screenOptions={{
-        contentStyle: { backgroundColor: '#FFFFFF' },
+        contentStyle: { backgroundColor: theme.palette.background },
         header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back />,
       }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

@@ -1,15 +1,17 @@
 import { Camera, GeoJSONSource, Layer, Map, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
-import { mapStyleUrl } from '@/modules/map/config';
+import { mapStyleUrl, themedMapStyle } from '@/modules/map/config';
+import { useThemeColors } from '@/theme/ThemeProvider';
 import { hideMapBuildings } from '@/modules/map/buildings';
 import type { Coordinate } from '@/modules/guidance/geometry';
 import type { GuidanceState } from '@/modules/guidance/engine';
 
 const basicStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#EDEFEA' } }] };
-const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
+const baseStyleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const line = (coordinates: Coordinate[]) => ({ type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates } });
 export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true, recenterAtBottom = false }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean; recenterAtBottom?: boolean }) {
+  const c = useThemeColors(), styleUrl = baseStyleUrl ? themedMapStyle(baseStyleUrl, c.background === '#121212') : null;
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
   const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));

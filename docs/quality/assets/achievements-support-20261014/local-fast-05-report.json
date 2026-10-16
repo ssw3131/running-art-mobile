@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "suite": "fast",
+  "startedAt": "2026-10-14T02:49:22.233Z",
+  "source": "42e7f1de9cddc6948988f740e2b86c9d93fcdc07",
+  "dirty": true,
+  "workingTree": [
+    "M docs/history/executed-plans/2026-10-14-0908-achievements-service.md",
+    " M docs/quality/achievements-support-20261014.md",
+    " M src/modules/achievements/image-file.ts",
+    " M tests/components/achievement-export.test.tsx"
+  ],
+  "ciRun": null,
+  "fixtureSha256": "12db681d69b4299c71eaf576a57b5d2aaebfc6545b04cd0e28065b69cbe63941",
+  "environment": {
+    "platform": "win32",
+    "node": "v24.21.0"
+  },
+  "retry": 0,
+  "steps": [
+    {
+      "id": "source",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 46078,
+      "log": "source.log"
+    },
+    {
+      "id": "server-source",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 3809,
+      "log": "server-source.log"
+    },
+    {
+      "id": "logic",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 30193,
+      "log": "logic.log"
+    },
+    {
+      "id": "components",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 61036,
+      "log": "components.log"
+    },
+    {
+      "id": "openapi",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 206,
+      "log": "openapi.log"
+    },
+    {
+      "id": "account-policies",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2582,
+      "log": "account-policies.log"
+    },
+    {
+      "id": "share-policies",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 1947,
+      "log": "share-policies.log"
+    }
+  ],
+  "finishedAt": "2026-10-14T02:51:48.557Z",
+  "status": "passed"
+}
