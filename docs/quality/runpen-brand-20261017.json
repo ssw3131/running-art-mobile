@@ -1,0 +1,128 @@
+{
+  "recordedAt": "2026-10-17T14:57:39.017158+09:00",
+  "figma": {
+    "file": "QYRGII8OdvQB1SrtH3BA08",
+    "node": "319:2228",
+    "sha256": "beddd36f9533ed797f789a33e0ddb08b5d434b526a0a375b0caf444fd1e733dd",
+    "size": [
+      432,
+      432
+    ]
+  },
+  "apk": {
+    "file": "runpen-0.1.0-20261017-brand.apk",
+    "sizeBytes": 127214637,
+    "sha256": "4ae28b04c8878c4261eeac116348585ce41eb85f938cbcffb3986d069a2b241b",
+    "signingCertificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+  },
+  "phone": {
+    "model": "SM-S942N",
+    "android": "17",
+    "before": {
+      "apkSha256": "83f4e7f568d408da5eb1bdee7ac06e331dfa11c1c8f64b2258e3f4510447375c",
+      "package": [
+        "versionName=0.1.0",
+        "lastUpdateTime=2026-10-17 14:14:54",
+        "dataDir=/data/user/0/com.runningart.mobile.dev",
+        "firstInstallTime=2026-09-27 16:29:39"
+      ],
+      "network": {
+        "wifi_on": "1",
+        "mobile_data": "1",
+        "airplane_mode_on": "0"
+      },
+      "fontScale": "1.0",
+      "servicesNone": true
+    },
+    "after": {
+      "apkSha256": "4ae28b04c8878c4261eeac116348585ce41eb85f938cbcffb3986d069a2b241b",
+      "package": [
+        "versionName=0.1.0",
+        "lastUpdateTime=2026-10-17 14:56:18",
+        "dataDir=/data/user/0/com.runningart.mobile.dev",
+        "firstInstallTime=2026-09-27 16:29:39"
+      ],
+      "network": {
+        "wifi_on": "1",
+        "mobile_data": "1",
+        "airplane_mode_on": "0"
+      },
+      "fontScale": "1.0",
+      "servicesNone": true
+    },
+    "dataBefore": {
+      "saved_courses": "4:b7c6ae4b89c3015e7470efd9f9ac6e36f27ae42418d962d9e79c4a80b4a04e05",
+      "running_sessions": "6:b963181c56aabf0e8627e03fb190edcec4854333a11c9a713912c9fbf7d80bd3",
+      "running_points": "1907:c255bc61dcf21cd73605b44ec5cc7ac43ad24e675b3b61377b2228e59868dbf1",
+      "storage_test_notes": "1:c30c777c63fa7efd60cbec6bd4d09ed534a62aaa8d49c458e3c2630e05798067",
+      "tests": [],
+      "remainingSynthetic": {
+        "saved_courses": {
+          "count": 0,
+          "guests": 0,
+          "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "running_sessions": {
+          "count": 0,
+          "guests": 0,
+          "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "running_points": {
+          "count": 0,
+          "guests": 0,
+          "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sync_deletions": 0,
+      "sync_conflicts": 0
+    },
+    "dataAfter": {
+      "saved_courses": "4:b7c6ae4b89c3015e7470efd9f9ac6e36f27ae42418d962d9e79c4a80b4a04e05",
+      "running_sessions": "6:b963181c56aabf0e8627e03fb190edcec4854333a11c9a713912c9fbf7d80bd3",
+      "running_points": "1907:c255bc61dcf21cd73605b44ec5cc7ac43ad24e675b3b61377b2228e59868dbf1",
+      "storage_test_notes": "1:c30c777c63fa7efd60cbec6bd4d09ed534a62aaa8d49c458e3c2630e05798067",
+      "tests": [],
+      "remainingSynthetic": {
+        "saved_courses": {
+          "count": 0,
+          "guests": 0,
+          "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "running_sessions": {
+          "count": 0,
+          "guests": 0,
+          "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "running_points": {
+          "count": 0,
+          "guests": 0,
+          "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sync_deletions": 0,
+      "sync_conflicts": 0
+    },
+    "visual": {
+      "launcherLabel": "RunPen",
+      "launcherIconOriginalVisible": true,
+      "launcherTapOpensHome": true,
+      "restartOpensHome": true,
+      "sourceSha256": "beddd36f9533ed797f789a33e0ddb08b5d434b526a0a375b0caf444fd1e733dd"
+    },
+    "cleanup": {
+      "status": "passed",
+      "dataPreserved": true,
+      "accountAndSettingsPreserved": true,
+      "helperRemoved": true,
+      "internalBackupRemoved": true,
+      "noRunningService": true
+    }
+  },
+  "checks": {
+    "typecheck": "passed",
+    "lint": "passed",
+    "release": "passed",
+    "buildRetry": "initial sandbox daemon connection failed; same source local retry succeeded"
+  },
+  "ci": "PR/main pending"
+}
