@@ -55,7 +55,7 @@ npm run test:api-contract
 
 fast-check 기본 seed는 `20261013`이다. 실패 출력의 seed와 path를 `FC_SEED`, `FC_PATH`로 지정하면 축소된 실패 순서를 재현한다. 충돌 선택은 사용자 동작으로 모델링하며, 응답 유실 뒤 수정한 기록을 자동으로 덮어쓰는 것을 성공으로 간주하지 않는다.
 
-Python 격리 환경에 `scripts/qa/requirements.txt`를 설치하고 `python scripts/qa/fuzz.py`를 실행한다. Schemathesis 4.31.0이 실제 `/healthz`, `/v1/routes` HTTP 처리기를 검사한다. 계산 결과는 공개 격자에서 실제 엔진으로 생성하며, 호스팅 서버를 호출하지 않는다. OpenAPI의 사용자 도형 폐곡선·둘레 조건은 의미 검증으로 남고 400 응답을 허용한다.
+Python 격리 환경에 `scripts/qa/requirements.txt`를 설치하고 `python scripts/qa/fuzz.py`를 실행한다. Schemathesis 4.31.0이 실제 `/health`, `/v1/routes` HTTP 처리기를 검사한다. 계산 결과는 공개 격자에서 실제 엔진으로 생성하며, 호스팅 서버를 호출하지 않는다. OpenAPI의 사용자 도형 폐곡선·둘레 조건은 의미 검증으로 남고 400 응답을 허용한다.
 
 ## 실제 DB 통합
 

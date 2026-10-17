@@ -14,7 +14,7 @@ test('API-CONTRACT-01: real HTTP health, success and error conform to published 
   server.listen(0, '127.0.0.1'); await once(server, 'listening'); t.after(() => server.close());
   const base = `http://127.0.0.1:${server.address().port}`;
   for (const [path, init, status, schema] of [
-    ['/healthz', {}, 200, 'Health'],
+    ['/health', {}, 200, 'Health'],
     ['/v1/routes', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(request) }, 200, 'Response'],
     ['/v1/routes', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }, 400, 'Error'],
   ]) {

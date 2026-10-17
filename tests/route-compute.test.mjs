@@ -83,6 +83,9 @@ test('HTTP accepts guests; rejects malformed/oversized input and excess concurre
   const base=`http://127.0.0.1:${server.address().port}`;
   const post=body=>fetch(`${base}/v1/routes`,{method:'POST',headers:{'content-type':'application/json'},body});
   assert.equal((await fetch(`${base}/healthz`)).status,200);
+  const health = await fetch(`${base}/health`);
+  assert.equal(health.status, 200);
+  assert.deepEqual(await health.json(), { contract: COMPUTE_CONTRACT, ok: true });
   assert.equal((await post('{}')).status,400);
   assert.equal((await post('x'.repeat(17000))).status,413);
   const pending=post(JSON.stringify(request));while(!resolve)await new Promise(done=>setTimeout(done,5));

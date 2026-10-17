@@ -16,7 +16,7 @@ with (OUT / 'server.log').open('w', encoding='utf8') as log:
             if server.poll() is not None:
                 raise RuntimeError('Contract server exited; see server.log')
             try:
-                with urllib.request.urlopen('http://127.0.0.1:8087/healthz', timeout=1) as response:
+                with urllib.request.urlopen('http://127.0.0.1:8087/health', timeout=1) as response:
                     if response.status == 200:
                         break
             except OSError:
