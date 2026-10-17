@@ -55,4 +55,6 @@
 
 [PR #19](https://github.com/ssw3131/running-art-mobile/pull/19)의 최종 커밋 `a0d2688`, 병합 검사 소스 `468e35a`에서 로직453·Jest38·실제 격리 DB3·HTTP Fuzz·API36 전체14단계/API29 호환6단계·원본 보존/정리가 통과했다. API36 정적4화면 차이0(기존 검토된 시스템 Wi-Fi 영역 제외), 두 Android 재시도0·전송 경고0이다. API36 캡처 준비 대기4회는 제품 검사 재시도가 아니다. 최초 PR 실행은 후속 경로 수정 커밋으로 대체됐다.
 
-main `3689c77`로 squash 병합하고 [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158)를 실행 중이다. main의 fast/API·API29 호환6단계·원본 보존/정리는 통과했다. API29는 UI 덤프 완료 뒤 셸 종료139 경고2건이 있었지만 각 호출의 새 receipt와 JUnit 성공을 확인했고 재시도0이었다. 원문 경고를 보존하며 제품 실패나 재실행 성공으로 바꾸어 적지 않는다. API36 최종 결과는 이어서 기록한다. [정제 증거](operations-readiness-20261017.json)·[실행 계획](../history/executed-plans/2026-10-17-0847-operations-readiness.md). 이번은 수동 반영이며 자동 배포를 구성하지 않았다.
+main `3689c77`로 squash 병합한 뒤 [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158)도 통과했다. 로직453·Jest38·실제 격리 DB3·HTTP 두 연산 Fuzz, API36 전체14/API29 호환6단계·원본 보존/정리와 API36 정적4화면 차이0을 확인했다. 두 Android 재시도0이다. API29는 UI 덤프 완료 뒤 셸 종료139 경고2건이 있었지만 각 호출의 새 receipt와 JUnit 성공을 확인했다. API36 전송 경고0건·캡처 준비 대기4회이며 원문/정제 이력을 보존한다. 이 경고는 제품 검사 재실행으로 대체한 결과가 아니다.
+
+[정제 증거](operations-readiness-20261017.json)·[실행 계획](../history/executed-plans/2026-10-17-0847-operations-readiness.md). 배포 후 운영 주소·A7 검증과 정리까지 완료했고, [결과 문서 PR #20](https://github.com/ssw3131/running-art-mobile/pull/20)에 기록을 반영한다. 이번은 수동 반영이며 자동 배포를 구성하지 않았다.

@@ -1178,7 +1178,7 @@
     },
     "finalMonthlyCountDelta": 11
   },
-  "updatedAt": "2026-10-17T00:57:37.720195+00:00",
+  "updatedAt": "2026-10-17T10:15:07+09:00",
   "phoneReport": "operations-phone-20261017.json",
   "phonePreflight": {
     "connected": "SM-A750N",
@@ -1193,6 +1193,403 @@
     "phonePreflight": "initial connection check before authorized QA",
     "phoneReport": "completed physical QA and cleanup",
     "ciPr": "final PR verification before merge",
-    "deployment": "manual staged rollout and post-rollout verification"
-  }
+    "deployment": "manual staged rollout and post-rollout verification",
+    "ciMain": "full merged source verification"
+  },
+  "ciMain": {
+    "runId": 38987521158,
+    "head": "3689c773f688915e811792afefb6a943b847da6b",
+    "fast": {
+      "report": {
+        "schemaVersion": 1,
+        "suite": "fast",
+        "startedAt": "2026-10-17T00:42:09.189Z",
+        "source": "3689c773f688915e811792afefb6a943b847da6b",
+        "dirty": false,
+        "workingTree": [],
+        "ciRun": "38987521158",
+        "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+        "environment": {
+          "platform": "linux",
+          "node": "v24.21.0"
+        },
+        "retry": 0,
+        "steps": [
+          {
+            "id": "source",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 21127,
+            "log": "source.log"
+          },
+          {
+            "id": "server-source",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 2171,
+            "log": "server-source.log"
+          },
+          {
+            "id": "logic",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 37352,
+            "log": "logic.log"
+          },
+          {
+            "id": "components",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 13070,
+            "log": "components.log"
+          },
+          {
+            "id": "openapi",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 110,
+            "log": "openapi.log"
+          },
+          {
+            "id": "account-policies",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1952,
+            "log": "account-policies.log"
+          },
+          {
+            "id": "share-policies",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1910,
+            "log": "share-policies.log"
+          }
+        ],
+        "finishedAt": "2026-10-17T00:43:26.922Z",
+        "status": "passed"
+      },
+      "nodeTests": 453,
+      "jestTests": 38
+    },
+    "api": {
+      "report": {
+        "schemaVersion": 1,
+        "suite": "integration",
+        "startedAt": "2026-10-17T00:43:51.101Z",
+        "source": "3689c773f688915e811792afefb6a943b847da6b",
+        "dirty": false,
+        "workingTree": [],
+        "ciRun": "38987521158",
+        "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+        "environment": {
+          "platform": "linux",
+          "node": "v24.21.0"
+        },
+        "retry": 0,
+        "steps": [
+          {
+            "id": "supabase-roundtrip",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1390,
+            "log": "supabase-roundtrip.log"
+          }
+        ],
+        "finishedAt": "2026-10-17T00:43:52.675Z",
+        "status": "passed"
+      },
+      "fuzz": {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "2",
+        "time": "3.007872"
+      },
+      "integrationTests": 3
+    },
+    "android29": {
+      "source": "3689c773f688915e811792afefb6a943b847da6b",
+      "status": "passed",
+      "apkSha256": "6a2f09b1d205fb0d3b549502b8d87655561da2935a6a9fdc120e80201844ec04",
+      "startedAt": "2026-10-17T00:52:57.851850+00:00",
+      "finishedAt": "2026-10-17T01:00:41.892962+00:00",
+      "retries": 0,
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "uiDumpReadinessWaits": 0,
+      "uiDumpTransportWarnings": 2,
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "durationSeconds": 42.348
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "durationSeconds": 94.827
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "durationSeconds": 79.775
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "durationSeconds": 16.766
+        },
+        {
+          "id": "S1-01-signup-entry",
+          "status": "passed",
+          "durationSeconds": 44.353
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "durationSeconds": 156.505
+        }
+      ],
+      "preservation": {
+        "status": "passed",
+        "sha256": "b702e09e5af8229bcf6e5ce6fbed3102145479002a6772161f07274d3f4a5218"
+      },
+      "transportWarnings": [
+        {
+          "capture": "current",
+          "exitCode": 139,
+          "token": "7be6e617db584a8bb70fdac7b892e714",
+          "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.53\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+        },
+        {
+          "capture": "current",
+          "exitCode": 139,
+          "token": "1fbfc8c3141443239d9421352b7e6c44",
+          "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.531\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+        }
+      ]
+    },
+    "android36": {
+      "source": "3689c773f688915e811792afefb6a943b847da6b",
+      "status": "passed",
+      "apkSha256": "a072345b06fc891135a5dd6f6d6dd83a50b63b8177bf5dbc0236f27038ff9590",
+      "startedAt": "2026-10-17T00:53:45.341924+00:00",
+      "finishedAt": "2026-10-17T01:14:06.328037+00:00",
+      "retries": 0,
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "uiDumpReadinessWaits": 4,
+      "uiDumpTransportWarnings": 0,
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "durationSeconds": 73.433
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "durationSeconds": 98.054
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "durationSeconds": 92.306
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "durationSeconds": 18.526
+        },
+        {
+          "id": "S0-04-save",
+          "status": "passed",
+          "durationSeconds": 180.807
+        },
+        {
+          "id": "S0-04-restart",
+          "status": "passed",
+          "durationSeconds": 13.338
+        },
+        {
+          "id": "S0-06-gps",
+          "status": "passed",
+          "durationSeconds": 100.852
+        },
+        {
+          "id": "S0-05-preparation",
+          "status": "passed",
+          "durationSeconds": 34.747
+        },
+        {
+          "id": "S234-01-integrated",
+          "status": "passed",
+          "durationSeconds": 199.687
+        },
+        {
+          "id": "S0-07-deep-link-gpx",
+          "status": "passed",
+          "durationSeconds": 51.808
+        },
+        {
+          "id": "S0-08-accessibility",
+          "status": "passed",
+          "durationSeconds": 42.866
+        },
+        {
+          "id": "S2a-02-accessibility",
+          "status": "passed",
+          "durationSeconds": 47.279
+        },
+        {
+          "id": "S1-01-signup-entry",
+          "status": "passed",
+          "durationSeconds": 44.723
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "durationSeconds": 170.273
+        }
+      ],
+      "preservation": {
+        "status": "passed",
+        "sha256": "f8129a08ec7e2f2a7f1d50dd39435cec44f46ed427adf36933d0a9360e9eac87"
+      },
+      "visual": {
+        "status": "passed",
+        "baseline": "tests/visual/android-linux-api36/baseline.json",
+        "results": [
+          {
+            "attempt": "attempt-01",
+            "status": "passed",
+            "environment": {
+              "host": "Linux",
+              "api": "36",
+              "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+              "size": "1080x2340",
+              "density": 420,
+              "fontScale": 1,
+              "locale": "en-US",
+              "timezone": "UTC",
+              "systemBar": "demo-1200-full-signal-battery100-v1",
+              "displayProfile": "pixel_5-overlays-v1"
+            },
+            "source": "3689c773f688915e811792afefb6a943b847da6b",
+            "apkSha256": "a072345b06fc891135a5dd6f6d6dd83a50b63b8177bf5dbc0236f27038ff9590",
+            "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+            "results": [
+              {
+                "id": "home",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7",
+                "currentSha256": "e30119cb06a2ffe7d8a76ac74b5f2b491079eaba667ed02cb25daa0be12c8b4c"
+              },
+              {
+                "id": "run",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
+                "currentSha256": "75b6c85ccd45998971dca0e7dc9665cddfffdda7cba9ba99d6b06254c223f70b"
+              },
+              {
+                "id": "archive",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+                "currentSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448"
+              },
+              {
+                "id": "account",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8",
+                "currentSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "jobs": [
+      {
+        "name": "scope",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262331727"
+      },
+      {
+        "name": "android (29)",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364526"
+      },
+      {
+        "name": "api",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364549"
+      },
+      {
+        "name": "android (36)",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364590"
+      },
+      {
+        "name": "fast",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364591"
+      },
+      {
+        "name": "verification-gate",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117270008455"
+      }
+    ]
+  },
+  "status": "completed within documented scope"
 }
