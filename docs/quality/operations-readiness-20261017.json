@@ -1,0 +1,382 @@
+{
+  "at": "2026-10-16T23:53:42.932Z",
+  "source": "9a314a1625c0ff8950bc14d6b0ad277ba3aeb0af",
+  "scope": "local deployment-bundle and read-only production preflight",
+  "bundle": {
+    "createdAt": "2026-10-16T23:51:30.649Z",
+    "files": [
+      {
+        "path": "server/route-compute/server.mjs",
+        "bytes": 5329,
+        "sha256": "abdf02687d6433c69a91f0a22c559cdc3c8f07fac567f98698455c526d180ef0"
+      },
+      {
+        "path": "server/route-compute/pool.mjs",
+        "bytes": 2185,
+        "sha256": "76f41e6ca605fbeeeed3381c6bb6b24313ead2f3e164225fad800572e7d990ae"
+      },
+      {
+        "path": "server/route-compute/worker.mjs",
+        "bytes": 1520,
+        "sha256": "3dad38d465114a40e569d2522f41cef6ab9b91ff8eed3f88d03997cc878a54f9"
+      },
+      {
+        "path": "server/route-compute/roads.mjs",
+        "bytes": 2212,
+        "sha256": "b36ee94967c722a83297b842ee1ef976af682ac86e306f5aca3257e848df71ef"
+      },
+      {
+        "path": "server/route-compute/admission.mjs",
+        "bytes": 5380,
+        "sha256": "204fc29a47a556cb86bcee0244926d4048a9ec1ec50e253a093433095a8ca995"
+      },
+      {
+        "path": "server/route-compute/admission-store.mjs",
+        "bytes": 3429,
+        "sha256": "68b56963beed033fccab0db25d4f20d71cde1b96f6c589ae521b02314476d0d3"
+      },
+      {
+        "path": "src/modules/route-engine/engine.ts",
+        "bytes": 38073,
+        "sha256": "d971ba4583c3fc815d7c835cb1683b4393637c2fbd1340376d68a0a32518cc55"
+      },
+      {
+        "path": "src/modules/route-engine/types.ts",
+        "bytes": 2875,
+        "sha256": "380872f84df170a96874c69fc763c592b532d1b8d12a91ed1c04eb10f1132d98"
+      },
+      {
+        "path": "src/modules/route-engine/runner.ts",
+        "bytes": 6385,
+        "sha256": "796ead986186ec2f13dc7674c213da69921cb46220a11206f4a8910d5fb2bb74"
+      },
+      {
+        "path": "src/modules/route-engine/service-shapes.ts",
+        "bytes": 2840,
+        "sha256": "f57aa16d2d2cf830bdbe40378a25c72c330c7c069b505ae195990d29726070aa"
+      },
+      {
+        "path": "src/modules/road-data/bounds.ts",
+        "bytes": 1012,
+        "sha256": "b3e75110058242b2e24f7832e58511f3d29c6afeb1b17f052d777e0db4c78158"
+      },
+      {
+        "path": "src/modules/road-data/channel.ts",
+        "bytes": 6594,
+        "sha256": "7d2a2dda958b1be3b74c79f0f9f4a2c3656cafc70a84fad85531943f7c95dd35"
+      },
+      {
+        "path": "src/modules/road-data/national-channel.ts",
+        "bytes": 3273,
+        "sha256": "692d6a8ca837dd63cefbca6260a7ccbf61e45e6afeaa01a705068d32c9e62fef"
+      },
+      {
+        "path": "src/modules/road-data/national-format.ts",
+        "bytes": 2913,
+        "sha256": "d553803ad4a489fa5cdac7f184f1e43768f202697dfc9e4bcd8d92e8670f907d"
+      },
+      {
+        "path": "src/modules/road-data/file-format.ts",
+        "bytes": 12214,
+        "sha256": "aeaf6c0fd39a226a0acf6e4061c9574959a57536b296763bdc6527d443cd59d4"
+      },
+      {
+        "path": "src/modules/road-data/persistent-cache.ts",
+        "bytes": 13448,
+        "sha256": "a194b186c1721679b6f6c94c0a43a00305815f49faf8f040e7e0bbc7c70455ef"
+      },
+      {
+        "path": "src/modules/route-compute/contract.ts",
+        "bytes": 5052,
+        "sha256": "5e23637b0c3b139396893b4e9647b33a019597ef7346b8f75a58b9be7f51e20c"
+      }
+    ]
+  },
+  "fast": {
+    "status": "passed",
+    "logicTests": 453,
+    "componentTests": 38,
+    "steps": [
+      {
+        "id": "source",
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 100485,
+        "log": "source.log"
+      },
+      {
+        "id": "server-source",
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 3019,
+        "log": "server-source.log"
+      },
+      {
+        "id": "logic",
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 26255,
+        "log": "logic.log"
+      },
+      {
+        "id": "components",
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 62434,
+        "log": "components.log"
+      },
+      {
+        "id": "openapi",
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 516,
+        "log": "openapi.log"
+      },
+      {
+        "id": "account-policies",
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 5361,
+        "log": "account-policies.log"
+      },
+      {
+        "id": "share-policies",
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 2225,
+        "log": "share-policies.log"
+      }
+    ]
+  },
+  "realRoadComparison": {
+    "passed": true,
+    "rows": [
+      {
+        "id": "heart-1km",
+        "httpMs": 3856.8329000000003,
+        "candidates": 5,
+        "resultSha256": "264d8f96bb6bb82c0e10ebdee386669ece38e22c9d14e8cddc0b22a534824589",
+        "expectedSha256": "264d8f96bb6bb82c0e10ebdee386669ece38e22c9d14e8cddc0b22a534824589",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": false
+        }
+      },
+      {
+        "id": "star-2km",
+        "httpMs": 2139.9207000000006,
+        "candidates": 5,
+        "resultSha256": "6e55715cc17b41c263c394e7ed85baba1899cbb0ac260a3b1e743ce167b0140b",
+        "expectedSha256": "6e55715cc17b41c263c394e7ed85baba1899cbb0ac260a3b1e743ce167b0140b",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "dog-3km",
+        "httpMs": 2676.0937999999987,
+        "candidates": 5,
+        "resultSha256": "68a9555668b7ea612db32a595e6c14e1596f606e24531463fdb9bbed791ed3b3",
+        "expectedSha256": "68a9555668b7ea612db32a595e6c14e1596f606e24531463fdb9bbed791ed3b3",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "cat-4km",
+        "httpMs": 2945.5518999999986,
+        "candidates": 5,
+        "resultSha256": "9cef33183dd3397af3d85f996ed7d1860e00bd44c839121fd29e4c395db5097f",
+        "expectedSha256": "9cef33183dd3397af3d85f996ed7d1860e00bd44c839121fd29e4c395db5097f",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "person-5km",
+        "httpMs": 3040.3849999999984,
+        "candidates": 5,
+        "resultSha256": "80510bc146fd15d4f483fbfa201751b3699ac8aee1ee340b719b7af98a90ac7d",
+        "expectedSha256": "80510bc146fd15d4f483fbfa201751b3699ac8aee1ee340b719b7af98a90ac7d",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "fish-6km",
+        "httpMs": 4501.155200000001,
+        "candidates": 5,
+        "resultSha256": "75d4033adceb23d807aa4ddf3952a911e29de5a04e611dffa75e1892ada279bf",
+        "expectedSha256": "75d4033adceb23d807aa4ddf3952a911e29de5a04e611dffa75e1892ada279bf",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "bone-7km",
+        "httpMs": 4128.055,
+        "candidates": 5,
+        "resultSha256": "10553110075b5d5f84be0e676a69807ef8b5d9967b550f2ba19b1d94fdec830b",
+        "expectedSha256": "10553110075b5d5f84be0e676a69807ef8b5d9967b550f2ba19b1d94fdec830b",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "turtle-8km",
+        "httpMs": 5740.213799999998,
+        "candidates": 5,
+        "resultSha256": "6fd05d8fe759bcca7013e8ca68f5028a0262063430b78f53ee3ce09acd4874e2",
+        "expectedSha256": "6fd05d8fe759bcca7013e8ca68f5028a0262063430b78f53ee3ce09acd4874e2",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "icecream-9km",
+        "httpMs": 4210.291600000004,
+        "candidates": 5,
+        "resultSha256": "993b171f3458cebae29fa414471c772524b779678a16b53300e3b2f239919b74",
+        "expectedSha256": "993b171f3458cebae29fa414471c772524b779678a16b53300e3b2f239919b74",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "strawberry-10km",
+        "httpMs": 5134.154500000004,
+        "candidates": 5,
+        "resultSha256": "9bbb3c4f74e3770fad9c8611960beb113911b7dfd78fe66b8a328dde75c15de1",
+        "expectedSha256": "9bbb3c4f74e3770fad9c8611960beb113911b7dfd78fe66b8a328dde75c15de1",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "cloud-1km",
+        "httpMs": 1676.5853999999963,
+        "candidates": 5,
+        "resultSha256": "32bfd324fde00c625fff50359bded3918dd2c36cb88ff6548f9ade4aa077eee0",
+        "expectedSha256": "32bfd324fde00c625fff50359bded3918dd2c36cb88ff6548f9ade4aa077eee0",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "crown-2km",
+        "httpMs": 1969.0037000000011,
+        "candidates": 5,
+        "resultSha256": "f4a444dc9bb2e0c2607b65e171f766f3d154d7b81008c5f9d33580a918151e06",
+        "expectedSha256": "f4a444dc9bb2e0c2607b65e171f766f3d154d7b81008c5f9d33580a918151e06",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "legacy-gangnam-heart-5km",
+        "httpMs": 4191.937600000005,
+        "candidates": 5,
+        "resultSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "expectedSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      },
+      {
+        "id": "legacy-busan-fish-3km",
+        "httpMs": 3933.1003999999957,
+        "candidates": 5,
+        "resultSha256": "c3e96ebfd98e7a27fede546d0e26de833e3e1f793e15fb4bbe0943ceb39eb2ff",
+        "expectedSha256": "c3e96ebfd98e7a27fede546d0e26de833e3e1f793e15fb4bbe0943ceb39eb2ff",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "35ca7c88052c975b9a48bd5c204f04c8e9833adf4ed1d952b01c63cf866275df",
+          "cached": false
+        }
+      },
+      {
+        "id": "custom-10km",
+        "httpMs": 176.6860000000015,
+        "candidates": 0,
+        "resultSha256": "c25f583b0f3ba4e2f28ba9d2b561dcd889419f97e46851e4fb248bbc2e7d97f9",
+        "expectedSha256": "c25f583b0f3ba4e2f28ba9d2b561dcd889419f97e46851e4fb248bbc2e7d97f9",
+        "roads": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "cached": true
+        }
+      }
+    ]
+  },
+  "supabase": {
+    "observedAt": "2026-10-17T08:52:46+09:00",
+    "readOnly": true,
+    "matchingFunctionBodies": 18,
+    "publicTablesWithRls": 6,
+    "supportTablesAbsent": true,
+    "migrationHistoryAbsent": true,
+    "counts": {
+      "accounts": 3,
+      "identities": 3,
+      "records": 25,
+      "shares": 1,
+      "objects": 10,
+      "memberships": 3,
+      "policies": 0,
+      "consents": 0
+    },
+    "structureComparison": {
+      "baseline": "2026-10-13 after S1",
+      "columns": 32,
+      "constraints": 31,
+      "tableGrants": 83,
+      "functionAcl": 19,
+      "publicTriggers": 2,
+      "buckets": 2,
+      "policies": 12,
+      "allMatched": true,
+      "policyWhitespaceNormalized": true,
+      "policyMd5": "bb9096d60b931f2d74f6d4a8c3e5691e"
+    }
+  },
+  "cloudRunPreflight": {
+    "revision": "runpen-route-compute-00002-nog",
+    "trafficPercent": 100,
+    "cpu": 1,
+    "memory": "1Gi",
+    "concurrency": 8,
+    "revisionMaxInstances": 2,
+    "startupCpuBoost": false,
+    "guardBucketConfigured": true
+  },
+  "phone": {
+    "connected": "SM-A750N",
+    "modified": false,
+    "highEndConnected": false
+  }
+}
