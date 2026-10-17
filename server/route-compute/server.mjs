@@ -21,7 +21,9 @@ export function createComputeServer(pool = createComputePool(), { admission, ing
         report({ severity: 'WARNING', event: 'compute_rejected', reason: value.error, status });
       }
     };
-    if (req.method === 'GET' && req.url === '/healthz') return reply(200, { contract: COMPUTE_CONTRACT, ok: true });
+    // Cloud Run reserves some paths ending in z. Keep the local legacy alias,
+    // but use /health for public checks and the API contract.
+    if (req.method === 'GET' && (req.url === '/health' || req.url === '/healthz')) return reply(200, { contract: COMPUTE_CONTRACT, ok: true });
     if (req.method !== 'POST' || req.url !== '/v1/routes') return reply(404, { error: 'not_found' });
     if (stopping) return reply(503, { error: 'stopping' });
     try { ingress(); } catch (error) { return reply(error.status, { error: error.code }, error.retryAfter); }

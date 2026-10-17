@@ -43,7 +43,7 @@ const response = name => ({ description: name, content: { 'application/json': { 
 export const spec = { openapi: '3.1.0', info: { title: 'RunPen route compute', version: '1.0.0' },
   servers: [{ url: 'http://127.0.0.1:8087', description: 'Isolated contract harness; never hosted production' }],
   paths: {
-    '/healthz': { get: { operationId: 'health', responses: { 200: response('Health') } } },
+    '/health': { get: { operationId: 'health', responses: { 200: response('Health') } } },
     '/v1/routes': { post: { operationId: 'computeRoutes', description: 'JSON body <= 16384 bytes; response <= 8 MiB. No authentication required.',
       requestBody: { required: true, content: { 'application/json': { schema: ref('Request') } } },
       responses: Object.fromEntries([200,400,404,408,413,415,429,503,504].map(status => [status, response(status === 200 ? 'Response' : 'Error')])) } },

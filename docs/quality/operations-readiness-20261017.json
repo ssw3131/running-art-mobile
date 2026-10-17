@@ -378,5 +378,147 @@
     "connected": "SM-A750N",
     "modified": false,
     "highEndConnected": false
+  },
+  "finalBundle": {
+    "createdAt": "2026-10-17T00:03:49.244Z",
+    "files": [
+      {
+        "path": "server/route-compute/server.mjs",
+        "bytes": 5498,
+        "sha256": "95e37dc1c6cda460b64acfbfe2687386bcd1a1803b797095f1118bb88967f5aa"
+      },
+      {
+        "path": "server/route-compute/pool.mjs",
+        "bytes": 2185,
+        "sha256": "76f41e6ca605fbeeeed3381c6bb6b24313ead2f3e164225fad800572e7d990ae"
+      },
+      {
+        "path": "server/route-compute/worker.mjs",
+        "bytes": 1520,
+        "sha256": "3dad38d465114a40e569d2522f41cef6ab9b91ff8eed3f88d03997cc878a54f9"
+      },
+      {
+        "path": "server/route-compute/roads.mjs",
+        "bytes": 2212,
+        "sha256": "b36ee94967c722a83297b842ee1ef976af682ac86e306f5aca3257e848df71ef"
+      },
+      {
+        "path": "server/route-compute/admission.mjs",
+        "bytes": 5380,
+        "sha256": "204fc29a47a556cb86bcee0244926d4048a9ec1ec50e253a093433095a8ca995"
+      },
+      {
+        "path": "server/route-compute/admission-store.mjs",
+        "bytes": 3429,
+        "sha256": "68b56963beed033fccab0db25d4f20d71cde1b96f6c589ae521b02314476d0d3"
+      },
+      {
+        "path": "src/modules/route-engine/engine.ts",
+        "bytes": 38073,
+        "sha256": "d971ba4583c3fc815d7c835cb1683b4393637c2fbd1340376d68a0a32518cc55"
+      },
+      {
+        "path": "src/modules/route-engine/types.ts",
+        "bytes": 2875,
+        "sha256": "380872f84df170a96874c69fc763c592b532d1b8d12a91ed1c04eb10f1132d98"
+      },
+      {
+        "path": "src/modules/route-engine/runner.ts",
+        "bytes": 6385,
+        "sha256": "796ead986186ec2f13dc7674c213da69921cb46220a11206f4a8910d5fb2bb74"
+      },
+      {
+        "path": "src/modules/route-engine/service-shapes.ts",
+        "bytes": 2840,
+        "sha256": "f57aa16d2d2cf830bdbe40378a25c72c330c7c069b505ae195990d29726070aa"
+      },
+      {
+        "path": "src/modules/road-data/bounds.ts",
+        "bytes": 1012,
+        "sha256": "b3e75110058242b2e24f7832e58511f3d29c6afeb1b17f052d777e0db4c78158"
+      },
+      {
+        "path": "src/modules/road-data/channel.ts",
+        "bytes": 6594,
+        "sha256": "7d2a2dda958b1be3b74c79f0f9f4a2c3656cafc70a84fad85531943f7c95dd35"
+      },
+      {
+        "path": "src/modules/road-data/national-channel.ts",
+        "bytes": 3273,
+        "sha256": "692d6a8ca837dd63cefbca6260a7ccbf61e45e6afeaa01a705068d32c9e62fef"
+      },
+      {
+        "path": "src/modules/road-data/national-format.ts",
+        "bytes": 2913,
+        "sha256": "d553803ad4a489fa5cdac7f184f1e43768f202697dfc9e4bcd8d92e8670f907d"
+      },
+      {
+        "path": "src/modules/road-data/file-format.ts",
+        "bytes": 12214,
+        "sha256": "aeaf6c0fd39a226a0acf6e4061c9574959a57536b296763bdc6527d443cd59d4"
+      },
+      {
+        "path": "src/modules/road-data/persistent-cache.ts",
+        "bytes": 13448,
+        "sha256": "a194b186c1721679b6f6c94c0a43a00305815f49faf8f040e7e0bbc7c70455ef"
+      },
+      {
+        "path": "src/modules/route-compute/contract.ts",
+        "bytes": 5052,
+        "sha256": "5e23637b0c3b139396893b4e9647b33a019597ef7346b8f75a58b9be7f51e20c"
+      }
+    ]
+  },
+  "healthFixValidation": {
+    "relatedTests": 21,
+    "httpFuzz": 189,
+    "passed": true,
+    "canonicalPath": "/health",
+    "legacyAlias": "/healthz"
+  },
+  "publicHttpPreflight": {
+    "at": "2026-10-17T00:02:19.351Z",
+    "support": [
+      {
+        "rpc": "get_membership_policy",
+        "kind": null,
+        "status": 200,
+        "missingFunction": false,
+        "unpublished": true
+      },
+      {
+        "rpc": "get_service_notices",
+        "kind": null,
+        "status": 404,
+        "missingFunction": true,
+        "unpublished": false
+      },
+      {
+        "rpc": "get_service_policy",
+        "kind": "terms",
+        "status": 404,
+        "missingFunction": true,
+        "unpublished": false
+      },
+      {
+        "rpc": "get_service_policy",
+        "kind": "privacy",
+        "status": 404,
+        "missingFunction": true,
+        "unpublished": false
+      },
+      {
+        "rpc": "get_service_policy",
+        "kind": "location",
+        "status": 404,
+        "missingFunction": true,
+        "unpublished": false
+      }
+    ],
+    "computeBefore": {
+      "health": 404,
+      "newInputStatus": 400,
+      "error": "invalid_request"
+    }
   }
 }

@@ -10,6 +10,10 @@
 
 ## 로컬 검증
 
+**09:04 후속 발견:** 실제 Cloud Run의 `/healthz`는404였다. [Google 공식 예약 경로 안내](https://docs.cloud.google.com/run/docs/known-issues#reserved_url_paths)의 z로 끝나는 경로 회피에 맞춰 외부 `/health`를 추가하고 OpenAPI/Fuzz/배포 묶음 검사를 전환했다. 로컬 `/healthz` 별칭은 유지한다. 아래 최초 fast 결과와 구분해 최종 소스를 재검증한다.
+
+최종 경로 변경 후 계산/공통 제한/OpenAPI/독립 패키지 검사 **21개**, HTTP Fuzz **189개**를 통과했다. 최종 묶음은 `build/route-compute/20261017-final/`이며 17파일이다. 공개 RPC에서는 회원 정책200/null, S6 공지·세 정책404(PGRST202)를 확인했다. 새 강아지1km 입력은 기존 운영 리비전에서400으로 거절됐다.
+
 - 정규 `npm run qa:fast`: 타입/린트·서버 타입/린트·Node **453개**·Jest **38개**·OpenAPI·PGlite 회원/문의/사진/탈퇴/공유 정책 통과. `test-results/operations-readiness-fast/`에 로그·보고서를 보존한다.
 - 수정한 묶음의 실제 서버/작업자 → 공개 R2 → 실제 도로 계산 **15개**를 독립 저장소 엔진과 비교했다. 서비스 12도형을 정수 1~10km에 분산, 기존 강남 하트5km·부산 물고기3km, 사용자 윤곽10km를 포함한다. 전 사례의 전체 결과 SHA-256이 일치했다. 실제 도로 120조합 전수 검증은 아니다.
 - 사용자 윤곽10km의 **0후보**도 동일한 결과이며, 모든 입력이 반드시 코스를 생성한다는 의미는 아니다.

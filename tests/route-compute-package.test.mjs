@@ -57,7 +57,9 @@ test('deployment bundle boots outside the checkout and computes expanded inputs 
       const hashes = [];
       try {
         const base = 'http://127.0.0.1:' + server.address().port;
-        assert.equal((await fetch(base + '/healthz')).status, 200);
+        const health = await fetch(base + '/health');
+        assert.equal(health.status, 200);
+        assert.deepEqual(await health.json(), { contract: COMPUTE_CONTRACT, ok: true });
         for (const option of options) {
           const request = makeRequest(option);
           const response = await fetch(base + '/v1/routes', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(request) });
