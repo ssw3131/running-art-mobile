@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-10-17T14:57:39.017158+09:00",
+  "recordedAt": "2026-10-17T16:40:39.558191+09:00",
   "figma": {
     "file": "QYRGII8OdvQB1SrtH3BA08",
     "node": "319:2228",
@@ -124,5 +124,454 @@
     "release": "passed",
     "buildRetry": "initial sandbox daemon connection failed; same source local retry succeeded"
   },
-  "ci": "PR/main pending"
+  "ci": {
+    "pr": {
+      "runId": "39008153021",
+      "url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39008153021",
+      "head": "4e93cacf1bda0cf34e46f54894066330f3cf67ce",
+      "attempt": 1,
+      "reports": {
+        "api-1": [
+          {
+            "source": "4f3ab23b1ac5ab104f3cbcfa35378a1d5bab1a20",
+            "status": "passed",
+            "ciRun": "39008153021"
+          }
+        ],
+        "android-36-1": [
+          {
+            "source": "4f3ab23b1ac5ab104f3cbcfa35378a1d5bab1a20",
+            "status": "passed",
+            "ciRun": "39008153021",
+            "cleanup": "passed",
+            "retries": 0,
+            "steps": [
+              {
+                "name": "S0-01-maestro",
+                "status": "passed"
+              },
+              {
+                "name": "S1-02-home-states",
+                "status": "passed"
+              },
+              {
+                "name": "S0-02-draft",
+                "status": "passed"
+              },
+              {
+                "name": "S0-03-oauth-cancel",
+                "status": "passed"
+              },
+              {
+                "name": "S0-04-save",
+                "status": "passed"
+              },
+              {
+                "name": "S0-04-restart",
+                "status": "passed"
+              },
+              {
+                "name": "S0-06-gps",
+                "status": "passed"
+              },
+              {
+                "name": "S0-05-preparation",
+                "status": "passed"
+              },
+              {
+                "name": "S234-01-integrated",
+                "status": "passed"
+              },
+              {
+                "name": "S0-07-deep-link-gpx",
+                "status": "passed"
+              },
+              {
+                "name": "S0-08-accessibility",
+                "status": "passed"
+              },
+              {
+                "name": "S2a-02-accessibility",
+                "status": "passed"
+              },
+              {
+                "name": "S1-01-signup-entry",
+                "status": "passed"
+              },
+              {
+                "name": "S56-01-achievements-support",
+                "status": "passed"
+              }
+            ],
+            "preservation": [
+              "passed"
+            ]
+          }
+        ],
+        "fast-1": [
+          {
+            "source": "4f3ab23b1ac5ab104f3cbcfa35378a1d5bab1a20",
+            "status": "passed",
+            "ciRun": "39008153021"
+          }
+        ]
+      },
+      "visual": {
+        "home": 0,
+        "run": 0,
+        "archive": 0,
+        "account": 0
+      },
+      "logicTests": [
+        "453",
+        "453"
+      ],
+      "components": [
+        "38 passed, 38 total"
+      ],
+      "androidDiagnostics": {
+        "android-36-1": {
+          "uiDumpReadinessWaits": 1,
+          "uiDumpTransportWarnings": 0
+        }
+      }
+    },
+    "main": {
+      "runId": "39009961393",
+      "url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393",
+      "head": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+      "attempt": 2,
+      "reports": {
+        "android-36-2": [
+          {
+            "source": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+            "status": "passed",
+            "ciRun": "39009961393",
+            "cleanup": "passed",
+            "retries": 0,
+            "steps": [
+              {
+                "name": "S0-01-maestro",
+                "status": "passed"
+              },
+              {
+                "name": "S1-02-home-states",
+                "status": "passed"
+              },
+              {
+                "name": "S0-02-draft",
+                "status": "passed"
+              },
+              {
+                "name": "S0-03-oauth-cancel",
+                "status": "passed"
+              },
+              {
+                "name": "S0-04-save",
+                "status": "passed"
+              },
+              {
+                "name": "S0-04-restart",
+                "status": "passed"
+              },
+              {
+                "name": "S0-06-gps",
+                "status": "passed"
+              },
+              {
+                "name": "S0-05-preparation",
+                "status": "passed"
+              },
+              {
+                "name": "S234-01-integrated",
+                "status": "passed"
+              },
+              {
+                "name": "S0-07-deep-link-gpx",
+                "status": "passed"
+              },
+              {
+                "name": "S0-08-accessibility",
+                "status": "passed"
+              },
+              {
+                "name": "S2a-02-accessibility",
+                "status": "passed"
+              },
+              {
+                "name": "S1-01-signup-entry",
+                "status": "passed"
+              },
+              {
+                "name": "S56-01-achievements-support",
+                "status": "passed"
+              }
+            ],
+            "preservation": [
+              "passed"
+            ]
+          }
+        ],
+        "android-29-1": [
+          {
+            "source": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+            "status": "passed",
+            "ciRun": "39009961393",
+            "cleanup": "passed",
+            "retries": 0,
+            "steps": [
+              {
+                "name": "S0-01-maestro",
+                "status": "passed"
+              },
+              {
+                "name": "S1-02-home-states",
+                "status": "passed"
+              },
+              {
+                "name": "S0-02-draft",
+                "status": "passed"
+              },
+              {
+                "name": "S0-03-oauth-cancel",
+                "status": "passed"
+              },
+              {
+                "name": "S1-01-signup-entry",
+                "status": "passed"
+              },
+              {
+                "name": "S56-01-achievements-support",
+                "status": "passed"
+              }
+            ],
+            "preservation": [
+              "passed"
+            ]
+          }
+        ],
+        "fast-1": [
+          {
+            "source": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+            "status": "passed",
+            "ciRun": "39009961393"
+          }
+        ],
+        "api-1": [
+          {
+            "source": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+            "status": "passed",
+            "ciRun": "39009961393"
+          }
+        ]
+      },
+      "visual": {
+        "home": 0,
+        "run": 0,
+        "archive": 0,
+        "account": 0
+      },
+      "supersededReports": {
+        "android-36-1": {
+          "source": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+          "status": "passed",
+          "visual": {
+            "status": "failed",
+            "baseline": "tests/visual/android-linux-api36/baseline.json",
+            "results": [
+              {
+                "attempt": "attempt-01",
+                "status": "failed",
+                "environment": {
+                  "host": "Linux",
+                  "api": "36",
+                  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+                  "size": "1080x2340",
+                  "density": 420,
+                  "fontScale": 1,
+                  "locale": "en-US",
+                  "timezone": "UTC",
+                  "systemBar": "demo-1200-full-signal-battery100-v1",
+                  "displayProfile": "pixel_5-overlays-v1"
+                },
+                "source": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+                "apkSha256": "5c74b6ca6f603954d499e986ab65f8bc45d5311ee64edc817ec54d3a7cde4770",
+                "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+                "results": [
+                  {
+                    "id": "home",
+                    "status": "passed",
+                    "pixels": 0,
+                    "masks": [
+                      {
+                        "reason": "system-wifi-rasterization",
+                        "x": 817,
+                        "y": 53,
+                        "width": 41,
+                        "height": 33
+                      }
+                    ],
+                    "baselineSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7",
+                    "currentSha256": "e30119cb06a2ffe7d8a76ac74b5f2b491079eaba667ed02cb25daa0be12c8b4c"
+                  },
+                  {
+                    "id": "run",
+                    "status": "passed",
+                    "pixels": 0,
+                    "masks": [
+                      {
+                        "reason": "system-wifi-rasterization",
+                        "x": 817,
+                        "y": 53,
+                        "width": 41,
+                        "height": 33
+                      }
+                    ],
+                    "baselineSha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
+                    "currentSha256": "75b6c85ccd45998971dca0e7dc9665cddfffdda7cba9ba99d6b06254c223f70b"
+                  },
+                  {
+                    "id": "archive",
+                    "status": "passed",
+                    "pixels": 0,
+                    "masks": [
+                      {
+                        "reason": "system-wifi-rasterization",
+                        "x": 817,
+                        "y": 53,
+                        "width": 41,
+                        "height": 33
+                      }
+                    ],
+                    "baselineSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+                    "currentSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448"
+                  },
+                  {
+                    "id": "account",
+                    "status": "failed",
+                    "pixels": 9424,
+                    "masks": [
+                      {
+                        "reason": "system-wifi-rasterization",
+                        "x": 817,
+                        "y": 53,
+                        "width": 41,
+                        "height": 33
+                      }
+                    ],
+                    "baselineSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8",
+                    "currentSha256": "14f6624298e0ddf66222e567c02bb891bd5f18fa75ae568dc72835b2ede040c3"
+                  }
+                ]
+              }
+            ]
+          },
+          "cleanup": {
+            "status": "passed",
+            "errors": []
+          },
+          "uiDumpReadinessWaits": 5,
+          "uiDumpTransportWarnings": 0
+        }
+      },
+      "logicTests": [
+        "453",
+        "453"
+      ],
+      "components": [
+        "38 passed, 38 total"
+      ],
+      "androidDiagnostics": {
+        "android-36-2": {
+          "uiDumpReadinessWaits": 2,
+          "uiDumpTransportWarnings": 0
+        },
+        "android-29-1": {
+          "uiDumpReadinessWaits": 0,
+          "uiDumpTransportWarnings": 0
+        }
+      }
+    },
+    "mainFirstFailure": {
+      "runId": "39009961393",
+      "attempt": 1,
+      "source": "e5d9ffa7d25eeb49361e4f081ab242c97901d823",
+      "functionalSteps": 14,
+      "functional": "passed",
+      "preservation": "passed",
+      "cleanup": "passed",
+      "visual": "failed",
+      "pixels": {
+        "home": 0,
+        "run": 0,
+        "archive": 0,
+        "account": 9424
+      },
+      "differenceBoundsInclusive": [
+        1069,
+        346,
+        1079,
+        1204
+      ],
+      "diagnosis": "Direct baseline/current/diff review: baseline shows the account scrollbar; current capture has faded it. All differing pixels are confined to the scrollbar strip. No source, baseline, mask or threshold changes. One diagnostic rerun of failed jobs.",
+      "uiDumpReadinessWaits": 5,
+      "uiDumpTransportWarnings": 0,
+      "jobs": [
+        {
+          "id": 117330220148,
+          "name": "scope",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T06:27:17Z",
+          "completed_at": "2026-10-17T06:27:25Z",
+          "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393/job/117330220148"
+        },
+        {
+          "id": 117330252986,
+          "name": "android (29)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T06:27:27Z",
+          "completed_at": "2026-10-17T06:48:32Z",
+          "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393/job/117330252986"
+        },
+        {
+          "id": 117330253009,
+          "name": "api",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T06:27:27Z",
+          "completed_at": "2026-10-17T06:30:21Z",
+          "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393/job/117330253009"
+        },
+        {
+          "id": 117330253027,
+          "name": "android (36)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T06:27:27Z",
+          "completed_at": "2026-10-17T07:02:00Z",
+          "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393/job/117330253027"
+        },
+        {
+          "id": 117330253031,
+          "name": "fast",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T06:27:27Z",
+          "completed_at": "2026-10-17T06:29:17Z",
+          "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393/job/117330253031"
+        },
+        {
+          "id": 117336679931,
+          "name": "verification-gate",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T07:02:03Z",
+          "completed_at": "2026-10-17T07:02:06Z",
+          "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393/job/117336679931"
+        }
+      ]
+    }
+  }
 }

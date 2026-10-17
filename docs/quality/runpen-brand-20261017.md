@@ -26,7 +26,22 @@ SM-S942N(Android17)에 14:56:18 KST 자료 유지 업데이트했다. APK `runpe
 - 내부 복구본·검사 도우미·UI jar/XML 정리, 실행 중 서비스 없음, 앱 홈으로 복귀했다. USB 분리 가능하다.
 - 상세 수치/해시는 [기계 판독 근거](runpen-brand-20261017.json)에 보존했다. 실제 폰 전체 화면은 개인 정보가 있어 로컬 `.cache/runpen-brand-20261017/phone/`에만 보관한다.
 
-PR/main 필수 CI 결과는 해당 PR 검사 이력으로 확인한다. 병합 대기 중이다.
+[PR #22](https://github.com/ssw3131/running-art-mobile/pull/22)를 main `e5d9ffa`에 squash 병합했다. [PR 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/39008153021)와 [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/39009961393)의 필수 `verification-gate`가 모두 성공했다. APK의 제품 변경은 이 병합 소스와 같고 후속 변경은 검증 문서다.
+
+| 항목 | PR | main |
+| --- | --- | --- |
+| 로직 / Jest | 453 / 38 | 453 / 38 |
+| 실제 격리 DB | 3 | 3 |
+| API 36 | 14단계, 재시도 0 | 14단계, 실패 작업 진단 재실행 1회 |
+| API 29 | 변경 범위 규칙에 따라 미실행 | 6단계, 재시도 0 |
+| 4개 정적 화면 차이 | 모두 0 | 모두 0 |
+| 시험 원본 보존 / 정리 | 통과 | 통과 |
+
+main 첫 실행은 기능 14단계·원본 보존/정리를 통과했으나 마이페이지 화면 비교가 9,424픽셀 차이로 실패했다. [기준](runpen-brand-20261017/first-main-account-baseline.png)·[실제](runpen-brand-20261017/first-main-account-current.png)·[차이](runpen-brand-20261017/first-main-account-diff.png)를 직접 대조했고, 차이는 오른쪽 스크롤바 `x=1069..1079, y=346..1204`에만 있었다. 기준에는 스크롤바가 보이고 실제 캡처에는 사라져 있었다. 소스·기준 이미지·마스크·임계값을 바꾸지 않고 실패한 Android 작업만 1회 진단 재실행해 최종 통과했다. 전체가 최초 실행 통과한 것은 아니다. 캡처 시점의 스크롤바 안정화는 별도 CI 개선 후보로 남긴다.
+
+PR API36의 UI 준비 대기 1회·main 최초 5회를 보존했다. main의 준비 대기·덤프 경고 수는 JSON의 `ci.main.androidDiagnostics`를 따른다. 검사 재시도와 UI 덤프 준비 대기는 구분한다. 로컬 근거 집계 도구는 첫 실행에서 하위 화면 보고서를 실행 보고서로 읽어 `dirty` 키 오류가 났고, 보고서 경로를 구분해 같은 CI 결과를 다시 대조했다. 제품/CI 재실행은 아니다.
+
+검증 종료: 2026-10-17T16:40:39.558191+09:00.
 
 ## 범위
 
