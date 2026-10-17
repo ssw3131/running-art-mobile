@@ -1,0 +1,295 @@
+{
+  "completedAt": "2026-10-17T14:41:13+09:00",
+  "device": {
+    "model": "SM-S942N",
+    "android": "17",
+    "fontScale": "1.0"
+  },
+  "installation": {
+    "installedAt": "2026-10-17T14:14:55.193393+09:00",
+    "packageLastUpdate": "2026-10-17 14:14:54",
+    "apkSha256": "83f4e7f568d408da5eb1bdee7ac06e331dfa11c1c8f64b2258e3f4510447375c",
+    "samePackageAndSignature": true,
+    "dataPreservingInstall": true
+  },
+  "baselineAndFinal": {
+    "saved_courses": "4:b7c6ae4b89c3015e7470efd9f9ac6e36f27ae42418d962d9e79c4a80b4a04e05",
+    "running_sessions": "6:b963181c56aabf0e8627e03fb190edcec4854333a11c9a713912c9fbf7d80bd3",
+    "running_points": "1907:c255bc61dcf21cd73605b44ec5cc7ac43ad24e675b3b61377b2228e59868dbf1",
+    "storage_test_notes": "1:c30c777c63fa7efd60cbec6bd4d09ed534a62aaa8d49c458e3c2630e05798067",
+    "tests": [],
+    "remainingSynthetic": {
+      "saved_courses": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "running_sessions": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "running_points": {
+        "count": 0,
+        "guests": 0,
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "sync_deletions": 0,
+    "sync_conflicts": 0
+  },
+  "account": {
+    "googleLoginPreserved": true,
+    "identityHashMatched": true,
+    "accountPreferencesAndSyncChoiceMatched": true
+  },
+  "calculations": {
+    "dog3": {
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "dog",
+        "targetKm": 3,
+        "elapsedMs": 5469.9290980000005,
+        "computeMs": 5469.9290980000005,
+        "maxSliceMs": 5469.9290980000005,
+        "yields": 0,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 105939,
+          "pathCacheHits": 25307,
+          "pathSearches": 79546,
+          "pathVisits": 4142662,
+          "maxCachedPaths": 8192,
+          "maxCachedNodes": 134697
+        },
+        "timing": {
+          "roadMs": 1878.0640129999997,
+          "calculationMs": 5469.9290980000005,
+          "totalMs": 9287.791406035423
+        },
+        "cached": false,
+        "maxTimerLagMs": 27.05476599931717,
+        "timerTicks": 142,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          83.11863073899266,
+          79.4353727255944,
+          79.43519860443014,
+          78.32958242005421,
+          77.5072553705786
+        ]
+      },
+      "visible": {
+        "completion": "서버에서 5개 코스를 찾았어요.",
+        "candidate-0": "전체 코스 거리 / 1순위 / 3.09 km / 양방향 순환 코스",
+        "candidate-1": "전체 코스 거리 / 2순위 / 2.99 km / 양방향 순환 코스",
+        "candidate-2": "전체 코스 거리 / 3순위 / 3.12 km / 양방향 순환 코스",
+        "candidate-3": "전체 코스 거리 / 4순위 / 3.02 km / 양방향 순환 코스",
+        "candidate-4": "전체 코스 거리 / 5순위 / 3.04 km / 양방향 순환 코스",
+        "route-timing": "전체 소요 9.29초 · 서버 계산",
+        "reference-comparison": "선택한 지도 중심 기준 결과예요. 고정 표본의 원본 비교는 적용하지 않아요.",
+        "calculation-metrics": "노드 13614 · 도로 구간 15363"
+      }
+    },
+    "strawberry10": {
+      "metrics": {
+        "dataset": "seoul",
+        "shape": "strawberry",
+        "targetKm": 10,
+        "elapsedMs": 9169.840907999984,
+        "computeMs": 9169.840907999984,
+        "maxSliceMs": 9169.840907999984,
+        "yields": 0,
+        "nodes": 13614,
+        "edges": 15363,
+        "routing": {
+          "pathRequests": 63988,
+          "pathCacheHits": 8718,
+          "pathSearches": 55270,
+          "pathVisits": 14308141,
+          "maxCachedPaths": 7295,
+          "maxCachedNodes": 262144
+        },
+        "timing": {
+          "roadMs": 396.7924570000032,
+          "calculationMs": 9169.840907999984,
+          "totalMs": 10079.862187981606
+        },
+        "cached": true,
+        "maxTimerLagMs": 29.536170959472656,
+        "timerTicks": 155,
+        "reference": "unavailable",
+        "candidates": 5,
+        "scores": [
+          84.32787525376519,
+          84.20027247056377,
+          84.04261843794025,
+          83.87783790082462,
+          83.36730593943756
+        ]
+      },
+      "visible": {
+        "completion": "서버에서 5개 코스를 찾았어요.",
+        "candidate-0": "전체 코스 거리 / 1순위 / 10.95 km / 양방향 순환 코스",
+        "candidate-1": "전체 코스 거리 / 2순위 / 10.73 km / 양방향 순환 코스",
+        "candidate-2": "전체 코스 거리 / 3순위 / 10.89 km / 양방향 순환 코스",
+        "candidate-3": "전체 코스 거리 / 4순위 / 10.93 km / 양방향 순환 코스",
+        "candidate-4": "전체 코스 거리 / 5순위 / 10.72 km / 양방향 순환 코스",
+        "route-timing": "전체 소요 10.08초 · 서버 계산",
+        "reference-comparison": "선택한 지도 중심 기준 결과예요. 고정 표본의 원본 비교는 적용하지 않아요.",
+        "calculation-metrics": "노드 13614 · 도로 구간 15363"
+      }
+    }
+  },
+  "referenceComparison": {
+    "dog3": {
+      "totalMs": 9287.791406035423,
+      "matchingScoresRoutingGraph": true,
+      "candidates": 5
+    },
+    "strawberry10": {
+      "totalMs": 10079.862187981606,
+      "matchingScoresRoutingGraph": true,
+      "candidates": 5
+    }
+  },
+  "inputControls": {
+    "selected": [
+      "distance-1",
+      "distance-2",
+      "distance-3",
+      "distance-4",
+      "distance-5",
+      "distance-6",
+      "distance-7",
+      "distance-8",
+      "distance-9",
+      "distance-10",
+      "shape-heart",
+      "shape-star",
+      "shape-dog",
+      "shape-cat",
+      "shape-person",
+      "shape-fish",
+      "shape-bone",
+      "shape-turtle",
+      "shape-icecream",
+      "shape-strawberry",
+      "shape-cloud",
+      "shape-crown"
+    ],
+    "all22Passed": true,
+    "confirmationCancel": true
+  },
+  "courseFlow": {
+    "saveAndDuplicateGuard": true,
+    "restartReopen": true,
+    "gpxChooserCancelled": true,
+    "uploadedRemoteVersion": 1,
+    "deletedAndNoPendingSync": true
+  },
+  "image": {
+    "generated256Square": true,
+    "realPickerDoneAndCrop": true,
+    "outlineApplied": true,
+    "confirmationCancelled": true,
+    "cleanup": {
+      "fixtureRemoved": true,
+      "mediaRowRemoved": true,
+      "newCachePngsRemoved": 2
+    }
+  },
+  "achievements": {
+    "syntheticCompletedFixtures": 3,
+    "badges": [
+      2,
+      1,
+      0
+    ],
+    "streaks": {
+      "two": {
+        "현재 연속 러닝": "2일",
+        "최장 연속 러닝": "3일"
+      },
+      "one": {
+        "현재 연속 러닝": "1일",
+        "최장 연속 러닝": "3일"
+      },
+      "final": {
+        "현재 연속 러닝": "0일",
+        "최장 연속 러닝": "3일"
+      }
+    },
+    "firstCompletionOpenedOlderFixture": true,
+    "originalLongestStreakPreserved": true
+  },
+  "png": {
+    "status": "passed",
+    "defaultNicknameDate": true,
+    "hiddenNicknameDate": true,
+    "savedMatchesPreview": true,
+    "cards": {
+      "story": {
+        "sha256": "81af28aeef05dcf525d26de526b86c7481769b128b2f72947fe3355b73260393",
+        "bytes": 180745,
+        "size": [
+          1080,
+          1920
+        ]
+      },
+      "feed-private": {
+        "sha256": "76d116806314a1e1c7f0cc3c8343c8599904e521b38266501a9a7dbaa1f40280",
+        "bytes": 130272,
+        "size": [
+          1080,
+          1350
+        ]
+      }
+    }
+  },
+  "runningScreens": {
+    "syntheticPausedFixture": true,
+    "mapFocus": true,
+    "voiceBackgroundOptions": true,
+    "longPressUnlock": true,
+    "restartOptionsRestored": true,
+    "finished": true,
+    "rechallengePrepared": true,
+    "startDisabledWithoutFreshPosition": true,
+    "realGpsNotTested": true
+  },
+  "support": {
+    "darkLightSystemAndRestart": true,
+    "originalThemeRestored": true,
+    "aboutGuideFaq": true,
+    "signedInInquiryFormOnly": true,
+    "noticeAndThreePolicies": "operational-query-error",
+    "actualConsentOrInquirySubmitted": false,
+    "font16ThenRestored10": true,
+    "fiveTabs": true
+  },
+  "cleanup": {
+    "status": "passed",
+    "dataPreserved": true,
+    "accountAndSettingsPreserved": true,
+    "helperRemoved": true,
+    "internalBackupRemoved": true,
+    "noRunningService": true,
+    "testPngAndFolderRemoved": true,
+    "cardCopiesAndCacheRemoved": true,
+    "testFixtureRemoved": true,
+    "downloadsUnchanged": true,
+    "exactGpxAndTestTreePermissionCleaned": true,
+    "releasedTestTreePermissions": 1,
+    "removedTestGpxExports": 1,
+    "noAppService": true
+  },
+  "limits": [
+    "Synthetic paused/complete run fixtures are not actual GPS or actual completion.",
+    "No outdoor, new long-duration unplugged run, or GPS accuracy pass.",
+    "No operational policy publication, consent or inquiry submission.",
+    "Two server samples do not cover all 120 shape-distance computations or performance statistics."
+  ]
+}
