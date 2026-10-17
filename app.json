@@ -1,15 +1,12 @@
 {
   "expo": {
-    "name": "Running Art",
+    "name": "RunPen",
     "slug": "running-art-mobile",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/brand/runpen-launcher.png",
     "scheme": "runningart",
     "userInterfaceStyle": "automatic",
-    "ios": {
-      "icon": "./assets/expo.icon"
-    },
     "android": {
       "package": "com.runningart.mobile.dev",
       "allowBackup": false,
@@ -17,17 +14,11 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.RECEIVE_BOOT_COMPLETED"
       ],
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/brand/runpen-launcher.png"
     },
     "plugins": [
       "./scripts/with-build-inputs.cjs",
@@ -36,7 +27,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#F6F5F0",
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/brand/runpen-launcher.png",
           "imageWidth": 76
         }
       ],
