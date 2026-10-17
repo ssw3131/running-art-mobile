@@ -1,0 +1,145 @@
+{
+  "date": "2026-10-17",
+  "device": {
+    "model": "SM-A750N",
+    "android": 10
+  },
+  "appUnchanged": {
+    "apkSha256": "83f4e7f568d408da5eb1bdee7ac06e331dfa11c1c8f64b2258e3f4510447375c",
+    "package": [
+      "userId=10251",
+      "versionName=0.1.0",
+      "dataDir=/data/user/0/com.runningart.mobile.dev",
+      "firstInstallTime=2026-10-11 20:36:59",
+      "lastUpdateTime=2026-10-16 23:01:56"
+    ],
+    "network": {
+      "wifi_on": "1",
+      "mobile_data": "1",
+      "airplane_mode_on": "0"
+    },
+    "fontScale": "1.1",
+    "servicesNone": true
+  },
+  "originalRows": {
+    "saved_courses": "0:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "running_sessions": "0:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "running_points": "0:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "storage_test_notes": "0:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "account": {
+    "guest": true,
+    "beforeAfterIdentityMatched": true
+  },
+  "computations": [
+    {
+      "case": "legacy-heart5",
+      "scoresAndSearchMatched": true,
+      "candidateDistancesMatched": true,
+      "timing": {
+        "roadMs": 2396.130343,
+        "calculationMs": 10324.338181000001,
+        "totalMs": 14951.520374000072
+      },
+      "candidates": 5,
+      "ui": {
+        "completion": "서버에서 5개 코스를 찾았어요.",
+        "candidate-0": "전체 코스 거리 / 1순위 / 5.07 km / 양방향 순환 코스",
+        "candidate-1": "전체 코스 거리 / 2순위 / 4.90 km / 양방향 순환 코스",
+        "candidate-2": "전체 코스 거리 / 3순위 / 5.31 km / 양방향 순환 코스",
+        "candidate-3": "전체 코스 거리 / 4순위 / 5.12 km / 양방향 순환 코스",
+        "candidate-4": "전체 코스 거리 / 5순위 / 4.80 km / 양방향 순환 코스",
+        "route-timing": "전체 소요 14.95초 · 서버 계산",
+        "reference-comparison": "선택한 지도 중심 기준 결과예요. 고정 표본의 원본 비교는 적용하지 않아요.",
+        "calculation-metrics": "노드 13614 · 도로 구간 15363"
+      }
+    },
+    {
+      "case": "new-dog3",
+      "scoresAndSearchMatched": true,
+      "candidateDistancesMatched": true,
+      "timing": {
+        "roadMs": 219.39902199999779,
+        "calculationMs": 5024.004229999991,
+        "totalMs": 6057.98115003109
+      },
+      "candidates": 5,
+      "ui": {
+        "completion": "서버에서 5개 코스를 찾았어요.",
+        "candidate-0": "전체 코스 거리 / 1순위 / 3.09 km / 양방향 순환 코스",
+        "candidate-1": "전체 코스 거리 / 2순위 / 2.99 km / 양방향 순환 코스",
+        "candidate-2": "전체 코스 거리 / 3순위 / 3.12 km / 양방향 순환 코스",
+        "candidate-3": "전체 코스 거리 / 4순위 / 3.02 km / 양방향 순환 코스",
+        "candidate-4": "전체 코스 거리 / 5순위 / 3.04 km / 양방향 순환 코스",
+        "route-timing": "전체 소요 6.06초 · 서버 계산",
+        "reference-comparison": "선택한 지도 중심 기준 결과예요. 고정 표본의 원본 비교는 적용하지 않아요.",
+        "calculation-metrics": "노드 13614 · 도로 구간 15363"
+      }
+    },
+    {
+      "case": "new-strawberry10",
+      "scoresAndSearchMatched": true,
+      "candidateDistancesMatched": true,
+      "timing": {
+        "roadMs": 380.20465600001626,
+        "calculationMs": 11047.166286999942,
+        "totalMs": 12586.52187603712
+      },
+      "candidates": 5,
+      "ui": {
+        "completion": "서버에서 5개 코스를 찾았어요.",
+        "candidate-0": "전체 코스 거리 / 1순위 / 10.95 km / 양방향 순환 코스",
+        "candidate-1": "전체 코스 거리 / 2순위 / 10.73 km / 양방향 순환 코스",
+        "candidate-2": "전체 코스 거리 / 3순위 / 10.89 km / 양방향 순환 코스",
+        "candidate-3": "전체 코스 거리 / 4순위 / 10.93 km / 양방향 순환 코스",
+        "candidate-4": "전체 코스 거리 / 5순위 / 10.72 km / 양방향 순환 코스",
+        "route-timing": "전체 소요 12.59초 · 서버 계산",
+        "reference-comparison": "선택한 지도 중심 기준 결과예요. 고정 표본의 원본 비교는 적용하지 않아요.",
+        "calculation-metrics": "노드 13614 · 도로 구간 15363"
+      }
+    }
+  ],
+  "savedAndReopenedThenDeleted": [
+    "QA-20261017-heart5",
+    "QA-20261017-dog3"
+  ],
+  "duplicateSavePrevented": true,
+  "gpxShareOpenedThenCancelled": true,
+  "runningPreparationOpened": true,
+  "gpsRecordingStarted": false,
+  "imageInput": {
+    "syntheticPng": true,
+    "dimensions": [
+      256,
+      256
+    ],
+    "nativePickerAndCrop": true,
+    "contourPreviewAndApply": true,
+    "confirmationThenCancelled": true,
+    "routeCalculation": false
+  },
+  "imageCleanup": {
+    "fixtureRemoved": true,
+    "mediaRowRemoved": true,
+    "newCachePngsRemoved": 2,
+    "preexistingFilesUntouched": true
+  },
+  "cleanup": {
+    "status": "passed",
+    "dataPreserved": true,
+    "accountAndSettingsPreserved": true,
+    "helperRemoved": true,
+    "internalBackupRemoved": true,
+    "noRunningService": true
+  },
+  "scopeLimits": [
+    "three actual phone calculations, not all 120 combinations",
+    "guest only, not sync roundtrip",
+    "no high-end phone or outdoor/long-duration running",
+    "no operating consent or inquiry submission"
+  ],
+  "screenshots": [
+    "operations-phone-20261017/dog-course.png",
+    "operations-phone-20261017/image-contour.png"
+  ]
+}

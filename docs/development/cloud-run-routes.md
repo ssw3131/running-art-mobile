@@ -11,7 +11,8 @@
 앱 → `POST /v1/routes` → 전국 R2 목록/타일 검증 → 동일 v0.2 엔진 → 후보 전체 결과 → 기존 앱의 후보 선택·저장·러닝. 서버 계산 성공 시 휴대폰에서 그래프/탐색을 다시 실행하지 않는다.
 
 - 공개 계산 API: 로그인/토큰이 필요 없다. 개인 코스·GPS 기록·Supabase 자격 증명을 보내지 않는다. 계산 중심과 도형은 요청 처리에만 사용하고 앱/서버 코드에서 로그나 DB에 저장하지 않는다. Cloud Run의 기본 HTTP 접근 로그는 남는다.
-- 계약 `runpen-routes-v1`: 한국 공급 범위, 반경 2km, 정수 1~10km, 자유 순환, 서비스 12도형·기존 도형 ID 또는 최대 49점의 닫힌 직접 그리기/이미지 윤곽. 임의 도로·외부 URL을 입력받지 않는다. 16KiB 요청/8MiB 응답 제한. 이 범위는 현재 소스 기준이며 10-10 운영 리비전 `00002-nog`는 이전 도형·3/5/7km 계약이다.
+- 계약 `runpen-routes-v1`: 한국 공급 범위, 반경 2km, 정수 1~10km, 자유 순환, 서비스 12도형·기존 도형 ID 또는 최대 49점의 닫힌 직접 그리기/이미지 윤곽. 임의 도로·외부 URL을 입력받지 않는다. 16KiB 요청/8MiB 응답 제한. 2026-10-17 `shapes1017` 리비전으로 운영 반영했다. 이전 `00002-nog`는 이전 도형·3/5/7km 계약이다.
+- 외부 상태 확인: `GET /health`의200은 프로세스 생존만 뜻한다. 공통 사용량·저장소 건강·계산 가능 여부는 보증하지 않는다. `/healthz`는 로컬 호환 별칭이며 Cloud Run의 예약 경로 때문에 외부 확인에 사용하지 않는다.
 - 도로 캐시: 기존 해시·크기·영역 검증과 64MiB SQLite 캐시를 서버 메모리에서 공유한다. 1시간 후 최신 목록을 확인하며 명시적 새 버전 확인은 즉시 갱신한다. 작업자 중단·인스턴스 종료 시 캐시는 소멸한다.
 - 실행: 인스턴스당 계산 1개. 여분 요청은 429, 계산 시간 초과는 504. 앱은 자동 서버 재시도 없이 기기 계산으로 전환하며 화면에 전환을 표시한다. 서버 작업자 제한 60초, 본문 5초, 전체 65초, Cloud Run 70초, 앱 75초.
 - 취소/화면 이동/백그라운드: 앱 요청 취소와 오래된 결과 무시. 서버가 연결 종료를 받으면 계산 작업자를 종료한다. 프록시가 연결 종료를 즉시 전달하지 않는 경우에도 60초 작업 제한이 남는다.
@@ -27,12 +28,16 @@
 # 저장소 루트, 기존 도구/인증 사용
 & .\.tools\node\node.exe scripts/route-compute/package.mjs build/route-compute/NEW-REVISION
 $env:CLOUDSDK_CONFIG=Join-Path (Get-Location) '.cache/gcloud-server-compute'
-& .\.tools\google-cloud-sdk\bin\gcloud.cmd run deploy runpen-route-compute --project=running-art-mobile --region=asia-northeast3 --source=build/route-compute/NEW-REVISION --service-account=runpen-route-compute@running-art-mobile.iam.gserviceaccount.com --cpu=1 --memory=1Gi --concurrency=8 --min=0 --max=2 --max-instances=2 --timeout=70 --cpu-throttling --no-cpu-boost --allow-unauthenticated --ingress=all --update-env-vars=COMPUTE_GUARD_BUCKET=runpen-compute-guard-125644906792
+& .\.tools\google-cloud-sdk\bin\gcloud.cmd run deploy runpen-route-compute --project=running-art-mobile --region=asia-northeast3 --source=build/route-compute/NEW-REVISION --no-traffic --tag=qa-new-revision --service-account=runpen-route-compute@running-art-mobile.iam.gserviceaccount.com --cpu=1 --memory=1Gi --concurrency=8 --min=0 --max=2 --max-instances=2 --timeout=70 --cpu-throttling --no-cpu-boost --allow-unauthenticated --ingress=all --update-env-vars=COMPUTE_GUARD_BUCKET=runpen-compute-guard-125644906792
 ```
+
+위 명령은 기존 트래픽을 유지한 채 새 리비전만 준비한다. 임시 태그 주소에서 기존/확대 입력의 전체 결과·`/health`·잘못된 입력을 확인한 뒤, 실제 생성된 리비전 이름으로 트래픽100%를 전환하고 태그를 제거한다. 검증 전에 새 리비전으로 전환하지 않는다.
 
 패키저는 코드 17개만 복사한다. 환경 파일·사용자 자료·키·APK를 빌드에 올리지 않는다. 새 출력 폴더를 사용하며 Docker 기본 이미지의 실제 digest는 배포 증거에서 확인한다. 앱 `.env.local`의 `EXPO_PUBLIC_COMPUTE_BASE_URL`에 배포 HTTPS origin을 넣어 APK를 다시 빌드한다. 주소가 비어 있으면 기존 기기 계산이다.
 
 복구: [운영 중지·재개](compute-protection.md#운영-중지재개)의 pause로 새 계산을 멈추면 앱은 기기 계산으로 전환한다. 이전 `00001-96r`로 단순 롤백하면 공통 제한도 사라지므로 주의한다. 앱에서 즉시 ‘기기 계산·도로 저장’을 선택할 수도 있다. 서버 주소를 비운 APK로 되돌리면 서버 호출을 완전히 제거한다. 코스·계정 DB 마이그레이션은 필요 없다.
+
+2026-10-17 반영은 PR #19 필수 검사·병합 후 `--no-traffic`/임시 태그로 새 리비전을 먼저 준비했다. 실제6표본 결과 해시·상태/오류 응답을 통과한 뒤 `shapes1017=100`으로 전환하고 임시 태그를 제거했다. 필요 시 보호 코드가 포함된 `00002-nog=100`으로 복구할 수 있으며, 이때 확대 입력은 기기 계산으로 전환된다. 기존 자원·서비스 계정·IAM·공통 사용량을 유지했다. 자동 배포는 구성하지 않았다. [상세 근거](../quality/operations-readiness-20261017.md).
 
 ## 검증 도구
 
