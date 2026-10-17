@@ -1,7 +1,7 @@
 {
   "at": "2026-10-16T23:53:42.932Z",
   "source": "9a314a1625c0ff8950bc14d6b0ad277ba3aeb0af",
-  "scope": "local deployment-bundle and read-only production preflight",
+  "scope": "independent bundle verification, read-only operating DB comparison, manual Cloud Run rollout and A7 follow-up",
   "bundle": {
     "createdAt": "2026-10-16T23:51:30.649Z",
     "files": [
@@ -374,11 +374,6 @@
     "startupCpuBoost": false,
     "guardBucketConfigured": true
   },
-  "phone": {
-    "connected": "SM-A750N",
-    "modified": false,
-    "highEndConnected": false
-  },
   "finalBundle": {
     "createdAt": "2026-10-17T00:03:49.244Z",
     "files": [
@@ -520,5 +515,1081 @@
       "newInputStatus": 400,
       "error": "invalid_request"
     }
-  }
+  },
+  "ciPr": {
+    "api": {
+      "fuzz": {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "2",
+        "time": "3.955908"
+      },
+      "report": {
+        "schemaVersion": 1,
+        "suite": "integration",
+        "startedAt": "2026-10-17T00:10:46.780Z",
+        "source": "468e35a60158705c48df45564c60a6aca2aac10e",
+        "dirty": false,
+        "workingTree": [],
+        "ciRun": "38984898591",
+        "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+        "environment": {
+          "platform": "linux",
+          "node": "v24.21.0"
+        },
+        "retry": 0,
+        "steps": [
+          {
+            "id": "supabase-roundtrip",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1779,
+            "log": "supabase-roundtrip.log"
+          }
+        ],
+        "finishedAt": "2026-10-17T00:10:48.778Z",
+        "status": "passed"
+      }
+    },
+    "fast": {
+      "report": {
+        "schemaVersion": 1,
+        "suite": "fast",
+        "startedAt": "2026-10-17T00:09:14.695Z",
+        "source": "468e35a60158705c48df45564c60a6aca2aac10e",
+        "dirty": false,
+        "workingTree": [],
+        "ciRun": "38984898591",
+        "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+        "environment": {
+          "platform": "linux",
+          "node": "v24.21.0"
+        },
+        "retry": 0,
+        "steps": [
+          {
+            "id": "source",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 18964,
+            "log": "source.log"
+          },
+          {
+            "id": "server-source",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1854,
+            "log": "server-source.log"
+          },
+          {
+            "id": "logic",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 34821,
+            "log": "logic.log"
+          },
+          {
+            "id": "components",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 11730,
+            "log": "components.log"
+          },
+          {
+            "id": "openapi",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 109,
+            "log": "openapi.log"
+          },
+          {
+            "id": "account-policies",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1991,
+            "log": "account-policies.log"
+          },
+          {
+            "id": "share-policies",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1922,
+            "log": "share-policies.log"
+          }
+        ],
+        "finishedAt": "2026-10-17T00:10:26.209Z",
+        "status": "passed"
+      }
+    },
+    "android29": {
+      "source": "468e35a60158705c48df45564c60a6aca2aac10e",
+      "status": "passed",
+      "apkSha256": "545abe3d8cf2faad70f02124c86f9bc3f812738b36ef71cf22cab43e7abcc656",
+      "startedAt": "2026-10-17T00:17:20.890691+00:00",
+      "finishedAt": "2026-10-17T00:24:26.690960+00:00",
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "durationSeconds": 39.042
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "durationSeconds": 86.846
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "durationSeconds": 76.129
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "durationSeconds": 15.492
+        },
+        {
+          "id": "S1-01-signup-entry",
+          "status": "passed",
+          "durationSeconds": 39.788
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "durationSeconds": 141.739
+        }
+      ],
+      "retries": 0,
+      "preservation": {
+        "status": "passed",
+        "sha256": "3cf075ff2d647e4ae0e1e4d1641b1223abba98417937e2fe31f301b037b952b8"
+      },
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "uiDumpReadinessWaits": 0,
+      "uiDumpTransportWarnings": 0
+    },
+    "android36": {
+      "source": "468e35a60158705c48df45564c60a6aca2aac10e",
+      "status": "passed",
+      "apkSha256": "c83f9c8a702c27da5fbdb5ef0f4f8d1d5a296db5f669fafd089eb5d914b0642d",
+      "startedAt": "2026-10-17T00:20:59.550773+00:00",
+      "finishedAt": "2026-10-17T00:40:49.716708+00:00",
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "durationSeconds": 68.989
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "durationSeconds": 96.823
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "durationSeconds": 91.384
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "durationSeconds": 18.161
+        },
+        {
+          "id": "S0-04-save",
+          "status": "passed",
+          "durationSeconds": 172.372
+        },
+        {
+          "id": "S0-04-restart",
+          "status": "passed",
+          "durationSeconds": 13.763
+        },
+        {
+          "id": "S0-06-gps",
+          "status": "passed",
+          "durationSeconds": 98.265
+        },
+        {
+          "id": "S0-05-preparation",
+          "status": "passed",
+          "durationSeconds": 32.11
+        },
+        {
+          "id": "S234-01-integrated",
+          "status": "passed",
+          "durationSeconds": 190.806
+        },
+        {
+          "id": "S0-07-deep-link-gpx",
+          "status": "passed",
+          "durationSeconds": 51.478
+        },
+        {
+          "id": "S0-08-accessibility",
+          "status": "passed",
+          "durationSeconds": 42.67
+        },
+        {
+          "id": "S2a-02-accessibility",
+          "status": "passed",
+          "durationSeconds": 46.022
+        },
+        {
+          "id": "S1-01-signup-entry",
+          "status": "passed",
+          "durationSeconds": 43.822
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "durationSeconds": 167.225
+        }
+      ],
+      "retries": 0,
+      "preservation": {
+        "status": "passed",
+        "sha256": "6d001ced67596771406025f7279bc46cd4890cb860a843ab3858e56b6c0379d5"
+      },
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "uiDumpReadinessWaits": 4,
+      "uiDumpTransportWarnings": 0
+    },
+    "visual": {
+      "status": "passed",
+      "baseline": "tests/visual/android-linux-api36/baseline.json",
+      "results": [
+        {
+          "attempt": "attempt-01",
+          "status": "passed",
+          "environment": {
+            "host": "Linux",
+            "api": "36",
+            "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+            "size": "1080x2340",
+            "density": 420,
+            "fontScale": 1,
+            "locale": "en-US",
+            "timezone": "UTC",
+            "systemBar": "demo-1200-full-signal-battery100-v1",
+            "displayProfile": "pixel_5-overlays-v1"
+          },
+          "source": "468e35a60158705c48df45564c60a6aca2aac10e",
+          "apkSha256": "c83f9c8a702c27da5fbdb5ef0f4f8d1d5a296db5f669fafd089eb5d914b0642d",
+          "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+          "results": [
+            {
+              "id": "home",
+              "status": "passed",
+              "pixels": 0,
+              "masks": [
+                {
+                  "reason": "system-wifi-rasterization",
+                  "x": 817,
+                  "y": 53,
+                  "width": 41,
+                  "height": 33
+                }
+              ],
+              "baselineSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7",
+              "currentSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7"
+            },
+            {
+              "id": "run",
+              "status": "passed",
+              "pixels": 0,
+              "masks": [
+                {
+                  "reason": "system-wifi-rasterization",
+                  "x": 817,
+                  "y": 53,
+                  "width": 41,
+                  "height": 33
+                }
+              ],
+              "baselineSha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
+              "currentSha256": "75b6c85ccd45998971dca0e7dc9665cddfffdda7cba9ba99d6b06254c223f70b"
+            },
+            {
+              "id": "archive",
+              "status": "passed",
+              "pixels": 0,
+              "masks": [
+                {
+                  "reason": "system-wifi-rasterization",
+                  "x": 817,
+                  "y": 53,
+                  "width": 41,
+                  "height": 33
+                }
+              ],
+              "baselineSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+              "currentSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448"
+            },
+            {
+              "id": "account",
+              "status": "passed",
+              "pixels": 0,
+              "masks": [
+                {
+                  "reason": "system-wifi-rasterization",
+                  "x": 817,
+                  "y": 53,
+                  "width": 41,
+                  "height": 33
+                }
+              ],
+              "baselineSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8",
+              "currentSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8"
+            }
+          ]
+        }
+      ]
+    },
+    "runId": 38984898591,
+    "head": "a0d268894f5cfed2bb15cc653dfb12b08fa33081",
+    "mergedMain": "3689c773f688915e811792afefb6a943b847da6b"
+  },
+  "deployment": {
+    "source": "3689c773f688915e811792afefb6a943b847da6b",
+    "staged": {
+      "at": "2026-10-17T00:42:34.316Z",
+      "settingsPreserved": true,
+      "settings": {
+        "region": "asia-northeast3",
+        "service": "runpen-route-compute",
+        "serviceAccount": "runpen-route-compute@running-art-mobile.iam.gserviceaccount.com",
+        "cpu": "1",
+        "memory": "1Gi",
+        "concurrency": 8,
+        "timeoutSeconds": 70,
+        "serviceMax": "2",
+        "serviceMin": "0",
+        "revisionMax": "2",
+        "revisionMin": "0",
+        "throttling": "true",
+        "boost": "false",
+        "ingress": "all",
+        "env": [
+          {
+            "name": "COMPUTE_GUARD_BUCKET",
+            "value": "runpen-compute-guard-125644906792"
+          }
+        ],
+        "port": [
+          {
+            "containerPort": 8080,
+            "name": "http1"
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "percent": 100,
+          "revisionName": "runpen-route-compute-00002-nog"
+        },
+        {
+          "revisionName": "runpen-route-compute-shapes1017",
+          "tag": "shapes1017",
+          "url": "https://shapes1017---runpen-route-compute-zehaomtsoq-du.a.run.app"
+        }
+      ],
+      "revision": "runpen-route-compute-shapes1017",
+      "image": "asia-northeast3-docker.pkg.dev/running-art-mobile/cloud-run-source-deploy/runpen-route-compute@sha256:d2c650666e10e56b989782b50a0af3ccc45b5d14b0a353f15ff55a8583ffcfe9",
+      "ready": true
+    },
+    "active": {
+      "at": "2026-10-17T00:43:59.390Z",
+      "settingsPreserved": true,
+      "settings": {
+        "region": "asia-northeast3",
+        "service": "runpen-route-compute",
+        "serviceAccount": "runpen-route-compute@running-art-mobile.iam.gserviceaccount.com",
+        "cpu": "1",
+        "memory": "1Gi",
+        "concurrency": 8,
+        "timeoutSeconds": 70,
+        "serviceMax": "2",
+        "serviceMin": "0",
+        "revisionMax": "2",
+        "revisionMin": "0",
+        "throttling": "true",
+        "boost": "false",
+        "ingress": "all",
+        "env": [
+          {
+            "name": "COMPUTE_GUARD_BUCKET",
+            "value": "runpen-compute-guard-125644906792"
+          }
+        ],
+        "port": [
+          {
+            "containerPort": 8080,
+            "name": "http1"
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "percent": 100,
+          "revisionName": "runpen-route-compute-shapes1017"
+        }
+      ],
+      "revision": "runpen-route-compute-shapes1017",
+      "image": "asia-northeast3-docker.pkg.dev/running-art-mobile/cloud-run-source-deploy/runpen-route-compute@sha256:d2c650666e10e56b989782b50a0af3ccc45b5d14b0a353f15ff55a8583ffcfe9",
+      "ready": true
+    },
+    "stagedVerification": {
+      "at": "2026-10-17T00:42:49.525Z",
+      "base": "https://shapes1017---runpen-route-compute-zehaomtsoq-du.a.run.app",
+      "mode": "staged",
+      "publicFixturesOnly": true,
+      "rows": [
+        {
+          "id": "heart-1km",
+          "status": 200,
+          "httpMs": 7155.3561,
+          "candidates": 5,
+          "resultSha256": "264d8f96bb6bb82c0e10ebdee386669ece38e22c9d14e8cddc0b22a534824589",
+          "expectedSha256": "264d8f96bb6bb82c0e10ebdee386669ece38e22c9d14e8cddc0b22a534824589",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+            "cached": false
+          }
+        },
+        {
+          "id": "dog-3km",
+          "status": 200,
+          "httpMs": 6097.1163,
+          "candidates": 5,
+          "resultSha256": "68a9555668b7ea612db32a595e6c14e1596f606e24531463fdb9bbed791ed3b3",
+          "expectedSha256": "68a9555668b7ea612db32a595e6c14e1596f606e24531463fdb9bbed791ed3b3",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+            "cached": true
+          }
+        },
+        {
+          "id": "strawberry-10km",
+          "status": 200,
+          "httpMs": 10801.4189,
+          "candidates": 5,
+          "resultSha256": "9bbb3c4f74e3770fad9c8611960beb113911b7dfd78fe66b8a328dde75c15de1",
+          "expectedSha256": "9bbb3c4f74e3770fad9c8611960beb113911b7dfd78fe66b8a328dde75c15de1",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+            "cached": true
+          }
+        },
+        {
+          "id": "legacy-gangnam-heart-5km",
+          "status": 200,
+          "httpMs": 7743.058000000001,
+          "candidates": 5,
+          "resultSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+          "expectedSha256": "4679bf3858bfc47caaa08ba2621a829818094fcb5c489bf4f727431588a358a5",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+            "cached": true
+          }
+        },
+        {
+          "id": "legacy-busan-fish-3km",
+          "status": 200,
+          "httpMs": 4655.074500000002,
+          "candidates": 5,
+          "resultSha256": "c3e96ebfd98e7a27fede546d0e26de833e3e1f793e15fb4bbe0943ceb39eb2ff",
+          "expectedSha256": "c3e96ebfd98e7a27fede546d0e26de833e3e1f793e15fb4bbe0943ceb39eb2ff",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "35ca7c88052c975b9a48bd5c204f04c8e9833adf4ed1d952b01c63cf866275df",
+            "cached": false
+          }
+        },
+        {
+          "id": "custom-10km",
+          "status": 200,
+          "httpMs": 780.5126999999993,
+          "candidates": 0,
+          "resultSha256": "c25f583b0f3ba4e2f28ba9d2b561dcd889419f97e46851e4fb248bbc2e7d97f9",
+          "expectedSha256": "c25f583b0f3ba4e2f28ba9d2b561dcd889419f97e46851e4fb248bbc2e7d97f9",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+            "cached": true
+          }
+        }
+      ],
+      "passed": true,
+      "health": {
+        "status": 200,
+        "body": {
+          "contract": "runpen-routes-v1",
+          "ok": true
+        }
+      },
+      "invalid": {
+        "status": 400,
+        "body": {
+          "error": "invalid_request"
+        }
+      }
+    },
+    "iamPreserved": true,
+    "guardBefore": {
+      "version": 1,
+      "paused": false,
+      "lastMs": 1791895141173,
+      "windows": {
+        "minute": {
+          "start": 1791895140000,
+          "end": 1791895200000,
+          "count": 1
+        },
+        "hour": {
+          "start": 1791892800000,
+          "end": 1791896400000,
+          "count": 2
+        },
+        "day": {
+          "start": 1791849600000,
+          "end": 1791936000000,
+          "count": 3
+        },
+        "month": {
+          "start": 1790812800000,
+          "end": 1793491200000,
+          "count": 28
+        }
+      }
+    },
+    "guardAfterStage": {
+      "version": 1,
+      "paused": false,
+      "lastMs": 1792197807138,
+      "windows": {
+        "minute": {
+          "start": 1792197780000,
+          "end": 1792197840000,
+          "count": 4
+        },
+        "hour": {
+          "start": 1792195200000,
+          "end": 1792198800000,
+          "count": 7
+        },
+        "day": {
+          "start": 1792195200000,
+          "end": 1792281600000,
+          "count": 7
+        },
+        "month": {
+          "start": 1790812800000,
+          "end": 1793491200000,
+          "count": 35
+        }
+      }
+    },
+    "productionVerification": {
+      "at": "2026-10-17T00:44:23.481Z",
+      "base": "https://runpen-route-compute-125644906792.asia-northeast3.run.app",
+      "mode": "production",
+      "publicFixturesOnly": true,
+      "rows": [
+        {
+          "id": "dog-3km",
+          "status": 200,
+          "httpMs": 5810.6212,
+          "candidates": 5,
+          "resultSha256": "68a9555668b7ea612db32a595e6c14e1596f606e24531463fdb9bbed791ed3b3",
+          "expectedSha256": "68a9555668b7ea612db32a595e6c14e1596f606e24531463fdb9bbed791ed3b3",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+            "cached": true
+          }
+        },
+        {
+          "id": "strawberry-10km",
+          "status": 200,
+          "httpMs": 9935.0598,
+          "candidates": 5,
+          "resultSha256": "9bbb3c4f74e3770fad9c8611960beb113911b7dfd78fe66b8a328dde75c15de1",
+          "expectedSha256": "9bbb3c4f74e3770fad9c8611960beb113911b7dfd78fe66b8a328dde75c15de1",
+          "roads": {
+            "release": "kr-20260930-c8cb96030306-roads-v1",
+            "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+            "cached": true
+          }
+        }
+      ],
+      "passed": true,
+      "health": {
+        "status": 200,
+        "body": {
+          "contract": "runpen-routes-v1",
+          "ok": true
+        }
+      },
+      "invalid": {
+        "status": 400,
+        "body": {
+          "error": "invalid_request"
+        }
+      }
+    },
+    "guardFinal": {
+      "version": 1,
+      "paused": false,
+      "lastMs": 1792198344256,
+      "windows": {
+        "minute": {
+          "start": 1792198320000,
+          "end": 1792198380000,
+          "count": 1
+        },
+        "hour": {
+          "start": 1792195200000,
+          "end": 1792198800000,
+          "count": 11
+        },
+        "day": {
+          "start": 1792195200000,
+          "end": 1792281600000,
+          "count": 11
+        },
+        "month": {
+          "start": 1790812800000,
+          "end": 1793491200000,
+          "count": 39
+        }
+      }
+    },
+    "finalMonthlyCountDelta": 11
+  },
+  "updatedAt": "2026-10-17T10:15:07+09:00",
+  "phoneReport": "operations-phone-20261017.json",
+  "phonePreflight": {
+    "connected": "SM-A750N",
+    "modified": false,
+    "highEndConnected": false
+  },
+  "evidencePhases": {
+    "at": "initial preflight time",
+    "source": "initial source before fixes",
+    "bundle": "first fixed package before health follow-up",
+    "finalBundle": "final deployed code manifest",
+    "phonePreflight": "initial connection check before authorized QA",
+    "phoneReport": "completed physical QA and cleanup",
+    "ciPr": "final PR verification before merge",
+    "deployment": "manual staged rollout and post-rollout verification",
+    "ciMain": "full merged source verification"
+  },
+  "ciMain": {
+    "runId": 38987521158,
+    "head": "3689c773f688915e811792afefb6a943b847da6b",
+    "fast": {
+      "report": {
+        "schemaVersion": 1,
+        "suite": "fast",
+        "startedAt": "2026-10-17T00:42:09.189Z",
+        "source": "3689c773f688915e811792afefb6a943b847da6b",
+        "dirty": false,
+        "workingTree": [],
+        "ciRun": "38987521158",
+        "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+        "environment": {
+          "platform": "linux",
+          "node": "v24.21.0"
+        },
+        "retry": 0,
+        "steps": [
+          {
+            "id": "source",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 21127,
+            "log": "source.log"
+          },
+          {
+            "id": "server-source",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 2171,
+            "log": "server-source.log"
+          },
+          {
+            "id": "logic",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 37352,
+            "log": "logic.log"
+          },
+          {
+            "id": "components",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 13070,
+            "log": "components.log"
+          },
+          {
+            "id": "openapi",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 110,
+            "log": "openapi.log"
+          },
+          {
+            "id": "account-policies",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1952,
+            "log": "account-policies.log"
+          },
+          {
+            "id": "share-policies",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1910,
+            "log": "share-policies.log"
+          }
+        ],
+        "finishedAt": "2026-10-17T00:43:26.922Z",
+        "status": "passed"
+      },
+      "nodeTests": 453,
+      "jestTests": 38
+    },
+    "api": {
+      "report": {
+        "schemaVersion": 1,
+        "suite": "integration",
+        "startedAt": "2026-10-17T00:43:51.101Z",
+        "source": "3689c773f688915e811792afefb6a943b847da6b",
+        "dirty": false,
+        "workingTree": [],
+        "ciRun": "38987521158",
+        "fixtureSha256": "d0161d84a34dcc0f7afe822e0564bcc492a810acb4d5778b5d040111c5e4a251",
+        "environment": {
+          "platform": "linux",
+          "node": "v24.21.0"
+        },
+        "retry": 0,
+        "steps": [
+          {
+            "id": "supabase-roundtrip",
+            "status": "passed",
+            "exitCode": 0,
+            "durationMs": 1390,
+            "log": "supabase-roundtrip.log"
+          }
+        ],
+        "finishedAt": "2026-10-17T00:43:52.675Z",
+        "status": "passed"
+      },
+      "fuzz": {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "2",
+        "time": "3.007872"
+      },
+      "integrationTests": 3
+    },
+    "android29": {
+      "source": "3689c773f688915e811792afefb6a943b847da6b",
+      "status": "passed",
+      "apkSha256": "6a2f09b1d205fb0d3b549502b8d87655561da2935a6a9fdc120e80201844ec04",
+      "startedAt": "2026-10-17T00:52:57.851850+00:00",
+      "finishedAt": "2026-10-17T01:00:41.892962+00:00",
+      "retries": 0,
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "uiDumpReadinessWaits": 0,
+      "uiDumpTransportWarnings": 2,
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "durationSeconds": 42.348
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "durationSeconds": 94.827
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "durationSeconds": 79.775
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "durationSeconds": 16.766
+        },
+        {
+          "id": "S1-01-signup-entry",
+          "status": "passed",
+          "durationSeconds": 44.353
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "durationSeconds": 156.505
+        }
+      ],
+      "preservation": {
+        "status": "passed",
+        "sha256": "b702e09e5af8229bcf6e5ce6fbed3102145479002a6772161f07274d3f4a5218"
+      },
+      "transportWarnings": [
+        {
+          "capture": "current",
+          "exitCode": 139,
+          "token": "7be6e617db584a8bb70fdac7b892e714",
+          "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.53\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+        },
+        {
+          "capture": "current",
+          "exitCode": 139,
+          "token": "1fbfc8c3141443239d9421352b7e6c44",
+          "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.531\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+        }
+      ]
+    },
+    "android36": {
+      "source": "3689c773f688915e811792afefb6a943b847da6b",
+      "status": "passed",
+      "apkSha256": "a072345b06fc891135a5dd6f6d6dd83a50b63b8177bf5dbc0236f27038ff9590",
+      "startedAt": "2026-10-17T00:53:45.341924+00:00",
+      "finishedAt": "2026-10-17T01:14:06.328037+00:00",
+      "retries": 0,
+      "cleanup": {
+        "status": "passed",
+        "errors": []
+      },
+      "uiDumpReadinessWaits": 4,
+      "uiDumpTransportWarnings": 0,
+      "steps": [
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "durationSeconds": 73.433
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "durationSeconds": 98.054
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "durationSeconds": 92.306
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "durationSeconds": 18.526
+        },
+        {
+          "id": "S0-04-save",
+          "status": "passed",
+          "durationSeconds": 180.807
+        },
+        {
+          "id": "S0-04-restart",
+          "status": "passed",
+          "durationSeconds": 13.338
+        },
+        {
+          "id": "S0-06-gps",
+          "status": "passed",
+          "durationSeconds": 100.852
+        },
+        {
+          "id": "S0-05-preparation",
+          "status": "passed",
+          "durationSeconds": 34.747
+        },
+        {
+          "id": "S234-01-integrated",
+          "status": "passed",
+          "durationSeconds": 199.687
+        },
+        {
+          "id": "S0-07-deep-link-gpx",
+          "status": "passed",
+          "durationSeconds": 51.808
+        },
+        {
+          "id": "S0-08-accessibility",
+          "status": "passed",
+          "durationSeconds": 42.866
+        },
+        {
+          "id": "S2a-02-accessibility",
+          "status": "passed",
+          "durationSeconds": 47.279
+        },
+        {
+          "id": "S1-01-signup-entry",
+          "status": "passed",
+          "durationSeconds": 44.723
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "durationSeconds": 170.273
+        }
+      ],
+      "preservation": {
+        "status": "passed",
+        "sha256": "f8129a08ec7e2f2a7f1d50dd39435cec44f46ed427adf36933d0a9360e9eac87"
+      },
+      "visual": {
+        "status": "passed",
+        "baseline": "tests/visual/android-linux-api36/baseline.json",
+        "results": [
+          {
+            "attempt": "attempt-01",
+            "status": "passed",
+            "environment": {
+              "host": "Linux",
+              "api": "36",
+              "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+              "size": "1080x2340",
+              "density": 420,
+              "fontScale": 1,
+              "locale": "en-US",
+              "timezone": "UTC",
+              "systemBar": "demo-1200-full-signal-battery100-v1",
+              "displayProfile": "pixel_5-overlays-v1"
+            },
+            "source": "3689c773f688915e811792afefb6a943b847da6b",
+            "apkSha256": "a072345b06fc891135a5dd6f6d6dd83a50b63b8177bf5dbc0236f27038ff9590",
+            "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+            "results": [
+              {
+                "id": "home",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "e9a31eaff6a0463187d6eb698c5df3dbfe563906d1bcb8e1a61a34d521bcf2d7",
+                "currentSha256": "e30119cb06a2ffe7d8a76ac74b5f2b491079eaba667ed02cb25daa0be12c8b4c"
+              },
+              {
+                "id": "run",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
+                "currentSha256": "75b6c85ccd45998971dca0e7dc9665cddfffdda7cba9ba99d6b06254c223f70b"
+              },
+              {
+                "id": "archive",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+                "currentSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448"
+              },
+              {
+                "id": "account",
+                "status": "passed",
+                "pixels": 0,
+                "masks": [
+                  {
+                    "reason": "system-wifi-rasterization",
+                    "x": 817,
+                    "y": 53,
+                    "width": 41,
+                    "height": 33
+                  }
+                ],
+                "baselineSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8",
+                "currentSha256": "1ced746de66842b9a6eff1ab48942877d7d113014b31e77ae72c2019c0951ea8"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "jobs": [
+      {
+        "name": "scope",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262331727"
+      },
+      {
+        "name": "android (29)",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364526"
+      },
+      {
+        "name": "api",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364549"
+      },
+      {
+        "name": "android (36)",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364590"
+      },
+      {
+        "name": "fast",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117262364591"
+      },
+      {
+        "name": "verification-gate",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/ssw3131/running-art-mobile/actions/runs/38987521158/job/117270008455"
+      }
+    ]
+  },
+  "status": "completed within documented scope"
 }
