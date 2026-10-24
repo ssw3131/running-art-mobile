@@ -9,7 +9,7 @@ import { useThemeColors } from '@/theme/ThemeProvider';
 
 const baseStyle = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 
-function PreviewMap({ paths, styleUrl, onFailure }: { paths: HomePath[]; styleUrl: string; onFailure(): void }) {
+function PreviewMap({ paths, styleUrl, bottomInset, onFailure }: { paths: HomePath[]; styleUrl: string; bottomInset: number; onFailure(): void }) {
   const camera = useRef<CameraRef>(null), [loaded, setLoaded] = useState(false);
   const geometry = useMemo(() => {
     const points = paths.flat();
@@ -27,7 +27,7 @@ function PreviewMap({ paths, styleUrl, onFailure }: { paths: HomePath[]; styleUr
   useEffect(() => {
     if (loaded) camera.current?.fitBounds(geometry.bounds, { padding: { top: 16, bottom: 16, left: 16, right: 16 }, duration: 0 });
   }, [loaded, geometry.bounds]);
-  return <Map testID="home-preview-map" style={StyleSheet.absoluteFill} mapStyle={styleUrl} logo={false} attribution={false} compass={false}
+  return <Map testID="home-preview-map" style={[StyleSheet.absoluteFill, { bottom: bottomInset }]} mapStyle={styleUrl} logo={false} attribution={false} compass={false}
     dragPan={false} touchZoom={false} touchRotate={false} touchPitch={false} doubleTapZoom={false} doubleTapHoldZoom={false}
     preferredFramesPerSecond={15} onDidFinishLoadingMap={() => setLoaded(true)} onDidFailLoadingMap={onFailure}>
     <Camera ref={camera} initialViewState={{ bounds: geometry.bounds, padding: { top: 16, bottom: 16, left: 16, right: 16 } }} />
@@ -59,11 +59,12 @@ export const HomePreview = memo(function HomePreview({ paths, active, label, una
   const key = `${signature}/${style}`, [failedKey, setFailedKey] = useState(''), [imageFailed, setImageFailed] = useState('');
   const fail = useMemo(() => () => setFailedKey(key), [key]);
   // Reserve the scaled attribution row so it cannot cover route endpoints.
-  const drawingArea = [StyleSheet.absoluteFill, { bottom: uri && !synthetic ? 12 * fontScale : 0 }];
+  const bottomInset = uri && !synthetic ? 12 * fontScale : 0;
+  const drawingArea = [StyleSheet.absoluteFill, { bottom: bottomInset }];
   return <View accessible accessibilityLabel={label} pointerEvents="none" style={{ aspectRatio: 1, width: '100%', backgroundColor: c.navigation, borderRadius: 14, overflow: 'hidden', justifyContent: 'center' }}>
     {uri && imageFailed !== uri ? <Image source={{ uri }} contentFit="contain" style={drawingArea} onError={() => setImageFailed(uri)} />
       : <AppText variant="caption" style={{ color: c.muted, padding: 8, textAlign: 'center' }}>{unavailable ? '경로를 읽지 못했어요' : '경로 기록이 없어요'}</AppText>}
-    {active && foreground && uri && style && !synthetic && failedKey !== key && <View style={drawingArea}><PreviewMap key={style} paths={stablePaths} styleUrl={style} onFailure={fail} /></View>}
+    {active && foreground && uri && style && !synthetic && failedKey !== key && <PreviewMap key={style} paths={stablePaths} styleUrl={style} bottomInset={bottomInset} onFailure={fail} />}
     {!!uri && !synthetic && <AppText style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: c.background, color: c.subtle, fontSize: 8, lineHeight: 12, textAlign: 'center' }}>© MapTiler © OSM</AppText>}
   </View>;
 });
