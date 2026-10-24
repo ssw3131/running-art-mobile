@@ -1,6 +1,6 @@
 # 현재 상태와 인수인계
 
-**2026-10-24 도메인 연결:** 회사 alohalab.co.kr·서비스 runpen.alohalab.co.kr을 Cloudflare에 배포했다. 새 /roads/·/api/·/share/의 실제 HTTPS·자료 해시·코스 계산을 확인했고 앱 주소/기존 오프라인 캐시 호환을 준비했다. 소개는 준비 안내이며 정책 미게시, 휴대폰 미설치, PR 검사 진행 중이다. [운영/복구](../development/domains.md)·[실행 기록](../history/executed-plans/2026-10-24-1519-domain-connection.md).
+**2026-10-24 도메인 연결:** 회사 alohalab.co.kr·서비스 runpen.alohalab.co.kr을 Cloudflare에 배포했다. 새 /roads/·/api/·/share/의 실제 HTTPS·자료 해시·코스 계산을 확인했고 앱 주소/기존 오프라인 캐시 호환을 준비했다. 소개는 준비 안내이며 정책 미게시, 휴대폰 미설치, GitHub 2FA 확인 후 PR 생성·필수 검사 대기다. [운영/복구](../development/domains.md)·[실행 기록](../history/executed-plans/2026-10-24-1519-domain-connection.md).
 
 
 **2026-10-17 RunPen 앱 로고 완료:** Figma 원본 러너/펜 아이콘·시작 화면과 RunPen 이름을 적용해 SM-S942N에 14:56:18 자료 유지 설치했다. 기존 4코스·6러닝·1,907좌표·1메모 해시와 로그인/설정 보존, 홈 아이콘/재시작·도우미 정리 확인. USB 분리 가능. PR #22/main `e5d9ffa` 병합·최종 전체 CI(453·Jest38·DB3·API36 14/API29 6·4화면 차이0) 통과. main 첫 스크롤바 캡처 차이 실패·동일 소스 진단 재실행 1회 이력 보존. [검증](../quality/runpen-brand-20261017.md).
