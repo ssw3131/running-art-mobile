@@ -32,7 +32,7 @@ node scripts/verify-domains.mjs
 
 다음 앱 빌드 설정은 도로 `https://runpen.alohalab.co.kr`, 계산 `https://runpen.alohalab.co.kr/api`, 공유 `https://runpen.alohalab.co.kr/share/`다. 도로 기본값을 변경했고 `/api` 계산 경로를 허용한다. 도로 캐시의 source 식별자는 이전 R2 주소를 유지해 기존 오프라인 자료를 재사용한다. 다른 호스트의 캐시는 합치지 않는다.
 
-별도 작업 사본의 `.env.local`에 새 주소를 적용했다. 기존 정책 작업 폴더의 환경 파일과 휴대폰 설치본은 그대로다. 휴대폰은 새 APK 업데이트 후에 이 경로를 사용한다. 이 작업은 휴대폰 설치·실기기 통합 통과를 뜻하지 않는다.
+별도 작업 사본의 `.env.local`에 새 주소를 적용하고 Android export 성공 및 생성 번들의 세 주소 포함을 확인했다. 기존 정책 작업 폴더의 환경 파일과 휴대폰 설치본은 그대로다. 다음 APK를 만드는 작업 폴더에도 위 세 값을 적용해야 한다. 휴대폰은 새 APK 업데이트 후에 이 경로를 사용한다. 이 작업은 서명 APK 제작·휴대폰 설치·실기기 통합 통과를 뜻하지 않는다.
 
 복구 시 앱의 도로 주소는 기존 `https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev`, 계산은 `https://runpen-route-compute-125644906792.asia-northeast3.run.app`, 공유는 `https://runpen-shared-runs.ssw3131.workers.dev`로 되돌릴 수 있다. 기존 서비스는 삭제하지 않았다. 회사 DNS 원복은 Worker 사용자 도메인 연결을 제거한 후 apex A `118.67.131.217`, Proxied, TTL Auto를 복구한다. 변경 전 이 주소는 521 오류였다.
 
