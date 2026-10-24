@@ -29,7 +29,7 @@ function TextLink({ label, onPress, testID }: { label: string; onPress(): void; 
   const c = useThemeColors();
   return <Pressable accessibilityRole="button" accessibilityLabel={label} testID={testID} onPress={onPress} style={styles.textLink}>
     <AppText weight="medium" style={{ color: c.subtle, flexShrink: 1 }}>{label}</AppText>
-    <Image source={require('../../../assets/home/more.png')} style={{ width: 20, height: 20 }} accessible={false} />
+    <Image source={require('../../../assets/ui/chevron-right.svg')} tintColor={c.subtle} contentFit="contain" style={{ width: 20, height: 20 }} accessible={false} />
   </Pressable>;
 }
 
