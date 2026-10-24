@@ -1,7 +1,7 @@
 import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from '@maplibre/maplibre-react-native';
 import { Image } from 'expo-image';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, StyleSheet, View } from 'react-native';
+import { AppState, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { AppText } from '@/components/ui';
 import { homePathSvg, type HomePath } from '@/modules/home/model';
 import { mapStyleUrl, themedMapStyle } from '@/modules/map/config';
@@ -45,6 +45,7 @@ export const HomePreview = memo(function HomePreview({ paths, active, label, una
   paths: HomePath[]; active: boolean; label: string; unavailable?: boolean; synthetic?: boolean;
 }) {
   const c = useThemeColors();
+  const { fontScale } = useWindowDimensions();
   const [foreground, setForeground] = useState(AppState.currentState === 'active');
   useEffect(() => {
     const listener = AppState.addEventListener('change', state => setForeground(state === 'active'));
@@ -57,10 +58,12 @@ export const HomePreview = memo(function HomePreview({ paths, active, label, una
   const style = baseStyle ? themedMapStyle(baseStyle, c.background !== '#FFFFFF') : null;
   const key = `${signature}/${style}`, [failedKey, setFailedKey] = useState(''), [imageFailed, setImageFailed] = useState('');
   const fail = useMemo(() => () => setFailedKey(key), [key]);
+  // Reserve the scaled attribution row so it cannot cover route endpoints.
+  const drawingArea = [StyleSheet.absoluteFill, { bottom: uri && !synthetic ? 12 * fontScale : 0 }];
   return <View accessible accessibilityLabel={label} pointerEvents="none" style={{ aspectRatio: 1, width: '100%', backgroundColor: c.navigation, borderRadius: 14, overflow: 'hidden', justifyContent: 'center' }}>
-    {uri && imageFailed !== uri ? <Image source={{ uri }} contentFit="contain" style={StyleSheet.absoluteFill} onError={() => setImageFailed(uri)} />
+    {uri && imageFailed !== uri ? <Image source={{ uri }} contentFit="contain" style={drawingArea} onError={() => setImageFailed(uri)} />
       : <AppText variant="caption" style={{ color: c.muted, padding: 8, textAlign: 'center' }}>{unavailable ? '경로를 읽지 못했어요' : '경로 기록이 없어요'}</AppText>}
-    {active && foreground && uri && style && !synthetic && failedKey !== key && <PreviewMap key={style} paths={stablePaths} styleUrl={style} onFailure={fail} />}
+    {active && foreground && uri && style && !synthetic && failedKey !== key && <View style={drawingArea}><PreviewMap key={style} paths={stablePaths} styleUrl={style} onFailure={fail} /></View>}
     {!!uri && !synthetic && <AppText style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: c.background, color: c.subtle, fontSize: 8, lineHeight: 12, textAlign: 'center' }}>© MapTiler © OSM</AppText>}
   </View>;
 });
