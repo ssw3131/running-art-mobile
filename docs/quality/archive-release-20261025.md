@@ -80,3 +80,14 @@
 - 기존 CourseEditor의 키보드 표시/포커스 후 입력칸 전체를 올리는 동작을 공통 상세의 신규 저장·이름 수정 두 입력칸에 적용했다. 타입/린트 및 관련 UI8 통과. 새 release·격리 실제 키보드·전체 CI를 검증하며, 앞서 준비한 slider APK 이후 변경이므로 최종 설치 대상도 갱신한다.
 
 - 최신 준비 APK: build/install/runpen-20261025-archive-usage-keyboard.apk, 130,409,929 bytes, SHA-256 a6731f71e2ea97f9d48ddbda740d728bcfbbea720938da7699399236f301f321. 기존 인증서·arm64-v8a/x86_64·운영 API/공유 도메인·QA 자산 미포함 확인. APK 검사 최초 ANDROID_HOME 미설정 오류는 env.ps1 적용 후 통과했다. 폰 미연결로 아직 설치하지 않았다.
+
+- 로컬 실제 키보드 확인: RunPen_Archive36 전용 AVD, 동일 keyboard APK, 360dp의 글꼴1.0/1.6에서 저장 전 사본 입력과 저장 후 이름 수정 4경로 통과. 입력칸 하단/키보드 상단은 각각 1215/1263px, 1206/1263px이며 실제 원본 PNG도 직접 대조했다. 저장·생성·GPS 실행은 없었다. 증거는 .cache/archive-release/keyboard-native36/keyboard-result.json 및 원본 PNG다.
+- 로컬 준비 실패 이력: 비로그인 홈 기대 오기, 캡처 이름의 점 문자 제한, SwiftShader MapLibre Vulkan의 No suitable GPU found 2건을 보존했다. 제품 키보드 검사를 우회하지 않고 호스트 GPU로 동일 AVD/APK를 재시작해 4경로를 통과했고 해당 부팅의 crash 로그는 비어 있었다. 합성 자료·오프라인 도우미·임시 파일 정리, 활성 서비스 없음, 전용 AVD 종료 완료. 기존 emulator-5580과 물리 폰은 조작하지 않았다.
+
+- 4d3ce6f / CI 40123768789 API36 최초 실행은 앱 설치/시나리오 이전 adb root의 unable to connect for root: closed로 실패했다. release 빌드는 성공했고 APK 동작 판정은 미실행이다. 최초 로그/산출물 12572615890을 보존하고 같은 소스의 API36 작업만 한 번 진단 재실행 대상으로 기록한다. API29는 진행 중이었다.
+
+- 같은 실행의 API29는 최종 success로 종료했다. API36 단일 job 재실행 요청은 실행 전체가 진행 중일 때 GitHub 403(The workflow run containing this job is already running)으로 거절됐으며, 종료 후 2026-10-25 04:33경 수락됐다. 동일 소스 진단 재실행은 한 번만 시작했고 새 API36 job은 120967000846이다. 최초 실패를 성공으로 덮어쓰지 않는다.
+
+- API29 산출물 12572956485의 실제 보고서를 확인했다. 게스트 차단·명시적 동의·Maestro·홈 상태·이동/뒤로가기·OAuth 취소·배지/지원 7단계 통과, 재실행0·UI 준비 대기3·전송 경고2, 원본 보존/정리 성공이다. 경고를 숨기지 않으며 API36 전체 검사와 구분한다. 로컬 근거: .cache/archive-release/android29-4d/report.json.
+
+- API36 동일 소스 진단 재실행은 실제 계산/저장/GPX와 일반 이름 입력, 자유 GPS 복구/종료, 코스 준비, S234 지도/집중/설정/잠금/별도 재도전, 딥링크와 360dp/1.6 이름 입력까지 통과했다. 이후 큰 글씨 생성 검사에서 생성 버튼 enabled=false로 실패했다. 원본 s2a-large-shapes PNG/XML(산출물 12573534686)을 직접 확인했다. 앞선 크기 변경/재진입 뒤 native 지도/위치 준비를 확인하지 않고 도형으로 스크롤한 시험을 보완해, 지도를 보이는 상태에서 실제 생성 버튼 활성화를 최대30초 기다리고 시간 초과 시 실패하도록 했다. 제품 활성화 조건·마스크·임계값은 변경하지 않았다. Python 구문 검사 통과, 새 HEAD 전체 결과는 대기다. 실패 후 정리는 성공했으며 전체 통과로 집계하지 않는다.

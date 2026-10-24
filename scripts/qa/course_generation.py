@@ -123,7 +123,19 @@ def generation_flow(q):
 def scaled_generation(q, launch):
     try:
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
-        launch(); q.tap('tab-courses'); q.seek('shape-star'); q.capture('s2a-large-shapes')
+        launch(); q.tap('tab-courses')
+        # Resizing the activity and opening this tab can recreate the native map.
+        # Keep the location/map visible until the real form is ready; scrolling
+        # immediately to shapes must not race native map/location initialization.
+        deadline = time.monotonic() + 30
+        while True:
+            tree = q.capture('s2a-large-location-ready')
+            button = q.find(tree, 'calculate-route')
+            if button is not None and button.get('enabled') == 'true':
+                break
+            assert time.monotonic() < deadline, 'Generation form did not become ready after display change'
+            time.sleep(.5)
+        q.seek('shape-star'); q.capture('s2a-large-shapes')
         q.tap('calculate-route'); q.capture('s2a-large-confirm')
         # The fixed sheet footer is outside its body ScrollView.
         q.tap('generation-confirm-cancel')
