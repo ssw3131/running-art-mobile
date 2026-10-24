@@ -88,7 +88,11 @@ def generation_flow(q):
     assert any(n.get('package') == 'com.android.intentresolver' for n in chooser.iter('node'))
     q.shell('input', 'keyevent', '4')
     q.tap('service-back'); q.tap('tab-archive')
-    assert q.find(q.capture('s2a-archive-destination'), '저장 코스') is not None
+    # Bottom-tab navigation preserves the last archive tab (the preceding
+    # navigation test deliberately selected completed records). Choose saved
+    # courses explicitly before verifying the newly saved item.
+    q.tap('저장 코스')
+    assert q.find(q.capture('s2a-archive-destination'), '저장 코스').get('selected') == 'true'
     q.seek('course-row-'+saved['id']);q.tap('course-row-'+saved['id'])
     assert q.find(q.capture('s2a-saved-reopened'),'course-save') is None
     q.tap('service-back')
