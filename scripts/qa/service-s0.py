@@ -236,6 +236,9 @@ def gps_navigation():
     seek('run-pause'); tap('run-pause')
     tap('tab-home'); seek('home-run-' + run_id); tap('home-run-' + run_id)
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'paused'
+    # Free-running home cards open their historical detail first. Opening it
+    # must not resume or mutate the paused session.
+    seek('진행 중인 러닝으로 이동'); tap('진행 중인 러닝으로 이동')
     seek('run-start'); tap('run-start'); tap('계속'); inject(12)
     capture('gps-resumed')
     shell('am', 'force-stop', APP)
@@ -243,7 +246,10 @@ def gps_navigation():
     time.sleep(3)
     assert find(capture('gps-cold-recovery'), 'home-history') is not None
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'interrupted'
-    seek('home-run-' + run_id); tap('home-run-' + run_id); seek('run-start'); tap('run-start'); tap('계속'); inject(16)
+    seek('home-run-' + run_id); tap('home-run-' + run_id)
+    assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'interrupted'
+    seek('진행 중인 러닝으로 이동'); tap('진행 중인 러닝으로 이동')
+    seek('run-start'); tap('run-start'); tap('계속'); inject(16)
     seek('run-finish'); tap('run-finish'); tap('종료·저장')
     capture('gps-result')
     final = query(f"SELECT id,status,point_count FROM running_sessions WHERE id='{run_id}'")[0]
