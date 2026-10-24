@@ -110,8 +110,21 @@ def verify_home_states(q, launch):
             assert q.query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == status, 'Home must not resume GPS'
         q.shell('am', 'force-stop', q.APP)
         q.shell('sqlite3', q.DB, f"UPDATE running_sessions SET status='completed',ended_at={now+10000} WHERE id='{run_id}';")
+        if getattr(q, 'MAP_PREVIEWS', False):
+            # Only the disposable emulator app's tile cache; never its SQLite
+            # records or authentication. Verify an uncached offline fallback.
+            assert q.SERIAL.startswith('emulator-')
+            tile_cache = f'/data/user/0/{q.APP}/files/mbgl-offline.db'
+            q.shell('rm', '-f', tile_cache, tile_cache+'-journal', tile_cache+'-wal', tile_cache+'-shm')
         q.shell('svc', 'wifi', 'disable'); q.shell('svc', 'data', 'disable')
         launch(); assert q.find(q.capture('home-history-offline'), 'home-history') is not None
+        if getattr(q, 'MAP_PREVIEWS', False):
+            time.sleep(13)
+            q.seek('home-run-'+run_id)
+            offline = q.capture('home-history-offline-fallback')
+            preview = q.find(offline, '실제 러닝 경로') or q.find(offline, 'home-run-'+run_id)
+            subprocess.run(['node', str(q.ROOT / 'scripts/qa/home-preview.mjs'), str(q.OUT / 'home-history-offline-fallback.png'),
+                            *re.findall(r'\d+', preview.get('bounds')), 'fallback'], check=True)
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.capture('home-history-large-font')
         q.seek('home-more-runs'); q.tap('home-more-runs'); q.capture('home-history-large-font-archive')

@@ -30,7 +30,7 @@ function PreviewMap({ paths, styleUrl, onFailure }: { paths: HomePath[]; styleUr
   return <Map testID="home-preview-map" style={StyleSheet.absoluteFill} mapStyle={styleUrl} logo={false} attribution={false} compass={false}
     dragPan={false} touchZoom={false} touchRotate={false} touchPitch={false} doubleTapZoom={false} doubleTapHoldZoom={false}
     preferredFramesPerSecond={15} onDidFinishLoadingMap={() => setLoaded(true)} onDidFailLoadingMap={onFailure}>
-    <Camera ref={camera} initialViewState={{ center: geometry.first, zoom: 14 }} />
+    <Camera ref={camera} initialViewState={{ bounds: geometry.bounds, padding: { top: 16, bottom: 16, left: 16, right: 16 } }} />
     <GeoJSONSource id="home-trace" data={geometry.data}>
       <Layer id="home-trace-border" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': 5 }} />
       <Layer id="home-trace-line" type="line" paint={{ 'line-color': '#FF5264', 'line-width': 3 }} />
