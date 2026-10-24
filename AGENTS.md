@@ -1,6 +1,6 @@
 # Running Art Mobile — 작업 지침
 
-**2026-10-25 통합 운영·SM-S942N 설치 후속:** 사용자 승인으로 usage SQL/Edge Function·Cloud Run 인증 원장과 도메인 전달을 운영 반영했다. SM-S942N에 01:37:52 회원 갱신 수정 APK를 자료 유지 설치했고 기존 4코스·10러닝·1,914좌표·1메모 해시와 로그인/동기화/설정 보존, 홈 스크롤 복원·도우미 정리를 확인했다. USB 분리 가능. A7은 제외했다. **PR #27의 원격 Android CI 수정·검증 및 병합은 진행 중**이며 개인정보 보존 초안은 미게시다. [적용·폰 검증·실패 이력](docs/quality/archive-release-20261025.md). 아래 미배포/미설치 표현보다 이 후속 결과를 우선한다.
+**2026-10-25 통합 운영·SM-S942N 설치 후속:** 사용자 승인으로 usage SQL/Edge Function·Cloud Run 인증 원장과 도메인 전달을 운영 반영했다. SM-S942N에 01:59:59 회원 확인 보완 APK를 자료 유지 설치했고 기존 4코스·10러닝·1,914좌표·1메모 해시와 로그인/동기화/설정 보존, 홈 스크롤 복원·도우미 정리를 확인했다. USB 분리 가능. A7은 제외했다. **PR #27의 원격 Android CI 수정·검증 및 병합은 진행 중**이며 개인정보 보존 초안은 미게시다. [적용·폰 검증·실패 이력](docs/quality/archive-release-20261025.md). 아래 미배포/미설치 표현보다 이 후속 결과를 우선한다.
 
 **2026-10-24 보관함·횟수 통합 완료(소스·격리 검증·APK):** 이 폴더는 `running-art-archive`, `feat/archive-usage`다. 가입·20km 원본 폴더를 보존하고 저장 코스/완주 기록·미완주 이어하기·직전 화면 복귀·공통 상세와 생성 5회/누적 저장 15회의 DB 관리 정책을 통합했다. 로직486·Jest100·타입/린트·서버 API·격리 PostgreSQL 경합·최종 release API36/29 이동/복구/GPX·360dp/다크/큰 글씨·20km 입력을 확인했다. [최신 계약](docs/development/archive-usage-20261024.md)·[검증/APK/실패 이력](docs/quality/archive-usage-20261024.md)·[실행 기록](docs/history/executed-plans/2026-10-24-2059-archive-usage.md). **PR/CI·병합·운영 DB/서버/정책 반영·휴대폰 설치 없음. 신규 생성/저장의 실제 이용은 usage 백엔드 운영 반영 후 가능**하다. 아래 가입 작업 폴더 안내·기기 fallback·상단 수치 보류는 과거 상태다.
 
