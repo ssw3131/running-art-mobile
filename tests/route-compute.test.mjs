@@ -27,6 +27,7 @@ test('request bounds exclude heavy input, remote URLs and unsupported modes', ()
   assert.throws(()=>parseComputeRequest({...request,origin:{lat:NaN,lng:127}}));
   assert.throws(()=>parseComputeRequest({...request,origin:{lat:40,lng:127}}));
   assert.equal(computeBaseUrl('https://x.run.app'),'https://x.run.app');
+  assert.equal(computeBaseUrl('https://runpen.alohalab.co.kr/api/'),'https://runpen.alohalab.co.kr/api');
   for (const url of ['http://x.run.app','https://x.run.app/path','https://user:pass@x.run.app','https://x.run.app?token=1']) assert.equal(computeBaseUrl(url),null);
 });
 
@@ -44,6 +45,7 @@ test('serialized real engine result survives strict response contract; corrupt p
   assert.deepEqual((await remote(input,new AbortController().signal,false)).result,result);
   assert.equal(sent.init.headers.authorization,undefined);
   assert.equal(JSON.parse(sent.init.body).elements,undefined);
+  await createRemoteCalculation('https://runpen.alohalab.co.kr/api',async(url)=>{assert.equal(url,'https://runpen.alohalab.co.kr/api/v1/routes');return reply(value);})(input,new AbortController().signal,false);
 });
 
 test('remote transport times out even with uncooperative fetch and honours cancellation', async () => {

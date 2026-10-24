@@ -8,8 +8,8 @@ export function computeBaseUrl(raw: string | undefined): string | null {
   if (!raw?.trim()) return null;
   try {
     const url = new URL(raw.trim());
-    if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || url.port || url.pathname !== '/') return null;
-    return url.origin;
+    if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || url.port || !['/', '/api', '/api/'].includes(url.pathname)) return null;
+    return url.origin + (url.pathname === '/' ? '' : '/api');
   } catch { return null; }
 }
 

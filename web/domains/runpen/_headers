@@ -1,0 +1,8 @@
+/*
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Permissions-Policy: geolocation=(), camera=(), microphone=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.maptiler.com; style-src 'self' 'unsafe-inline' https://cdn.maptiler.com; img-src 'self' data: blob: https://api.maptiler.com; connect-src 'self' https://api.maptiler.com https://*.supabase.co; worker-src blob:; font-src 'self' https://api.maptiler.com; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
