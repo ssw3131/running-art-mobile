@@ -21,11 +21,27 @@ export function GenerationDistanceInput({ value, onChange }: { value: number; on
   // eslint-disable-next-line react-hooks/refs
   const [responder] = useState(() => {
     const select = (x: number) => change.current(Math.max(1, Math.min(10, Math.round(x / width.current * 9) + 1)));
+    let direction: 'pending' | 'horizontal' | 'vertical' = 'pending';
     return PanResponder.create({
     onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: event => { touchStart.current = event.nativeEvent.locationX; select(touchStart.current); },
-    onPanResponderMove: (_event, gesture) => select(touchStart.current + gesture.dx),
+    onMoveShouldSetPanResponder: (_event, gesture) => Math.abs(gesture.dx) > 6 && Math.abs(gesture.dx) > Math.abs(gesture.dy),
+    // A touch can become a vertical page scroll. Do not change the distance
+    // until it is a horizontal drag or a released tap.
+    onPanResponderGrant: event => { touchStart.current = event.nativeEvent.locationX; direction = 'pending'; },
+    onPanResponderMove: (_event, gesture) => {
+      if (direction === 'pending' && Math.max(Math.abs(gesture.dx), Math.abs(gesture.dy)) > 6) {
+        direction = Math.abs(gesture.dx) > Math.abs(gesture.dy) ? 'horizontal' : 'vertical';
+      }
+      if (direction === 'horizontal') select(touchStart.current + gesture.dx);
+    },
+    onPanResponderRelease: (_event, gesture) => {
+      if (direction === 'horizontal') select(touchStart.current + gesture.dx);
+      else if (direction === 'pending' && Math.max(Math.abs(gesture.dx), Math.abs(gesture.dy)) <= 6) select(touchStart.current);
+      direction = 'pending';
+    },
+    onPanResponderTerminationRequest: () => direction !== 'horizontal',
+    onPanResponderTerminate: () => { direction = 'pending'; },
+    onShouldBlockNativeResponder: () => false,
     });
   });
   const apply = () => {

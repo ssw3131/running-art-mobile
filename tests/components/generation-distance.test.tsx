@@ -1,6 +1,7 @@
 // Distance modal validation and accessible slider interactions.
 import React, { useState } from 'react';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { PanResponder } from 'react-native';
 import { GenerationDistanceInput } from '../../src/features/course-generation/GenerationDistanceInput';
 jest.mock('expo-router', () => ({ useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]) }));
 function Distance() { const [value,setValue]=useState(5); return <GenerationDistanceInput value={value} onChange={setValue} />; }
@@ -31,4 +32,27 @@ test('slider supports accessible increments without exceeding its range', async 
   await fireEvent.press(screen.getByTestId('distance-10'));
   await fireEvent(screen.getByTestId('distance-slider'),'accessibilityAction',{nativeEvent:{actionName:'increment'}});
   expect(screen.getByTestId('distance-value')).toHaveTextContent('10 km');
+});
+
+test('vertical scrolling preserves distance while horizontal dragging and taps adjust it', async () => {
+  const creation = jest.spyOn(PanResponder, 'create');
+  try {
+    await render(<Distance />);
+    const gesture = creation.mock.calls.at(-1)![0];
+    const event = (x: number) => ({ nativeEvent: { locationX: x } }) as any;
+    const movement = (dx: number, dy: number) => ({ dx, dy }) as any;
+    await fireEvent.press(screen.getByTestId('distance-3'));
+    await act(() => gesture.onPanResponderGrant!(event(150), movement(0, 0)));
+    expect(screen.getByTestId('distance-value')).toHaveTextContent('3 km');
+    await act(() => gesture.onPanResponderMove!(event(150), movement(0, 100)));
+    await act(() => gesture.onPanResponderRelease!(event(150), movement(0, 100)));
+    expect(screen.getByTestId('distance-value')).toHaveTextContent('3 km');
+    await act(() => gesture.onPanResponderGrant!(event(30), movement(0, 0)));
+    await act(() => gesture.onPanResponderMove!(event(300), movement(270, 1)));
+    await act(() => gesture.onPanResponderRelease!(event(300), movement(270, 1)));
+    expect(screen.getByTestId('distance-value')).toHaveTextContent('10 km');
+    await act(() => gesture.onPanResponderGrant!(event(0), movement(0, 0)));
+    await act(() => gesture.onPanResponderRelease!(event(0), movement(0, 0)));
+    expect(screen.getByTestId('distance-value')).toHaveTextContent('1 km');
+  } finally { creation.mockRestore(); }
 });
