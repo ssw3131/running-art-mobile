@@ -15,7 +15,8 @@ def verify_home_result(q):
     candidate = q.find(q.capture('home-existing-result-before'), 'candidate-0')
     previous = candidate.get('content-desc')
     assert previous and '1순위' in previous
-    q.tap('tab-home'); q.seek('home-shape-fish'); q.tap('home-shape-fish'); q.tap('open-route-lab')
+    q.tap('tab-home'); q.seek('open-route-lab'); q.tap('open-route-lab')
+    q.tap('조건 설정'); q.seek('shape-fish'); q.tap('shape-fish')
     seek_above(q, 'generation-changed')
     assert q.find(q.capture('home-existing-result-notice'), 'generation-changed') is not None
     q.tap('추천 코스')
@@ -49,6 +50,10 @@ def verify_home_states(q, launch):
     wifi = q.shell('settings', 'get', 'global', 'wifi_on').decode().strip()
     mobile = q.shell('settings', 'get', 'global', 'mobile_data').decode().strip()
     try:
+        q.shell('am','force-stop',q.APP)
+        # Temporarily make only this disposable fixture a guest record. A signed-in
+        # account must not see or adopt it; restore its exact ownership in finally.
+        q.shell('sqlite3',q.DB,f"UPDATE saved_courses SET owner_id='' WHERE id='{'d'*32}';")
         launch(); q.tap('tab-home')
         assert q.find(q.capture('home-initial-top'), 'home-initial') is not None
         q.seek('home-shape-fish'); q.tap('home-shape-fish'); q.tap('open-route-lab')
@@ -57,14 +62,23 @@ def verify_home_states(q, launch):
         seek_shape(q, 'shape-star', 'right')
         q.tap('shape-star'); q.tap('tab-home'); q.tap('tab-courses'); q.seek('shape-star')
         assert q.find(q.capture('home-tab-keeps-edited-shape'), 'shape-star').get('selected') == 'true'
+        q.tap('tab-home'); q.seek('home-all-shapes'); q.tap('home-all-shapes')
+        assert q.find(q.capture('home-all-shapes-target'),'shape-heart') is not None
         q.shell('am', 'force-stop', q.APP)
-        q.shell('sqlite3', q.DB, f"INSERT INTO running_sessions(id,status,started_at,ended_at,checkpoint_at,resumed_at,owner_id,distance_m,active_ms,point_count) VALUES('{run_id}','completed',{now},{now+10000},{now},{now},'',3200,100000,4);")
+        q.shell('sqlite3',q.DB,f"UPDATE saved_courses SET owner_id='{q.OWNER}' WHERE id='{'d'*32}';")
+        launch()
+        assert q.find(q.capture('home-saved-only'),'home-history') is not None
+        q.seek('home-course-'+'d'*32); q.tap('home-course-'+'d'*32)
+        assert q.find(q.capture('home-saved-detail'),'course-title') is not None
+        q.shell('am','force-stop',q.APP)
+        q.shell('sqlite3', q.DB, f"INSERT INTO running_sessions(id,status,started_at,ended_at,checkpoint_at,resumed_at,owner_id,distance_m,active_ms,point_count) VALUES('{run_id}','completed',{now},{now+10000},{now},{now},'{q.OWNER}',3200,100000,4);")
         for i, (lat, lng) in enumerate([(37.5, 127), (37.501, 127.001), (37.502, 127), (37.5, 127)], 1):
             q.shell('sqlite3', q.DB, f"INSERT INTO running_points VALUES('{run_id}',{i},0,{now+i},{lat},{lng},5);")
         launch(); q.tap('tab-home')
+        q.seek('home-run-'+run_id)
         history = q.capture('home-history')
         assert q.find(history, 'home-history') is not None
-        preview = q.find(history, '실제 러닝 경로')
+        preview = q.find(history, '실제 러닝 경로') or q.find(history,'home-run-'+run_id)
         subprocess.run(['node', str(q.ROOT / 'scripts/qa/home-preview.mjs'), str(q.OUT / 'home-history.png'),
                         *re.findall(r'\d+', preview.get('bounds'))], check=True)
         q.seek('home-run-' + run_id); q.tap('home-run-' + run_id)
@@ -74,8 +88,8 @@ def verify_home_states(q, launch):
             q.shell('am', 'force-stop', q.APP)
             q.shell('sqlite3', q.DB, f"UPDATE running_sessions SET status='{status}',ended_at=NULL WHERE id='{run_id}';")
             launch(); q.tap('tab-home')
-            assert q.find(q.capture('home-' + status), 'active-run-banner') is not None
-            q.tap('home-resume-run'); q.capture('home-' + status + '-return')
+            assert q.find(q.capture('home-' + status), 'home-history') is not None
+            q.seek('home-run-'+run_id); q.tap('home-run-'+run_id); q.capture('home-' + status + '-return')
             assert q.query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == status, 'Home must not resume GPS'
         q.shell('am', 'force-stop', q.APP)
         q.shell('sqlite3', q.DB, f"UPDATE running_sessions SET status='completed',ended_at={now+10000} WHERE id='{run_id}';")
@@ -83,13 +97,14 @@ def verify_home_states(q, launch):
         launch(); assert q.find(q.capture('home-history-offline'), 'home-history') is not None
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.capture('home-history-large-font')
-        q.seek('open-runs'); q.tap('open-runs'); q.capture('home-history-large-font-archive')
+        q.seek('home-more-runs'); q.tap('home-more-runs'); q.capture('home-history-large-font-archive')
     except Exception:
         q.capture('home-failure-before-cleanup')
         raise
     finally:
         q.shell('am', 'force-stop', q.APP)
         q.shell('sqlite3', q.DB, f"DELETE FROM running_points WHERE run_id='{run_id}'; DELETE FROM running_sessions WHERE id='{run_id}';")
+        q.shell('sqlite3',q.DB,f"UPDATE saved_courses SET owner_id='{q.OWNER}' WHERE id='{'d'*32}';")
         q.shell('svc', 'wifi', 'disable' if wifi == '0' else 'enable')
         q.shell('svc', 'data', 'disable' if mobile == '0' else 'enable')
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')

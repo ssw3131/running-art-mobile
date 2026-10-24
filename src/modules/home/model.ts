@@ -1,16 +1,18 @@
 import type { Run } from '../running/model.ts';
+import type { CourseSummary } from '../courses/model.ts';
 import { fromByteArray } from 'base64-js';
 
 export type HomePath = [number, number][];
 export type HomeRun = { run: Run; paths: HomePath[] };
-export type HomeActive = HomeRun & { progress: number | null; totalM: number | null; guidanceError: boolean };
+export type HomeCourse = { course: CourseSummary; paths: HomePath[]; previewError: boolean };
 export type HomeData = {
   owner: string; monthStart: number; monthEnd: number; monthlyDistanceM: number; runCount: number;
-  active: HomeActive | null; recent: HomeRun[];
+  recent: HomeRun[]; latestCompleted: Run | null; courseCount: number; courses: HomeCourse[];
   currentStreak: number;
 };
-export type HomeKind = 'initial' | 'active' | 'history';
-export const homeKind = (data: HomeData): HomeKind => data.active ? 'active' : data.runCount > 0 ? 'history' : 'initial';
+export type HomeKind = 'initial' | 'history';
+export const homeKind = (data: HomeData): HomeKind => data.runCount > 0 || data.courseCount > 0 ? 'history' : 'initial';
+export const homeRunOutcome = (run: Run) => !run.courseId ? null : run.courseOutcome === 'finished' ? '완주' : '미완주';
 
 /** Device calendar, assigned to the session's start date (including midnight crossings). */
 export function homeMonth(now: number) {

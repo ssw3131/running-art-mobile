@@ -9,7 +9,7 @@ def service_s56(q, launch):
     run_id='5'*32
     entry=json.loads((q.ROOT/'.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
     before=q.snapshot('s56-before')
-    preferences=q.query("SELECT * FROM account_preferences WHERE owner_id=''")
+    preferences=q.query(f"SELECT * FROM account_preferences WHERE owner_id='{q.OWNER}'")
     api=int(q.shell('getprop','ro.build.version.sdk').decode().strip())
     export_folder='/sdcard/Download' if api<30 else '/sdcard/Pictures'
     original_exports=set(q.shell('ls','-1',export_folder).decode().splitlines())
@@ -21,7 +21,7 @@ def service_s56(q, launch):
     now=int(time.time()*1000)
     literal=lambda v: "'"+str(v).replace("'","''")+"'"
     q.shell('am','force-stop',q.APP)
-    values=[run_id,'completed',now,now+1800000,now,now,'',3000,1800000,entry['id'],entry['name'],entry['json'],entry['hash'],'finished']
+    values=[run_id,'completed',now,now+1800000,now,now,q.OWNER,3000,1800000,entry['id'],entry['name'],entry['json'],entry['hash'],'finished']
     q.shell('sqlite3',q.DB,'INSERT INTO running_sessions(id,status,started_at,ended_at,checkpoint_at,resumed_at,owner_id,distance_m,active_ms,course_id,course_name,course_snapshot_json,course_snapshot_hash,course_outcome) VALUES('+','.join(map(literal,values))+');')
     try:
         launch('run-result?id='+run_id)
@@ -71,7 +71,7 @@ def service_s56(q, launch):
         q.seek('support-about');q.tap('support-about');q.capture('s6-about');q.tap('service-back')
         q.seek('support-guide');q.tap('support-guide');q.capture('s6-guide');q.tap('service-back')
         q.seek('support-faq');q.tap('support-faq');q.seek('faq-gps');q.tap('faq-gps');q.capture('s6-faq');q.tap('service-back')
-        q.seek('support-inquiry');q.tap('support-inquiry');q.seek('inquiry-sign-in');q.capture('s6-inquiry-guest');q.tap('service-back')
+        q.seek('support-inquiry');q.tap('support-inquiry');q.seek('inquiry-title');q.capture('s6-inquiry-member');q.tap('service-back')
         # Exercise the app's real last-good cache with an explicitly synthetic
         # publication. No production notice or product fixture hook is used.
         fixture=q.OUT/'s56-notice-fixture.json'
@@ -115,7 +115,7 @@ def service_s56(q, launch):
         for name in set(q.shell('ls','-1',export_folder).decode().splitlines())-original_exports:
             if name.startswith('RunPen-') and name.endswith('.png') and '/' not in name:
                 q.shell('rm',export_folder+'/'+name)
-        q.shell('sqlite3',q.DB,f"DELETE FROM running_sessions WHERE id='{run_id}'; DELETE FROM account_preferences WHERE owner_id='';")
+        q.shell('sqlite3',q.DB,f"DELETE FROM running_sessions WHERE id='{run_id}'; DELETE FROM account_preferences WHERE owner_id='{q.OWNER}';")
         for row in preferences:
             q.shell('sqlite3',q.DB,'INSERT INTO account_preferences(owner_id,preferences_json,updated_at) VALUES('+','.join(map(literal,[row['owner_id'],row['preferences_json'],row['updated_at']]))+');')
         q.shell('wm','density','420');q.shell('settings','put','system','font_scale','1.0')

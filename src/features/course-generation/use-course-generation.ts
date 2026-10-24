@@ -34,7 +34,7 @@ export function locationMessage(state: CenterState) {
 }
 
 export function useCourseGeneration() {
-  const homeParams = useLocalSearchParams<{ homeShape?: string; homeRequest?: string }>();
+  const homeParams = useLocalSearchParams<{ homeShape?: string; homeRequest?: string; homeSection?: string }>();
   const appliedHomeRequest = useRef<string | undefined>(undefined);
   const [datasetId, setDatasetId] = useState<DatasetId>('seoul');
   const [diagnostics, setDiagnostics] = useState(false);
@@ -80,10 +80,11 @@ export function useCourseGeneration() {
   useFocusEffect(useCallback(() => {
     if (!homeParams.homeRequest || homeParams.homeRequest === appliedHomeRequest.current) return;
     appliedHomeRequest.current = homeParams.homeRequest;
+    if (homeParams.homeSection === 'shapes') { cancel(); setDrawingOpen(false); setTab('conditions'); return; }
     if (homeParams.homeShape !== 'heart' && homeParams.homeShape !== 'fish' && homeParams.homeShape !== 'dog') return;
     cancel(); setShape(homeParams.homeShape); setDrawingOpen(false); setTab('conditions');
     if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
-  }, [homeParams.homeRequest, homeParams.homeShape, cancel, completed]));
+  }, [homeParams.homeRequest, homeParams.homeShape, homeParams.homeSection, cancel, completed]));
   useFocusEffect(useCallback(() => {
     // A tab refocus must not replace the user's chosen center with GPS.
     if (datasetId === 'seoul' && !locatedOnEntry.current) {

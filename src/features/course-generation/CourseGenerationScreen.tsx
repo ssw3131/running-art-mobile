@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { AppModal, AppText, Button, Tabs, Toggle } from '@/components/ui';
@@ -25,6 +25,9 @@ const routeColors = { route: '#FF5264', target: '#5197FE' };
 const modes = [{ id: 'prefer-cache', label: '저장 자료 우선' }, { id: 'refresh', label: '새 버전 확인' }, { id: 'offline', label: '오프라인' }] as const;
 
 export default function CourseGenerationScreen() {
+  const homeParams = useLocalSearchParams<{ homeSection?: string; homeRequest?: string }>();
+  const [shapeY, setShapeY] = useState(0);
+  const scrolledRequest = useRef('');
   const g = useCourseGeneration(), c = useThemeColors(), auth = useAuth();
   const { width, fontScale } = useWindowDimensions();
   const shapeColumns = fontScale >= 1.4 ? 2 : width < 390 ? 3 : 4;
@@ -52,6 +55,11 @@ export default function CourseGenerationScreen() {
     const frame=requestAnimationFrame(()=>scroll.current?.scrollTo({y:0,animated:false}));
     return ()=>cancelAnimationFrame(frame);
   },[g.tab]);
+  useEffect(() => {
+    if (homeParams.homeSection !== 'shapes' || !homeParams.homeRequest || scrolledRequest.current === homeParams.homeRequest || !choosing || !shapeY) return;
+    const frame = requestAnimationFrame(() => { scroll.current?.scrollTo({ y: shapeY, animated: false }); scrolledRequest.current = homeParams.homeRequest!; });
+    return () => cancelAnimationFrame(frame);
+  }, [homeParams.homeSection, homeParams.homeRequest, choosing, shapeY]);
   const showConfirmation = () => {
     if (g.cannotCalculate || busy) return;
     setNotice('');
@@ -115,7 +123,7 @@ export default function CourseGenerationScreen() {
         <AppText family="roboto" weight="black" variant="metric" style={{ textAlign: 'center' }}>{g.targetKm}<AppText weight="black" variant="heading"> km</AppText></AppText>
         <View style={[styles.row, { flexWrap: 'wrap' }]}>{GENERATION_DISTANCES.map(km => <Choice key={km} id={`distance-${km}`} label={`${km} km`} selected={g.targetKm === km} onPress={() => { g.changeSearch(); g.setTargetKm(km); }} />)}</View>
         <AppText variant="heading" weight="bold" style={styles.section}>3. 코스 모양</AppText>
-        <View style={styles.shapes}>{SERVICE_SHAPES.map(shape => <Pressable key={shape.id} testID={`shape-${shape.id}`} accessibilityRole="button"
+        <View testID="generation-shapes" onLayout={event => setShapeY(event.nativeEvent.layout.y)} style={styles.shapes}>{SERVICE_SHAPES.map(shape => <Pressable key={shape.id} testID={`shape-${shape.id}`} accessibilityRole="button"
           accessibilityLabel={shape.name} accessibilityState={{ selected: g.shape === shape.id }} onPress={() => { g.changeSearch(); g.setShape(shape.id as ShapeId); }}
           style={[styles.shape, { width: shapeWidth, borderColor: g.shape === shape.id ? c.selected : c.border, backgroundColor: g.shape === shape.id ? '#FFF0E8' : c.surface }]}>
           <View style={styles.shapeIcon}><GenerationIcon name={shape.id} /></View>

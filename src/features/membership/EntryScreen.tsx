@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { authentication } from '@/modules/auth/runtime';
-import { openServiceTab } from '@/features/service/open-service-tab';
 import type { SignInProvider } from '@/modules/auth/providers';
 import { SignupBrand } from './SignupBrand';
 import { SocialButton } from './SocialButton';
@@ -30,8 +29,7 @@ export default function EntryScreen() {
           onPress={() => { setProvider(p); void authentication.signIn(p); }} />)}
     </View>
     {!!auth.message && <AppText testID="signup-auth-message" accessibilityRole="alert">{auth.message}</AppText>}
-    {!auth.configured && <AppText accessibilityRole="alert">이 버전에서는 로그인을 연결할 수 없어요. 기존 기능은 게스트로 이용할 수 있어요.</AppText>}
+    {!auth.configured && <AppText accessibilityRole="alert">로그인 연결을 사용할 수 없어요. 앱 설정 또는 업데이트를 확인해 주세요.</AppText>}
     <Button testID="signup-mode" label={signup ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 회원가입'} variant="outline" compact disabled={auth.busy} onPress={() => setSignup(!signup)} />
-    <Button testID="signup-guest" label={auth.account ? '마이페이지로 돌아가기' : '게스트로 입장하기'} variant="outline" disabled={auth.busy} onPress={() => openServiceTab(auth.account ? '/account' : '/')} />
   </ScrollView></SafeAreaView>;
 }

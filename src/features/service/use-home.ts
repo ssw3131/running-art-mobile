@@ -8,7 +8,7 @@ import type { HomeData } from '@/modules/home/model';
 
 export type HomeLoad = { owner: string; data: HomeData | null; error: string };
 export function useHome() {
-  const auth = useAuth(), owner = auth.ready ? auth.account?.id ?? '' : null;
+  const auth = useAuth(), owner = auth.ready && auth.account ? auth.account.id : null;
   const [state, setState] = useState<HomeLoad>({ owner: '', data: null, error: '' });
   const [attempt, setAttempt] = useState(0);
   useFocusEffect(useCallback(() => {

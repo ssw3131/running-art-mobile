@@ -21,6 +21,7 @@ from course_generation import generation_flow, scaled_generation
 from service_s234 import service_s234
 from service_s56 import service_s56
 from storage_readiness import wait_for_storage
+import emulator_auth
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -113,6 +114,7 @@ for script in ['course-gps-fixture.mjs', 'free-loop-fixture.mjs']:
     run(['node', 'scripts/qa/' + script])
 q.adb('root'); q.adb('wait-for-device')
 q.adb('install', '-r', '--no-streaming', str(args.apk), timeout=180)
+q.adb('install', '-r', '--no-streaming', str(emulator_auth.build(ROOT, sdk)))
 q.adb('push', str(ROOT / '.cache/running-qa/ui-dump.jar'), '/data/local/tmp/running-ui-dump.jar')
 q.shell('wm', 'size', '1080x2340'); q.shell('wm', 'density', '420')
 for namespace, key, value in [('system', 'font_scale', '1.0'), ('system', 'screen_off_timeout', '1800000'),
@@ -233,7 +235,7 @@ def launch(route=''):
 def callback():
     q.tap('tab-courses'); q.seek('distance-3'); q.tap('distance-3'); q.seek('shape-star'); q.tap('shape-star')
     launch('auth/callback?error=access_denied&error_description=S0_cancelled')
-    assert q.find(q.capture('auth-cancel-callback'), 'tab-account').get('selected') == 'true'
+    assert q.find(q.capture('auth-cancel-callback'), 'tab-home').get('selected') == 'true'
     q.tap('tab-courses'); q.seek('distance-3')
     assert q.find(q.capture('draft-after-callback-distance'), 'distance-3').get('selected') == 'true'
     q.seek('shape-star')
@@ -262,28 +264,33 @@ def saved_restart():
 
 
 def signup_entry():
-    # Read-only guest flow: no real social account or product fixtures.
-    # Establish our own start after any previous scenario's configuration reset.
     launch()
-    q.tap('tab-home'); q.seek('home-signup'); q.tap('home-signup')
     tree = q.capture('signup-entry')
     assert q.find(tree, 'signup-entry') is not None
+    assert q.find(tree, 'tab-home') is None and q.find(tree, 'signup-guest') is None
     assert not any('5회 무료' in n.get('text', '') for n in tree.iter('node'))
     q.seek('signup-mode'); q.tap('signup-mode'); q.capture('signup-login')
-    q.seek('signup-guest'); q.tap('signup-guest')
-    assert q.find(q.capture('signup-guest-return'), 'tab-home').get('selected') == 'true'
-    q.tap('tab-account'); q.seek('account-signup'); q.tap('account-signup')
-    q.shell('input', 'keyevent', '4')
-    time.sleep(1)
-    assert q.find(q.capture('signup-account-back'), 'tab-account').get('selected') == 'true'
+    routes = ['run','route-lab','courses','account','courses/'+'d'*32,'runs/'+'9'*32,
+              'service-info','development','account-signup','run-card','service-inquiry']
+    for i, route in enumerate(routes):
+        launch(route)
+        tree=q.capture('guest-blocked-'+str(i))
+        assert q.find(tree,'signup-entry') is not None and q.find(tree,'tab-home') is None, route
+    launch('auth/callback?error=access_denied')
+    assert q.find(q.capture('guest-callback-cancel'),'signup-entry') is not None
+    q.shell('input','keyevent','4'); launch()
+    assert q.find(q.capture('guest-back-restart'),'signup-entry') is not None
+    launch('service-policy?kind=terms')
+    assert q.find(q.capture('guest-required-policy'),'service-back') is not None
+    q.tap('service-back')
+    assert q.find(q.capture('guest-policy-back'),'signup-entry') is not None
     try:
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         # Configuration changes recreate the activity. Reach the entry through
         # its real CTA after home is ready, instead of racing a second deep link.
-        launch(); q.seek('home-signup'); q.tap('home-signup')
+        launch()
         assert q.find(q.capture('signup-large-font'), 'signup-entry') is not None
-        q.seek('signup-guest'); q.tap('signup-guest')
-        assert q.find(q.capture('signup-large-font-return'), 'tab-home').get('selected') == 'true'
+        q.seek('signup-mode'); q.tap('signup-mode')
     finally:
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
 
@@ -304,7 +311,10 @@ try:
             q.shell('pm', 'grant', q.APP, 'android.permission.' + permission)
         if int(environment['api']) >= 33:
             q.shell('pm', 'grant', q.APP, 'android.permission.POST_NOTIFICATIONS')
-        launch(); wait_for_storage(q); q.snapshot('empty'); q.seed()
+        launch(); wait_for_storage(q); q.snapshot('empty')
+        signup_entry()
+        result['steps'].append({'id':'AUTH-guest-gate','status':'passed'})
+        emulator_auth.seed(q); launch(); wait_for_storage(q); q.seed()
         original_fixture = preserved_fixture()
         steps = [('S0-01-maestro', maestro_navigation), ('S1-02-home-states', lambda: verify_home_states(q, launch)),
                  ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
@@ -317,11 +327,10 @@ try:
         # The original S0 chain deliberately carries draft/navigation state.
         # S1 returns home and recreates the activity for font/density checks,
         # so run it after that chain rather than breaking its preconditions.
-        steps += [('S1-01-signup-entry', signup_entry)]
         # Native PNG capture, SAF and theme behavior also need the API 29
         # compatibility run; a modern-Android-only pass is insufficient.
         steps += [('S56-01-achievements-support', lambda: service_s56(q, launch))]
-        if args.signup_only: steps = [('S1-01-signup-entry', signup_entry)]
+        if args.signup_only: steps = []
         if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
                                    ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
         if args.generation_only: steps = [('S2a-01-generation', lambda: generation_flow(q)),
@@ -353,7 +362,7 @@ try:
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
         pin_display(q.OUT)
         # Fixed visual fixtures, independent of the timestamped GPS scenario.
-        q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); launch(); wait_for_storage(q); q.seed()
+        q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); emulator_auth.seed(q); launch(); wait_for_storage(q); q.seed()
         capture_visuals()
         result['status'] = 'passed'
         result['finishedAt'] = datetime.now(timezone.utc).isoformat()
@@ -383,7 +392,7 @@ except Exception as error:
 finally:
     # Clean even after failed assertions, and retain evidence. Dedicated emulator only.
     cleanup_errors = []
-    for command in [('am', 'force-stop', q.APP), ('pm', 'clear', q.APP), ('wm', 'size', 'reset'), ('wm', 'density', 'reset'),
+    for command in [('am', 'force-stop', q.APP), ('pm', 'clear', q.APP), ('pm', 'uninstall', emulator_auth.PACKAGE), ('wm', 'size', 'reset'), ('wm', 'density', 'reset'),
                     ('settings', 'put', 'system', 'font_scale', '1.0'),
                     ('am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'),
                     ('settings', 'put', 'global', 'sysui_demo_allowed', '0'),

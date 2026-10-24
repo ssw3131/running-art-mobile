@@ -14,6 +14,7 @@ jest.mock('../../src/modules/map/MapSurface', () => ({ __esModule: true, default
   mockMapProps = props; return require('react').createElement(require('react-native').View, { testID: 'map-preview' });
 } }));
 jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => ({}),
   router: { push: (...args: any[]) => mockPush(...args) },
   useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]),
 }));
