@@ -162,9 +162,16 @@ def navigation():
     capture('course-detail'); tap('service-back'); tap('tab-courses')
     draft('draft-after-detail')
     shell('input', 'keyevent', '4')
-    assert find(capture('system-back-home'), 'service-home') is not None
-    tap('home-more-runs')
+    # Archive was the immediately preceding tab. Android back follows history;
+    # it must not erase that history and force Home as the old S0 contract did.
+    returned = capture('system-back-previous-archive')
+    assert find(returned, 'tab-archive').get('selected') == 'true'
+    assert find(returned, '저장 코스').get('selected') == 'true'
+    tap('tab-home'); seek('home-more-runs'); tap('home-more-runs')
     assert find(capture('archive-saved-from-home'), '저장 코스').get('selected') == 'true'
+    tap('service-back')
+    assert find(capture('archive-more-back-home'), 'service-home') is not None
+    seek('home-more-runs'); tap('home-more-runs')
     tap('완주 기록')
     tap('tab-account'); tap('tab-archive')
     assert find(capture('archive-view-after-tab'), 'runs-refresh') is not None
