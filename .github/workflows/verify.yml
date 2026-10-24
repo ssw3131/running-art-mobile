@@ -153,6 +153,15 @@ jobs:
           mkdir -p .cache
           supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor > .cache/android-supabase.log 2>&1
           supabase status -o json > .cache/qa-supabase-status.json
+          # Validate real disposable identities and receipt setup before the
+          # expensive native build; these are setup checks, not Android passes.
+          node scripts/qa/prepare-membership-fixture.mjs prepare
+          node scripts/qa/prepare-membership-fixture.mjs new-signup
+          node scripts/qa/prepare-membership-fixture.mjs session signup
+          node scripts/qa/prepare-membership-fixture.mjs session service
+          node scripts/qa/prepare-membership-fixture.mjs assert-complete service
+          node scripts/qa/prepare-membership-fixture.mjs cleanup
+          rm -f .cache/emulator-auth/session.json
       - name: Build test APK with no local credentials or test hooks
         env:
           EXPO_PUBLIC_SUPABASE_URL: https://localhost:54431

@@ -12,7 +12,16 @@ export const ANDROID_API = 'https://localhost:54431';
 export const ANDROID_KEY = 'sb_publishable_isolated_ci';
 const folder = resolve('.cache/qa-membership');
 const statePath = resolve(folder, 'private-state.json');
-const must = (result, description) => { assert.equal(result.error, null, description); return result.data; };
+const must = (result, description) => {
+  if (result.error) {
+    // Report only our static operation label and bounded status/code, never the
+    // backend message, account, password, JWT, URL or assertion's actual value.
+    const code = String(result.error.code ?? 'unknown');
+    console.error('Fixture step failed:', description, /^[A-Za-z0-9_]{1,50}$/.test(code) ? code : 'unknown', Number(result.error.status) || 0);
+    throw Error('Fixture backend operation failed');
+  }
+  return result.data;
+};
 const persist = state => writeFile(statePath, JSON.stringify(state), { mode: 0o600 });
 
 export async function membershipFixture(command, role = 'service', output = '.cache/emulator-auth/session.json') {
@@ -50,6 +59,7 @@ export async function membershipFixture(command, role = 'service', output = '.ca
     const sub=`android-${state.run}-${name}`;
     const sql=`insert into auth.identities(id,user_id,provider_id,provider,identity_data) values('${randomUUID()}','${record.owner}','${sub}','google','${JSON.stringify({sub,email})}'::jsonb);`;
     const inserted=spawnSync('psql',['-X','-v','ON_ERROR_STOP=1'],{input:sql,encoding:'utf8',env:{...process.env,PGHOST:db.hostname,PGPORT:db.port,PGUSER:db.username,PGPASSWORD:decodeURIComponent(db.password),PGDATABASE:db.pathname.slice(1)}});
+    if (inserted.status !== 0) console.error('Fixture synthetic identity insertion failed:', inserted.status, inserted.error?.code === 'ENOENT' ? 'psql_missing' : 'psql_error');
     assert.equal(inserted.status,0,'Insert isolated synthetic provider identity');
     return record;
   };
