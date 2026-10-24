@@ -1,5 +1,5 @@
 import type { Origin, OsmElement } from '../route-engine/types.ts';
-import { createRoadChannel, DEFAULT_ROAD_BASE_URL, ROAD_PREFIX, roadBaseUrl } from './channel.ts';
+import { createRoadChannel, DEFAULT_ROAD_BASE_URL, ROAD_PREFIX, roadBaseUrl, roadCacheOrigin } from './channel.ts';
 import type { RoadFetch } from './channel.ts';
 import { checkRoadCacheSignal, RoadCacheError } from './persistent-cache.ts';
 import type { RoadCache, RoadCacheRequest, RoadCacheResult } from './persistent-cache.ts';
@@ -22,14 +22,14 @@ type RoadLoaderOptions = {
 };
 export function createRoadLoader({ getCache, fetcher, baseUrl = DEFAULT_ROAD_BASE_URL, timeoutMs = 65000,
   yieldToHost, onAttempt, supply = 'samples' }: RoadLoaderOptions): RoadLoader {
-  const root = roadBaseUrl(baseUrl);
+  const root = roadBaseUrl(baseUrl), cacheRoot = roadCacheOrigin(root);
   return async (origin, radius, signal, mode = 'prefer-cache') => {
     checkRoadCacheSignal(signal);
     const bounds = roadBounds(origin, radius), started = performance.now();
     let regionId: string | undefined;
     try { if (supply === 'national') regionId = nationalRegionId(origin); }
     catch { throw new Error('한국 도로 자료의 지원 범위를 벗어났어요. 지도를 이동해 주세요.'); }
-    const source = regionId ? `${root}/${NATIONAL_PREFIX}/current.json#${regionId}` : `${root}/${ROAD_PREFIX}/current.json`;
+    const source = regionId ? `${cacheRoot}/${NATIONAL_PREFIX}/current.json#${regionId}` : `${cacheRoot}/${ROAD_PREFIX}/current.json`;
     const controller = new AbortController();
     let requests = 0, timedOut = false;
     let rejectInterrupted!: (error: Error) => void;

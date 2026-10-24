@@ -6,12 +6,13 @@ import { codecs } from '../scripts/road-data/common.mjs';
 import { createRoadCache, migrateRoadCache } from '../src/modules/road-data/persistent-cache.ts';
 import { createRoadLoader } from '../src/modules/road-data/client.ts';
 import { NATIONAL_PREFIX } from '../src/modules/road-data/national-format.ts';
+import { DEFAULT_ROAD_BASE_URL, LEGACY_ROAD_BASE_URL, roadCacheOrigin } from '../src/modules/road-data/channel.ts';
 const origin = {lat:37.5,lng:127}, signal = () => new AbortController().signal;
-async function fixture(t) {
+async function fixture(t, baseUrl) {
   const db = openSqlite(':memory:'); await migrateRoadCache(db); t.after(() => db.closeAsync());
   let data = nationalFixture(), now = 1000, corrupt = false;
   const calls = [], cache = createRoadCache(db,codecs,{ now:() => now, maxAgeMs:100 });
-  const load = createRoadLoader({supply:'national',getCache:async()=>cache,fetcher:async url => {
+  const load = createRoadLoader({baseUrl,supply:'national',getCache:async()=>cache,fetcher:async url => {
     calls.push(url); const key = new URL(url).pathname.slice(1), item = data.objects.get(key);
     assert.ok(item, key);
     const body = Buffer.from(item.body);
@@ -21,6 +22,17 @@ async function fixture(t) {
   }});
   return {cache,load,calls,set:(next,time,damage=false)=>{ data=next;now=time;corrupt=damage; }};
 }
+test('domain migration retains installed national offline cache and isolates unrelated hosts', async t => {
+  const { load, cache, calls } = await fixture(t, LEGACY_ROAD_BASE_URL);
+  const saved = await load(origin, 2000, signal());
+  assert.ok(calls.every(url => url.startsWith(LEGACY_ROAD_BASE_URL + '/')));
+  const next = createRoadLoader({ baseUrl: DEFAULT_ROAD_BASE_URL, supply: 'national', getCache: async () => cache,
+    fetcher: async () => { assert.fail('offline migration must not request the network'); } });
+  const reopened = await next(origin, 2000, signal(), 'offline');
+  assert.deepEqual(reopened.elements, saved.elements);
+  assert.equal(reopened.cache.downloaded, 0);
+  assert.equal(roadCacheOrigin('https://unrelated.example'), 'https://unrelated.example');
+});
 test('national channel pins one region and release, then reopens offline with zero requests',async t=>{
   const {load,calls}=await fixture(t);
   const first=await load(origin,2000,signal());
