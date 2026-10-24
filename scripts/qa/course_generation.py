@@ -135,8 +135,13 @@ def scaled_generation(q, launch):
                 break
             assert time.monotonic() < deadline, 'Generation form did not become ready after display change'
             time.sleep(.5)
+        selected = q.find(tree, 'selected-center')
+        assert selected is not None, 'Capture the chosen center before scrolling'
+        origin = re.findall(r'-?\d+\.\d+', selected.get('text'))
+        assert len(origin) == 2, 'The isolated QA origin must use explicit coordinates'
         q.seek('shape-star'); q.capture('s2a-large-shapes')
-        q.tap('calculate-route'); q.capture('s2a-large-confirm')
+        q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
+        assert q.find(confirmation, '탐색 중심: ' + ', '.join(origin)) is not None, 'Page scrolling must preserve the chosen map center'
         # The fixed sheet footer is outside its body ScrollView.
         q.tap('generation-confirm-cancel')
         q.seek('shape-custom'); q.tap('shape-custom'); q.seek('drawing-cancel'); q.tap('drawing-cancel')
