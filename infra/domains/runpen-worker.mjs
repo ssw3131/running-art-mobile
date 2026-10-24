@@ -70,8 +70,15 @@ export function createHandler(fetcher = fetch) {
       try {
         let body;
         if (calculate) body = await boundedBody(request);
+        const forwardedHeaders = { 'content-type': 'application/json', accept: 'application/json' };
+        // The fixed compute service verifies the member and the idempotent operation.
+        // Do not forward cookies or unrelated credentials to this upstream.
+        if (calculate) for (const name of ['authorization', 'x-operation-id']) {
+          const value = request.headers.get(name);
+          if (value) forwardedHeaders[name] = value;
+        }
         const upstream = await fetcher(`${COMPUTE_ORIGIN}${url.pathname.slice(4)}`, {
-          method: request.method, headers: { 'content-type': 'application/json', accept: 'application/json' },
+          method: request.method, headers: forwardedHeaders,
           body, redirect: 'manual', signal: AbortSignal.any([request.signal, AbortSignal.timeout(70000)]),
         });
         if (upstream.status >= 300 && upstream.status < 400) return error(502, 'Unexpected upstream redirect');
