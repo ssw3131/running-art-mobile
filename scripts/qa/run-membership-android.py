@@ -20,7 +20,7 @@ def main():
     assert not (LOCAL / 'private-state.json').exists(), 'Clean up the previous fixture run first; never overwrite credentials'
     assert (LOCAL / 'tls/ca.crt').is_file(), 'Prepare the native QA TLS build first'
     env = {**os.environ, 'QA_SUPABASE_STATUS': str(pathlib.Path(os.environ.get('QA_SUPABASE_STATUS', ROOT / '.cache/qa-supabase-status.json')).resolve())}
-    status = json.loads(pathlib.Path(env['QA_SUPABASE_STATUS']).read_text(encoding='utf8-sig'))
+    status = json.loads(pathlib.Path(env['QA_SUPABASE_STATUS']).read_text(encoding='utf-8-sig'))
     assert status['API_URL'].rstrip('/') in ['http://127.0.0.1:54321', 'http://localhost:54321'], 'Only the isolated loopback stack is permitted'
     proxy = None
     cleanup_error = False
