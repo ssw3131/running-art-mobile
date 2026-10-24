@@ -55,3 +55,5 @@
 
 - 신규 계정 진입 보완 APK: build/install/runpen-20261025-archive-usage-guard.apk, 130,408,497 bytes, SHA-256 d5f3f4d5d716d9ed15b2ad0efa5c8ef9fbd51d66c79af6f04152454c03cd524d. 동일 ID/서명/ABI·운영 URL·시험 자산 미포함 확인. 01:59:59 SM-S942N 자료 유지 업데이트, 기존 4/10/1,914/1 내용 해시·계정/동기화/설정 일치, 0/5·0/15 및 재시작 확인. 임시 도우미/복구본/XML 정리 완료, USB 분리 가능. 증거는 .cache/archive-release/phone-guard/.
 - CI 40112004520 API29는 전체 지정 호환 시나리오·원본 보존·정리 성공. API36은 OAuth까지 통과 후 앞서 기록한 국내 위치 설정 실패로 중단했다. 실패를 삭제하지 않고 보완 소스로 다음 전체 CI를 수행한다.
+
+- Android29 정적 화면 직접 검토에서 마이페이지에 무작위 시험 이메일이 표시되어 실행마다 픽셀 비교가 달라지는 것을 확인했다. 전용 격리 DB의 service fixture 이메일만 고정하고 owner/비밀번호/provider sub/run 검증·충돌 거절·현재 run 정리는 유지했다. 화면 마스크나 제품 코드는 바꾸지 않았다. 93e625c의 빠른 검사/API는 통과했으며 Android 빌드는 이 시험 보완을 포함하는 새 HEAD로 대체한다.

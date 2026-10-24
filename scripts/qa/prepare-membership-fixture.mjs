@@ -46,7 +46,11 @@ export async function membershipFixture(command, role = 'service', output = '.ca
     assert.equal(state.policy, `runpen-test-android-${state.run}`);
   }
   const createAccount = async name => {
-    const email = `qa-android-${randomUUID()}@example.invalid`, password = randomUUID() + 'Aa!9';
+    // The exclusive stack's service profile is also the pixel-comparison fixture.
+    // Keep only its visible email stable; owner, password and provider subject
+    // remain unique. createUser refuses collisions, and cleanup still checks run.
+    const emailId = name === 'service' ? '00000000-0000-4000-8000-000000000001' : randomUUID();
+    const email = `qa-android-${emailId}@example.invalid`, password = randomUUID() + 'Aa!9';
     // Persist intended identity before the request so cleanup can recover a lost response.
     const record = { email, password, owner: null }; state.users.push(record); await persist(state);
     const result = must(await admin.auth.admin.createUser({ email, password, email_confirm: true,
