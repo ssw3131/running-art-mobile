@@ -335,12 +335,13 @@ def compatibility():
     time.sleep(1)
     seek('경로 링크 공유'); capture('legacy-run-share')
     tap('service-back'); tap('service-back')
+    assert find(capture('legacy-detail-back-archive'), 'tab-archive').get('selected') == 'true'
     tap('service-menu'); seek('open-development'); tap('open-development')
     seek('개발 환경 확인'); tap('개발 환경 확인')
     capture('development-environment'); tap('RunPen 공통 UI 미리보기 열기')
     capture('development-ui-preview')
     shell('input', 'keyevent', '4'); tap('service-back'); tap('service-back'); tap('service-back')
-    assert find(capture('development-back-home'), 'tab-home').get('selected') == 'true'
+    assert find(capture('development-back-origin'), 'tab-archive').get('selected') == 'true'
     print('PASS: cold course link/back, GPX chooser/cancel, legacy run detail/share entry, development/environment/UI preview/back')
 
 
