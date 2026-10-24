@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "reviewed": true,
-  "reviewedAt": "2026-10-24T18:49:12.658415+09:00",
-  "review": "S0 common header/footer and typography reviewed against the existing Figma-backed S0 verification; existing body screens are regression references. Account deliberately has no CI auth configuration. S1: reviewed the new guest signup CTA on home and account, including the resulting account content shift. Only those two PNGs were replaced; run/archive and all masks remain unchanged. Per-screen provenance records mixed source versions. S1 home states: only home was replaced after direct original/current/diff review. Initial home uses original Figma illustration and shapes, personalized greeting, scrollable body and fixed course CTA; lower controls are reached by scrolling. Other screens and comparison masks/tolerances are unchanged. S234: Directly reviewed baseline/current/diff for home, run and archive after all 13 Linux API 36 functional steps, fixture preservation and cleanup passed. Home removes the dog unavailable caption after enabling the dog selector, reducing the common selector-row height; differences are confined to the three original shape icons. Run adopts shared white/black/gray/orange typography and rounded buttons. Archive adds the saved count and shape thumbnail, removes the raw score, and presents actual distance/date in a white card. Account has zero differing pixels and is unchanged. No masks, thresholds, environment or assertions changed. S56: Directly reviewed account baseline/current/diff after all 14 Linux API 36 functional steps, preservation and cleanup passed. Account now uses shared Noto typography, white/black/gray/orange palette, rounded action buttons and adjusted content spacing. The existing guest explanation, unavailable-auth state and real zero statistics remain. Home, run and archive have zero differing pixels and retain their existing PNGs. No masks, thresholds, geometry or assertions changed. Home/auth 2026-10-24: Directly reviewed baseline/current/diff for home and account after all 14 Linux API 36 functional steps, original fixture preservation and cleanup passed. The existing saved-course fixture now correctly selects returning home, with empty run statistics/list and a real saved-path fallback; initial home is separately verified in native scenarios. Account now uses a restored isolated synthetic signed-in session, since guests cannot access this page. Its actual profile, membership link and empty account statistics replace the old guest/unconfigured-auth view. Run and archive have zero changed pixels and retain their PNGs. No masks, thresholds, environment, geometry or assertions changed. Home attribution follow-up: Directly reviewed original/current/diff after API 36 all 14 steps and preservation/cleanup passed. Only the saved route drawing changes size/position inside its preview to reserve a scaled attribution row; no text, navigation or other screen changes. Updated only home.png. Masks, thresholds, geometry and assertions are unchanged.",
+  "reviewedAt": "2026-10-25T05:44:21.955380+09:00",
+  "review": "S0 common header/footer and typography reviewed against the existing Figma-backed S0 verification; existing body screens are regression references. Account deliberately has no CI auth configuration. S1: reviewed the new guest signup CTA on home and account, including the resulting account content shift. Only those two PNGs were replaced; run/archive and all masks remain unchanged. Per-screen provenance records mixed source versions. S1 home states: only home was replaced after direct original/current/diff review. Initial home uses original Figma illustration and shapes, personalized greeting, scrollable body and fixed course CTA; lower controls are reached by scrolling. Other screens and comparison masks/tolerances are unchanged. S234: Directly reviewed baseline/current/diff for home, run and archive after all 13 Linux API 36 functional steps, fixture preservation and cleanup passed. Home removes the dog unavailable caption after enabling the dog selector, reducing the common selector-row height; differences are confined to the three original shape icons. Run adopts shared white/black/gray/orange typography and rounded buttons. Archive adds the saved count and shape thumbnail, removes the raw score, and presents actual distance/date in a white card. Account has zero differing pixels and is unchanged. No masks, thresholds, environment or assertions changed. S56: Directly reviewed account baseline/current/diff after all 14 Linux API 36 functional steps, preservation and cleanup passed. Account now uses shared Noto typography, white/black/gray/orange palette, rounded action buttons and adjusted content spacing. The existing guest explanation, unavailable-auth state and real zero statistics remain. Home, run and archive have zero differing pixels and retain their existing PNGs. No masks, thresholds, geometry or assertions changed. Home/auth 2026-10-24: Directly reviewed baseline/current/diff for home and account after all 14 Linux API 36 functional steps, original fixture preservation and cleanup passed. The existing saved-course fixture now correctly selects returning home, with empty run statistics/list and a real saved-path fallback; initial home is separately verified in native scenarios. Account now uses a restored isolated synthetic signed-in session, since guests cannot access this page. Its actual profile, membership link and empty account statistics replace the old guest/unconfigured-auth view. Run and archive have zero changed pixels and retain their PNGs. No masks, thresholds, environment, geometry or assertions changed. Home attribution follow-up: Directly reviewed original/current/diff after API 36 all 14 steps and preservation/cleanup passed. Only the saved route drawing changes size/position inside its preview to reserve a scaled attribution row; no text, navigation or other screen changes. Updated only home.png. Masks, thresholds, geometry and assertions are unchanged. Archive/usage integration: directly reviewed baseline/current/diff for all four screens after all 15 API 36 functional steps, original fixture preservation and cleanup passed. Home adds real 1/5 generation and 1/15 save usage indicators; its body is unchanged. Archive changes the right tab to completed records, adds the cumulative save usage card and actual ratio, updates course shape/time/chevron cards, and places refresh below the list. Account uses the stable isolated synthetic email with a linked Google identity and completed membership, so the pending-signup action is correctly absent and following content moves upward. Run has zero differing pixels and retains its PNG. Only home/archive/account PNGs change. Masks, thresholds, environment, geometry and assertions are unchanged.",
   "references": [
     "docs/quality/service-s0-verification.md",
     "docs/quality/service-s0-screenshots.html",
@@ -11,7 +11,9 @@
     "docs/quality/home-states-20261013.md",
     "docs/quality/course-archive-running-20261013.md",
     "docs/quality/achievements-support-20261014.md",
-    "docs/quality/home-auth-20261024.md"
+    "docs/quality/home-auth-20261024.md",
+    "docs/quality/archive-usage-20261024.md",
+    "docs/quality/archive-release-20261025.md"
   ],
   "source": "3bf1318d9a1edd4e97aef79cea00ed850883e351",
   "ciHead": "97602bcef41018b22d1a3d9eab279933aefb7c68",
@@ -43,14 +45,14 @@
           "height": 33
         }
       ],
-      "sha256": "575104ea37692bb09980fc34595f0ff96b3e698c03da8a9e72d079a4ae7e365b",
+      "sha256": "9e431d68502c2186d296d22d58f16b348fd2cf3b4482ccb58edb5c22cb8db53a",
       "provenance": {
-        "ciRun": "40081103820",
-        "artifact": 12555883548,
-        "ciHead": "51574a2159f29db565562ea031d0dbab5937a0c1",
-        "source": "72d59fdc4f0a4339bd52aeca60199c977905473b",
-        "apkSha256": "7bd418d186e6f77248702f9a5cf8f5da1402668a2088e21116453c3a528ae7d0",
-        "ciAttempt": 1
+        "ciRun": "40128119366",
+        "ciAttempt": 1,
+        "artifact": 12575210287,
+        "ciHead": "5d5fb98b2f71a3d4f2afe643a5f2e1a390df5358",
+        "source": "09cace278eec6eec11cad051f6570fe87e1a8662",
+        "apkSha256": "ab5c25fba8bd2a25509c11c778b74bbd374b01ae4ebc1f535ce97717a96dbe65"
       }
     },
     {
@@ -87,14 +89,14 @@
           "height": 33
         }
       ],
-      "sha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+      "sha256": "b112fadda3c52b83dea441dd9b110ef46deb7205bc8df62cb2e19e04bfe39270",
       "provenance": {
-        "ciRun": "38412089257",
-        "ciAttempt": 2,
-        "artifact": 11825745317,
-        "ciHead": "2a59107f33b5a14f5930a483e7c1df06ace21589",
-        "source": "3d3a5f490c190c4bb7497395c9f620927af0c6e4",
-        "apkSha256": "4dd4a49756530504a4c038bdb9a239be3db197c60de6c4a32bc0b9aa0a650f30"
+        "ciRun": "40128119366",
+        "ciAttempt": 1,
+        "artifact": 12575210287,
+        "ciHead": "5d5fb98b2f71a3d4f2afe643a5f2e1a390df5358",
+        "source": "09cace278eec6eec11cad051f6570fe87e1a8662",
+        "apkSha256": "ab5c25fba8bd2a25509c11c778b74bbd374b01ae4ebc1f535ce97717a96dbe65"
       }
     },
     {
@@ -109,14 +111,14 @@
           "height": 33
         }
       ],
-      "sha256": "cbb2e11276339829da30a5dc51647fa5517a09fc233215092de9406c248016b0",
+      "sha256": "df23c11bb1523b90c9178eb3cc820b961963b84f6a3924789c32c18d0457b685",
       "provenance": {
-        "ciRun": "40077834738",
-        "artifact": 12554029183,
-        "ciHead": "8a30b1eb49a77fa4a2c3c5351630510434040958",
-        "source": "c8c6e882a8074037af6c33a51a6d21138f2f41da",
-        "apkSha256": "f15a41a3868d93cd5520783c8382eb758cd0e3dc0db80cadffe866fea2cf2810",
-        "ciAttempt": 1
+        "ciRun": "40128119366",
+        "ciAttempt": 1,
+        "artifact": 12575210287,
+        "ciHead": "5d5fb98b2f71a3d4f2afe643a5f2e1a390df5358",
+        "source": "09cace278eec6eec11cad051f6570fe87e1a8662",
+        "apkSha256": "ab5c25fba8bd2a25509c11c778b74bbd374b01ae4ebc1f535ce97717a96dbe65"
       }
     }
   ],
@@ -685,5 +687,167 @@
         }
       ]
     }
+  },
+  "archiveUsageReview": {
+    "reviewedAt": "2026-10-25T05:44:21.955380+09:00",
+    "ciRun": "40128119366",
+    "artifact": 12575210287,
+    "reason": "Archive/usage integration: directly reviewed baseline/current/diff for all four screens after all 15 API 36 functional steps, original fixture preservation and cleanup passed. Home adds real 1/5 generation and 1/15 save usage indicators; its body is unchanged. Archive changes the right tab to completed records, adds the cumulative save usage card and actual ratio, updates course shape/time/chevron cards, and places refresh below the list. Account uses the stable isolated synthetic email with a linked Google identity and completed membership, so the pending-signup action is correctly absent and following content moves upward. Run has zero differing pixels and retains its PNG. Only home/archive/account PNGs change. Masks, thresholds, environment, geometry and assertions are unchanged.",
+    "previousScreens": [
+      {
+        "id": "home",
+        "file": "home.png",
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "sha256": "575104ea37692bb09980fc34595f0ff96b3e698c03da8a9e72d079a4ae7e365b",
+        "provenance": {
+          "ciRun": "40081103820",
+          "artifact": 12555883548,
+          "ciHead": "51574a2159f29db565562ea031d0dbab5937a0c1",
+          "source": "72d59fdc4f0a4339bd52aeca60199c977905473b",
+          "apkSha256": "7bd418d186e6f77248702f9a5cf8f5da1402668a2088e21116453c3a528ae7d0",
+          "ciAttempt": 1
+        }
+      },
+      {
+        "id": "run",
+        "file": "run.png",
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "sha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
+        "provenance": {
+          "ciRun": "38412089257",
+          "ciAttempt": 2,
+          "artifact": 11825745317,
+          "ciHead": "2a59107f33b5a14f5930a483e7c1df06ace21589",
+          "source": "3d3a5f490c190c4bb7497395c9f620927af0c6e4",
+          "apkSha256": "4dd4a49756530504a4c038bdb9a239be3db197c60de6c4a32bc0b9aa0a650f30"
+        }
+      },
+      {
+        "id": "archive",
+        "file": "archive.png",
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "sha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+        "provenance": {
+          "ciRun": "38412089257",
+          "ciAttempt": 2,
+          "artifact": 11825745317,
+          "ciHead": "2a59107f33b5a14f5930a483e7c1df06ace21589",
+          "source": "3d3a5f490c190c4bb7497395c9f620927af0c6e4",
+          "apkSha256": "4dd4a49756530504a4c038bdb9a239be3db197c60de6c4a32bc0b9aa0a650f30"
+        }
+      },
+      {
+        "id": "account",
+        "file": "account.png",
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "sha256": "cbb2e11276339829da30a5dc51647fa5517a09fc233215092de9406c248016b0",
+        "provenance": {
+          "ciRun": "40077834738",
+          "artifact": 12554029183,
+          "ciHead": "8a30b1eb49a77fa4a2c3c5351630510434040958",
+          "source": "c8c6e882a8074037af6c33a51a6d21138f2f41da",
+          "apkSha256": "f15a41a3868d93cd5520783c8382eb758cd0e3dc0db80cadffe866fea2cf2810",
+          "ciAttempt": 1
+        }
+      }
+    ],
+    "originalResults": [
+      {
+        "id": "home",
+        "status": "failed",
+        "pixels": 3175,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "575104ea37692bb09980fc34595f0ff96b3e698c03da8a9e72d079a4ae7e365b",
+        "currentSha256": "9e431d68502c2186d296d22d58f16b348fd2cf3b4482ccb58edb5c22cb8db53a"
+      },
+      {
+        "id": "run",
+        "status": "passed",
+        "pixels": 0,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "0b87364988de123ed917bd3227b71de6c045fa80dbb17e700b6a31827f457b91",
+        "currentSha256": "75b6c85ccd45998971dca0e7dc9665cddfffdda7cba9ba99d6b06254c223f70b"
+      },
+      {
+        "id": "archive",
+        "status": "failed",
+        "pixels": 207307,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "6aa6dcaa349e2ba287130de077bdea258c3ae91fb185afc3c4d104f0ae943448",
+        "currentSha256": "b112fadda3c52b83dea441dd9b110ef46deb7205bc8df62cb2e19e04bfe39270"
+      },
+      {
+        "id": "account",
+        "status": "failed",
+        "pixels": 85719,
+        "masks": [
+          {
+            "reason": "system-wifi-rasterization",
+            "x": 817,
+            "y": 53,
+            "width": 41,
+            "height": 33
+          }
+        ],
+        "baselineSha256": "cbb2e11276339829da30a5dc51647fa5517a09fc233215092de9406c248016b0",
+        "currentSha256": "df23c11bb1523b90c9178eb3cc820b961963b84f6a3924789c32c18d0457b685"
+      }
+    ]
   }
 }
