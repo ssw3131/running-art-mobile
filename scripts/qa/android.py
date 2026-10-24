@@ -55,6 +55,19 @@ spec.loader.exec_module(q)
 q.ADB, q.SERIAL = adb, args.serial
 q.MAP_PREVIEWS = args.map_previews
 
+def page_scroll_x(tree, viewport, start, end):
+    """Scroll the page gutter instead of panning an interactive map child."""
+    left, _, right, _ = viewport
+    maps = [list(map(int, re.findall(r'\d+', n.get('bounds')))) for n in tree.iter('node')
+            if n.get('resource-id') == 'native-map']
+    maps = [b for b in maps if b[2] > b[0] and b[3] > b[1]
+            and max(min(start, end), b[1]) < min(max(start, end), b[3])]
+    if maps:
+        map_left, map_right = min(b[0] for b in maps), max(b[2] for b in maps)
+        if map_left-left >= 24: return (left+map_left)//2
+        if right-map_right >= 24: return (map_right+right)//2
+    return (left+right)//2
+
 def seek_visible(key, allow_disabled=False):
     """Use the actual scroll viewport; do not assume a 2340px display."""
     upwards = False
@@ -93,7 +106,7 @@ def seek_visible(key, allow_disabled=False):
         # Keep both ends and the horizontal position inside the content viewport.
         start, end = bottom-max(96,int((bottom-top)*.18)), top+max(96,int((bottom-top)*.22))
         if upwards: start,end=end,start
-        x = (left + right) // 2
+        x = page_scroll_x(tree, (left, top, right, bottom), start, end)
         q.shell('input','swipe',str(x),str(start),str(x),str(end),'350')
     raise RuntimeError('Control not reached: ' + key)
 
