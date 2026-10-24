@@ -2,6 +2,7 @@
 import { createServer } from 'node:https';
 import { request } from 'node:http';
 import { readFileSync } from 'node:fs';
+import { setTimeout as delay } from 'node:timers/promises';
 import { isolatedSupabase } from './isolated-supabase.mjs';
 import { ANDROID_KEY } from './prepare-membership-fixture.mjs';
 import { createUsageBackend } from '../../supabase/functions/_shared/usage-backend.ts';
@@ -13,7 +14,13 @@ const usage = createUsageBackend({url:url.href,serviceKey:env.SERVICE_ROLE_KEY,i
 const handler = createUsageHandler(usage);
 // The production HTTP handler and engine run on a public deterministic grid.
 // Only road sourcing is replaced; Auth, membership, ledger and app calls are real.
-const compute = createComputeServer({run:async input=>response(input),close:async()=>{}},{usage,ingress:()=>{}});
+const compute = createComputeServer({run:async (input,signal)=>{
+  // The 7 km scenario explicitly cancels an in-flight calculation. Give that
+  // real request a bounded latency window instead of racing the tiny grid.
+  // The production handler, engine result, ledger and abort signal are unchanged.
+  if(input.options.targetKm===7)await delay(5000,undefined,{signal});
+  return response(input);
+},close:async()=>{}},{usage,ingress:()=>{}});
 compute.listen(54432,'127.0.0.1');
 const server = createServer({ key: readFileSync('.cache/qa-membership/tls/server.key'), cert: readFileSync('.cache/qa-membership/tls/server.crt') }, async (req, res) => {
   if (req.url === '/healthz') { res.writeHead(200); res.end('ready'); return; }
@@ -24,7 +31,7 @@ const server = createServer({ key: readFileSync('.cache/qa-membership/tls/server
   }
   if (req.url === '/api/v1/routes') {
     const upstream=request({hostname:'127.0.0.1',port:54432,path:'/v1/routes',method:req.method,headers:req.headers},response=>{res.writeHead(response.statusCode,response.headers);response.pipe(res);});
-    upstream.on('error',()=>{if(!res.headersSent)res.writeHead(502);res.end();});req.on('aborted',()=>upstream.destroy());req.pipe(upstream);return;
+    upstream.on('error',()=>{if(!res.headersSent)res.writeHead(502);res.end();});req.on('aborted',()=>upstream.destroy());res.on('close',()=>{if(!res.writableEnded)upstream.destroy();});req.pipe(upstream);return;
   }
   if (!/^\/(rest|storage)\/v1\//.test(req.url ?? '') && !/^\/auth\/v1\/(token|user|logout)(?:\?|$)/.test(req.url ?? '')) { res.writeHead(404); res.end(); return; }
   if (req.headers.apikey !== ANDROID_KEY) { res.writeHead(403); res.end(); return; }

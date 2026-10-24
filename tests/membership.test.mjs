@@ -3,6 +3,7 @@ import test from 'node:test';
 import { createClient } from '@supabase/supabase-js';
 import { createMembershipController } from '../src/modules/membership/controller.ts';
 import { createMembershipRemote } from '../src/modules/membership/remote.ts';
+import { membershipAccess } from '../src/modules/membership/access.ts';
 import { consentValid, parseMembership, parsePolicy, signupNickname } from '../src/modules/membership/model.ts';
 
 const A = '11111111-1111-4111-8111-111111111111', B = '22222222-2222-4222-8222-222222222222';
@@ -92,6 +93,30 @@ test('completed version restores after restart; network error is retryable and i
   f.remote.policy = async () => { throw new Error('offline private detail'); }; await f.controller.reload();
   assert.equal(f.controller.getSnapshot().status, 'required'); assert.equal(f.controller.getSnapshot().policyStatus, 'error'); assert.equal(f.controller.getSnapshot().membership.owner, A);
   f.remote.policy = async () => policy; await f.controller.reload(); assert.equal(f.controller.getSnapshot().status, 'complete');
+});
+
+for (const first of ['policy', 'receipt']) test(`confirmed owner keeps service state throughout reload when ${first} returns first`, async () => {
+  const f = fixture({ remote: { membership: async () => complete(A) } });
+  f.controller.start(); await tick();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'service');
+  const policyReply = deferred(), receiptReply = deferred(), states = [];
+  f.remote.policy = () => policyReply.promise;
+  f.remote.membership = () => receiptReply.promise;
+  const unsubscribe = f.controller.subscribe(() => states.push(membershipAccess(A, f.controller.getSnapshot())));
+  const loading = f.controller.reload(); await tick();
+  if (first === 'policy') policyReply.resolve(policy); else receiptReply.resolve(complete(A));
+  await tick();
+  if (first === 'policy') receiptReply.resolve(complete(A)); else policyReply.resolve(policy);
+  await loading;
+  unsubscribe();
+  assert.ok(states.length > 2);
+  assert.deepEqual([...new Set(states)], ['service'], 'An intermediate signup state remounts the navigator and erases course conditions');
+  // A real policy change must still revoke service access after resolution.
+  f.remote.policy = async () => ({ ...policy, id: 'test-v2' });
+  f.remote.membership = async () => complete(A);
+  await f.controller.reload();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'signup');
+  f.controller.stop();
 });
 test('SDK sends explicit owner and policy, rejects foreign receipt and tolerates only missing old RPC', async () => {
   let mode = 'normal'; const calls = [];

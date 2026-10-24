@@ -82,6 +82,9 @@ def service_s56(q, launch):
             'category':'검증','publishedAt':'2026-10-01T00:00:00Z'}]},ensure_ascii=False),encoding='utf8')
         q.adb('push',str(fixture),notice_cache)
         q.shell('svc','wifi','disable');q.shell('svc','data','disable')
+        # Wi-Fi/data toggles do not disconnect ADB's loopback TLS transport.
+        # Remove this runner's forwarding too, so the real request must fail.
+        q.adb('reverse','--remove','tcp:54431')
         q.seek('support-notices');q.tap('support-notices');q.seek('notice-s56-qa')
         assert any('오프라인 저장본' in n.get('text','') for n in q.capture('s6-notices').iter('node'))
         q.tap('notice-s56-qa')
@@ -90,6 +93,7 @@ def service_s56(q, launch):
         assert any('오프라인 저장본' in n.get('text','') for n in detail.iter('node'))
         q.seek('목록으로 돌아가기');q.tap('목록으로 돌아가기');q.seek('notice-s56-qa');q.capture('s6-notice-back')
         q.tap('service-back')
+        q.adb('reverse','tcp:54431','tcp:54431')
         q.shell('svc','wifi','disable' if wifi=='0' else 'enable');q.shell('svc','data','disable' if mobile=='0' else 'enable')
         launch('account-settings');q.seek('theme-dark');q.tap('theme-dark');q.capture('s6-theme-dark')
         q.shell('am','force-stop',q.APP);launch('account-settings');q.seek('theme-dark');q.capture('s6-theme-restarted')
@@ -108,6 +112,7 @@ def service_s56(q, launch):
         raise
     finally:
         q.shell('am','force-stop',q.APP)
+        q.adb('reverse','tcp:54431','tcp:54431')
         if original_notice is None: q.shell('rm','-f',notice_cache)
         else:
             restore=q.OUT/'s56-notice-cache-restore.json';restore.write_bytes(original_notice)

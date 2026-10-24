@@ -67,7 +67,12 @@ def generation_flow(q):
     q.seek('course-save-name')
     assert q.find(q.capture('s2a-name-restored'), 'course-save-name').get('text') == 'S0_DRAFT'
     q.seek('course-save'); q.tap('course-save')
-    rows = q.query("SELECT id,name,length_km,snapshot_json,snapshot_hash FROM saved_courses WHERE name='S0_DRAFT'")
+    deadline = time.monotonic() + 20
+    while True:
+        rows = q.query("SELECT id,name,length_km,snapshot_json,snapshot_hash FROM saved_courses WHERE name='S0_DRAFT'")
+        if rows: break
+        assert time.monotonic() < deadline, 'Server-confirmed course save did not finish'
+        time.sleep(.3)
     assert len(rows) == 1
     saved = rows[0]
     assert format(saved['length_km'], '.2f') + ' km' in selected
