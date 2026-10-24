@@ -143,6 +143,8 @@ def navigation():
         before = capture('center-before-tab')
     assert find(before, 'route-location-loading') is None, 'Initial location has not settled'
     center = find(before, 'selected-center').get('text')
+    lat, lng = map(float, re.findall(r'-?\d+\.\d+', center))
+    assert 33 <= lat < 39 and 124 <= lng < 132, 'QA origin must be inside Korea before testing server generation'
     adb('emu', 'geo', 'fix', '127', '37', '0', '10')
     tap('tab-home'); tap('tab-courses')
     assert find(capture('center-after-tab'), 'selected-center').get('text') == center

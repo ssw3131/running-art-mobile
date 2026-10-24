@@ -18,7 +18,7 @@ const compute = createComputeServer({run:async (input,signal)=>{
   // The 7 km scenario explicitly cancels an in-flight calculation. Give that
   // real request a bounded latency window instead of racing the tiny grid.
   // The production handler, engine result, ledger and abort signal are unchanged.
-  if(input.options.targetKm===7)await delay(5000,undefined,{signal});
+  if(input.options.targetKm===7)await delay(30000,undefined,{signal});
   return response(input);
 },close:async()=>{}},{usage,ingress:()=>{}});
 compute.listen(54432,'127.0.0.1');

@@ -313,6 +313,9 @@ def save_and_home():
 
 def reset_app():
     q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP)
+    # The fresh emulator defaults to a US GPS fix. Service generation validates
+    # Korea coverage before HTTP; start at the public grid's Korean origin.
+    q.adb('emu', 'geo', 'fix', '126.9764', '37.57162', '0', '10')
     for permission in ['ACCESS_FINE_LOCATION', 'ACCESS_COARSE_LOCATION', 'ACCESS_BACKGROUND_LOCATION']:
         q.shell('pm', 'grant', q.APP, 'android.permission.' + permission)
     if int(environment['api']) >= 33:
