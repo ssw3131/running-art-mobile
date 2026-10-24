@@ -1,6 +1,6 @@
 {
   "fileKey": "QYRGII8OdvQB1SrtH3BA08",
-  "queriedAt": "2026-10-13",
+  "queriedAt": "2026-10-24",
   "frames": [
     "2:855",
     "2:1168",
@@ -54,6 +54,13 @@
       "node": "2:1078",
       "bytes": 261,
       "sha256": "ab912ceff97c2d1aade367fbc4dc760684ecfc2a0f717cd1344e9beba4a093e2"
+    },
+    {
+      "asset": "3a9de.svg",
+      "frame": "5:73",
+      "file": "flame.svg",
+      "sha256": "af3c69f654753e80088d7328689d9943f0cbb1baea5b016929d3f0a46a6879ab",
+      "bytes": 878
     }
   ]
 }

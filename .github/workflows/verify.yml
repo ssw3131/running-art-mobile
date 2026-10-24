@@ -146,6 +146,9 @@ jobs:
       - run: npm ci
       - run: python scripts/qa/install-maestro.py
       - name: Build test APK with no local credentials or test hooks
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://runpen-ci.invalid
+          EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_isolated_ci
         run: |
           python -m unittest discover -s scripts/qa -p 'test_*.py'
           npm run prebuild:android

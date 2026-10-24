@@ -15,6 +15,7 @@ ADB = ROOT / '.tools/android-sdk/platform-tools/adb.exe'
 OUT = ROOT / '.cache/service-s0-20261012'
 SERIAL = 'emulator-5558'
 APP = 'com.runningart.mobile.dev'
+OWNER = '10000000-0000-4000-8000-000000000001'
 DB = f'/data/user/0/{APP}/files/SQLite/running-art.db'
 OUT.mkdir(parents=True, exist_ok=True)
 
@@ -72,7 +73,7 @@ def find(tree, key):
 
 
 def tap(key):
-    if key in ['open-courses', 'open-runs']:
+    if key in ['home-more-courses', 'home-more-runs']:
         seek(key)
     tree = capture('current')
     n = find(tree, key)
@@ -123,8 +124,8 @@ def seed():
     s = entry['snapshot']
     def literal(v):
         return "'" + str(v).replace("'", "''") + "'"
-    values = [entry['id'], entry['label'], s['source'], s['shape'], s['targetKm'], s['lengthKm'], s['score'], entry['json'], entry['hash'], 1791010000000, 1791010000000]
-    sql = 'INSERT INTO saved_courses(id,name,source,shape,target_km,length_km,score,snapshot_json,snapshot_hash,created_at,updated_at) VALUES(' + ','.join(map(literal, values)) + ');'
+    values = [entry['id'], entry['label'], s['source'], s['shape'], s['targetKm'], s['lengthKm'], s['score'], entry['json'], entry['hash'], 1791010000000, 1791010000000, OWNER]
+    sql = 'INSERT INTO saved_courses(id,name,source,shape,target_km,length_km,score,snapshot_json,snapshot_hash,created_at,updated_at,owner_id) VALUES(' + ','.join(map(literal, values)) + ');'
     sql += "INSERT INTO storage_test_notes(content,created_at,updated_at) VALUES('S0 preservation fixture',1791010000000,1791010000000);"
     p = subprocess.run([str(ADB), '-s', SERIAL, 'shell', shlex.join(['sqlite3', DB])], input=sql.encode(), capture_output=True)
     assert p.returncode == 0, p.stderr.decode()
@@ -162,7 +163,7 @@ def navigation():
     draft('draft-after-detail')
     shell('input', 'keyevent', '4')
     assert find(capture('system-back-home'), 'service-home') is not None
-    tap('open-runs')
+    tap('home-more-runs')
     assert find(capture('archive-runs'), 'runs-refresh') is not None
     tap('tab-account'); tap('tab-archive')
     assert find(capture('archive-view-after-tab'), 'runs-refresh') is not None
@@ -199,7 +200,7 @@ def calculation():
     assert find(tree, 'course-save-name').get('text') == 'S0_DRAFT'
     seek('course-save'); tap('course-save')
     assert query("SELECT count(*) AS n FROM saved_courses WHERE name='S0_DRAFT'")[0]['n'] == 1
-    tap('tab-home'); tap('open-runs'); tap('tab-courses'); seek('저장한 코스 목록'); tap('저장한 코스 목록')
+    tap('tab-home'); tap('home-more-runs'); tap('tab-courses'); seek('저장한 코스 목록'); tap('저장한 코스 목록')
     assert find(capture('save-list-destination'), '저장한 코스') is not None
     print('PASS: blur cancels active calculation; recalculate, keyboard, draft persistence, SQLite save, archive destination')
 
@@ -216,23 +217,23 @@ def gps_navigation():
     run_id, initial_count = row['id'], row['point_count']
     assert row['status'] == 'running' and initial_count > 0
     tap('tab-home')
-    assert find(capture('gps-home-banner'), 'active-run-banner') is not None
+    assert find(capture('gps-home-banner'), 'home-history') is not None
     tap('tab-archive'); inject(4)
     tap('tab-account'); inject(8)
     tap('tab-run')
     row = query("SELECT id,status,point_count FROM running_sessions WHERE status <> 'completed'")[0]
     assert row['id'] == run_id and row['status'] == 'running' and row['point_count'] > initial_count
     seek('run-pause'); tap('run-pause')
-    tap('tab-home'); tap('home-resume-run')
+    tap('tab-home'); seek('home-run-' + run_id); tap('home-run-' + run_id)
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'paused'
     seek('run-start'); tap('run-start'); tap('계속'); inject(12)
     capture('gps-resumed')
     shell('am', 'force-stop', APP)
     shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///', APP)
     time.sleep(3)
-    assert find(capture('gps-cold-recovery'), 'active-run-banner') is not None
+    assert find(capture('gps-cold-recovery'), 'home-history') is not None
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'interrupted'
-    tap('home-resume-run'); seek('run-start'); tap('run-start'); tap('계속'); inject(16)
+    seek('home-run-' + run_id); tap('home-run-' + run_id); seek('run-start'); tap('run-start'); tap('계속'); inject(16)
     seek('run-finish'); tap('run-finish'); tap('종료·저장')
     capture('gps-result')
     final = query(f"SELECT id,status,point_count FROM running_sessions WHERE id='{run_id}'")[0]
@@ -249,13 +250,13 @@ def course_preparation():
     entry = json.loads((ROOT / '.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
     if not query("SELECT id FROM saved_courses WHERE id='" + 'f'*32 + "'"):
         s = entry['snapshot']
-        values = [entry['id'], entry['name'], s['source'], s['shape'], s['targetKm'], s['lengthKm'], s['score'], entry['json'], entry['hash'], 1791010000000, 1791010000000]
-        sql = 'INSERT INTO saved_courses(id,name,source,shape,target_km,length_km,score,snapshot_json,snapshot_hash,created_at,updated_at) VALUES(' + ','.join("'" + str(v).replace("'", "''") + "'" for v in values) + ');'
+        values = [entry['id'], entry['name'], s['source'], s['shape'], s['targetKm'], s['lengthKm'], s['score'], entry['json'], entry['hash'], 1791010000000, 1791010000000, OWNER]
+        sql = 'INSERT INTO saved_courses(id,name,source,shape,target_km,length_km,score,snapshot_json,snapshot_hash,created_at,updated_at,owner_id) VALUES(' + ','.join("'" + str(v).replace("'", "''") + "'" for v in values) + ');'
         p = subprocess.run([str(ADB), '-s', SERIAL, 'shell', shlex.join(['sqlite3', DB])], input=sql.encode(), capture_output=True)
         assert p.returncode == 0, p.stderr.decode()
     lng, lat = entry['snapshot']['route'][0]
     adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
-    tap('tab-home'); tap('open-courses'); tap('course-row-' + 'f'*32)
+    tap('tab-home'); tap('home-more-courses'); tap('course-row-' + 'f'*32)
     seek('course-run'); tap('course-run')
     assert find(capture('course-preparation-tab'), 'tab-run').get('selected') == 'true'
     for _ in range(2):
@@ -288,7 +289,7 @@ def scaled():
         assert 0 <= x1 < x2 <= 1080 and 0 <= y1 < y2 <= 2340 and x2-x1 >= 144 and y2-y1 >= 144
     tap('tab-account'); capture('scaled-account')
     tap('service-menu'); capture('scaled-menu'); tap('service-back')
-    tap('tab-home'); tap('open-courses'); seek('course-row-' + 'd'*32); tap('course-row-' + 'd'*32)
+    tap('tab-home'); tap('home-more-courses'); seek('course-row-' + 'd'*32); tap('course-row-' + 'd'*32)
     seek('course-rename-input'); tap('course-rename-input')
     shell('input', 'keycombination', '113', '29'); shell('input', 'text', 'S0_keyboard')
     tree = capture('scaled-keyboard')

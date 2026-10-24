@@ -79,6 +79,10 @@ def generation_flow(q):
     q.capture('s2a-saved')
     q.seek('candidate-export'); q.tap('candidate-export')
     chooser = q.capture('s2a-gpx-chooser')
+    deadline = time.monotonic() + 20
+    while not any(n.get('package') == 'com.android.intentresolver' for n in chooser.iter('node')) and time.monotonic() < deadline:
+        time.sleep(.5)
+        chooser = q.capture('s2a-gpx-chooser-ready')
     assert any(n.get('package') == 'com.android.intentresolver' for n in chooser.iter('node'))
     q.shell('input', 'keyevent', '4')
     q.seek('generation-saved-list'); q.tap('generation-saved-list')

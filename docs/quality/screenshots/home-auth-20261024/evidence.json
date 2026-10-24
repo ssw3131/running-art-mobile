@@ -1,0 +1,68 @@
+{
+  "source": "b3bf9cc2e4441935d4cc9b345c660f81b345de16",
+  "dirty": false,
+  "apkSha256": "5c7a5f7f0e2c8d45deb98a5ed004020ef720361f1d62e185fae8b6cca1fec812",
+  "environment": {
+    "host": "Windows",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "scenario-capture-live-clock",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "startedAt": "2026-10-24T09:42:46.135614+00:00",
+  "finishedAt": "2026-10-24T09:50:04.909827+00:00",
+  "mode": "home-states-only",
+  "retries": 0,
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "captureKind": "Native scenario screenshots; separate Linux captures are used for fixed pixel comparison",
+  "screens": [
+    {
+      "file": "signup-entry.png",
+      "label": "비로그인 회원가입 진입",
+      "sha256": "78141a91464f3d9de03849ad6c40799126997b947e4e60bce28c66bb3f5ba7dc"
+    },
+    {
+      "file": "home-initial-top.png",
+      "label": "처음 이용 · 라이트",
+      "sha256": "2dc1192f319ea556d78f4ab9fe5f2cb8dc274f5320e38ea87979d59fa90f2972"
+    },
+    {
+      "file": "home-initial-dark.png",
+      "label": "처음 이용 · 다크",
+      "sha256": "9788662daeb7aadc3efee930c746b93d63e2bbb0641ebb3fab42a0aef5a6d9de"
+    },
+    {
+      "file": "home-saved-only.png",
+      "label": "저장 코스만 있는 재방문",
+      "sha256": "f8f2da159e0dfd6f141cf81d9a27eceff4d95ad31164830a8cb85665c0c10fed"
+    },
+    {
+      "file": "home-history.png",
+      "label": "종료 러닝 · 실제 지도",
+      "sha256": "000c8306ecc8cdc284fbaaf306188af949ebc6f2f1fa355fc53f05cb7f86882d"
+    },
+    {
+      "file": "home-history-dark.png",
+      "label": "재방문 · 다크 지도",
+      "sha256": "56c76239374410f4e9111e60eb0e3aa6fc88d75cf1f820fe2fdd52dcc2c68784"
+    },
+    {
+      "file": "home-history-offline-fallback.png",
+      "label": "캐시 없는 오프라인 · 실제 경로 대체",
+      "sha256": "3537ad1665f2777318bfaabc1ad04914d76a1a51ae0950c86ced362da9990fca"
+    },
+    {
+      "file": "home-history-large-font.png",
+      "label": "큰 글씨 1.6배 · 360dp",
+      "sha256": "05f4dbb089e6bd1c08f60d2a33648c417d7cf4b956e74f980f50f5f5ce24ef1b"
+    }
+  ]
+}

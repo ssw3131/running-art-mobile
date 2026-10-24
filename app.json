@@ -22,7 +22,7 @@
     },
     "plugins": [
       "./scripts/with-build-inputs.cjs",
-      "expo-router",
+      ["expo-router", { "sitemap": false }],
       [
         "expo-splash-screen",
         {
