@@ -7,6 +7,8 @@ import time
 def service_s56(q, launch):
     assert q.SERIAL.startswith('emulator-')
     run_id='5'*32
+    assert not q.query(f"SELECT id FROM running_sessions WHERE id='{run_id}'")
+    assert not q.query(f"SELECT id FROM sync_deletions WHERE owner_id='{q.OWNER}' AND kind='run' AND id='{run_id}'")
     entry=json.loads((q.ROOT/'.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
     before=q.snapshot('s56-before')
     preferences=q.query(f"SELECT * FROM account_preferences WHERE owner_id='{q.OWNER}'")
@@ -116,6 +118,7 @@ def service_s56(q, launch):
             if name.startswith('RunPen-') and name.endswith('.png') and '/' not in name:
                 q.shell('rm',export_folder+'/'+name)
         q.shell('sqlite3',q.DB,f"DELETE FROM running_sessions WHERE id='{run_id}'; DELETE FROM account_preferences WHERE owner_id='{q.OWNER}';")
+        q.shell('sqlite3',q.DB,f"DELETE FROM sync_deletions WHERE owner_id='{q.OWNER}' AND kind='run' AND id='{run_id}';")
         for row in preferences:
             q.shell('sqlite3',q.DB,'INSERT INTO account_preferences(owner_id,preferences_json,updated_at) VALUES('+','.join(map(literal,[row['owner_id'],row['preferences_json'],row['updated_at']]))+');')
         q.shell('wm','density','420');q.shell('settings','put','system','font_scale','1.0')

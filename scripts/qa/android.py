@@ -31,6 +31,7 @@ parser.add_argument('--repeat', type=int, default=1)
 parser.add_argument('--smoke', action='store_true')
 parser.add_argument('--signup-only', action='store_true', help='Run only S1 entry and accessibility; never substitutes for full CI')
 parser.add_argument('--home-only', action='store_true', help='Run S1 home and calculation handoff diagnostics; never substitutes for full CI')
+parser.add_argument('--map-previews', action='store_true', help='Require real online map previews in a separately authorized local test APK')
 parser.add_argument('--service-only', action='store_true', help='Diagnose S234 integration only; never substitutes for full CI')
 parser.add_argument('--achievements-only', action='store_true', help='Diagnose S5/S6 only; never substitutes for full CI')
 parser.add_argument('--generation-only', action='store_true', help='Run S2a generation and accessibility diagnostics; never substitutes for full CI')
@@ -46,6 +47,7 @@ spec = importlib.util.spec_from_file_location('s0', ROOT / 'scripts/qa/service-s
 q = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(q)
 q.ADB, q.SERIAL = adb, args.serial
+q.MAP_PREVIEWS = args.map_previews
 
 def seek_visible(key):
     """Use the actual scroll viewport; do not assume a 2340px display."""
