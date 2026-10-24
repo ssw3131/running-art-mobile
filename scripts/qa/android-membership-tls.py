@@ -40,7 +40,7 @@ def prepare():
     MANIFEST.write_text(original.replace('<application ', '<application android:networkSecurityConfig="@xml/runpen_qa_network_security" ', 1), encoding='utf8')
     CONFIG.parent.mkdir(parents=True, exist_ok=True)
     CA.parent.mkdir(parents=True, exist_ok=True)
-    CONFIG.write_text('<network-security-config><base-config cleartextTrafficPermitted="false"><trust-anchors><certificates src="system"/></trust-anchors></base-config><domain-config cleartextTrafficPermitted="false"><domain>localhost</domain><trust-anchors><certificates src="@raw/runpen_qa_ca"/></trust-anchors></domain-config></network-security-config>', encoding='utf8')
+    CONFIG.write_text('<network-security-config><base-config cleartextTrafficPermitted="false"><trust-anchors><certificates src="system"/></trust-anchors></base-config><domain-config cleartextTrafficPermitted="false"><domain includeSubdomains="false">localhost</domain><trust-anchors><certificates src="@raw/runpen_qa_ca"/></trust-anchors></domain-config></network-security-config>', encoding='utf8')
     shutil.copyfile(TLS / 'ca.crt', CA)
 
 
