@@ -37,5 +37,7 @@
 3. 추천 상세에서 이름을 입력한 뒤 탭을 다녀오면 초기화되는 문제를 수정했다. 후보 draft 유지 테스트 포함 관련 4개와 타입 검사 통과.
 4. 두 번째 CI `40104051984`는 fast/API 성공, API36 release의 격리 TLS XML `includeSubdomains` 누락으로 린트 실패했다. `false`를 명시해 localhost 범위를 유지했다. API29는 후속 push에 의해 취소됐으므로 통과로 기록하지 않는다.
 5. `50c86e3`의 CI `40104777079`는 fast/API·두 release 빌드 성공 후 Android 실행기의 인코딩 이름 `utf8-sig` 오기로 두 API에서 실행 전 실패했다. `utf-8-sig`로 수정하고 QA 스크립트의 명시적 codec 170개를 검사했다. 홈 스크롤 수정 `7022a3d`와 함께 다음 PR head에서 검사한다.
+6. `f9d3c40`의 CI `40106130804`에서 로직486·Jest102(17 suites)·타입/린트·HTTP556·실제 DB3·pgTAP5가 통과했다. API29/36 release도 성공했으나 실제 회원 fixture 준비에서 실패하여 Android 시나리오는 실행되지 않았다. 기존 시험 인증 도우미가 이번 합성 Google identity를 같은 실행 ID/역할/이메일로 엄격히 확인하도록 먼저 수정했다. 이후 fixture의 안전한 작업명/오류 코드 진단과 빌드 전 실제 준비·정리 검사를 추가했다. 이 실패를 Android 통과로 집계하지 않는다.
+7. `f8e149e` / `40107421861` 사전 검사에서 합성 identity 추가 뒤 Auth 로그인·삭제 HTTP500을 확인했다. 합성 소셜 identity의 생성/갱신/최종 로그인 시각을 명시하도록 보완했다. 이 변경은 전용 loopback 시험 DB에만 적용하며 실제 계정·제품 인증을 우회하지 않는다.
 
 운영·폰 증거는 로컬 `.cache/archive-release/`, 앞선 격리 증거는 `test-results/archive/`에 있다. 비밀·개인 자료·전체 폰 화면은 저장소에 올리지 않는다.

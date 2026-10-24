@@ -57,7 +57,9 @@ export async function membershipFixture(command, role = 'service', output = '.ca
     const db=new URL(env.DB_URL);assert.ok(['localhost','127.0.0.1'].includes(db.hostname));
     assert.match(record.owner,/^[a-f0-9-]{36}$/);
     const sub=`android-${state.run}-${name}`;
-    const sql=`insert into auth.identities(id,user_id,provider_id,provider,identity_data) values('${randomUUID()}','${record.owner}','${sub}','google','${JSON.stringify({sub,email})}'::jsonb);`;
+    // GoTrue reads these timestamps into its identity model. SQL permits null
+    // on some local versions, but a partial row then breaks Auth get/login/delete.
+    const sql=`insert into auth.identities(id,user_id,provider_id,provider,identity_data,created_at,updated_at,last_sign_in_at) values('${randomUUID()}','${record.owner}','${sub}','google','${JSON.stringify({sub,email,email_verified:true})}'::jsonb,now(),now(),now());`;
     const inserted=spawnSync('psql',['-X','-v','ON_ERROR_STOP=1'],{input:sql,encoding:'utf8',env:{...process.env,PGHOST:db.hostname,PGPORT:db.port,PGUSER:db.username,PGPASSWORD:decodeURIComponent(db.password),PGDATABASE:db.pathname.slice(1)}});
     if (inserted.status !== 0) console.error('Fixture synthetic identity insertion failed:', inserted.status, inserted.error?.code === 'ENOENT' ? 'psql_missing' : 'psql_error');
     assert.equal(inserted.status,0,'Insert isolated synthetic provider identity');

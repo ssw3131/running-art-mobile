@@ -83,4 +83,4 @@ Remove-Item -LiteralPath .cache/qa-membership/tls/ca.key,.cache/qa-membership/tl
 
 강제 종료로 wrapper까지 사라진 경우 그 실행에서 시작한 localhost adapter PID만 확인해 종료한다. 모든 Node 프로세스를 일괄 종료하지 않는다. native manifest가 준비 이후 다른 작업으로 변경됐으면 restore는 덮어쓰지 않고 거절한다. `.cache/qa-membership/native-trust-backup.json`과 현재 manifest를 대조해 QA 속성/두 자산만 제거한다.
 
-현재 상태는 **준비 소스 작성 완료 / 실행 결과 없음**이다. [가입 체크리스트](../quality/signup-membership-figma-checklist.md)에 따라 나중에 검증한다.
+2026-10-25 후속: 실제 원격 Android 실행을 시작했으며 회원 fixture 준비 실패를 진단 중이다. 전용 loopback DB에서만 합성 Google identity를 연결하고 사용량 API·제품 계산 HTTP 핸들러도 실제 원장으로 검증한다. 긴 native 빌드 전에 prepare/new-signup/session/receipt/cleanup을 검사하며 이 준비 검사를 Android UI 통과로 집계하지 않는다. [통합 실행/실패 이력](../quality/archive-release-20261025.md)을 최신 결과로 따른다.
