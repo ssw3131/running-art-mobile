@@ -32,6 +32,7 @@ parser.add_argument('--smoke', action='store_true')
 parser.add_argument('--signup-only', action='store_true', help='Run only S1 entry and accessibility; never substitutes for full CI')
 parser.add_argument('--home-only', action='store_true', help='Run S1 home and calculation handoff diagnostics; never substitutes for full CI')
 parser.add_argument('--home-states-only', action='store_true', help='Diagnose home state/map rendering only; never substitutes for full CI')
+parser.add_argument('--accessibility-only', action='store_true', help='Diagnose existing large-font/keyboard checks only; never substitutes for full CI')
 parser.add_argument('--map-previews', action='store_true', help='Require real online map previews in a separately authorized local test APK')
 parser.add_argument('--service-only', action='store_true', help='Diagnose S234 integration only; never substitutes for full CI')
 parser.add_argument('--achievements-only', action='store_true', help='Diagnose S5/S6 only; never substitutes for full CI')
@@ -39,7 +40,7 @@ parser.add_argument('--generation-only', action='store_true', help='Run S2a gene
 parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
-assert sum([args.signup_only, args.home_only, args.home_states_only, args.generation_only, args.service_only, args.achievements_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
+assert sum([args.signup_only, args.home_only, args.home_states_only, args.accessibility_only, args.generation_only, args.service_only, args.achievements_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
 assert args.serial.startswith('emulator-') and args.serial[9:].isdigit(), 'Physical devices are forbidden'
 assert 1 <= args.repeat <= 10
 sdk = pathlib.Path(os.environ.get('ANDROID_HOME', ROOT / '.tools/android-sdk'))
@@ -142,7 +143,7 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'startedAt': datetime.now(timezone.utc).isoformat(), 'ciRun': os.environ.get('GITHUB_RUN_ID'),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
-          'mode': 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-states-only' if args.home_states_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
+          'mode': 'accessibility-only' if args.accessibility_only else 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-states-only' if args.home_states_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
 original_overlays = None
@@ -338,6 +339,7 @@ try:
         if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
                                    ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
         if args.home_states_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch))]
+        if args.accessibility_only: steps = [('S0-08-accessibility', q.scaled), ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         if args.generation_only: steps = [('S2a-01-generation', lambda: generation_flow(q)),
                                          ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         if args.service_only: steps = [('S0-05-preparation', q.course_preparation), ('S234-01-integrated', lambda: service_s234(q, launch))]
