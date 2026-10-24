@@ -47,7 +47,7 @@ public class EmulatorAuth extends Instrumentation {
       JSONObject f=new JSONObject(fixture());
       if(!f.getString("fixture").equals("runpen-emulator-auth-v1") || !f.getString("projectUrl").equals("https://runpen-ci.invalid"))throw new Exception("Wrong fixture");
       JSONObject s=f.getJSONObject("session"),u=s.getJSONObject("user");
-      if(!u.getString("email").matches("runpen-ci@example\\.invalid"))throw new Exception("Only approved fixture B is allowed");
+      if(!u.getString("email").matches("runpen-ci@example\\.invalid"))throw new Exception("Only the emulator fixture is allowed");
       JSONArray identities=u.getJSONArray("identities");
       if(identities.length()!=1 || !identities.getJSONObject(0).getString("provider").equals("email"))throw new Exception("Not an email fixture");
       long expiry=s.getLong("expires_at")*1000,now=System.currentTimeMillis();

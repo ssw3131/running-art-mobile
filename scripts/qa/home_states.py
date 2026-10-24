@@ -56,7 +56,7 @@ def verify_home_states(q, launch):
         q.shell('sqlite3',q.DB,f"UPDATE saved_courses SET owner_id='' WHERE id='{'d'*32}';")
         launch(); q.tap('tab-home')
         assert q.find(q.capture('home-initial-top'), 'home-initial') is not None
-        q.seek('home-shape-fish'); q.tap('home-shape-fish'); q.tap('open-route-lab')
+        q.seek('home-shape-fish'); q.tap('home-shape-fish'); q.seek('open-route-lab'); q.tap('open-route-lab')
         q.seek('shape-star'); seek_shape(q, 'shape-fish', 'left')
         assert q.find(q.capture('home-shape-applied'), 'shape-fish').get('selected') == 'true'
         seek_shape(q, 'shape-star', 'right')

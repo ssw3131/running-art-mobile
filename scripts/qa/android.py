@@ -229,7 +229,8 @@ def capture_visuals():
         demo('exit'); q.shell('settings', 'put', 'global', 'sysui_demo_allowed', '0')
 
 def launch(route=''):
-    q.shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///' + route, q.APP)
+    prefix = 'runningart://' if route.startswith('auth/callback') else 'runningart:///'
+    q.shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', prefix + route, q.APP)
     time.sleep(3)
 
 def callback():
@@ -271,7 +272,7 @@ def signup_entry():
     assert not any('5회 무료' in n.get('text', '') for n in tree.iter('node'))
     q.seek('signup-mode'); q.tap('signup-mode'); q.capture('signup-login')
     routes = ['run','route-lab','courses','account','courses/'+'d'*32,'runs/'+'9'*32,
-              'service-info','development','account-signup','run-card','service-inquiry']
+              'service-info','development','account-signup','run-card','service-inquiry','_sitemap','unknown-page']
     for i, route in enumerate(routes):
         launch(route)
         tree=q.capture('guest-blocked-'+str(i))

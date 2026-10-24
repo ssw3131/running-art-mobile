@@ -30,9 +30,13 @@ export const authentication = createAuthController({
   profilePhotos: authClient && profilePhotosEnabled ? createProfilePhotoStore(authClient, Crypto.randomUUID) : undefined,
   openBrowser: (url, redirect) => WebBrowser.openAuthSessionAsync(url, redirect),
   canChangeAccount: async () => {
+    // Guest pages are inaccessible. Preserved legacy guest runs must never trap
+    // a signed-out user before they can authenticate. No records are adopted.
+    const owner = authentication.getSnapshot().account?.id;
+    if (!owner) return true;
     const { getStorage } = await import('../storage/database');
     const active=await (await getStorage()).sync.hasActiveRun();
     // Expiry must not lock a runner out of re-authenticating to finish their run.
-    return !active || active.owner_id!==(authentication.getSnapshot().account?.id??'');
+    return !active || active.owner_id !== owner;
   },
 });

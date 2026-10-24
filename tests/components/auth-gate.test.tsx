@@ -24,7 +24,7 @@ for (const [name] of privateScreens) routes[name === '(tabs)' ? '(tabs)/index' :
 beforeEach(() => { mockAuth = { ready: true, account: null }; });
 afterEach(() => jest.useRealTimers());
 
-test.each([...privateScreens.map(([name]) => name === '(tabs)' ? '/' : '/' + name.replace('[id]', 'abc').replace('/index', '')), '/run'])('guest deep link %s cannot mount service content', async initialUrl => {
+test.each([...privateScreens.map(([name]) => name === '(tabs)' ? '/' : '/' + name.replace('[id]', 'abc').replace('/index', '')), '/run', '/unknown-page'])('guest deep link %s cannot mount service content', async initialUrl => {
   // Register a tab deep link as well as the real root private route group.
   await renderRouter({ ...routes, '(tabs)/run': () => <Text testID="private">run</Text> }, { initialUrl });
   expect(screen.getByTestId('entry')).toBeVisible();

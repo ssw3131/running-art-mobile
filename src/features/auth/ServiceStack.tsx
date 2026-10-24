@@ -18,6 +18,7 @@ export const privateScreens = [
   ['ui-preview', 'UI 미리보기'], ['service-notices', '공지사항'], ['service-notice', '공지사항'],
   ['service-inquiry', '문의'], ['service-guide', '사용법'], ['service-faq', '자주 묻는 질문'],
   ['service-about', 'RunPen 소개'], ['run-result', '러닝 결과'], ['run-card', '공유하기'],
+  ['+not-found', ''],
 ] as const;
 
 type RouteState = { routeNames?: readonly string[]; routes: readonly { name: string; state?: RouteState }[] };
@@ -48,7 +49,7 @@ export function ServiceStack() {
   if (!auth.ready) return <View testID="auth-loading" style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
     <ActivityIndicator /><AppText>로그인 상태를 확인하고 있어요.</AppText>
   </View>;
-  return <Stack screenOptions={{ contentStyle: { backgroundColor: c.background },
+  return <Stack key={identity ?? 'guest'} screenOptions={{ contentStyle: { backgroundColor: c.background },
     header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back menu={!!auth.account} /> }}>
     <Stack.Protected guard={!!auth.account}>
       {privateScreens.map(([name, title]) => <Stack.Screen key={name} name={name} options={{ title,

@@ -7,7 +7,6 @@ backend. Physical devices and existing sessions are rejected by both helpers.
 import base64
 import json
 import os
-import pathlib
 import subprocess
 import time
 
