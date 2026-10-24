@@ -5,8 +5,10 @@ import { COMPUTE_CONTRACT, MAX_REQUEST_BYTES, MAX_RESPONSE_BYTES, parseComputeRe
 import { createComputePool, ServiceError } from './pool.mjs';
 import { createAdmissionGuard, createIngressGate } from './admission.mjs';
 import { createGcsAdmissionStore } from './admission-store.mjs';
+import { configuredUsage, reserveCalculation } from './usage.mjs';
+import { UsageError } from '../../supabase/functions/_shared/usage-backend.ts';
 
-export function createComputeServer(pool = createComputePool(), { admission, ingress = createIngressGate(), report = () => {} } = {}) {
+export function createComputeServer(pool = createComputePool(), { admission, ingress = createIngressGate(), report = () => {}, usage = configuredUsage() } = {}) {
   let occupied = false, stopping = false, lastRejection = -Infinity;
   const server = http.createServer({ maxHeaderSize: 8192 }, async (req, res) => {
     const reply = (status, value, retryAfter = 5) => {
@@ -38,6 +40,7 @@ export function createComputeServer(pool = createComputePool(), { admission, ing
     // immediately propagate a mobile disconnect.
     const timer = setTimeout(() => { controller.abort(); reply(408, { error: 'timeout' }); req.destroy(); }, 65000);
     const bodyTimer = setTimeout(() => { controller.abort(); reply(408, { error: 'timeout' }); req.destroy(); }, 5000);
+    let allowance = null, resultReady = false;
     try {
       let size = 0;
       const chunks = [];
@@ -50,19 +53,31 @@ export function createComputeServer(pool = createComputePool(), { admission, ing
       let request;
       try { request = parseComputeRequest(JSON.parse(Buffer.concat(chunks).toString('utf8'))); }
       catch { throw new ServiceError(400, 'invalid_request'); }
+      allowance = await reserveCalculation(usage, req, request);
+      if (['ready', 'committed'].includes(allowance.operation.state)) {
+        resultReady = true;
+        if (!allowance.operation.result) throw new UsageError('result_expired', 409);
+        return reply(200, allowance.operation.result);
+      }
       if (admission) await admission.reserve(AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]));
       if (controller.signal.aborted) throw new ServiceError(499, 'cancelled');
       report({ severity: 'INFO', event: 'compute_admitted' });
       const value = await pool.run(request, controller.signal);
       if (Buffer.byteLength(JSON.stringify(value)) > MAX_RESPONSE_BYTES) throw new ServiceError(503, 'response_size');
+      if (value.result.candidates.length) {
+        const updated = await usage.command(allowance.owner, 'ready', { id: allowance.id, result: value });
+        if (updated.state !== 'ready' && updated.state !== 'committed') throw new UsageError('operation_cancelled', 409);
+        resultReady = true;
+      } else await usage.command(allowance.owner, 'cancel', { id: allowance.id });
       reply(200, value);
     } catch (error) {
       if (!controller.signal.aborted) {
         const admissionTimeout = error instanceof ServiceError && error.status === 499;
-        reply(admissionTimeout ? 503 : error instanceof ServiceError ? error.status : 503,
-          { error: admissionTimeout ? 'guard_unavailable' : error instanceof ServiceError ? error.code : 'unavailable' }, error.retryAfter ?? 5);
+        reply(admissionTimeout ? 503 : error instanceof ServiceError || error instanceof UsageError ? error.status : 503,
+          { error: admissionTimeout ? 'guard_unavailable' : error instanceof ServiceError || error instanceof UsageError ? error.code : 'unavailable' }, error.retryAfter ?? 5);
       }
     } finally {
+      if (allowance && !resultReady) await usage.command(allowance.owner, 'cancel', { id: allowance.id }).catch(() => {});
       clearTimeout(timer); clearTimeout(bodyTimer); res.removeListener('close', disconnect); occupied = false;
     }
   });

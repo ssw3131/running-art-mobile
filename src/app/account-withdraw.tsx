@@ -26,6 +26,7 @@ export default function AccountWithdrawScreen() {
       <Text testID="withdraw-retention-policy" style={[s.body, { color: colors.text }]}>탈퇴하면 계정과 서버에 보관한 개인 코스·러닝 자료를 삭제합니다. 이 기기에 저장된 코스, 러닝 기록, GPS 경로는 삭제하지 않고 비로그인 기록으로 보관합니다.</Text>
       <Text style={[s.body, { color: colors.muted }]}>보관한 기록은 이 기기에서 계속 열 수 있어요. 나중에 다른 계정으로 로그인하더라도 기기 기록 연결을 직접 선택하기 전에는 그 계정에 업로드하지 않습니다.</Text>
       <Text style={[s.body, { color: colors.muted }]}>서버에만 있고 이 기기에 저장되지 않은 기록은 탈퇴 후 복원할 수 없어요. 진행 중인 러닝은 먼저 종료해 주세요.</Text>
+      <Text testID="withdraw-usage-retention" style={[s.body, { color: colors.muted }]}>같은 소셜 계정으로 재가입해도 생성·저장 사용 횟수는 유지됩니다. 무료 혜택 정책 운영 기간 동안 원본 이메일·소셜 ID 대신 비밀키로 변환한 식별값과 누적 사용량을 별도로 보관합니다. 총량 변경으로 보관 기간이 끝나지는 않습니다.</Text>
     </AccountCard>
     <AccountButton id="withdraw-policy" title="데이터 삭제 · 보관 안내" colors={colors} secondary onPress={() => router.push({ pathname: '/service-policy', params: { kind: 'privacy' } })} />
     <AccountCard colors={colors}>

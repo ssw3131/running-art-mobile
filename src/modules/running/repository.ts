@@ -28,6 +28,11 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
     return queue(async () => { let result!: T; await db.withExclusiveTransactionAsync(async tx => { result = await task(tx); }); return result; });
   }
   return {
+    finished: (limit=30,offset=0) => queue(() => {
+      if(!Number.isSafeInteger(limit)||limit<1||limit>100||!Number.isSafeInteger(offset)||offset<0)throw new RunError('목록 범위가 올바르지 않아요.');
+      return db.getAllAsync<Run & {shape:string|null}>(`SELECT ${columns},json_extract(course_snapshot_json,'$.shape') AS shape FROM running_sessions
+        WHERE owner_id=? AND status='completed' AND course_outcome='finished' AND course_id IS NOT NULL ORDER BY started_at DESC,id DESC LIMIT ? OFFSET ?`,scope(),limit,offset);
+    }),
     course: (id: string) => queue(async () => {
       const row = await db.getFirstAsync<{name:string;snapshot_json:string;snapshot_hash:string}>('SELECT name,snapshot_json,snapshot_hash FROM saved_courses WHERE id=? AND owner_id=?',validateId(id),scope());
       if(!row)throw new RunError('내 계정의 저장 코스를 찾을 수 없어요.');

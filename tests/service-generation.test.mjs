@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PNG } from 'pngjs';
-import { SERVICE_SHAPES, isGenerationDistance } from '../src/modules/route-engine/service-shapes.ts';
+import { SERVICE_SHAPES, isGenerationDistance, generationRadiusKm } from '../src/modules/route-engine/service-shapes.ts';
 import { templateFor, validateCustomTemplate } from '../src/modules/route-engine/engine.ts';
 import { drawingTemplate } from '../src/features/route-lab/drawing.ts';
-import { parseComputeRequest, COMPUTE_CONTRACT } from '../src/modules/route-compute/contract.ts';
+import { parseComputeRequest, CURRENT_COMPUTE_CONTRACT } from '../src/modules/route-compute/contract.ts';
+import { FIGMA_SHAPE_VERSION } from '../src/modules/route-engine/figma-contours.ts';
 import { decodeContourPng } from '../src/modules/image-contour/png.ts';
 import { imageContour } from '../src/modules/image-contour/contour.ts';
 import { encodeSnapshot, decodeSnapshot } from '../src/modules/courses/model.ts';
@@ -13,7 +14,7 @@ test('all twelve product silhouettes remain closed, non-crossing and distinct wi
   assert.equal(SERVICE_SHAPES.length,12);
   const hashes=new Set();
   for(const {id} of SERVICE_SHAPES){
-    const points=templateFor(id);assert.ok(Math.hypot(points[0].x-points.at(-1).x,points[0].y-points.at(-1).y)<1e-10);hashes.add(JSON.stringify(points));
+    const points=templateFor(id,FIGMA_SHAPE_VERSION);assert.ok(Math.hypot(points[0].x-points.at(-1).x,points[0].y-points.at(-1).y)<1e-10);hashes.add(JSON.stringify(points));
     if(!['heart','star','cat','fish'].includes(id)) {
       const span=Math.max(...points.flatMap(p=>[Math.abs(p.x),Math.abs(p.y)]));
       validateCustomTemplate(drawingTemplate(points.map(p=>({x:.5+p.x/(span*2.2),y:.5+p.y/(span*2.2)}))));
@@ -23,9 +24,14 @@ test('all twelve product silhouettes remain closed, non-crossing and distinct wi
   for(const id of ['rabbit','house','diamond','bolt','arrow'])assert.ok(templateFor(id).length);
 });
 test('product distances reject fractional, nonfinite and excessive requests for every shape',()=>{
-  const request={contract:COMPUTE_CONTRACT,origin:{lat:37.4979,lng:127.0276},options:{version:'0.2',mode:'free-loop',shape:'heart',targetKm:5,radiusKm:2},refresh:false};
-  for(const {id} of SERVICE_SHAPES)for(let km=1;km<=10;km++)assert.equal(parseComputeRequest({...request,options:{...request.options,shape:id,targetKm:km}}).options.shape,id);
-  for(const km of [0,11,1.5,NaN,Infinity,'5']){assert.equal(isGenerationDistance(km),false);assert.throws(()=>parseComputeRequest({...request,options:{...request.options,targetKm:km}}));}
+  const request={contract:CURRENT_COMPUTE_CONTRACT,origin:{lat:37.4979,lng:127.0276},options:{version:'0.2',mode:'free-loop',shape:'heart',targetKm:5,radiusKm:2,shapeVersion:FIGMA_SHAPE_VERSION,maxRouteKm:20},refresh:false};
+  for(const {id} of SERVICE_SHAPES)for(let km=1;km<=20;km++){
+    const radiusKm=generationRadiusKm(km);
+    assert.equal(radiusKm,km<=10?2:km/4);
+    assert.equal(parseComputeRequest({...request,options:{...request.options,shape:id,targetKm:km,radiusKm}}).options.shape,id);
+    assert.throws(()=>parseComputeRequest({...request,options:{...request.options,shape:id,targetKm:km,radiusKm:radiusKm+0.25}}));
+  }
+  for(const km of [0,21,40,1.5,NaN,Infinity,'5']){assert.equal(isGenerationDistance(km),false);assert.throws(()=>generationRadiusKm(km));assert.throws(()=>parseComputeRequest({...request,options:{...request.options,targetKm:km}}));}
 });
 test('saved new shape identities round-trip without changing legacy snapshot decoding',()=>{
   for(const {id} of SERVICE_SHAPES){

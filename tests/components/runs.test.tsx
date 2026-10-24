@@ -12,7 +12,7 @@ jest.mock('../../src/features/service/ServiceTabLink', () => {
 test('UI-RUNS-01: pending list does not claim empty; completion shows empty state', async () => {
   let finish!: (value: any[]) => void;
   const list = jest.fn(() => new Promise(resolve => { finish = resolve; }));
-  jest.mocked(getStorage).mockResolvedValue({ runs: { list } } as any);
+  jest.mocked(getStorage).mockResolvedValue({ runs: { finished: list } } as any);
   await render(<RunsScreen embedded />);
   expect(screen.queryByTestId('runs-empty')).toBeNull();
   expect(screen.getByTestId('runs-refresh')).toBeDisabled();
@@ -23,7 +23,7 @@ test('UI-RUNS-01: pending list does not claim empty; completion shows empty stat
 
 test('UI-RUNS-02: storage failure is announced and refresh recovers', async () => {
   const list = jest.fn().mockRejectedValueOnce(new Error('unavailable')).mockResolvedValueOnce([]);
-  jest.mocked(getStorage).mockResolvedValue({ runs: { list } } as any);
+  jest.mocked(getStorage).mockResolvedValue({ runs: { finished: list } } as any);
   await render(<RunsScreen embedded />);
   expect(screen.getByRole('alert')).toBeVisible();
   expect(screen.queryByTestId('runs-empty')).toBeNull();

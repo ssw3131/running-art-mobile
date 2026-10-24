@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "RunPen route compute",
-    "version": "1.0.0"
+    "version": "2.0.0"
   },
   "servers": [
     {
@@ -31,7 +31,23 @@
     "/v1/routes": {
       "post": {
         "operationId": "computeRoutes",
-        "description": "JSON body <= 16384 bytes; response <= 8 MiB. No authentication required.",
+        "description": "JSON body <= 16384 bytes; response <= 8 MiB. Completed membership and bearer authentication required. x-operation-id identifies one reserved generation; confirm receipt through the usage API.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-operation-id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -63,6 +79,26 @@
               }
             }
           },
+          "401": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Error",
             "content": {
@@ -74,6 +110,16 @@
             }
           },
           "408": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Error",
             "content": {
               "application/json": {
@@ -171,7 +217,10 @@
         ],
         "properties": {
           "contract": {
-            "const": "runpen-routes-v1"
+            "enum": [
+              "runpen-routes-v1",
+              "runpen-routes-v2"
+            ]
           },
           "origin": {
             "type": "object",
@@ -219,14 +268,15 @@
                   "bolt",
                   "fish",
                   "arrow",
-                  "dog",
-                  "person",
-                  "bone",
-                  "turtle",
-                  "icecream",
-                  "strawberry",
                   "cloud",
                   "crown",
+                  "icecream",
+                  "strawberry",
+                  "bone",
+                  "whale",
+                  "turtle",
+                  "dog",
+                  "person",
                   "custom"
                 ]
               },
@@ -241,13 +291,227 @@
                   7,
                   8,
                   9,
-                  10
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
                 ]
               },
               "radiusKm": {
-                "const": 2
+                "type": "number",
+                "minimum": 2,
+                "maximum": 5
               }
             },
+            "oneOf": [
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 1
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 2
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 3
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 4
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 5
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 6
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 7
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 8
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 9
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 10
+                  },
+                  "radiusKm": {
+                    "const": 2
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 11
+                  },
+                  "radiusKm": {
+                    "const": 2.75
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 12
+                  },
+                  "radiusKm": {
+                    "const": 3
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 13
+                  },
+                  "radiusKm": {
+                    "const": 3.25
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 14
+                  },
+                  "radiusKm": {
+                    "const": 3.5
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 15
+                  },
+                  "radiusKm": {
+                    "const": 3.75
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 16
+                  },
+                  "radiusKm": {
+                    "const": 4
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 17
+                  },
+                  "radiusKm": {
+                    "const": 4.25
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 18
+                  },
+                  "radiusKm": {
+                    "const": 4.5
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 19
+                  },
+                  "radiusKm": {
+                    "const": 4.75
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "targetKm": {
+                    "const": 20
+                  },
+                  "radiusKm": {
+                    "const": 5
+                  }
+                }
+              }
+            ],
             "allOf": [
               {
                 "if": {
@@ -302,7 +566,80 @@
           "refresh": {
             "type": "boolean"
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "contract": {
+                  "const": "runpen-routes-v2"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "options": {
+                  "required": [
+                    "shapeVersion",
+                    "maxRouteKm"
+                  ],
+                  "properties": {
+                    "shapeVersion": {
+                      "const": "figma-20261024"
+                    },
+                    "maxRouteKm": {
+                      "const": 20
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "options": {
+                  "properties": {
+                    "targetKm": {
+                      "enum": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10
+                      ]
+                    },
+                    "radiusKm": {
+                      "const": 2
+                    },
+                    "shape": {
+                      "not": {
+                        "const": "whale"
+                      }
+                    }
+                  },
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "shapeVersion"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "maxRouteKm"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "Error": {
         "type": "object",
@@ -502,7 +839,10 @@
         ],
         "properties": {
           "contract": {
-            "const": "runpen-routes-v1"
+            "enum": [
+              "runpen-routes-v1",
+              "runpen-routes-v2"
+            ]
           },
           "request": {
             "$ref": "#/components/schemas/Request"
@@ -708,7 +1048,65 @@
               }
             }
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "contract": {
+                  "const": "runpen-routes-v2"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "request": {
+                  "properties": {
+                    "contract": {
+                      "const": "runpen-routes-v2"
+                    }
+                  }
+                },
+                "result": {
+                  "properties": {
+                    "candidates": {
+                      "items": {
+                        "properties": {
+                          "score": {
+                            "properties": {
+                              "lengthKm": {
+                                "type": "number",
+                                "exclusiveMinimum": 0,
+                                "maximum": 20
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "request": {
+                  "properties": {
+                    "contract": {
+                      "const": "runpen-routes-v1"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }

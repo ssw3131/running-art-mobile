@@ -2,7 +2,7 @@ import type { StorageDatabase } from '../storage/types.ts';
 import { serialDatabase } from '../storage/serial-database.ts';
 import { guestScope, type OwnerScope } from '../sync/ownership.ts';
 import { CourseError, courseId, courseName, decodeSnapshot, encodeSnapshot } from './model.ts';
-import type { CourseSnapshot, CourseSummary, SavedCourse } from './model.ts';
+import type { CourseSnapshot, CourseSummary, SavedCourse, CourseAttempt } from './model.ts';
 
 export const summaryColumns = `id,name,source,shape,target_km AS targetKm,length_km AS lengthKm,score,
   created_at AS createdAt,updated_at AS updatedAt`;
@@ -14,11 +14,19 @@ export function createCourseRepository(db: StorageDatabase, now = Date.now, scop
     const result = tail.then(task); tail = result.catch(() => {}); return result;
   }
   return {
+    latestAttempt(id: string | null, hash: string): Promise<CourseAttempt|null> {
+      const owner=scope();
+      return queue(()=>db.getFirstAsync<CourseAttempt>(`SELECT id,status,course_outcome AS courseOutcome,started_at AS startedAt FROM running_sessions
+        WHERE owner_id=? AND (course_id=? OR course_snapshot_hash=?) ORDER BY started_at DESC,id DESC LIMIT 1`,owner,id,hash));
+    },
+    async recover(): Promise<boolean> { return false; },
+    findHash(hash: string) { const owner = scope(); return queue(async () => (await db.getFirstAsync<{id:string}>('SELECT id FROM saved_courses WHERE snapshot_hash=? AND owner_id=?', hash, owner))?.id ?? null); },
     count() {
       const owner=scope();
       return queue(async()=> (await db.getFirstAsync<{count:number}>('SELECT COUNT(*) AS count FROM saved_courses WHERE owner_id=?',owner))?.count ?? 0);
     },
-    async save(value: CourseSnapshot, name: string): Promise<{ id: string; created: boolean }> {
+    async save(value: CourseSnapshot, name: string, requestedId?: string): Promise<{ id: string; created: boolean }> {
+      if (requestedId) courseId(requestedId);
       const { snapshot, json, hash } = encodeSnapshot(value), title = courseName(name);
       const owner = scope();
       return queue(async () => {
@@ -29,7 +37,7 @@ export function createCourseRepository(db: StorageDatabase, now = Date.now, scop
           if (existing) { decodeSnapshot(existing.snapshot_json, existing.snapshot_hash); saved = { id: existing.id, created: false }; return; }
           const timestamp = now();
           await tx.runAsync(`INSERT INTO saved_courses(id,name,source,shape,target_km,length_km,score,snapshot_json,snapshot_hash,created_at,updated_at,owner_id)
-            VALUES(lower(hex(randomblob(16))),?,?,?,?,?,?,?,?,?,?,?)`, title, snapshot.source, snapshot.shape,
+            VALUES(coalesce(?,lower(hex(randomblob(16)))),?,?,?,?,?,?,?,?,?,?,?)`, requestedId ?? null, title, snapshot.source, snapshot.shape,
           snapshot.targetKm, snapshot.lengthKm, snapshot.score, json, hash, timestamp, timestamp, owner);
           const row = await tx.getFirstAsync<{ id: string }>('SELECT id FROM saved_courses WHERE snapshot_hash=? AND owner_id=?', hash, owner);
           if (!row) throw new Error('Saved course unavailable');
@@ -42,7 +50,13 @@ export function createCourseRepository(db: StorageDatabase, now = Date.now, scop
       const owner = scope();
       return queue(async () => {
         if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isSafeInteger(offset) || offset < 0) throw new CourseError('validation', '목록 범위가 올바르지 않아요.');
-        return db.getAllAsync<CourseSummary>(`SELECT ${summaryColumns} FROM saved_courses WHERE owner_id=? ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?`, owner, limit, offset);
+        const rows=await db.getAllAsync<CourseSummary>(`SELECT ${summaryColumns} FROM saved_courses WHERE owner_id=? ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?`, owner, limit, offset);
+        return Promise.all(rows.map(async course=>{
+          const last=await db.getFirstAsync<{status:string;outcome:string}>(`SELECT r.status,r.course_outcome AS outcome FROM running_sessions r
+            JOIN saved_courses c ON c.id=? AND c.owner_id=r.owner_id
+            WHERE r.owner_id=? AND (r.course_id=c.id OR r.course_snapshot_hash=c.snapshot_hash) ORDER BY r.started_at DESC,r.id DESC LIMIT 1`,course.id,owner);
+          return {...course,unfinished:!!last && !(last.status==='completed' && last.outcome==='finished')};
+        }));
       });
     },
     get(id: string): Promise<SavedCourse> {

@@ -5,6 +5,7 @@ import { AppText, Button } from '@/components/ui';
 import { SupportPage } from '@/features/support/SupportPage';
 import { authClient } from '@/modules/auth/runtime';
 import { useThemeColors } from '@/theme/ThemeProvider';
+import { policyPublicationLabel } from '@/modules/membership/policy-presentation';
 
 const titles = { terms: '이용약관', privacy: '개인정보 처리방침', location: '위치기반 서비스 이용약관' };
 type Policy = { id: string; body: string; effectiveAt: string };
@@ -31,7 +32,7 @@ export default function ServicePolicy() {
   const shown = state.kind === kind ? state : { loading: true, policy: null, error: '' };
   return <SupportPage title={title}>
     {shown.loading ? <ActivityIndicator accessibilityLabel="정책 불러오는 중" color={c.action} /> : shown.policy ? <>
-      <AppText variant="heading" weight="bold">RunPen {title}</AppText><AppText variant="caption" style={{ color: c.muted }}>버전 {shown.policy.id} · 시행 {new Date(shown.policy.effectiveAt).toLocaleDateString()}</AppText>
+      <AppText variant="heading" weight="bold">RunPen {title}</AppText><AppText variant="caption" style={{ color: c.muted }}>버전 {shown.policy.id} · {shown.policy.id.startsWith('runpen-test-') ? policyPublicationLabel(shown.policy.id, shown.policy.effectiveAt) : `시행 ${new Date(shown.policy.effectiveAt).toLocaleDateString()}`}</AppText>
       <AppText selectable style={{ lineHeight: 28 }}>{shown.policy.body}</AppText>
     </> : <AppText accessibilityRole="alert">{shown.error || '현재 게시된 문서가 없습니다.'}</AppText>}
     <Button label="문서 다시 확인" variant="outline" onPress={() => setAttempt(value => value + 1)} />

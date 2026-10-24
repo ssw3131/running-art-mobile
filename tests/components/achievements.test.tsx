@@ -6,6 +6,13 @@ const mockPush=jest.fn(),mockRetry=jest.fn();
 jest.mock('../../src/features/achievements/use-run-result',()=>({useRunResult:()=>({...mockResult,retry:mockRetry})}));
 jest.mock('expo-router',()=>({Stack:{Screen:()=>null},useLocalSearchParams:()=>({id:'a'.repeat(32)}),router:{push:(...args:any[])=>mockPush(...args)}}));
 jest.mock('../../src/features/service/open-service-tab',()=>({openServiceTab:jest.fn()}));
+jest.mock('../../src/features/auth/use-auth',()=>({useAuth:()=>({ready:true,account:{id:'owner',name:'러너'}})}));
+jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>({account:{id:'owner'}})}}));
+jest.mock('../../src/modules/storage/database',()=>({getStorage:jest.fn()}));
+jest.mock('../../src/modules/courses/share-gpx',()=>({shareRunCourseGpx:jest.fn()}));
+jest.mock('../../src/features/terrain/use-terrain',()=>({useTerrain:()=>({state:{status:'idle',profile:null}})}));
+jest.mock('../../src/features/running/RunPath',()=>()=>null);
+jest.mock('../../src/features/running/RunSharePanel',()=>()=>null);
 beforeEach(()=>{mockPush.mockReset();mockRetry.mockReset();mockResult={data:null,error:''};});
 test('UI-S5-01 loading and error never advertise an award, retry is explicit',async()=>{
  const view=await render(<RunResultScreen/>);expect(screen.queryByTestId('run-result-badge')).toBeNull();
@@ -13,12 +20,17 @@ test('UI-S5-01 loading and error never advertise an award, retry is explicit',as
  await fireEvent.press(screen.getByText('다시 불러오기'));expect(mockRetry).toHaveBeenCalledTimes(1);
 });
 test('UI-S5-02 stopped and finished outcomes remain distinct, share opens the selected record',async()=>{
- const snapshot={shape:'heart',target:[[127,37],[127.01,37.01],[127,37]]};
- const data={run:{status:'completed',courseOutcome:'stopped',distanceM:3000,activeMs:1800000},course:{snapshot},achievements:{finishedCourses:2,currentStreak:3,badges:[{shape:'heart',count:2}]}};
+ const snapshot={shape:'heart',origin:{lat:37,lng:127},lengthKm:3,target:[[127,37],[127.01,37.01],[127,37]]};
+ const data={run:{status:'completed',startedAt:Date.UTC(2026,9,24),courseOutcome:'stopped',distanceM:3000,activeMs:1800000},course:{snapshot,name:'하트 코스'},points:[],achievements:{finishedCourses:2,currentStreak:3,badges:[{shape:'heart',count:2,firstRunId:'other'}]}};
  mockResult={data,error:''};const view=await render(<RunResultScreen/>);
  expect(screen.queryByTestId('run-result-badge')).toBeNull();
  mockResult={data:{...data,run:{...data.run,courseOutcome:'finished'}},error:''};await view.rerender(<RunResultScreen/>);
- expect(screen.getByTestId('run-result-badge')).toHaveTextContent('하트 · 2회 완주');
- await fireEvent.press(screen.getByTestId('run-result-share'));expect(mockPush).toHaveBeenCalledWith({pathname:'/run-card',params:{id:'a'.repeat(32)}});
+ expect(screen.getByTestId('completion-trophy')).toBeTruthy();
+ expect(screen.queryByTestId('completion-first-badge')).toBeNull();
+ await fireEvent.press(screen.getByText('공유 이미지 만들기'));expect(mockPush).toHaveBeenCalledWith({pathname:'/run-card',params:{id:'a'.repeat(32)}});
+ mockResult={data:{...data,run:{...data.run,courseOutcome:'finished'},achievements:{...data.achievements,badges:[{shape:'heart',count:2,firstRunId:'a'.repeat(32)}]}},error:''};await view.rerender(<RunResultScreen/>);
+ expect(screen.getByTestId('completion-first-badge')).toBeTruthy();expect(screen.queryByTestId('completion-trophy')).toBeNull();
+ mockResult={data:{...data,course:null,run:{...data.run,courseOutcome:null}},error:''};await view.rerender(<RunResultScreen/>);
+ expect(screen.queryByTestId('completion-first-badge')).toBeNull();expect(screen.queryByTestId('completion-trophy')).toBeNull();
  expect(screen.queryByText(/칼로리/)).toBeNull();
 });

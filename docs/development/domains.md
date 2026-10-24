@@ -26,7 +26,7 @@ node scripts/verify-domains.mjs
 
 빌드에는 명시한 안내 HTML·404·헤더와 기존 공유 뷰어만 포함한다. 정책 초안·APK·개인 기록은 포함하지 않는다. Supabase Auth/DB/Storage, MapTiler, Cloud Run 설정·전역 계산 보호 한도는 유지했다. 새 요금제/구독을 신청하지 않았다.
 
-도로 Worker는 GET/HEAD 및 두 공개 prefix만 받는다. gzip 파일은 Content-Encoding 없이 원본 바이트·길이·해시 검증을 유지하며 content-addressed 파일만 캐시한다. 계산은 고정 서버의 두 경로만 허용하고 16KiB 요청 제한·본문 읽기 시간 제한·70초 상한을 두며 쿠키/인증을 전달하거나 결과를 캐시하지 않는다. 기존 서버가 응답한 429/Retry-After도 유지한다.
+도로 Worker는 GET/HEAD 및 두 공개 prefix만 받는다. gzip 파일은 Content-Encoding 없이 원본 바이트·길이·해시 검증을 유지하며 content-addressed 파일만 캐시한다. 계산은 고정 서버의 두 경로만 허용하고 16KiB 요청 제한·본문 읽기 시간 제한·70초 상한을 두며 쿠키를 전달하거나 결과를 캐시하지 않는다. 2026-10-24 사용량 통합부터 계산 POST에만 Authorization·x-operation-id를 고정 Cloud Run으로 전달하여 회원 인증과 작업 재전송을 검증한다. health에는 전달하지 않는다. 기존 서버가 응답한 429/Retry-After도 유지한다.
 
 ## 앱 반영과 복구
 

@@ -3,6 +3,7 @@ import test from 'node:test';
 import { createClient } from '@supabase/supabase-js';
 import { createMembershipController } from '../src/modules/membership/controller.ts';
 import { createMembershipRemote } from '../src/modules/membership/remote.ts';
+import { membershipAccess } from '../src/modules/membership/access.ts';
 import { consentValid, parseMembership, parsePolicy, signupNickname } from '../src/modules/membership/model.ts';
 
 const A = '11111111-1111-4111-8111-111111111111', B = '22222222-2222-4222-8222-222222222222';
@@ -38,7 +39,7 @@ test('existing pending and new accounts require consent; no policy does not fabr
   const f = fixture(); f.controller.start(); await tick();
   assert.equal(f.controller.getSnapshot().status, 'required');
   f.remote.policy = async () => null; await f.controller.reload();
-  assert.equal(f.controller.getSnapshot().status, 'unavailable');
+  assert.equal(f.controller.getSnapshot().status, 'required'); assert.equal(f.controller.getSnapshot().policyStatus, 'unavailable');
   assert.equal(await f.controller.accept(input), false); assert.equal(f.calls.length, 0);
 });
 test('lost response retains request ID across process restart; double taps submit once', async () => {
@@ -52,7 +53,9 @@ test('lost response retains request ID across process restart; double taps submi
   const second = fixture({ storage: f.storage }); second.controller.start(); await tick();
   assert.equal(await second.controller.accept(input), true);
   assert.equal(second.calls[0].requestId, f.calls[0].requestId);
-  assert.equal(second.controller.getSnapshot().status, 'complete'); assert.equal(f.values.size, 0);
+  assert.equal(second.controller.getSnapshot().status, 'complete');
+  assert.equal([...f.values.keys()].some(key=>key.includes('.pending.')), false);
+  assert.equal([...f.values.keys()].some(key=>key.includes('.receipt.')), true);
 });
 test('account switch discards old in-flight load and receipt, including logout/login to same owner', async () => {
   const gate = deferred(), f = fixture({ remote: { membership: owner => owner === A ? gate.promise : Promise.resolve(complete(B)) } });
@@ -88,8 +91,41 @@ test('completed version restores after restart; network error is retryable and i
   const f = fixture({ remote: { membership: async () => complete(A) } }); f.controller.start(); await tick();
   assert.equal(f.controller.getSnapshot().status, 'complete');
   f.remote.policy = async () => { throw new Error('offline private detail'); }; await f.controller.reload();
-  assert.equal(f.controller.getSnapshot().status, 'error'); assert.equal(f.controller.getSnapshot().membership, null);
+  assert.equal(f.controller.getSnapshot().status, 'required'); assert.equal(f.controller.getSnapshot().policyStatus, 'error'); assert.equal(f.controller.getSnapshot().membership.owner, A);
   f.remote.policy = async () => policy; await f.controller.reload(); assert.equal(f.controller.getSnapshot().status, 'complete');
+});
+
+for (const first of ['policy', 'receipt']) test(`confirmed owner keeps service state throughout reload when ${first} returns first`, async () => {
+  const f = fixture({ remote: { membership: async () => complete(A) } });
+  f.controller.start(); await tick();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'service');
+  const policyReply = deferred(), receiptReply = deferred(), states = [];
+  f.remote.policy = () => policyReply.promise;
+  f.remote.membership = () => receiptReply.promise;
+  const unsubscribe = f.controller.subscribe(() => states.push(membershipAccess(A, f.controller.getSnapshot())));
+  const loading = f.controller.reload(); await tick();
+  if (first === 'policy') policyReply.resolve(policy); else receiptReply.resolve(complete(A));
+  await tick();
+  if (first === 'policy') receiptReply.resolve(complete(A)); else policyReply.resolve(policy);
+  await loading;
+  unsubscribe();
+  assert.ok(states.length > 2);
+  assert.deepEqual([...new Set(states)], ['service'], 'An intermediate signup state remounts the navigator and erases course conditions');
+  // A real policy change must still revoke service access after resolution.
+  f.remote.policy = async () => ({ ...policy, id: 'test-v2' });
+  f.remote.membership = async () => complete(A);
+  await f.controller.reload();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'signup');
+  f.controller.stop();
+});
+
+test('a first receipt without a trusted cache waits for the current policy before service access', async () => {
+  const reply = deferred(), f = fixture({ remote: { policy: () => reply.promise, membership: async () => complete(A) } });
+  f.controller.start(); await tick();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'signup');
+  reply.resolve({ ...policy, id: 'test-v2' }); await tick();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'signup');
+  f.controller.stop();
 });
 test('SDK sends explicit owner and policy, rejects foreign receipt and tolerates only missing old RPC', async () => {
   let mode = 'normal'; const calls = [];
@@ -107,4 +143,61 @@ test('SDK sends explicit owner and policy, rejects foreign receipt and tolerates
   mode = 'foreign'; await assert.rejects(remote.membership(A));
   mode = 'old'; assert.equal(await remote.policy(), null);
   mode = 'error'; await assert.rejects(remote.policy());
+});
+
+
+test('membership resolves independently while policy is unavailable or still loading', async () => {
+  const gate = deferred(), f = fixture({ remote: { policy: () => gate.promise } });
+  f.controller.start(); await tick();
+  assert.equal(f.controller.getSnapshot().status, 'required');
+  assert.equal(f.controller.getSnapshot().policyStatus, 'loading');
+  assert.equal(f.controller.getSnapshot().membership.owner, A);
+  gate.resolve(null); await tick();
+  assert.equal(f.controller.getSnapshot().policyStatus, 'unavailable');
+  f.remote.policy = async () => policy;
+  await f.controller.retryPolicy();
+  assert.equal(f.controller.getSnapshot().policyStatus, 'ready');
+  assert.equal(f.controller.getSnapshot().status, 'required');
+});
+test('membership error is independent of a readable policy and retry cannot fabricate a receipt', async () => {
+  const f = fixture({ remote: { membership: async () => { throw Error('offline'); } } }); f.controller.start(); await tick();
+  assert.equal(f.controller.getSnapshot().status, 'error'); assert.equal(f.controller.getSnapshot().policyStatus, 'ready');
+  await f.controller.retryPolicy(); assert.equal(f.controller.getSnapshot().status, 'error');
+  f.remote.membership = async () => complete(A); await f.controller.reload();
+  assert.equal(f.controller.getSnapshot().status, 'complete');
+});
+test('profile save holds membership busy across auth snapshots, blocks duplicates/reload and precedes consent', async () => {
+  const f = fixture(), save = deferred(); f.controller.start(); await tick();
+  const pending = f.controller.accept(input, () => save.promise);
+  assert.equal(f.controller.getSnapshot().busy, true);
+  f.change(A); await f.controller.reload();
+  assert.equal(f.controller.getSnapshot().busy, true);
+  assert.equal(await f.controller.accept(input), false); assert.equal(f.calls.length, 0);
+  save.resolve(true); assert.equal(await pending, true); assert.equal(f.calls.length, 1);
+});
+test('failed profile save never accepts consent; account switching during save ignores its late result', async () => {
+  const f = fixture(); f.controller.start(); await tick();
+  assert.equal(await f.controller.accept(input, async () => false), false); assert.equal(f.calls.length, 0);
+  const save = deferred(), pending = f.controller.accept(input, () => save.promise);
+  f.change(null); f.change(B); await tick(); save.resolve(true);
+  assert.equal(await pending, false); assert.equal(f.calls.length, 0);
+  assert.equal(f.controller.getSnapshot().owner, B); assert.equal(f.controller.getSnapshot().status, 'required');
+});
+test('deletion and rejoining with a new auth ID cannot reuse the old receipt or pending request', async () => {
+  const f = fixture(); f.controller.start(); await tick(); await f.controller.accept(input);
+  assert.equal(f.controller.getSnapshot().status, 'complete');
+  f.change(null); f.change(B); await tick();
+  assert.equal(f.controller.getSnapshot().status, 'required'); assert.equal(f.controller.getSnapshot().membership.owner, B);
+  await f.controller.accept(input); assert.equal(f.calls[1].owner, B); assert.notEqual(f.calls[0].requestId, f.calls[1].requestId);
+});
+
+test('consent receipt with failed latest-policy lookup stays behind the gate until policy retry confirms it', async () => {
+  const f = fixture(); f.controller.start(); await tick();
+  f.remote.accept = async () => { f.remote.policy = async () => { throw Error('offline'); }; return complete(A); };
+  assert.equal(await f.controller.accept(input, async () => true), false);
+  assert.equal(f.controller.getSnapshot().status, 'required');
+  assert.equal(f.controller.getSnapshot().policyStatus, 'error');
+  assert.equal(f.controller.getSnapshot().membership.owner, A);
+  f.remote.policy = async () => policy; await f.controller.retryPolicy();
+  assert.equal(f.controller.getSnapshot().status, 'complete');
 });

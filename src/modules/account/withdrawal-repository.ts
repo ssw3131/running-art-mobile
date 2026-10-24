@@ -51,7 +51,7 @@ export function createWithdrawalRepository(database: StorageDatabase, scope: Own
       }
       // Keep the former account's settings and any existing guest settings too.
       await tx.runAsync("INSERT OR IGNORE INTO account_preferences(owner_id,preferences_json,updated_at) SELECT '',preferences_json,updated_at FROM account_preferences WHERE owner_id=?", owner);
-      for (const table of ['sync_accounts', 'sync_deletions', 'sync_conflicts']) await tx.runAsync(`DELETE FROM ${table} WHERE owner_id=?`, owner);
+      for (const table of ['sync_accounts', 'sync_deletions', 'sync_conflicts', 'usage_pending', 'usage_generation_pending']) await tx.runAsync(`DELETE FROM ${table} WHERE owner_id=?`, owner);
       await tx.runAsync('UPDATE account_withdrawals SET retained_at=? WHERE owner_id=?', now(), owner);
     }),
   };

@@ -24,8 +24,18 @@ const assets = {
   confirm: { source: require('../../../assets/generation/generate-confirm.svg'), width: 20, height: 20 },
   run: { source: require('../../../assets/generation/run.svg'), width: 22, height: 22 },
 };
-export function GenerationIcon({ name }: { name: keyof typeof assets }) {
-  const asset = assets[name];
+const figmaAssets = {
+  heart: require('../../../assets/generation/figma-20261024/heart.svg'), star: require('../../../assets/generation/figma-20261024/star.svg'),
+  cloud: require('../../../assets/generation/figma-20261024/cloud.svg'), crown: require('../../../assets/generation/figma-20261024/crown.svg'),
+  icecream: require('../../../assets/generation/figma-20261024/icecream.svg'), strawberry: require('../../../assets/generation/figma-20261024/strawberry.svg'),
+  fish: require('../../../assets/generation/figma-20261024/fish.svg'), bone: require('../../../assets/generation/figma-20261024/bone.svg'),
+  whale: require('../../../assets/generation/figma-20261024/whale.svg'), turtle: require('../../../assets/generation/figma-20261024/turtle.svg'),
+  cat: require('../../../assets/generation/figma-20261024/cat.svg'), dog: require('../../../assets/generation/figma-20261024/dog.svg'),
+};
+export function GenerationIcon({ name }: { name: keyof typeof assets | keyof typeof figmaAssets }) {
+  if (name in figmaAssets) return <Image source={figmaAssets[name as keyof typeof figmaAssets]} accessible={false} contentFit="contain"
+    style={{ width: 48, height: 48, transform: ['crown', 'bone'].includes(name) ? [{ scaleX: -1 }] : undefined }} />;
+  const asset = assets[name as keyof typeof assets];
   if (name === 'generate') return <View accessible={false} style={{ width: 22, height: 22 }}>
     <Image source={asset.source} contentFit="contain" accessible={false}
       style={{ position: 'absolute', left: -2.5, top: -5 / 3, width: asset.width, height: asset.height }} />

@@ -8,13 +8,15 @@ import type { HomeData } from '@/modules/home/model';
 
 export type HomeLoad = { owner: string; data: HomeData | null; error: string };
 export function useHome() {
-  const auth = useAuth(), owner = auth.ready ? auth.account?.id ?? '' : null;
+  const auth = useAuth(), owner = auth.ready && auth.account ? auth.account.id : null;
   const [state, setState] = useState<HomeLoad>({ owner: '', data: null, error: '' });
   const [attempt, setAttempt] = useState(0);
   useFocusEffect(useCallback(() => {
     if (owner === null) return;
     let current = true, busy = false;
-    setState({ owner, data: null, error: '' });
+    // Keep this owner's rows mounted on return so FlatList retains its offset.
+    // The render guard below still hides another account's data immediately.
+    setState(previous => previous.owner === owner ? { ...previous, error: '' } : { owner, data: null, error: '' });
     const refresh = async () => {
       if (busy || !current || AppState.currentState !== 'active') return;
       busy = true;
@@ -23,7 +25,7 @@ export function useHome() {
         const data = await (await getStorage()).home.read();
         if (current && data.owner === owner) setState({ owner, data, error: '' });
       } catch (error) {
-        if (current) setState({ owner, data: null, error: Platform.OS === 'android' ? storageErrorMessage(error) : '홈 기록은 Android 앱에서 확인해 주세요.' });
+        if (current) setState(previous => ({ owner, data: previous.owner === owner ? previous.data : null, error: Platform.OS === 'android' ? storageErrorMessage(error) : '홈 기록은 Android 앱에서 확인해 주세요.' }));
       } finally { busy = false; }
     };
     void refresh();

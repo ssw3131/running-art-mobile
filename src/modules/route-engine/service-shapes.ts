@@ -2,14 +2,21 @@ import type { Point, ShapeId } from './types.ts';
 
 /** Product catalog order; legacy IDs remain supported by the engine and saved data. */
 export const SERVICE_SHAPES = [
-  { id: 'heart', name: '하트' }, { id: 'star', name: '별' }, { id: 'dog', name: '강아지' },
-  { id: 'cat', name: '고양이' }, { id: 'person', name: '사람' }, { id: 'fish', name: '물고기' },
-  { id: 'bone', name: '뼈다귀' }, { id: 'turtle', name: '거북이' }, { id: 'icecream', name: '아이스크림' },
-  { id: 'strawberry', name: '딸기' }, { id: 'cloud', name: '구름' }, { id: 'crown', name: '왕관' },
+  { id: 'heart', name: '하트' }, { id: 'star', name: '별' }, { id: 'cloud', name: '구름' }, { id: 'crown', name: '왕관' },
+  { id: 'icecream', name: '아이스크림' }, { id: 'strawberry', name: '딸기' }, { id: 'fish', name: '물고기' }, { id: 'bone', name: '뼈다귀' },
+  { id: 'whale', name: '고래' }, { id: 'turtle', name: '거북이' }, { id: 'cat', name: '냥냥이' }, { id: 'dog', name: '댕댕이' },
 ] as const satisfies readonly { id: ShapeId; name: string }[];
 export const GENERATION_DISTANCES = Array.from({ length: 10 }, (_, i) => i + 1);
+export const MAX_GENERATION_DISTANCE = 20;
+export const SUPPORTED_GENERATION_DISTANCES = Array.from({ length: MAX_GENERATION_DISTANCE }, (_, i) => i + 1);
 export function isGenerationDistance(value: unknown): value is number {
-  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 10;
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= MAX_GENERATION_DISTANCE;
+}
+
+/** Preserve existing short searches; long shapes need room without unbounded road loading. */
+export function generationRadiusKm(targetKm: number): number {
+  if (!isGenerationDistance(targetKm)) throw new Error('목표 거리는 1~20km 정수로 입력해 주세요.');
+  return targetKm <= 10 ? 2 : targetKm / 4;
 }
 
 // Closed, bounded route silhouettes. Display icons remain the untouched Figma assets.

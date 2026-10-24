@@ -5,15 +5,17 @@ import CourseGenerationScreen from '../../src/features/course-generation/CourseG
 
 let mockG: any;
 let mockMapProps: any;
+let mockAccount: { id: string } | null = null;
 const mockPush = jest.fn();
 jest.mock('../../src/features/course-generation/use-course-generation', () => ({
   useCourseGeneration: () => mockG, locationMessage: () => '지도를 움직여 탐색 중심을 선택해 주세요.',
 }));
-jest.mock('../../src/features/auth/use-auth', () => ({ useAuth: () => ({ ready: true, account: null }) }));
+jest.mock('../../src/features/auth/use-auth', () => ({ useAuth: () => ({ ready: true, account: mockAccount }) }));
 jest.mock('../../src/modules/map/MapSurface', () => ({ __esModule: true, default: (props: any) => {
   mockMapProps = props; return require('react').createElement(require('react-native').View, { testID: 'map-preview' });
 } }));
 jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => ({}),
   router: { push: (...args: any[]) => mockPush(...args) },
   useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]),
 }));
@@ -23,6 +25,7 @@ const completed = (count = 2) => ({ result: { ...baseline, candidates: baseline.
   origin: grid.origin, options: { ...grid.options, shape: 'heart', targetKm: 3 }, liveRoads: false });
 beforeEach(() => {
   mockPush.mockReset();
+  mockAccount = null;
   mockG = {
     tab: 'conditions', datasetId: 'grid', dataset: { synthetic: true, input: grid, description: '가상 도로' },
     shape: 'heart', targetKm: 3, customTemplate: null, drawingOpen: false, diagnostics: false,
@@ -66,7 +69,8 @@ test('UI-GEN-03: old result keeps its conditions and real candidate count after 
   expect(screen.getByText('추천 코스 2개')).toBeVisible();
   expect(screen.getByTestId('generation-result-conditions')).toHaveTextContent(/하트 · 목표 3 km/);
   expect(screen.queryByTestId('candidate-2')).toBeNull();
-  expect(screen.queryByText(/유사도.*%/)).toBeNull();
+  expect(screen.getAllByText(/유사도 :/).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/예상 러닝 시간 :/).length).toBe(2);
   await fireEvent.press(screen.getByTestId('candidate-1'));
   expect(mockG.setSelected).toHaveBeenCalledWith(1);
   await fireEvent.press(screen.getByTestId('generation-detail'));
@@ -105,4 +109,34 @@ test('UI-GEN-06: a condition changed while confirmation was open must be confirm
   await fireEvent.press(screen.getByTestId('generation-confirm'));
   expect(mockG.start).not.toHaveBeenCalled();
   expect(screen.getByText('조건이 바뀌었어요. 현재 조건을 다시 확인해 주세요.')).toBeVisible();
+});
+
+test('UI-GEN-07: regeneration confirms the completed result even after the next input changed', async () => {
+  mockG.tab = 'results'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('generation-regenerate'));
+  expect(screen.getByText('같은 조건으로 다시 생성할까요?')).toBeVisible();
+  await fireEvent.press(screen.getByTestId('generation-confirm-cancel'));
+  expect(mockG.start).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByTestId('generation-regenerate'));
+  await fireEvent.press(screen.getByTestId('generation-confirm'));
+  expect(mockG.setTargetKm).toHaveBeenCalledWith(3);
+  expect(mockG.setShape).toHaveBeenCalledWith('heart');
+  expect(mockG.start).toHaveBeenCalledWith({origin:grid.origin,shape:'heart',targetKm:3,customTemplate:undefined});
+});
+
+test('UI-GEN-08: real-map updates preserve place input and an open distance draft', async () => {
+  mockG.dataset.synthetic = false;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.changeText(screen.getByTestId('place-search-input'), 'Busan city hall');
+  await fireEvent.press(screen.getByTestId('distance-more'));
+  await fireEvent.changeText(screen.getByTestId('distance-input'), '20');
+  mockG.mapMoving = true;
+  await screen.rerender(<CourseGenerationScreen />);
+  expect(screen.getByTestId('place-search-input')).toHaveDisplayValue('Busan city hall');
+  expect(screen.getByTestId('distance-input')).toHaveDisplayValue('20');
+  mockAccount = { id: 'another-owner' };
+  await screen.rerender(<CourseGenerationScreen />);
+  expect(screen.getByTestId('place-search-input')).toHaveDisplayValue('');
+  expect(screen.queryByTestId('distance-input')).toBeNull();
 });

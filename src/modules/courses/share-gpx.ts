@@ -6,11 +6,10 @@ import { CourseExportError, createCourseExporter } from './export';
 let sequence = 0;
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
-export const shareCourseGpx = createCourseExporter({
-  load: async id => (await getStorage()).courses.get(id),
+const nativeExporter = {
   isAvailable: () => Sharing.isAvailableAsync(),
-  share: (uri, options) => Sharing.shareAsync(uri, options),
-  async write(fileName, xml) {
+  share: (uri: string, options: Sharing.SharingOptions) => Sharing.shareAsync(uri, options),
+  async write(fileName: string, xml: string) {
     if (!FileSystem.cacheDirectory) throw new CourseExportError('임시 파일 저장소를 사용할 수 없어요. 앱을 다시 실행해 주세요.');
     const root = `${FileSystem.cacheDirectory}course-exports/`;
     await FileSystem.makeDirectoryAsync(root, { intermediates: true });
@@ -35,4 +34,10 @@ export const shareCourseGpx = createCourseExporter({
       throw error;
     }
   },
-});
+};
+export const shareCourseGpx = createCourseExporter({ ...nativeExporter, load: async id => (await getStorage()).courses.get(id) });
+export const shareRunCourseGpx = createCourseExporter({ ...nativeExporter, load: async id => {
+  const guide = await (await getStorage()).runs.guidance(id);
+  if (!guide) throw new CourseExportError('이 기록에 코스 사본이 없어요.');
+  return { ...guide.course, createdAt: Date.now(), updatedAt: Date.now(), shape: guide.course.snapshot.shape, lengthKm: guide.course.snapshot.lengthKm, targetKm: guide.course.snapshot.targetKm, source: guide.course.snapshot.source, score: guide.course.snapshot.score };
+} });

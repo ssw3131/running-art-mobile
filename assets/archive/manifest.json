@@ -1,0 +1,45 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "nodes": {
+    "saved": "35:4724",
+    "sheet": "268:9518",
+    "detail": "35:4857",
+    "finished": "35:5250",
+    "badge": "35:5820",
+    "trophy": "494:2835",
+    "header": "305:11642",
+    "edit": "35:5567"
+  },
+  "assets": [
+    {
+      "file": "heart-badge-cropped.png",
+      "node": "494:2831",
+      "note": "Figma 마스크/이미지 변환을 포함한 개별 배지 노드 export. 원본 sheet 전체 표시 오류 수정."
+    },
+    {
+      "file": "wand.svg",
+      "source": "https://www.figma.com/api/mcp/asset/d72472af-ae85-44cb-ac13-75d04ecf0218/cad7c.svg"
+    },
+    {
+      "file": "archive.svg",
+      "source": "https://www.figma.com/api/mcp/asset/d72472af-ae85-44cb-ac13-75d04ecf0218/c20ef.svg"
+    },
+    {
+      "file": "confetti.png",
+      "source": "https://www.figma.com/api/mcp/asset/628b3ddd-3657-41d8-a824-c9368c60a5fc/84878.png"
+    },
+    {
+      "file": "heart-badge.png",
+      "source": "https://www.figma.com/api/mcp/asset/628b3ddd-3657-41d8-a824-c9368c60a5fc/0ae45.png"
+    },
+    {
+      "file": "trophy.png",
+      "source": "https://www.figma.com/api/mcp/asset/e4562cd7-47be-4252-b9a5-07f6d970aff2/eb5a3.png"
+    },
+    {
+      "file": "edit.svg",
+      "source": "https://www.figma.com/api/mcp/asset/c415f99a-2c9b-44a4-8bc1-d7d4c4a0c172.svg"
+    }
+  ],
+  "note": "Figma 원본 자산. 예시 거리·주소·저장 공간/구매 문구는 사용자 확정 계약에 따라 실제 데이터·누적 횟수 안내로 대체."
+}

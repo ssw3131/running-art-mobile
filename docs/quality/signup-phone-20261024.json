@@ -1,0 +1,55 @@
+{
+  "completedAt": "2026-10-24T20:16:04.945339+09:00",
+  "device": "SM-A750N",
+  "apk": {
+    "sha256": "65c4252c251f5d1ccf79b1a744016a2d5e20d6f991ad15fc8d5f4335e804e4a6",
+    "bytes": 88158785,
+    "certificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "abi": "arm64-v8a"
+  },
+  "installedAt": "2026-10-24T20:11:42+09:00",
+  "checks": {
+    "typecheck": true,
+    "lint": true,
+    "logic": 472,
+    "components": 92,
+    "releaseBuild": true,
+    "gradleTasks": 992
+  },
+  "smoke": {
+    "entry": true,
+    "loginToggle": true,
+    "privateRouteGated": true,
+    "restart": true,
+    "socialLoginPerformed": false,
+    "consentSubmitted": false
+  },
+  "preservation": {
+    "dataPreserved": true,
+    "settingsPreserved": true,
+    "permissionsPreserved": true,
+    "installIdentityPreserved": true,
+    "apkMatches": true,
+    "helperRemoved": true,
+    "internalBackupRemoved": true,
+    "temporaryUiFileRemoved": true,
+    "noRunningService": true
+  },
+  "server": {
+    "membershipPolicy": {
+      "status": 200,
+      "published": false
+    },
+    "privacyAndLocation": {
+      "status": 404,
+      "code": "PGRST202"
+    },
+    "policyPublishedByThisTask": false
+  },
+  "limits": [
+    "No real social login or consent",
+    "No full isolated Android or DB suite",
+    "No CI or merge",
+    "Course20km not included"
+  ]
+}

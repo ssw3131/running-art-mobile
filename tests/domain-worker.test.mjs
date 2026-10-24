@@ -40,7 +40,7 @@ test('domain roads never permit writes, arbitrary keys, query strings or cached 
   assert.equal(miss.headers.get('cache-control'), 'no-store');
 });
 
-test('domain compute forwards only fixed endpoints and no cookies or account tokens', async () => {
+test('domain compute forwards member authorization and operation only to the fixed calculation endpoint', async () => {
   let sent;
   const handle = createHandler(async (url, init) => {
     sent = { url, init };
@@ -48,14 +48,18 @@ test('domain compute forwards only fixed endpoints and no cookies or account tok
   });
   const response = await handle(req('/api/v1/routes', { method: 'POST', headers: {
     'content-type': 'application/json', authorization: 'Bearer private', cookie: 'private=true',
+    'x-operation-id': 'a9c174e0-0671-4f81-a2c4-a66051820a27', apikey: 'unrelated',
   }, body: '{"origin":"fixture"}' }), {}, ctx);
   assert.equal(sent.url, 'https://runpen-route-compute-125644906792.asia-northeast3.run.app/v1/routes');
-  assert.deepEqual(Object.keys(sent.init.headers).sort(), ['accept', 'content-type']);
+  assert.deepEqual(sent.init.headers, {accept: 'application/json', 'content-type': 'application/json',
+    authorization: 'Bearer private', 'x-operation-id': 'a9c174e0-0671-4f81-a2c4-a66051820a27'});
   assert.equal(new TextDecoder().decode(sent.init.body), '{"origin":"fixture"}');
   assert.equal(response.status, 429);
   assert.equal(response.headers.get('retry-after'), '60');
   assert.equal(response.headers.get('cache-control'), 'no-store');
   assert.equal(sent.init.redirect, 'manual');
+  await handle(req('/api/health', {headers:{authorization:'Bearer private',cookie:'private=true','x-operation-id':'unused'}}),{},ctx);
+  assert.deepEqual(Object.keys(sent.init.headers).sort(), ['accept', 'content-type']);
 });
 
 test('domain compute rejects oversize streamed bodies, wrong methods and arbitrary proxy destinations', async () => {

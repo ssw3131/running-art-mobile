@@ -6,7 +6,7 @@ import { courseShapes } from '@/modules/courses/model';
 import type { ShapeBadge } from '@/modules/achievements/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
 
-const icons = ['dog', 'person', 'bone', 'turtle', 'icecream', 'strawberry', 'cloud', 'crown', 'heart', 'star', 'cat', 'fish'] as const;
+const icons = ['dog', 'person', 'whale', 'bone', 'turtle', 'icecream', 'strawberry', 'cloud', 'crown', 'heart', 'star', 'cat', 'fish'] as const;
 export function Badges({ badges }: { badges: ShapeBadge[] }) {
   const c = useThemeColors();
   if (!badges.length) return <AppText style={{ color: c.muted }}>코스를 한 바퀴 완주하면 도형 배지가 여기에 모여요.</AppText>;

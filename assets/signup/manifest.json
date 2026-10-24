@@ -3,7 +3,8 @@
   "nodes": [
     "253:7200",
     "253:7124",
-    "229:2153"
+    "229:2153",
+    "256:7388"
   ],
   "assets": [
     {
@@ -59,6 +60,13 @@
       "sourceNode": "248:3048",
       "exportScale": 4,
       "reason": "Figma original PNG render for Android SVG graphics compatibility"
+    },
+    {
+      "name": "avatar-default.png",
+      "bytes": 34949,
+      "sha256": "7d41cb67a7d0a6d0e99014aeaf014ee1219898373e7ec700edfcdc3be239affc",
+      "sourceNode": "256:7487",
+      "reason": "Original Figma image 27 (2e253.png), clipped to 120px / 60px circles; no raster editing"
     }
   ]
 }

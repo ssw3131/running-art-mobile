@@ -7,7 +7,8 @@ export function courseFromCalculation(completed: LabCalculation, index: number) 
   if (!candidate) throw new CourseError('validation', '저장할 코스를 먼저 선택해 주세요.');
   const overlay = candidateOverlay(candidate, completed.origin);
   const customTemplate = completed.options.customTemplate;
-  return validateSnapshot({ schemaVersion: customTemplate ? 3 : completed.result.mode === 'free-loop' ? 2 : 1,
+  return validateSnapshot({ schemaVersion: completed.options.shapeVersion ? 4 : customTemplate ? 3 : completed.result.mode === 'free-loop' ? 2 : 1,
+    ...(completed.options.shapeVersion ? { shapeVersion: completed.options.shapeVersion } : {}),
     ...(customTemplate ? { customTemplate } : {}), roadSegments: candidate.roadSegments, engineVersion: completed.result.version,
     source: completed.liveRoads ? 'osm' : 'synthetic', shape: customTemplate ? 'custom' : completed.options.shape,
     origin: completed.origin, targetKm: completed.options.targetKm, lengthKm: candidate.score.lengthKm, score: candidate.score.total,

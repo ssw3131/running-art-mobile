@@ -3,10 +3,11 @@ import test from 'node:test';
 import { openSqlite } from './helpers/sqlite.mjs';
 import { migrateDatabase } from '../src/modules/storage/migrations.ts';
 import { createHomeRepository } from '../src/modules/home/repository.ts';
-import { courseProgress, homeKind, homeMonth, homePathSvg } from '../src/modules/home/model.ts';
+import { courseProgress, homeKind, homeMonth, homePathSvg, homeRunOutcome } from '../src/modules/home/model.ts';
 import { encodeSnapshot } from '../src/modules/courses/model.ts';
 import { createGuidance } from '../src/modules/guidance/engine.ts';
 import { demoCourse } from '../src/modules/guidance/simulator.ts';
+import { createCourseRepository } from '../src/modules/courses/repository.ts';
 
 const A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const NOW = new Date(2026, 9, 13, 12).getTime();
@@ -27,9 +28,9 @@ test('home distinguishes an empty account, saved history and every active status
   for (const status of ['running', 'paused', 'interrupted']) {
     await run(f.db, 2, { status });
     const state = await f.home.read(NOW);
-    assert.equal(homeKind(state), 'active'); assert.equal(state.active.run.status, status);
-    assert.equal(state.runCount, 1); assert.equal(state.monthlyDistanceM, 1000);
-    assert.equal(state.active.progress, null);
+    assert.equal(homeKind(state), 'history'); assert.equal(state.recent[0].run.status, status);
+    assert.equal(state.runCount, 2); assert.equal(state.monthlyDistanceM, 1000);
+    assert.equal(state.latestCompleted.id, id(1));
     await f.db.runAsync('DELETE FROM running_sessions WHERE id=?', id(2));
   }
 });
@@ -44,8 +45,8 @@ test('home calendar includes start boundary and excludes next month, active and 
   await run(f.db, 6, { status: 'paused', distance: 60000 });
   for (let n = 7; n <= 70; n++) await run(f.db, n, { distance: 10 });
   const state = await f.home.read(NOW);
-  assert.equal(state.monthlyDistanceM, 5640); assert.equal(state.runCount, 68);
-  assert.equal(state.recent.length, 3); assert.equal(state.recent[0].run.id, id(4));
+  assert.equal(state.monthlyDistanceM, 5640); assert.equal(state.runCount, 69);
+  assert.equal(state.recent.length, 3); assert.equal(state.recent[0].run.id, id(6)); assert.equal(state.latestCompleted.id, id(4));
   f.switchOwner(B); assert.equal((await f.home.read(NOW)).monthlyDistanceM, 50000);
   f.switchOwner(''); assert.equal(homeKind(await f.home.read(NOW)), 'initial');
 });
@@ -73,8 +74,8 @@ test('home preserves active recovery when guidance is corrupt; real GPS segments
   const f = await fixture(t); await run(f.db, 1, { status: 'interrupted' });
   await f.db.runAsync('UPDATE running_sessions SET course_id=?,course_name=?,course_snapshot_json=?,course_snapshot_hash=?,point_count=4 WHERE id=?', id(9), '보존 코스', '{}', 'bad', id(1));
   for (let n = 1; n <= 4; n++) await f.db.runAsync('INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy) VALUES(?,?,?,?,?,?,?)', id(1), n, n < 3 ? 0 : 1, NOW + n, 37 + n / 1000, 127, 5);
-  const active = (await f.home.read(NOW)).active;
-  assert.equal(active.guidanceError, true); assert.equal(active.progress, null); assert.equal(active.run.status, 'interrupted');
+  const active = (await f.home.read(NOW)).recent[0];
+  assert.equal(active.run.status, 'interrupted');
   assert.deepEqual(active.paths.map(path => path.length), [2, 2]);
   const uri = homePathSvg(active.paths, '#FC5602');
   assert.ok(uri.startsWith('data:image/svg+xml;base64,'));
@@ -82,15 +83,15 @@ test('home preserves active recovery when guidance is corrupt; real GPS segments
   assert.equal((svg.match(/<polyline/g) ?? []).length, 2);
 });
 
-test('home uses guidance progress instead of walked distance, even if the saved course was deleted', async t => {
+test('home never substitutes planned course coordinates for missing real GPS points', async t => {
   const f = await fixture(t); await run(f.db, 1, { status: 'paused', distance: 99999 });
   const route = demoCourse('normal'), engine = createGuidance(route), cp = engine.checkpoint();
   cp.progress = engine.snapshot().totalM * .42;
   const course = encodeSnapshot({ schemaVersion: 1, engineVersion: '0.2', source: 'osm', shape: 'heart', origin: { lng: route[0][0], lat: route[0][1] }, targetKm: 3, lengthKm: 3, score: 80, route, target: route });
   await f.db.runAsync('UPDATE running_sessions SET course_id=?,course_name=?,course_snapshot_json=?,course_snapshot_hash=?,guidance_json=? WHERE id=?', id(9), '삭제된 원본의 러닝 사본', course.json, course.hash, JSON.stringify(cp), id(1));
-  const active = (await f.home.read(NOW)).active;
-  assert.equal(active.progress, 42); assert.equal(active.run.distanceM, 99999); assert.ok(active.paths[0].length > 1);
-  assert.equal(active.guidanceError, false);
+  const active = (await f.home.read(NOW)).recent[0];
+  assert.equal(active.run.distanceM, 99999); assert.deepEqual(active.paths, []);
+  assert.equal(homeRunOutcome(active.run), '미완주');
 });
 
 test('home month is calendar-safe in December and leap February; malformed progress is unavailable', () => {
@@ -100,4 +101,34 @@ test('home month is calendar-safe in December and leap February; malformed progr
   assert.equal(courseProgress(5, 0), null); assert.equal(courseProgress(NaN, 100), null);
   assert.equal(homePathSvg([], '#FC5602'), null);
   assert.ok(!homePathSvg([[[127, 37]]], '#FC5602').includes('NaN'));
+});
+
+test('saved-only home, latest three ordering, corrupted preview and deleting all data', async t => {
+  const f = await fixture(t), route = demoCourse('normal');
+  let clock = NOW;
+  const repository = createCourseRepository(f.db, () => ++clock, () => A);
+  // Different snapshots avoid the repository content-hash duplicate guard.
+  for (let n = 1; n <= 4; n++) await repository.save({
+    schemaVersion: 1, engineVersion: '0.2', source: 'osm', shape: 'heart', origin: { lng: route[0][0], lat: route[0][1] },
+    targetKm: n, lengthKm: 3, score: 80, route, target: route,
+  }, `코스 ${n}`);
+  const before = await f.db.getAllAsync('SELECT * FROM saved_courses ORDER BY id');
+  const data = await f.home.read(NOW);
+  assert.equal(homeKind(data), 'history'); assert.equal(data.courseCount, 4); assert.equal(data.courses.length, 3);
+  assert.deepEqual(data.courses.map(item => item.course.name), ['코스 4', '코스 3', '코스 2']);
+  assert.equal(data.latestCompleted, null); assert.equal(data.monthlyDistanceM, 0); assert.equal(data.currentStreak, 0);
+  assert.ok(data.courses.every(item => item.paths[0].length > 1));
+  assert.deepEqual(await f.db.getAllAsync('SELECT * FROM saved_courses ORDER BY id'), before);
+  const first = data.courses[0].course.id;
+  await f.db.runAsync('UPDATE saved_courses SET snapshot_hash=? WHERE id=?', '0'.repeat(64), first);
+  assert.equal((await f.home.read(NOW)).courses[0].previewError, true);
+  f.switchOwner(B); assert.equal(homeKind(await f.home.read(NOW)), 'initial');
+  f.switchOwner(A); await f.db.runAsync('DELETE FROM saved_courses WHERE owner_id=?', A);
+  assert.equal(homeKind(await f.home.read(NOW)), 'initial');
+});
+
+test('course completion is distinct from session ending and free runs', () => {
+  assert.equal(homeRunOutcome({ courseId: null, status: 'completed' }), null);
+  assert.equal(homeRunOutcome({ courseId: id(1), status: 'completed', courseOutcome: 'stopped' }), '미완주');
+  assert.equal(homeRunOutcome({ courseId: id(1), status: 'completed', courseOutcome: 'finished' }), '완주');
 });

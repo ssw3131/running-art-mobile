@@ -12,7 +12,7 @@ with zipfile.ZipFile(apk) as archive:
         assert not any(part in item.filename.split('/') for part in ['.env', '.cache', 'test-results', 'phone-validation-original']), item.filename
         if item.filename.endswith('.dex') or item.filename.endswith('index.android.bundle'):
             payload = archive.read(item)
-            for marker in [b'com/runningart/authdigest/PhoneValidation', b'QA_SUPABASE_STATUS', b'phone-validation-original']:
+            for marker in [b'com/runningart/authdigest/PhoneValidation', b'com/runningart/emulatorauth', b'com/runningart/archiveoffline', b'offline-ui-fixture', b'runpen-emulator-auth-v1', b'runpen-isolated-membership-v1', b'QA_SUPABASE_STATUS', b'private-state.json', b'phone-validation-original']:
                 assert marker not in payload, 'QA-only entry point packaged: ' + marker.decode()
 sdk = pathlib.Path(os.environ['ANDROID_HOME'])
 aapt = sdk / ('build-tools/36.0.0/aapt.exe' if os.name == 'nt' else 'build-tools/36.0.0/aapt')

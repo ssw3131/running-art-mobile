@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import { size } from '@/theme/tokens';
 import { AppText } from './AppText';
+import type { AppTextProps } from './AppText';
 import { Icon } from './Icon';
 import { useThemeColors } from '@/theme/ThemeProvider';
 
@@ -9,8 +10,9 @@ export type ChoiceControlProps = {
   label: string; checked: boolean; onChange(checked: boolean): void; disabled?: boolean; testID?: string;
   /** Optional paired overrides; original Figma states are supplied by default. */
   visuals?: { on: ReactNode; off: ReactNode };
+  labelProps?: Pick<AppTextProps, 'weight' | 'variant' | 'style'>;
 };
-function ChoiceControl({ label, checked, onChange, disabled = false, testID, visuals, role }: ChoiceControlProps & { role: 'checkbox' | 'switch' }) {
+function ChoiceControl({ label, checked, onChange, disabled = false, testID, visuals, labelProps, role }: ChoiceControlProps & { role: 'checkbox' | 'switch' }) {
   const c = useThemeColors();
   const states = visuals ?? (role === 'switch'
     ? { on: <Icon name="switchOn" />, off: <Icon name="switchOff" /> }
@@ -21,7 +23,7 @@ function ChoiceControl({ label, checked, onChange, disabled = false, testID, vis
     {role === 'switch' && <AppText weight="bold" style={{ fontSize: 15, flexShrink: 1 }}>{label}</AppText>}
     <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants"
       style={{ width: role === 'switch' ? 50 : 24, height: 24, flexShrink: 0, alignItems: 'center', justifyContent: 'center' }}>{checked ? states.on : states.off}</View>
-    {role === 'checkbox' && <AppText style={{ flexShrink: 1 }}>{label}</AppText>}
+    {role === 'checkbox' && <AppText {...labelProps} style={[{ flexShrink: 1 }, labelProps?.style]}>{label}</AppText>}
   </Pressable>;
 }
 export function Checkbox(props: ChoiceControlProps) { return <ChoiceControl {...props} role="checkbox" />; }
