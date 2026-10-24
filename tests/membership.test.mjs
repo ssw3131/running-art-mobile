@@ -118,6 +118,15 @@ for (const first of ['policy', 'receipt']) test(`confirmed owner keeps service s
   assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'signup');
   f.controller.stop();
 });
+
+test('a first receipt without a trusted cache waits for the current policy before service access', async () => {
+  const reply = deferred(), f = fixture({ remote: { policy: () => reply.promise, membership: async () => complete(A) } });
+  f.controller.start(); await tick();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'signup');
+  reply.resolve({ ...policy, id: 'test-v2' }); await tick();
+  assert.equal(membershipAccess(A, f.controller.getSnapshot()), 'signup');
+  f.controller.stop();
+});
 test('SDK sends explicit owner and policy, rejects foreign receipt and tolerates only missing old RPC', async () => {
   let mode = 'normal'; const calls = [];
   const client = createClient('https://test.invalid', 'public-test-key', { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }, global: { fetch: async (url, init) => {

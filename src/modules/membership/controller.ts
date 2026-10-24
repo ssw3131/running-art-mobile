@@ -56,7 +56,7 @@ export function createMembershipController(deps: { auth: AuthSource; remote: Mem
           // Keep a confirmed owner's navigator mounted while policy/receipt
           // requests finish in either order. Only the settled pair decides
           // whether renewed consent is required; pending members remain gated.
-          update({ membership, status: membership?.completedAt ? 'loading' : 'required', offlineAvailable: !!membership?.completedAt });
+          update({ membership, status: membership?.completedAt && state.offlineAvailable ? 'loading' : 'required', offlineAvailable: !!membership?.completedAt });
           if (membership?.completedAt) await remember(owner, membership);
           else await deps.storage.removeItem(receiptKey(owner)).catch(() => undefined);
         }
