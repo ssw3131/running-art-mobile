@@ -1,0 +1,16 @@
+{
+  "name": "runpen-service",
+  "main": "./runpen-worker.mjs",
+  "compatibility_date": "2026-10-24",
+  "account_id": "ab7a058ebcf0d88b44a59d64c48f883b",
+  "workers_dev": true,
+  "routes": [{ "pattern": "runpen.alohalab.co.kr", "custom_domain": true }],
+  "assets": {
+    "directory": "../../build/domain-web/runpen",
+    "binding": "ASSETS",
+    "run_worker_first": ["/roads/*", "/api/*"],
+    "not_found_handling": "404-page"
+  },
+  "r2_buckets": [{ "binding": "ROADS", "bucket_name": "running-art" }],
+  "observability": { "enabled": false }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "alohalab-web",
+  "compatibility_date": "2026-10-24",
+  "account_id": "ab7a058ebcf0d88b44a59d64c48f883b",
+  "workers_dev": true,
+  "routes": [{ "pattern": "alohalab.co.kr", "custom_domain": true }],
+  "assets": { "directory": "../../build/domain-web/company", "not_found_handling": "404-page" }
+}

@@ -4,7 +4,12 @@ import { checkRoadCacheSignal } from './persistent-cache.ts';
 import type { RoadCacheRequest } from './persistent-cache.ts';
 
 export const ROAD_PREFIX = 'roads/samples/v1';
-export const DEFAULT_ROAD_BASE_URL = 'https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev';
+export const DEFAULT_ROAD_BASE_URL = 'https://runpen.alohalab.co.kr';
+export const LEGACY_ROAD_BASE_URL = 'https://pub-5944210ae37a4e4987dea14ae0f41905.r2.dev';
+// Both hosts serve the same verified R2 objects. Keep installed offline caches addressable.
+export function roadCacheOrigin(root: string): string {
+  return root === DEFAULT_ROAD_BASE_URL ? LEGACY_ROAD_BASE_URL : root;
+}
 export const roadSamples = [
   { id: 'seoul-gangnam', label: '서울 강남', origin: { lat: 37.4979, lng: 127.0276 } },
   { id: 'busan-cityhall', label: '부산 시청', origin: { lat: 35.1796, lng: 129.0756 } },
