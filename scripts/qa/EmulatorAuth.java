@@ -53,7 +53,15 @@ public class EmulatorAuth extends Instrumentation {
       if(!u.getString("email").matches("qa-android-[a-f0-9-]+@example\\.invalid"))throw new Exception("Only disposable fixture identities are allowed");
       if(!u.getJSONObject("app_metadata").getString("runpen_qa_run").equals(f.getString("run")))throw new Exception("Wrong fixture run");
       JSONArray identities=u.getJSONArray("identities");
-      if(identities.length()!=1 || !identities.getJSONObject(0).getString("provider").equals("email"))throw new Exception("Not an email fixture");
+      if(identities.length()!=2)throw new Exception("Wrong fixture identities");
+      boolean emailIdentity=false,socialIdentity=false;
+      for(int i=0;i<identities.length();i++) {
+        JSONObject identity=identities.getJSONObject(i),data=identity.getJSONObject("identity_data");
+        if(identity.getString("provider").equals("email") && data.getString("email").equals(u.getString("email")))emailIdentity=true;
+        else if(identity.getString("provider").equals("google") && data.getString("sub").equals("android-"+f.getString("run")+"-"+f.getString("role")) && data.getString("email").equals(u.getString("email")))socialIdentity=true;
+        else throw new Exception("Not this run's synthetic identity");
+      }
+      if(!emailIdentity || !socialIdentity)throw new Exception("Missing synthetic identities");
       long expiry=s.getLong("expires_at")*1000,now=System.currentTimeMillis();
       if(expiry<=now || expiry>now+7200000)throw new Exception("Invalid fixture expiry");
       String[] jwt=s.getString("access_token").split("\\.");
