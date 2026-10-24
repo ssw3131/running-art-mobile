@@ -39,3 +39,14 @@ test('UI-SIGNUP-03: submit locks input and choices; retry retains choices; new v
   await view.rerender(<ConsentForm key="qa-v2" {...p} policy={{ ...policy, id: 'qa-v2' }} />);
   expect(screen.getByTestId('signup-complete')).toBeDisabled();
 });
+
+test('UI-SIGNUP-06: policy absence keeps profile inputs and blocks completion; changing version resets both consents without a remount', async () => {
+  const p = props(); const view = await render(<ConsentForm {...p} />);
+  await fireEvent.press(screen.getByTestId('signup-consent-all'));
+  expect(screen.getByTestId('signup-complete')).toBeEnabled();
+  await view.rerender(<ConsentForm {...p} policy={{ ...policy, id: 'qa-v2' }} />);
+  expect(screen.getByTestId('signup-complete')).toBeDisabled();
+  await view.rerender(<ConsentForm {...p} policy={null} policyStatus="error" />);
+  expect(screen.getByTestId('signup-nickname')).toBeVisible();
+  expect(screen.getByTestId('signup-complete')).toBeDisabled();
+});

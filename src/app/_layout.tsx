@@ -14,10 +14,10 @@ import { useAuth } from '@/features/auth/use-auth';
 import { personalSync } from '@/modules/sync/runtime';
 import { accountWithdrawal } from '@/modules/account/withdrawal-runtime';
 import { membership } from '@/modules/membership/runtime';
-import { MembershipPrompt } from '@/features/membership/MembershipPrompt';
+import { getStorage } from '@/modules/storage/database';
 
-// A cold detail/deep link has a stable service-home destination for Back.
-export const unstable_settings = { initialRouteName: '(tabs)' };
+// Do not fabricate home history for cold detail links; the header supplies the
+// relevant list only when the navigator has no previous screen.
 
 export default function RootLayout() {
   const auth=useAuth();
@@ -26,6 +26,19 @@ export default function RootLayout() {
   const [recovery, setRecovery] = useState({ scope: '', message: '' });
   const recoveryError = recovery.scope === recoveryScope ? recovery.message : '';
   const [recoveryAttempt, setRecoveryAttempt] = useState(0);
+  useEffect(() => {
+    if (!auth.ready || !auth.account) return;
+    let current = true;
+    const owner = auth.account.id;
+    const recoverSaves = () => {
+      void getStorage().then(db => {
+        if (current && authentication.getSnapshot().account?.id === owner) return db.courses.recover();
+      }).catch(() => undefined); // Durable pending writes retry when online again.
+    };
+    recoverSaves();
+    const listener = AppState.addEventListener('change', state => { if (state === 'active') recoverSaves(); });
+    return () => { current = false; listener.remove(); };
+  }, [auth.ready, auth.account]);
   useEffect(() => {
     void authentication.start();
     membership.start();
@@ -37,8 +50,9 @@ export default function RootLayout() {
     void Linking.getInitialURL().then(url => { if (url) return authentication.handleUrl(url); }).catch(() => undefined);
     const lifecycle = AppState.addEventListener('change', state => {
       authentication.setActive(state === 'active'); personalSync.setActive(state === 'active');
-      // Returning from the photo picker must not reset the open consent form.
-      if (state === 'active' && membership.getSnapshot().status !== 'required') void membership.reload();
+      // Resume must not discard a running route or the open signup draft.
+      // Cold start/account change and the consent RPC recheck the current policy.
+      if (state === 'active' && ['idle', 'error', 'unavailable'].includes(membership.getSnapshot().status)) void membership.reload();
     });
     return () => { links.remove(); lifecycle.remove(); authentication.setActive(false);personalSync.setActive(false); };
   }, []);
@@ -58,7 +72,6 @@ export default function RootLayout() {
         <Button label="복원 다시 시도" compact onPress={() => setRecoveryAttempt(value => value + 1)} />
       </View>}
       <ServiceStack />
-      <MembershipPrompt />
     </SafeAreaView></FontGate></ThemeProvider>
   );
 }

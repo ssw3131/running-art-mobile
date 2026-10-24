@@ -37,7 +37,7 @@ test('UI-HOME-02: unfinished stays in history and opens the existing run without
   await render(<HomeScreen />);
   expect(screen.getByTestId('home-history')).toBeVisible(); expect(screen.queryByTestId('home-active')).toBeNull();
   expect(screen.getByTestId('home-outcome-' + run.id)).toHaveTextContent('미완주');
-  await fireEvent.press(screen.getByTestId('home-run-' + run.id)); expect(mockNavigate).toHaveBeenCalledWith('/run');
+  await fireEvent.press(screen.getByTestId('home-run-' + run.id)); expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'course',runId:run.id}});
 });
 
 test('UI-HOME-03: history opens the real record and matching archive, without guest entry', async () => {
@@ -47,7 +47,7 @@ test('UI-HOME-03: history opens the real record and matching archive, without gu
   await fireEvent.press(screen.getByTestId('home-run-' + run.id));
   expect(mockPush).toHaveBeenCalledWith({ pathname: '/runs/[id]', params: { id: run.id } });
   await fireEvent.press(screen.getByTestId('home-more-runs'));
-  expect(mockNavigate).toHaveBeenCalledWith({ pathname: '/courses', params: { view: 'runs' } });
+  expect(mockNavigate).toHaveBeenCalledWith({ pathname: '/courses', params: { view: 'courses', fromHome: '1' } });
   expect(screen.queryByTestId('home-signup')).toBeNull();
 });
 

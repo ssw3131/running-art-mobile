@@ -1,6 +1,7 @@
 import { buildGraphSteps, searchSteps, SHAPES, validateCustomTemplate } from './engine.ts';
 import type { SearchDiagnostics } from './engine.ts';
 import type { ProgressCallback, SearchInput, SearchResult, Steps } from './types.ts';
+import { FIGMA_SHAPE_VERSION } from './figma-contours.ts';
 
 export class CalculationCancelled extends Error {
   constructor() { super('계산을 취소했어요.'); this.name = 'CalculationCancelled'; }
@@ -31,6 +32,8 @@ function* validateInputSteps(input: SearchInput): Steps<void> {
     throw new Error('목표 거리와 탐색 반경은 0보다 커야 해요.');
   }
   if (options.version !== '0.2') throw new Error('모바일 계산은 v0.2 기준으로 실행해요.');
+  if (options.shapeVersion !== undefined && options.shapeVersion !== FIGMA_SHAPE_VERSION) throw new Error('지원하지 않는 도형 기준이에요.');
+  if (options.maxRouteKm !== undefined && (!Number.isFinite(options.maxRouteKm) || options.maxRouteKm <= 0)) throw new Error('코스 최대 거리가 올바르지 않아요.');
   if (options.mode !== undefined && !['anchored', 'free-loop'].includes(options.mode)) throw new Error('지원하지 않는 코스 탐색 방식이에요.');
   if (options.customTemplate) validateCustomTemplate(options.customTemplate);
   else if (!SHAPES.some((shape) => shape.id === options.shape)) throw new Error('지원하지 않는 도형이에요.');

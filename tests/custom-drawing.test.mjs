@@ -88,7 +88,7 @@ test('custom free-loop calculation persists the actual drawing, route and road r
   assert.deepEqual(decodeSnapshot(encoded.json,encoded.hash),snapshot);
   assert.deepEqual(savedCourseOverlay(snapshot).target.geometry.coordinates,snapshot.target);
   for(const change of [{customTemplate:[]},{customTemplate:null},{roadSegments:[]},{schemaVersion:2},{shape:'heart'}])assert.throws(()=>encodeSnapshot({...snapshot,...change}));
-  assert.throws(()=>encodeSnapshot({...snapshot,schemaVersion:4}),{code:'newer-format'});
+  assert.throws(()=>encodeSnapshot({...snapshot,schemaVersion:5}),{code:'newer-format'});
   const synthetic=courseFromCalculation({...completed,liveRoads:false},0);assert.equal(synthetic.source,'synthetic');
 });
 

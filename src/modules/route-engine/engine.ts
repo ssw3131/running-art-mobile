@@ -4,6 +4,7 @@
 import type { Point, Origin, Tags, OsmElement, GraphNode, GraphEdge, Graph, SearchOptions, ProgressCallback, Steps, Placement, EvaluatedCandidate, Usage, Score, SearchResult } from './types.ts';
 
 import { SERVICE_SHAPES, serviceTemplate } from './service-shapes.ts';
+import { FIGMA_SHAPE_VERSION, figmaTemplate } from './figma-contours.ts';
 
 function point(x: number, y: number): Point {
   return { x, y };
@@ -67,6 +68,7 @@ const SHAPES = [
   {id:'arrow',name:'화살표',description:'격자 도로에 맞추기 쉬운 직선 중심의 윤곽',added:true}
 ];
 SHAPES.push(...SERVICE_SHAPES.filter(shape => !SHAPES.some(old => old.id === shape.id)).map(shape => ({ ...shape, description: `${shape.name} 윤곽을 따라 만드는 코스`, added: true })));
+SHAPES.push({ id: 'person', name: '사람', description: '이전에 저장한 사람 도형', added: true });
 const polygonTemplates: Record<string, number[][]> = {
   house:[[0,-1.2],[1.1,-0.25],[1.1,1],[-1.1,1],[-1.1,-0.25],[0,-1.2]],
   diamond:[[0,-1.2],[1,0],[0,1.2],[-1,0],[0,-1.2]],
@@ -74,7 +76,11 @@ const polygonTemplates: Record<string, number[][]> = {
   fish:[[-1.3,-0.7],[-0.65,-0.25],[0,-0.75],[0.85,-0.55],[1.35,0],[0.85,0.55],[0,0.75],[-0.65,0.25],[-1.3,0.7],[-1.3,-0.7]],
   arrow:[[-1.3,-0.4],[0.25,-0.4],[0.25,-1],[1.3,0],[0.25,1],[0.25,0.4],[-1.3,0.4],[-1.3,-0.4]]
 };
-function templateFor(name: string): Point[] {
+function templateFor(name: string, shapeVersion?: SearchOptions['shapeVersion']): Point[] {
+  if (shapeVersion === FIGMA_SHAPE_VERSION || name === 'whale') {
+    const current = figmaTemplate(name);
+    if (current) return current;
+  }
   const factories: Record<string, () => Point[]> = {heart:heartTemplate,star:starTemplate,cat:catTemplate,rabbit:rabbitTemplate};
   const factory=factories[name];
   if(factory) return factory();
@@ -549,6 +555,10 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
   if(diagnostics) Object.assign(diagnostics,{pathRequests:0,pathCacheHits:0,pathSearches:0,pathVisits:0,maxCachedPaths:0,maxCachedNodes:0});
   const routing=routingContext(graph,diagnostics);
   const targetMeters=options.targetKm*1000, radius=options.radiusKm*1000;
+  const maximumMeters=Math.min(targetMeters*1.25, (options.maxRouteKm ?? Infinity)*1000);
+  // At a hard distance ceiling, road detours need smaller whole-shape placements.
+  // Keep legacy/unclipped searches byte-for-byte identical; never trim a route.
+  const capped=maximumMeters<targetMeters*1.25;
   const foundStart=free?{id:-1,x:0,y:0,links:[]}:nearestNode(graph,point(0,0),100);
   if(!foundStart) throw new Error('출발지 100m 안에 연결 가능한 보행 도로가 없습니다. 지도에서 출발 위치를 다시 선택하세요.');
   const start=foundStart;
@@ -563,29 +573,30 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
   // reachability/turn filtering for every placement sample.
   const indexes=yield* searchIndexesSteps(graph,reachable);
   routing.turnColumns=indexes.turns;
-  const base=options.customTemplate?validateCustomTemplate(options.customTemplate):templateFor(options.shape),scale=targetMeters/pathLength(base);
+  const base=options.customTemplate?validateCustomTemplate(options.customTemplate):templateFor(options.shape, options.shapeVersion),scale=targetMeters/pathLength(base);
   const fixed=transformPoints(base,scale,0,0,0), anchors=densify(fixed,33).slice(0,-1);
   const placements: Placement[]=[], keys=new Set<string>();let checked=0;
-  function *add(tx: number,ty: number,rotation: number): Steps<void> {
+  function *add(tx: number,ty: number,rotation: number,factor=1): Steps<void> {
     yield;
-    const key=`${Math.round(tx/30)},${Math.round(ty/30)},${Math.round(rotation*180/Math.PI)}`;
+    const key=`${Math.round(tx/30)},${Math.round(ty/30)},${Math.round(rotation*180/Math.PI)},${factor.toFixed(4)}`;
     if(keys.has(key)) return; keys.add(key);checked++;
-    const target=transformPoints(base,scale,rotation,tx,ty);
+    const target=transformPoints(base,scale*factor,rotation,tx,ty);
     if(target.some(p=>Math.hypot(p.x,p.y)>radius)) return;
     const error=placementError(graph,target,start,targetMeters,indexes.all,free);
     if(error===null) return;
-    placements.push({target,rotation,scale,offset:point(tx,ty),error});
+    placements.push({target,rotation,scale:scale*factor,offset:point(tx,ty),error});
   }
   const step=Math.max(250,targetMeters/12),reach=free?radius:Math.min(radius,targetMeters*0.7);
   for(let deg=0;deg<360;deg+=15) {
     const rotation=deg*Math.PI/180,c=Math.cos(rotation),s=Math.sin(rotation);
     if(!free) for(const a of anchors) yield* add(start.x-(a.x*c-a.y*s),start.y-(a.x*s+a.y*c),rotation);
-    for(let x=-reach;x<=reach;x+=step) for(let y=-reach;y<=reach;y+=step) yield* add(x,y,rotation);
+    for(let x=-reach;x<=reach;x+=step) for(let y=-reach;y<=reach;y+=step)
+      for(const factor of capped?[1,0.88,0.8]:[1]) yield* add(x,y,rotation,factor);
     progress({phase:'placement',text:`고정 크기 도형 비교 중 · ${deg+15}° / 360° · ${checked.toLocaleString()}개 배치`});
   }
   const coarse=[...placements].sort((a,b)=>a.error-b.error).slice(0,24);
   for(const p of coarse) for(const dx of [-100,0,100]) for(const dy of [-100,0,100]) for(const dr of [-5,0,5])
-    yield* add(p.offset.x+dx,p.offset.y+dy,(p.rotation+dr*Math.PI/180+Math.PI*2)%(Math.PI*2));
+    yield* add(p.offset.x+dx,p.offset.y+dy,(p.rotation+dr*Math.PI/180+Math.PI*2)%(Math.PI*2),p.scale/scale);
   placements.sort((a,b)=>a.error-b.error);
   // Keep spatial/angular diversity so one promising neighborhood cannot consume every routing attempt.
   const shortlist: Placement[]=[],buckets=new Map<string, number>();
@@ -596,18 +607,18 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     if(shortlist.length>=200) break;
   }
   function *evaluate(p: Placement): Steps<EvaluatedCandidate | null> {
-    const loopIds=yield* routeFromTemplateSteps(graph,p.target,targetMeters*1.25,routing);
+    const loopIds=yield* routeFromTemplateSteps(graph,p.target,maximumMeters,routing);
     if(!loopIds) return null;
     const loop=loopIds.map(id=>graph.nodes[id]),loopLength=pathLength(loop);
     if(free) {
       const usage=edgeUsage(graph,loopIds);
-      if(usage.total<targetMeters*0.75 || usage.total>targetMeters*1.25 || usage.repeated/usage.total>0.30) return null;
+      if(usage.total<targetMeters*0.75 || usage.total>maximumMeters || usage.repeated/usage.total>0.30) return null;
       return {...p,ids:loopIds,route:loop,usage,access:[],loop,score:scoreCandidate(p.target,loop,loop,targetMeters,usage),loopKm:loopLength/1000,accessKm:0};
     }
     const entries=[...new Set(loopIds.slice(0,-1))].sort((a,b)=>dist(start,graph.nodes[a])-dist(start,graph.nodes[b])).slice(0,6);
     let best: Pick<EvaluatedCandidate, "ids" | "route" | "usage" | "access"> | null=null;
     for(const entry of entries) {
-      const budget=targetMeters*1.25-loopLength;
+      const budget=maximumMeters-loopLength;
       const outward=yield* shortestPathSteps(graph,start.id,entry,budget,routing);
       if(!outward.length) continue;
       const back=yield* shortestPathSteps(graph,entry,start.id,budget-pathLength(outward.map(id=>graph.nodes[id])),routing);
@@ -615,7 +626,7 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
       const pos=loopIds.indexOf(entry),around=[...loopIds.slice(pos,-1),...loopIds.slice(0,pos+1)];
       const ids=[...outward,...around.slice(1),...back.slice(1)],route=ids.map(id=>graph.nodes[id]);
       const usage=edgeUsage(graph,ids);
-      if(usage.total<targetMeters*0.75 || usage.total>targetMeters*1.25 || usage.repeated/usage.total>0.30) continue;
+      if(usage.total<targetMeters*0.75 || usage.total>maximumMeters || usage.repeated/usage.total>0.30) continue;
       if(!best || usage.total<best.usage.total) best={ids,route,usage,access:[outward,back].map(path=>path.map(id=>graph.nodes[id]))};
     }
     if(!best) return null;
@@ -652,7 +663,7 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
       for(const seed of seeds)for(const factor of factors)for(const [dx,dy] of moves)for(const angle of angles) {
         yield;
         const nextScale=seed.scale*factor,ratio=nextScale/scale;
-        if(ratio<0.85-1e-8||ratio>1.15+1e-8)continue;
+        if(ratio<(capped?0.75:0.85)-1e-8||ratio>1.15+1e-8)continue;
         const rotation=(seed.rotation+angle*Math.PI/180+Math.PI*2)%(Math.PI*2);
         const offset=point(seed.offset.x+dx,seed.offset.y+dy),target=transformPoints(base,nextScale,rotation,offset.x,offset.y);
         const p: Placement={target,rotation,scale:nextScale,offset,scaleRatio:ratio,error:0};const key=placementKey(p);

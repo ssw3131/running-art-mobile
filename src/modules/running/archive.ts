@@ -1,4 +1,5 @@
 import type { Run } from './model.ts';
+export function isFinishedCourseRun(run: Pick<Run,'status'|'courseId'|'courseOutcome'>) { return run.status==='completed' && !!run.courseId && run.courseOutcome==='finished'; }
 export function runOutcomeLabel(run: Pick<Run, 'status' | 'courseId' | 'courseOutcome'>) {
   if (run.status !== 'completed') return run.status === 'running' ? '진행 중' : '이어달리기';
   if (!run.courseId) return '자유 러닝';

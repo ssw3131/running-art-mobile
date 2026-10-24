@@ -1,15 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
-import { createClient } from '@supabase/supabase-js';
+import { isolatedSupabase } from '../../scripts/qa/isolated-supabase.mjs';
 import { createMembershipRemote } from '../../src/modules/membership/remote.ts';
 
-const env = JSON.parse(readFileSync(process.env.QA_SUPABASE_STATUS ?? '.cache/qa-supabase-status.json', 'utf8'));
-const url = new URL(env.API_URL);
-assert.ok(['127.0.0.1', 'localhost'].includes(url.hostname) && url.protocol === 'http:', 'Only an isolated loopback stack is permitted');
-const options = { auth: { persistSession: false, autoRefreshToken: false } };
-const admin = createClient(url.href, env.SERVICE_ROLE_KEY, options);
+const { admin, client: createIsolatedClient } = isolatedSupabase();
 
 test('DB-SIGNUP-01: real Auth pending state, concurrent RPC receipt, account isolation and cascade', async t => {
   const users = [], clients = [], policyId = `qa-${randomUUID()}`;
@@ -23,7 +18,7 @@ test('DB-SIGNUP-01: real Auth pending state, concurrent RPC receipt, account iso
     const email = `qa-signup-${randomUUID()}@example.invalid`, password = randomUUID() + 'Aa!9';
     const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { runpen_nickname: '보존할 이름', unrelated: 'keep' } });
     assert.equal(error, null); users.push(data.user.id);
-    const client = createClient(url.href, env.ANON_KEY, options);
+    const client = createIsolatedClient();
     assert.equal((await client.auth.signInWithPassword({ email, password })).error, null); clients.push(client);
   }
   const remote = createMembershipRemote(clients[0]), other = createMembershipRemote(clients[1]);
@@ -42,7 +37,7 @@ test('DB-SIGNUP-01: real Auth pending state, concurrent RPC receipt, account iso
   assert.ok((await clients[0].from('memberships').update({ completed_at: null }).eq('owner_id', users[0])).error);
   const account = await admin.auth.admin.getUserById(users[0]);
   assert.equal(account.data.user.user_metadata.runpen_nickname, '보존할 이름'); assert.equal(account.data.user.user_metadata.unrelated, 'keep');
-  const anonymous = createMembershipRemote(createClient(url.href, env.ANON_KEY, options));
+  const anonymous = createMembershipRemote(createIsolatedClient());
   await assert.rejects(anonymous.accept(request));
   const id = users.shift();
   assert.equal((await admin.auth.admin.deleteUser(id)).error, null);

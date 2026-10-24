@@ -1,3 +1,4 @@
+import { usageFixture, usageHeaders } from './helpers/usage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
@@ -126,13 +127,13 @@ test('metadata token is cached then refreshed and rejected without Google respon
 
 test('HTTP guard rejects before worker, leaves health available, and logs contain no inputs', async t => {
   let runs = 0; const events = [], store = memoryStore(), limits = { minute: 1, hour: 10, day: 10, month: 10 };
-  const pool = { run: async () => { runs++; return {}; }, close: async () => {} };
-  const server = createComputeServer(pool, { admission: createAdmissionGuard({ store, limits }), report: e => events.push(e) });
+  const pool = { run: async () => { runs++; return {result:{candidates:[]}}; }, close: async () => {} };
+  const server = createComputeServer(pool, { usage: usageFixture(), admission: createAdmissionGuard({ store, limits }), report: e => events.push(e) });
   server.listen(0, '127.0.0.1'); await once(server, 'listening'); t.after(() => server.close());
   const base = `http://127.0.0.1:${server.address().port}`;
   const body = JSON.stringify({ contract: COMPUTE_CONTRACT, origin: { lat: 37.4979, lng: 127.0276 },
     options: { version: '0.2', mode: 'free-loop', shape: 'heart', targetKm: 3, radiusKm: 2 }, refresh: false });
-  const post = headers => fetch(`${base}/v1/routes`, { method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body });
+  const post = headers => fetch(`${base}/v1/routes`, { method: 'POST', headers: { 'content-type': 'application/json', ...usageHeaders(), ...headers }, body });
   assert.equal((await post()).status, 200);
   const denied = await post({ 'x-forwarded-for': '1.2.3.4', 'x-client-id': 'rotate-me' });
   assert.equal(denied.status, 429); assert.ok(Number(denied.headers.get('retry-after')) > 0);

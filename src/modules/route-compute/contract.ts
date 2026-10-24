@@ -1,15 +1,18 @@
-import { SHAPES, validateCustomTemplate } from '../route-engine/engine.ts';
+import { SHAPES, validateCustomTemplate, pathLength } from '../route-engine/engine.ts';
 import type { Origin, SearchOptions } from '../route-engine/types.ts';
 import type { Calculation } from '../route-engine/runner.ts';
 import { nationalRegionId } from '../road-data/national-format.ts';
 
-import { isGenerationDistance } from '../route-engine/service-shapes.ts';
+import { generationRadiusKm, isGenerationDistance } from '../route-engine/service-shapes.ts';
+import { FIGMA_SHAPE_VERSION } from '../route-engine/figma-contours.ts';
 
 export const COMPUTE_CONTRACT = 'runpen-routes-v1';
+export const CURRENT_COMPUTE_CONTRACT = 'runpen-routes-v2';
+type Contract = typeof COMPUTE_CONTRACT | typeof CURRENT_COMPUTE_CONTRACT;
 export const MAX_REQUEST_BYTES = 16384;
 export const MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
-export type ComputeRequest = { contract: typeof COMPUTE_CONTRACT; origin: Origin; options: SearchOptions; refresh: boolean };
-export type ComputeResponse = Calculation & { contract: typeof COMPUTE_CONTRACT; request: ComputeRequest;
+export type ComputeRequest = { contract: Contract; origin: Origin; options: SearchOptions; refresh: boolean };
+export type ComputeResponse = Calculation & { contract: Contract; request: ComputeRequest;
   roads: { release: string; manifestHash: string; cached: boolean };
   timing: { roadMs: number; calculationMs: number; totalMs: number } };
 
@@ -17,14 +20,18 @@ export function parseComputeRequest(value: unknown): ComputeRequest {
   const fail = () => { throw new Error('지원하지 않는 코스 계산 조건이에요.'); };
   if (!value || typeof value !== 'object') return fail();
   const data = value as ComputeRequest, o = data.options;
-  if (data.contract !== COMPUTE_CONTRACT || !data.origin || !Number.isFinite(data.origin.lat) || !Number.isFinite(data.origin.lng) ||
-    !o || o.version !== '0.2' || o.mode !== 'free-loop' || !isGenerationDistance(o.targetKm) || o.radiusKm !== 2 ||
+  const current = data.contract === CURRENT_COMPUTE_CONTRACT;
+  if ((!current && data.contract !== COMPUTE_CONTRACT) || !data.origin || !Number.isFinite(data.origin.lat) || !Number.isFinite(data.origin.lng) ||
+    !o || o.version !== '0.2' || o.mode !== 'free-loop' || !isGenerationDistance(o.targetKm) ||
     typeof data.refresh !== 'boolean') return fail();
+  if (current ? o.radiusKm !== generationRadiusKm(o.targetKm) || o.shapeVersion !== FIGMA_SHAPE_VERSION || o.maxRouteKm !== 20
+    : o.targetKm > 10 || o.radiusKm !== 2 || o.shape === 'whale' || o.shapeVersion !== undefined || o.maxRouteKm !== undefined) return fail();
   nationalRegionId(data.origin);
   if (o.shape === 'custom') validateCustomTemplate(o.customTemplate!);
   else if (!SHAPES.some(shape => shape.id === o.shape) || o.customTemplate !== undefined) return fail();
-  return { contract: COMPUTE_CONTRACT, origin: { lat: data.origin.lat, lng: data.origin.lng },
-    options: { version: '0.2', mode: 'free-loop', shape: o.shape, targetKm: o.targetKm, radiusKm: 2,
+  return { contract: data.contract, origin: { lat: data.origin.lat, lng: data.origin.lng },
+    options: { version: '0.2', mode: 'free-loop', shape: o.shape, targetKm: o.targetKm, radiusKm: current ? generationRadiusKm(o.targetKm) : 2,
+      ...(current ? { shapeVersion: FIGMA_SHAPE_VERSION, maxRouteKm: 20 } : {}),
       ...(o.shape === 'custom' ? { customTemplate: validateCustomTemplate(o.customTemplate!) } : {}) }, refresh: data.refresh };
 }
 
@@ -34,7 +41,7 @@ export function parseComputeResponse(value: unknown, request: ComputeRequest): C
   const fail = () => { throw new Error('서버 계산 결과를 확인하지 못했어요. 다시 계산해 주세요.'); };
   if (!value || typeof value !== 'object') return fail();
   const data = value as ComputeResponse;
-  if (data.contract !== COMPUTE_CONTRACT || JSON.stringify(parseComputeRequest(data.request)) !== JSON.stringify(parseComputeRequest(request))) return fail();
+  if (data.contract !== request.contract || JSON.stringify(parseComputeRequest(data.request)) !== JSON.stringify(parseComputeRequest(request))) return fail();
   const finite = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n);
   const point = (p: unknown) => !!p && typeof p === 'object' && finite((p as {x:unknown}).x) && finite((p as {y:unknown}).y);
   const path = (p: unknown) => Array.isArray(p) && p.length <= 20000 && p.every(point);
@@ -57,6 +64,10 @@ export function parseComputeResponse(value: unknown, request: ComputeRequest): C
       !Array.isArray(c.roadSegments) || c.roadSegments.length !== c.route.length - 1 ||
       !c.roadSegments.every(s => s && [s.way,s.from,s.to].every(n => Number.isSafeInteger(n) && n > 0) && s.from !== s.to &&
         finite(s.start) && finite(s.end) && s.start >= 0 && s.start <= 1 && s.end >= 0 && s.end <= 1 && s.start !== s.end && s.bidirectional === true)) return fail();
+    if (request.contract === CURRENT_COMPUTE_CONTRACT) {
+      const length = pathLength(c.route), target = request.options.targetKm * 1000;
+      if (length < target * 0.75 || length > Math.min(target * 1.25, 20000) || Math.abs(length / 1000 - c.score.lengthKm) > 1e-6 || c.score.raw < 0 || c.score.raw > 100) return fail();
+    }
   }
   return data;
 }

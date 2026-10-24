@@ -5,12 +5,14 @@ import { AppText } from '@/components/ui';
 import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { useAuth } from './use-auth';
+import { useMembership } from '@/features/membership/use-membership';
+import { membershipAccess } from '@/modules/membership/access';
 
 // Explicit registration prevents automatic exposure of unclassified app pages.
 // A route inventory test requires every new page to be classified here.
 export const privateScreens = [
   ['(tabs)', ''], ['service-info', '서비스 안내 및 지원'], ['development', '개발 도구'],
-  ['account-profile', '프로필 편집'], ['account-signup', '가입 정보 · 약관 동의'],
+  ['account-profile', '프로필 편집'],
   ['account-settings', '설정'], ['account-sync', '개인 기록 동기화'], ['account-withdraw', '회원 탈퇴'],
   ['map', '내 주변 지도'], ['storage', '저장소 테스트'], ['courses/[id]', '코스 상세'],
   ['course-candidate', '코스 상세'], ['guidance', ''], ['runs/index', '러닝 기록 목록'], ['runs/[id]', '러닝 상세'],
@@ -31,31 +33,40 @@ function resetServiceState(state: RouteState, destination: string): ResetState |
   }
 }
 export function ServiceStack() {
-  const auth = useAuth(), c = useThemeColors();
+  const auth = useAuth(), registration = useMembership(), c = useThemeColors();
   const navigation = useNavigationContainerRef();
   const identity = auth.account?.id ?? null;
-  const previous = useRef({ ready: auth.ready, identity });
+  const access = membershipAccess(identity, registration);
+  // Keep the initial URL pending while the owner's cached receipt is loading.
+  // Mounting the signup navigator here would discard a cold course deep link.
+  const restoringMembership = !!identity && (registration.owner !== identity || registration.status === 'idle' ||
+    (registration.status === 'loading' && registration.policyStatus === 'loading' && !registration.offlineAvailable));
+  const destination = access === 'service' ? '(tabs)' : access === 'signup' ? 'account-signup' : 'account-entry';
+  const previous = useRef({ ready: false, identity, access });
   useEffect(() => {
-    if (!auth.ready) return;
-    const changed = previous.current.ready && previous.current.identity !== identity;
-    previous.current = { ready: true, identity };
+    if (!auth.ready || restoringMembership) return;
+    const changed = previous.current.ready && (previous.current.identity !== identity || previous.current.access !== access);
+    previous.current = { ready: true, identity, access };
     // A navigator key alone remounts views but preserves the container's route
     // state. Clear that state too, including shared policy/callback history.
     if (changed && navigation.isReady()) {
-      const next = resetServiceState(navigation.getRootState(), identity ? '(tabs)' : 'account-entry');
+      const next = resetServiceState(navigation.getRootState(), destination);
       if (next) navigation.resetRoot(next);
     }
-  }, [auth.ready, identity, navigation]);
-  if (!auth.ready) return <View testID="auth-loading" style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+  }, [auth.ready, restoringMembership, identity, access, destination, navigation]);
+  if (!auth.ready || restoringMembership) return <View testID="auth-loading" style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
     <ActivityIndicator /><AppText>로그인 상태를 확인하고 있어요.</AppText>
   </View>;
   return <Stack key={identity ?? 'guest'} screenOptions={{ contentStyle: { backgroundColor: c.background },
     header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back menu={!!auth.account} /> }}>
-    <Stack.Protected guard={!!auth.account}>
+    <Stack.Protected guard={access === 'service'}>
       {privateScreens.map(([name, title]) => <Stack.Screen key={name} name={name} options={{ title,
         headerShown: name !== '(tabs)' && name !== 'guidance',
         ...(name === 'service-info' || name === 'course-candidate' ? { header: () => <ServiceHeader title={title} back menu={false} /> } : {}),
       }} />)}
+    </Stack.Protected>
+    <Stack.Protected guard={access === 'signup'}>
+      <Stack.Screen name="account-signup" options={{ headerShown: false, gestureEnabled: false }} />
     </Stack.Protected>
     <Stack.Protected guard={!auth.account}>
       <Stack.Screen name="account-entry" options={{ headerShown: false }} />

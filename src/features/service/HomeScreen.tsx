@@ -22,8 +22,7 @@ type Row = { key: string; kind: 'initial' | 'stats' | 'run-heading' | 'course-he
 const viewability = { itemVisiblePercentThreshold: 1 };
 const km = (distance: number) => (distance / 1000).toFixed(1);
 const date = (at: number) => { const d = new Date(at); return `${d.getMonth() + 1}월 ${d.getDate()}일`; };
-const openRuns = () => router.navigate({ pathname: '/courses', params: { view: 'runs' } });
-const openCourses = () => router.navigate({ pathname: '/courses', params: { view: 'courses' } });
+const openCourses = () => router.navigate({ pathname: '/courses', params: { view: 'courses',fromHome:'1' } });
 
 function TextLink({ label, onPress, testID }: { label: string; onPress(): void; testID: string }) {
   const c = useThemeColors();
@@ -80,7 +79,7 @@ export default function HomeScreen() {
   const list = useRef<FlatList<Row>>(null), [shape, setShape] = useState<Shape>('heart'), [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState<Set<string>>(new Set());
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken<Row>[] }) => setVisible(new Set(viewableItems.map(v => v.item.key))), []);
-  useFocusEffect(useCallback(() => { setFocused(true); list.current?.scrollToOffset({ offset: 0, animated: false }); return () => setFocused(false); }, []));
+  useFocusEffect(useCallback(() => { setFocused(true); return () => setFocused(false); }, []));
   const kind = data ? homeKind(data) : null;
   const rows = useMemo(() => {
     if (!data) return [];
@@ -105,12 +104,12 @@ export default function HomeScreen() {
         if (item.kind === 'run-heading' || item.kind === 'course-heading') {
           const runs = item.kind === 'run-heading';
           return <View style={styles.sectionHeading}><AppText weight="bold" style={styles.sectionTitle}>{runs ? '최근 달린 코스' : '최근 저장 코스'}</AppText>
-            <TextLink label="더보기" testID={runs ? 'home-more-runs' : 'home-more-courses'} onPress={runs ? openRuns : openCourses} /></View>;
+            <TextLink label="더보기" testID={runs ? 'home-more-runs' : 'home-more-courses'} onPress={openCourses} /></View>;
         }
         if (item.kind === 'runs') return item.runs?.length ? <View style={styles.cards}>{item.runs.map(({ run, paths }) => {
           const outcome = homeRunOutcome(run), complete = outcome === '완주';
           return <Pressable key={run.id} testID={`home-run-${run.id}`} accessibilityRole="button" accessibilityLabel={`${run.courseName || '자유 러닝'}, ${outcome ?? '러닝 기록'}, ${km(run.distanceM)} 킬로미터, ${date(run.startedAt)}`}
-            onPress={() => run.status === 'completed' ? router.push({ pathname: '/runs/[id]', params: { id: run.id } }) : router.navigate('/run')} style={[styles.card, { width: cardWidth }]}>
+            onPress={() => run.courseId ? router.push({ pathname: '/courses/[id]', params: { id:run.courseId,runId:run.id } }) : router.push({ pathname:'/runs/[id]',params:{id:run.id} })} style={[styles.card, { width: cardWidth }]}>
             <HomePreview paths={paths} active={active} label="실제 러닝 경로" />
             <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{ flexShrink: 1 }}>{run.courseName || '자유 러닝'}</AppText>
               {outcome && <View style={{ backgroundColor: complete ? c.muted : c.action, paddingHorizontal: 5, borderRadius: 10 }}><AppText testID={`home-outcome-${run.id}`} style={{ color: complete ? c.surface : c.onAction, fontSize: 10, lineHeight: 16 }}>{outcome}</AppText></View>}</View>

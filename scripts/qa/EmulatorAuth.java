@@ -45,9 +45,13 @@ public class EmulatorAuth extends Instrumentation {
       if(!getTargetContext().getPackageName().equals("com.runningart.mobile.dev"))throw new Exception("Wrong app");
       if(!android.os.Build.FINGERPRINT.contains("generic") && !android.os.Build.MODEL.contains("sdk_gphone"))throw new Exception("Emulator only");
       JSONObject f=new JSONObject(fixture());
-      if(!f.getString("fixture").equals("runpen-emulator-auth-v1") || !f.getString("projectUrl").equals("https://runpen-ci.invalid"))throw new Exception("Wrong fixture");
+      if(!f.getString("fixture").equals("runpen-isolated-membership-v1") || !f.getString("projectUrl").equals("https://localhost:54431"))throw new Exception("Wrong fixture");
+      if(!f.getString("role").equals("signup") && !f.getString("role").equals("service"))throw new Exception("Wrong fixture role");
+      java.net.URI issuer=new java.net.URI(f.getString("issuer"));
+      if(!issuer.getScheme().equals("http") || !(issuer.getHost().equals("127.0.0.1") || issuer.getHost().equals("localhost")) || issuer.getPort()!=54321 || !issuer.getPath().equals("/auth/v1"))throw new Exception("Not a loopback issuer");
       JSONObject s=f.getJSONObject("session"),u=s.getJSONObject("user");
-      if(!u.getString("email").matches("runpen-ci@example\\.invalid"))throw new Exception("Only the emulator fixture is allowed");
+      if(!u.getString("email").matches("qa-android-[a-f0-9-]+@example\\.invalid"))throw new Exception("Only disposable fixture identities are allowed");
+      if(!u.getJSONObject("app_metadata").getString("runpen_qa_run").equals(f.getString("run")))throw new Exception("Wrong fixture run");
       JSONArray identities=u.getJSONArray("identities");
       if(identities.length()!=1 || !identities.getJSONObject(0).getString("provider").equals("email"))throw new Exception("Not an email fixture");
       long expiry=s.getLong("expires_at")*1000,now=System.currentTimeMillis();
@@ -55,7 +59,7 @@ public class EmulatorAuth extends Instrumentation {
       String[] jwt=s.getString("access_token").split("\\.");
       if(jwt.length!=3)throw new Exception("Invalid token format");
       JSONObject claims=new JSONObject(new String(Base64.decode(jwt[1],Base64.URL_SAFE|Base64.NO_WRAP),StandardCharsets.UTF_8));
-      if(!claims.getString("sub").equals(u.getString("id")) || !claims.getString("iss").equals(f.getString("projectUrl")+"/auth/v1"))throw new Exception("Fixture token mismatch");
+      if(!claims.getString("sub").equals(u.getString("id")) || !claims.getString("iss").equals(f.getString("issuer")))throw new Exception("Fixture token mismatch");
       SharedPreferences prefs=getTargetContext().getSharedPreferences("SecureStore",0);
       for(String name:new String[]{AUTH,"running-art-auth-pending-v1"})
         if(prefs.contains(SERVICE+"-"+name)||prefs.contains(name))throw new Exception("Sign out first; existing authentication is never overwritten");

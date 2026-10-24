@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth/use-auth';
 import { ServiceTabLink } from '@/features/service/ServiceTabLink';
+import DevelopmentCourseLab from '@/features/courses/DevelopmentCourseLab';
 
 export default function DevelopmentScreen() {
   const { account } = useAuth();
@@ -20,6 +21,7 @@ export default function DevelopmentScreen() {
           </ServiceTabLink>
         </View>
         <View style={styles.card}>
+          <DevelopmentCourseLab/>
           <Text style={styles.badge}>핵심 기능 테스트</Text>
           <Text style={styles.cardTitle}>지도 · 현재 위치</Text>
           <Text style={styles.description}>지도 표시와 위치 권한·현재 위치를 확인합니다.</Text>

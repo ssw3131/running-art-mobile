@@ -8,7 +8,7 @@ test('every application route is explicitly inside the authenticated group or pu
   const source = readFileSync(new URL('../src/features/auth/ServiceStack.tsx', import.meta.url), 'utf8');
   const privatePart = source.split('export const privateScreens = [')[1].split('] as const')[0];
   const declared = [...privatePart.matchAll(/\['([^']+)',/g)].map(match => match[1]);
-  assert.deepEqual([...declared, 'account-entry', 'auth/callback', 'service-policy'].sort(), actual,
+  assert.deepEqual([...declared, 'account-entry', 'account-signup', 'auth/callback', 'service-policy'].sort(), actual,
     'Classify every added page. Expo Router otherwise auto-registers unlisted pages outside Stack.Protected.');
   const app = JSON.parse(readFileSync(new URL('../app.json', import.meta.url), 'utf8'));
   assert.equal(app.expo.plugins.find(plugin => Array.isArray(plugin) && plugin[0] === 'expo-router')[1].sitemap, false);

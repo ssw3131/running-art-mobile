@@ -125,7 +125,7 @@ jobs:
     needs: scope
     if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'android')
     runs-on: ubuntu-24.04
-    timeout-minutes: ${{ inputs.repetitions == '10' && 240 || 45 }}
+    timeout-minutes: ${{ inputs.repetitions == '10' && 240 || 60 }}
     strategy:
       fail-fast: false
       matrix:
@@ -145,13 +145,23 @@ jobs:
           cache: gradle
       - run: npm ci
       - run: python scripts/qa/install-maestro.py
+      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb
+        with:
+          version: 2.120.0
+      - name: Start exclusive Android Auth and membership backend
+        run: |
+          mkdir -p .cache
+          supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor > .cache/android-supabase.log 2>&1
+          supabase status -o json > .cache/qa-supabase-status.json
       - name: Build test APK with no local credentials or test hooks
         env:
-          EXPO_PUBLIC_SUPABASE_URL: https://runpen-ci.invalid
+          EXPO_PUBLIC_SUPABASE_URL: https://localhost:54431
           EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_isolated_ci
+          EXPO_PUBLIC_PROFILE_PHOTOS_ENABLED: 'false'
         run: |
           python -m unittest discover -s scripts/qa -p 'test_*.py'
           npm run prebuild:android
+          python scripts/qa/android-membership-tls.py prepare
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2
@@ -171,13 +181,24 @@ jobs:
           avd-name: RunPen_CI
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
           disable-animations: true
-          script: python scripts/qa/android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
+          script: python scripts/qa/run-membership-android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
       - name: Compare reviewed API 36 screens
         if: matrix.api == 36
         run: node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json
       - name: Build screenshot report
         if: always()
         run: node scripts/qa/gallery.mjs test-results/android-${{ matrix.api }}
+      - name: Clean isolated membership backend and native QA trust
+        if: always()
+        run: |
+          cleanup_status=0
+          python scripts/qa/android-membership-tls.py restore || cleanup_status=1
+          if [ -f .cache/qa-membership/private-state.json ]; then
+            node scripts/qa/prepare-membership-fixture.mjs cleanup || cleanup_status=1
+          fi
+          supabase stop --no-backup || cleanup_status=1
+          rm -f .cache/qa-supabase-status.json .cache/qa-membership/tls/ca.key .cache/qa-membership/tls/server.key
+          exit "$cleanup_status"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

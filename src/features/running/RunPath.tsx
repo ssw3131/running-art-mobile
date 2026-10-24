@@ -1,12 +1,20 @@
 import { Camera, GeoJSONSource, Layer, Map, type CameraRef } from '@maplibre/maplibre-react-native';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import type { FeatureCollection, LineString } from 'geojson';
 import type { RunPoint } from '@/modules/running/model';
+import { mapStyleUrl } from '@/modules/map/config';
+import { MapCredits } from '@/features/course-generation/MapCredits';
 
 const offlineStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#E8EDE7' } }] };
 const padding = { top: 30, bottom: 30, left: 30, right: 30 };
-export default function RunPath({ points }: { points: RunPoint[] }) {
+export default function RunPath({ points, background = false }: { points: RunPoint[]; background?: boolean }) {
+  const styleUrl = background ? mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY) : null;
+  const [failed,setFailed]=useState(false),[loaded,setLoaded]=useState(false);
+  useEffect(()=>{
+    if(!styleUrl||failed||loaded)return;
+    const timer=setTimeout(()=>setFailed(true),12000);return()=>clearTimeout(timer);
+  },[styleUrl,failed,loaded]);
   const camera = useRef<CameraRef>(null);
   const drawing = useMemo(() => {
     const segments: RunPoint[][] = [];
@@ -26,16 +34,19 @@ export default function RunPath({ points }: { points: RunPoint[] }) {
   useEffect(() => { if (points.length) camera.current?.fitBounds(drawing.bounds, { padding, duration: 0 }); }, [drawing, points.length]);
   const last = points[points.length - 1];
   if (!last) return <View style={{ height: 180, backgroundColor: '#E8EDE7', padding: 24, justifyContent: 'center' }}><Text>GPS 위치를 받으면 이곳에 궤적을 표시해요.</Text></View>;
-  return <View style={{ height: 260, borderRadius: 16, overflow: 'hidden' }}>
-    <Map style={{ flex: 1 }} mapStyle={offlineStyle} attribution={false} logo={false}
-      onDidFinishLoadingMap={() => camera.current?.fitBounds(drawing.bounds, { padding, duration: 0 })}>
+  return <View style={{ height: background ? 360 : 260, borderRadius: background ? 0 : 16, overflow: 'hidden' }}>
+    <Map key={failed?'offline':'background'} style={{ flex: 1 }} mapStyle={!failed&&styleUrl || offlineStyle} attribution={false} logo={false}
+      onDidFailLoadingMap={()=>setFailed(true)}
+      onDidFinishLoadingMap={() => {setLoaded(true);camera.current?.fitBounds(drawing.bounds, { padding, duration: 0 });}}>
       <Camera ref={camera} initialViewState={{ center: [last.longitude, last.latitude], zoom: 16 }} />
       <GeoJSONSource id="running-track" data={drawing.data}>
-        <Layer id="running-line" type="line" paint={{ 'line-color': '#23694C', 'line-width': 4 }} />
+        <Layer id="running-line" type="line" paint={{ 'line-color': background ? '#FF5264' : '#23694C', 'line-width': 4 }} />
       </GeoJSONSource>
       <GeoJSONSource id="running-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [last.longitude, last.latitude] } }}>
         <Layer id="running-dot" type="circle" paint={{ 'circle-color': '#2563EB', 'circle-radius': 7, 'circle-stroke-width': 2, 'circle-stroke-color': '#FFFFFF' }} />
       </GeoJSONSource>
     </Map>
+    {!!styleUrl && !failed && <MapCredits/>}
+    {failed && <Text style={{padding:6,fontSize:12}}>배경 지도 연결 없이 기록된 경로를 표시합니다.</Text>}
   </View>;
 }

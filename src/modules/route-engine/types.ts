@@ -21,13 +21,15 @@ export type Graph = {
   origin: Origin;
   reachable?: Set<number>;
 };
-export type ShapeId = 'heart' | 'star' | 'cat' | 'rabbit' | 'house' | 'diamond' | 'bolt' | 'fish' | 'arrow' | 'dog' | 'person' | 'bone' | 'turtle' | 'icecream' | 'strawberry' | 'cloud' | 'crown' | 'custom';
+export type ShapeId = 'heart' | 'star' | 'cat' | 'rabbit' | 'house' | 'diamond' | 'bolt' | 'fish' | 'arrow' | 'dog' | 'person' | 'bone' | 'turtle' | 'icecream' | 'strawberry' | 'cloud' | 'crown' | 'whale' | 'custom';
 export type SearchOptions = {
   mode?: 'anchored' | 'free-loop';
   version: '0.1' | '0.2';
   shape: ShapeId;
   targetKm: number;
   radiusKm: number;
+  shapeVersion?: 'figma-20261024';
+  maxRouteKm?: number;
   customTemplate?: Point[];
 };
 export type SearchInput = { origin: Origin; options: SearchOptions; elements: OsmElement[] };

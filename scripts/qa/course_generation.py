@@ -53,7 +53,7 @@ def generation_flow(q):
     q.tap('generation-target-toggle')
     q.seek('candidate-1'); q.tap('candidate-1')
     selected = q.find(q.capture('s2a-selected'), 'candidate-1').get('content-desc')
-    assert selected.startswith('2순위')
+    assert selected.startswith('유사도 ') and '예상 러닝 시간 약' in selected
     q.tap('generation-detail')
     detail = q.capture('s2a-detail-top')
     assert q.find(detail, 'candidate-detail') is not None

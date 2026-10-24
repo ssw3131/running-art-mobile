@@ -13,6 +13,7 @@ import { RunError, runErrorMessage, type Run, type RunPoint } from '@/modules/ru
 import RunPath from '@/features/running/RunPath';
 import RunSharePanel from '@/features/running/RunSharePanel';
 import { RunButton, RunStats, useRunStyles } from '@/features/running/ui';
+import CompletedDetail from '@/features/running/CompletedDetail';
 
 export default function RunDetailScreen() {
   const styles = useRunStyles();
@@ -45,6 +46,7 @@ export default function RunDetailScreen() {
     catch(cause){if(request===generation.current)setError(runErrorMessage(cause));}
     finally{working.current=false;if(request===generation.current)setBusy(false);}
   }
+  if (run?.status === 'completed' && run.courseOutcome === 'finished' && run.courseId && loadedOwner === owner) return <CompletedDetail id={id}/>;
   return <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}><ScrollView contentContainerStyle={styles.content}>
     {!!error && <><Text accessibilityRole="alert" style={styles.error}>{error}</Text><RunButton id="run-detail-retry" title="다시 불러오기" disabled={busy} onPress={() => void refresh()} /></>}
     {run && loadedOwner===owner && <>

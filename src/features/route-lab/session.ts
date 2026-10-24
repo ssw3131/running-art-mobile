@@ -16,7 +16,7 @@ export type LabCalculation = Calculation & {
 };
 
 // One cancellation scope covers road preparation and local calculation, including uncooperative late promises.
-export function createLabSession(load: RoadLoader, run: typeof calculateRoute, now = () => performance.now(), remote?: RemoteCalculation) {
+export function createLabSession(load: RoadLoader, run: typeof calculateRoute, now = () => performance.now(), remote?: RemoteCalculation, serverOnly = false) {
   let active: AbortController | null = null;
   const cancel = () => { active?.abort(); active = null; };
   return {
@@ -35,6 +35,7 @@ export function createLabSession(load: RoadLoader, run: typeof calculateRoute, n
         ...(request.input.options.customTemplate ? { customTemplate: request.input.options.customTemplate.map(p => ({ ...p })) } : {}) } };
       const started = now();
       try {
+        if (serverOnly && (!liveRoads || request.deviceOnly || request.roadMode === 'offline' || !remote)) throw new Error('새 코스는 온라인 서버에서 생성해 주세요.');
         let fallback = false;
         if (remote && liveRoads && !request.deviceOnly && request.roadMode !== 'offline') {
           callbacks.progress({ phase: 'graph', text: '서버에서 주변 도로를 확인하고 코스를 계산하고 있어요.' });
@@ -47,6 +48,7 @@ export function createLabSession(load: RoadLoader, run: typeof calculateRoute, n
             return;
           } catch (error) {
             if (!current() || error instanceof CalculationCancelled) return;
+            if (serverOnly) throw error;
             fallback = true;
             callbacks.progress({ phase: 'graph', text: '서버를 이용할 수 없어 기기에서 계산해요. 시간이 더 걸릴 수 있어요.' });
           }

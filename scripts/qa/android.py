@@ -18,10 +18,12 @@ from sqlite_snapshot import query_snapshot
 from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5_geometry
 from home_states import verify_home_states, verify_home_result
 from course_generation import generation_flow, scaled_generation
+from course_generation_figma import inputs as figma_inputs, real_course as figma_real_course
 from service_s234 import service_s234
 from service_s56 import service_s56
 from storage_readiness import wait_for_storage
 import emulator_auth
+from signup_membership import signup_membership, wait_home
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -29,7 +31,7 @@ parser.add_argument('--serial', required=True)
 parser.add_argument('--apk', required=True, type=pathlib.Path)
 parser.add_argument('--repeat', type=int, default=1)
 parser.add_argument('--smoke', action='store_true')
-parser.add_argument('--signup-only', action='store_true', help='Run only S1 entry and accessibility; never substitutes for full CI')
+parser.add_argument('--signup-only', action='store_true', help='Run guest entry plus real pending membership consent/restart; never substitutes for full CI')
 parser.add_argument('--home-only', action='store_true', help='Run S1 home and calculation handoff diagnostics; never substitutes for full CI')
 parser.add_argument('--home-states-only', action='store_true', help='Diagnose home state/map rendering only; never substitutes for full CI')
 parser.add_argument('--accessibility-only', action='store_true', help='Diagnose existing large-font/keyboard checks only; never substitutes for full CI')
@@ -37,10 +39,12 @@ parser.add_argument('--map-previews', action='store_true', help='Require real on
 parser.add_argument('--service-only', action='store_true', help='Diagnose S234 integration only; never substitutes for full CI')
 parser.add_argument('--achievements-only', action='store_true', help='Diagnose S5/S6 only; never substitutes for full CI')
 parser.add_argument('--generation-only', action='store_true', help='Run S2a generation and accessibility diagnostics; never substitutes for full CI')
+parser.add_argument('--figma-generation-only', action='store_true', help='Figma input, real Korean search/route, save gate; not a full regression')
+parser.add_argument('--figma-real-only', action='store_true', help='Diagnose real Figma route/save and scaled UI')
 parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
-assert sum([args.signup_only, args.home_only, args.home_states_only, args.accessibility_only, args.generation_only, args.service_only, args.achievements_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
+assert sum([args.signup_only, args.home_only, args.home_states_only, args.accessibility_only, args.generation_only, args.figma_generation_only, args.figma_real_only, args.service_only, args.achievements_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
 assert args.serial.startswith('emulator-') and args.serial[9:].isdigit(), 'Physical devices are forbidden'
 assert 1 <= args.repeat <= 10
 sdk = pathlib.Path(os.environ.get('ANDROID_HOME', ROOT / '.tools/android-sdk'))
@@ -51,7 +55,7 @@ spec.loader.exec_module(q)
 q.ADB, q.SERIAL = adb, args.serial
 q.MAP_PREVIEWS = args.map_previews
 
-def seek_visible(key):
+def seek_visible(key, allow_disabled=False):
     """Use the actual scroll viewport; do not assume a 2340px display."""
     upwards = False
     previous = None
@@ -63,7 +67,7 @@ def seek_visible(key):
         bounds = [list(map(int, re.findall(r'\d+', n.get('bounds')))) for n in scrolls]
         bounds = [b for b in bounds if b[2]-b[0] > 300 and b[3]-b[1] > 220]
         if not bounds:
-            if node is not None and node.get('enabled') == 'true':
+            if node is not None and (allow_disabled or node.get('enabled') == 'true'):
                 b = list(map(int, re.findall(r'\d+', node.get('bounds'))))
                 if b[2] > b[0] and b[3] > b[1]: return
             raise RuntimeError('No scroll viewport for: ' + key)
@@ -80,7 +84,8 @@ def seek_visible(key):
         previous=signature
         if node is not None:
             x1,y1,x2,y2 = map(int,re.findall(r'\d+',node.get('bounds')))
-            if node.get('enabled') == 'true' and x2>x1 and y2-y1>=30 and top<=y1<y2<=bottom: return
+            minimum_height = 20 if re.fullmatch(r'distance-\d+', key) else 30
+            if (allow_disabled or node.get('enabled') == 'true') and x2>x1 and y2-y1>=minimum_height and top<=y1<y2<=bottom: return
             # API 29 exposes clipped buttons at [0,0][0,0]. Their position is
             # unknown, so retain the search direction instead of forcing up.
             if x2>x1 and y2>y1: upwards = y2 <= top + 10
@@ -143,8 +148,9 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'startedAt': datetime.now(timezone.utc).isoformat(), 'ciRun': os.environ.get('GITHUB_RUN_ID'),
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
-          'mode': 'accessibility-only' if args.accessibility_only else 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-states-only' if args.home_states_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
+          'mode': 'figma-generation-only' if args.figma_generation_only else 'accessibility-only' if args.accessibility_only else 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-states-only' if args.home_states_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
+if args.figma_real_only: report['mode'] = 'figma-real-only'
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
 original_overlays = None
 
@@ -237,6 +243,7 @@ def launch(route=''):
     q.shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', prefix + route, q.APP)
     time.sleep(3)
 
+
 def callback():
     q.tap('tab-courses'); q.seek('distance-3'); q.tap('distance-3'); q.seek('shape-star'); q.tap('shape-star')
     launch('auth/callback?error=access_denied&error_description=S0_cancelled')
@@ -304,6 +311,14 @@ def save_and_home():
     generation_flow(q)
     verify_home_result(q)
 
+def reset_app():
+    q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP)
+    for permission in ['ACCESS_FINE_LOCATION', 'ACCESS_COARSE_LOCATION', 'ACCESS_BACKGROUND_LOCATION']:
+        q.shell('pm', 'grant', q.APP, 'android.permission.' + permission)
+    if int(environment['api']) >= 33:
+        q.shell('pm', 'grant', q.APP, 'android.permission.POST_NOTIFICATIONS')
+
+
 try:
     for attempt in range(1, args.repeat + 1):
         q.OUT = args.output / f'attempt-{attempt:02}'
@@ -311,15 +326,22 @@ try:
         result = {'attempt': attempt, 'startedAt': datetime.now(timezone.utc).isoformat(), 'steps': [], 'status': 'running'}; report['attempts'].append(result)
         pin_display(q.OUT)
         # This runner accepts only dedicated emulator names above. Never physical.
-        q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP)
-        for permission in ['ACCESS_FINE_LOCATION', 'ACCESS_COARSE_LOCATION', 'ACCESS_BACKGROUND_LOCATION']:
-            q.shell('pm', 'grant', q.APP, 'android.permission.' + permission)
-        if int(environment['api']) >= 33:
-            q.shell('pm', 'grant', q.APP, 'android.permission.POST_NOTIFICATIONS')
+        reset_app()
         launch(); wait_for_storage(q); q.snapshot('empty')
         signup_entry()
         result['steps'].append({'id':'AUTH-guest-gate','status':'passed'})
-        emulator_auth.seed(q); launch(); wait_for_storage(q); q.seed()
+        if args.signup_only or not (args.home_only or args.home_states_only or args.accessibility_only or args.generation_only or args.service_only or args.achievements_only or args.visual_only):
+            signup_membership(q, launch)
+            result['steps'].append({'id': 'S1-membership-explicit-consent', 'status': 'passed'})
+        if args.signup_only:
+            result['status'] = 'passed'
+            result['finishedAt'] = datetime.now(timezone.utc).isoformat()
+            save_report()
+            continue
+        # Service/home scenarios start from a separately prepared REAL receipt.
+        # This setup is not counted as passing the signup UI scenario.
+        reset_app()
+        emulator_auth.seed(q, 'service'); launch(); wait_home(q); wait_for_storage(q); q.seed()
         original_fixture = preserved_fixture()
         steps = [('S0-01-maestro', maestro_navigation), ('S1-02-home-states', lambda: verify_home_states(q, launch)),
                  ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
@@ -335,12 +357,16 @@ try:
         # Native PNG capture, SAF and theme behavior also need the API 29
         # compatibility run; a modern-Android-only pass is insufficient.
         steps += [('S56-01-achievements-support', lambda: service_s56(q, launch))]
-        if args.signup_only: steps = []
         if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
                                    ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
         if args.home_states_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch))]
         if args.accessibility_only: steps = [('S0-08-accessibility', q.scaled), ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         if args.generation_only: steps = [('S2a-01-generation', lambda: generation_flow(q)),
+                                         ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
+        if args.figma_generation_only: steps = [('Figma-inputs', lambda: figma_inputs(q)),
+                                               ('Figma-real-course', lambda: figma_real_course(q)),
+                                               ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
+        if args.figma_real_only: steps = [('Figma-real-course', lambda: figma_real_course(q)),
                                          ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         if args.service_only: steps = [('S0-05-preparation', q.course_preparation), ('S234-01-integrated', lambda: service_s234(q, launch))]
         if args.achievements_only: steps = [('S56-01-achievements-support', lambda: service_s56(q, launch))]
@@ -369,7 +395,7 @@ try:
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
         pin_display(q.OUT)
         # Fixed visual fixtures, independent of the timestamped GPS scenario.
-        q.shell('am', 'force-stop', q.APP); q.shell('pm', 'clear', q.APP); emulator_auth.seed(q); launch(); wait_for_storage(q); q.seed()
+        reset_app(); emulator_auth.seed(q, 'service'); launch(); wait_home(q); wait_for_storage(q); q.seed()
         capture_visuals()
         result['status'] = 'passed'
         result['finishedAt'] = datetime.now(timezone.utc).isoformat()
@@ -399,6 +425,8 @@ except Exception as error:
 finally:
     # Clean even after failed assertions, and retain evidence. Dedicated emulator only.
     cleanup_errors = []
+    try: q.adb('reverse', '--remove', 'tcp:54431')
+    except Exception: cleanup_errors.append({'command': ['adb', 'reverse'], 'error': 'Could not remove local backend forwarding'})
     for command in [('am', 'force-stop', q.APP), ('pm', 'clear', q.APP), ('pm', 'uninstall', emulator_auth.PACKAGE), ('wm', 'size', 'reset'), ('wm', 'density', 'reset'),
                     ('settings', 'put', 'system', 'font_scale', '1.0'),
                     ('am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'),

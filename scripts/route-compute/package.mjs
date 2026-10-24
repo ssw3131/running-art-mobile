@@ -6,8 +6,9 @@ const output = process.argv[2];
 if (!output || fs.existsSync(output)) throw new Error('Provide a new output directory');
 // Explicit allowlist: no environment files, credentials, personal data or APKs.
 const files = [
-  ...['server','pool','worker','roads','admission','admission-store'].map(n => `server/route-compute/${n}.mjs`),
-  ...['engine','types','runner','service-shapes'].map(n => `src/modules/route-engine/${n}.ts`),
+  ...['server','pool','worker','roads','admission','admission-store','usage'].map(n => `server/route-compute/${n}.mjs`),
+  'supabase/functions/_shared/usage-backend.ts',
+  ...['engine','types','runner','service-shapes','figma-contours'].map(n => `src/modules/route-engine/${n}.ts`),
   ...['bounds','channel','national-channel','national-format','file-format','persistent-cache'].map(n => `src/modules/road-data/${n}.ts`),
   'src/modules/route-compute/contract.ts',
 ];

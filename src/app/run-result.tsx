@@ -8,6 +8,7 @@ import { homePathSvg } from '@/modules/home/model';
 import { courseShapes } from '@/modules/courses/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { openServiceTab } from '@/features/service/open-service-tab';
+import CompletedDetail from '@/features/running/CompletedDetail';
 
 export default function RunResultScreen() {
   const params = useLocalSearchParams<{ id: string }>(), id = typeof params.id === 'string' ? params.id : '';
@@ -15,6 +16,7 @@ export default function RunResultScreen() {
   const finished = data?.run.courseOutcome === 'finished' && !!data.course;
   const badge = data?.achievements.badges.find(item => item.shape === data.course?.snapshot.shape);
   const uri = data?.course ? homePathSvg([data.course.snapshot.target], colors.selected) : null;
+  if (finished) return <CompletedDetail id={id}/>;
   return <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={{ padding: 24, gap: 24, paddingBottom: 48, maxWidth: 680, width: '100%', alignSelf: 'center' }}>
     <Stack.Screen options={{ title: finished ? '완주 결과' : '러닝 결과' }} />
     {!data && !error && <ActivityIndicator accessibilityLabel="러닝 결과 확인 중" color={colors.action} />}

@@ -1,5 +1,5 @@
 import { Camera, GeoJSONSource, Layer, Map, Marker, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { MapSurfaceProps as Props } from './types';
@@ -10,7 +10,7 @@ import { useThemeColors } from '@/theme/ThemeProvider';
 
 const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
-function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terrainOverlay, origin, syntheticRoads, centerSelection, showTarget = true, routeColors, onRetry }: Props & { onRetry(): void }) {
+function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terrainOverlay, origin, syntheticRoads, centerSelection, showTarget = true, routeColors, onRetry, onFailure }: Props & { onRetry(): void; onFailure(): void }) {
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
   const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
@@ -24,9 +24,9 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terr
 
   useEffect(() => {
     if (status !== 'loading') return;
-    const timer = setTimeout(() => setStatus('error'), 20000);
+    const timer = setTimeout(() => { setStatus('error'); onFailure(); }, 20000);
     return () => clearTimeout(timer);
-  }, [status]);
+  }, [status, onFailure]);
 
   useEffect(() => {
     if (position && status === 'ready' && !selecting) {
@@ -96,7 +96,7 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terr
         onDidFinishLoadingMap={() => {
           void buildingUpdate.current.then(applied => { if (applied) setStatus('ready'); });
         }}
-        onDidFailLoadingMap={() => setStatus('error')}
+        onDidFailLoadingMap={() => { setStatus('error'); onFailure(); }}
       >
         <Camera ref={camera} initialViewState={{ center: origin ? [origin.lng, origin.lat] : [127.8, 36.3], zoom: origin ? 13 : 6 }} />
         {syntheticRoads && <GeoJSONSource id="synthetic-roads" data={syntheticRoads}>
@@ -166,8 +166,15 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terr
 export default function MapSurface(props: Props) {
   const c = useThemeColors();
   const [attempt, setAttempt] = useState(0);
+  const [failedStyle, setFailedStyle] = useState('');
   const styleUrl = themedMapStyle(props.styleUrl, c.background === '#121212');
-  return <MapAttempt key={`${styleUrl}-${attempt}`} {...props} styleUrl={styleUrl} onRetry={() => setAttempt((value) => value + 1)} />;
+  const onFailure = useCallback(() => setFailedStyle(styleUrl), [styleUrl]);
+  const offline = failedStyle === styleUrl && !!props.routeOverlay && !props.centerSelection && !props.syntheticRoads;
+  return <View style={styles.fill}><MapAttempt key={`${styleUrl}-${attempt}-${offline}`} {...props}
+    syntheticRoads={offline ? {type:'FeatureCollection',features:[]} : props.syntheticRoads}
+    styleUrl={styleUrl} onFailure={onFailure} onRetry={() => {setFailedStyle('');setAttempt(value => value + 1);}} />
+    {offline && <Text style={{padding:6,color:c.muted,backgroundColor:c.background,fontSize:12}}>배경 지도 연결 없이 저장된 코스 경로를 표시합니다.</Text>}
+  </View>;
 }
 
 const styles = StyleSheet.create({

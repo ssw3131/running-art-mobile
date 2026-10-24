@@ -3,12 +3,18 @@ import { act, render } from '@testing-library/react-native';
 import AuthCallbackScreen from '../../src/app/auth/callback';
 const mockReplace = jest.fn(), mockNavigate = jest.fn(), mockDismiss = jest.fn(), mockHandle = jest.fn(), mockStart = jest.fn();
 let mockAccount: any, mockURL: string | null;
+let mockRequired = false;
+const mockMembershipReload = jest.fn();
+jest.mock('../../src/modules/membership/runtime', () => ({ membership: {
+  reload: () => mockMembershipReload(), getSnapshot: () => ({ owner: mockAccount?.id, status: mockRequired ? 'required' : 'complete',
+    policyStatus: 'ready', policy: { id: 'v1' }, membership: { owner: mockAccount?.id, policyId: 'v1', completedAt: '2026-10-24' }, busy: false }),
+} }));
 jest.mock('expo-router', () => ({ router: { replace: (...args: any[]) => mockReplace(...args), navigate: (...args: any[]) => mockNavigate(...args), dismissAll: () => mockDismiss() } }));
 jest.mock('expo-linking', () => ({ useLinkingURL: () => mockURL }));
 jest.mock('../../src/modules/auth/runtime', () => ({ authentication: {
   start: () => mockStart(), handleUrl: (url: string) => mockHandle(url), getSnapshot: () => ({ account: mockAccount }),
 } }));
-beforeEach(() => { mockAccount = null; mockURL = 'runningart://auth/callback?code=fixture-code'; mockReplace.mockReset(); mockNavigate.mockReset(); mockDismiss.mockReset(); mockHandle.mockReset(); mockStart.mockReset().mockResolvedValue(undefined); });
+beforeEach(() => { mockRequired = false; mockMembershipReload.mockReset().mockResolvedValue(undefined); mockAccount = null; mockURL = 'runningart://auth/callback?code=fixture-code'; mockReplace.mockReset(); mockNavigate.mockReset(); mockDismiss.mockReset(); mockHandle.mockReset(); mockStart.mockReset().mockResolvedValue(undefined); });
 test('callback waits for the common exchange and then opens home on success', async () => {
   let finish!: () => void;
   mockHandle.mockImplementation(() => new Promise<void>(resolve => { finish = resolve; }));
@@ -42,5 +48,15 @@ test('does not navigate after the callback screen unmounts', async () => {
   await screen.unmount();
   await act(async () => { finish(); });
   expect(mockReplace).not.toHaveBeenCalled();
+  expect(mockNavigate).not.toHaveBeenCalled();
+});
+
+
+test('pending social account goes to signup after membership lookup, never home', async () => {
+  mockRequired = true;
+  mockHandle.mockImplementation(async () => { mockAccount = { id: 'new-owner' }; });
+  await render(<AuthCallbackScreen />);
+  expect(mockMembershipReload).toHaveBeenCalledTimes(1);
+  expect(mockReplace).toHaveBeenCalledWith('/account-signup');
   expect(mockNavigate).not.toHaveBeenCalled();
 });

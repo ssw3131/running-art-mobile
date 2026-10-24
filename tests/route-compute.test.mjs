@@ -1,3 +1,4 @@
+import { usageFixture, usageHeaders } from './helpers/usage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -17,7 +18,7 @@ const envelope = result => ({contract:COMPUTE_CONTRACT,request:parseComputeReque
   metrics:{elapsedMs:1,computeMs:1,maxSliceMs:1,yields:0,nodes:1,edges:1,routing:{}},
   roads:{release:'test',manifestHash:'a'.repeat(64),cached:false},timing:{roadMs:1,calculationMs:1,totalMs:2}});
 const local = {result:{candidates:[]},metrics:{}};
-const reply = value => new Response(JSON.stringify(value),{headers:{'content-type':'application/json'}});
+const reply = value => new Response(JSON.stringify(value),{headers:{'content-type':'application/json',...usageHeaders()}});
 
 test('request bounds exclude heavy input, remote URLs and unsupported modes', () => {
   assert.deepEqual(parseComputeRequest({...request,url:'https://evil.test',elements:[1]}),request);
@@ -78,12 +79,12 @@ test('cancelled late server reply cannot overwrite newer result or trigger local
   session.cancel();finish(envelope(local.result));await pending;assert.equal(success,0);
 });
 
-test('HTTP accepts guests; rejects malformed/oversized input and excess concurrency', async t => {
+test('HTTP accepts authenticated operations; rejects malformed/oversized input and excess concurrency', async t => {
   let resolve,aborted=false;
   const pool={run:(_r,signal)=>new Promise(done=>{resolve=done;signal.addEventListener('abort',()=>{aborted=true;done({});});}),close:async()=>{}};
-  const server=createComputeServer(pool);server.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>server.close());
+  const server=createComputeServer(pool, { usage: usageFixture() });server.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>server.close());
   const base=`http://127.0.0.1:${server.address().port}`;
-  const post=body=>fetch(`${base}/v1/routes`,{method:'POST',headers:{'content-type':'application/json'},body});
+  const post=body=>fetch(`${base}/v1/routes`,{method:'POST',headers:{'content-type':'application/json',...usageHeaders()},body});
   assert.equal((await fetch(`${base}/healthz`)).status,200);
   const health = await fetch(`${base}/health`);
   assert.equal(health.status, 200);
@@ -94,7 +95,7 @@ test('HTTP accepts guests; rejects malformed/oversized input and excess concurre
   assert.equal((await post(JSON.stringify(request))).status,429);
   resolve(envelope(local.result));assert.equal((await pending).status,200);
   const controller=new AbortController();resolve=undefined;
-  const cancelled=fetch(`${base}/v1/routes`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(request),signal:controller.signal}).catch(()=>{});
+  const cancelled=fetch(`${base}/v1/routes`,{method:'POST',headers:{'content-type':'application/json',...usageHeaders()},body:JSON.stringify(request),signal:controller.signal}).catch(()=>{});
   while(!resolve)await new Promise(done=>setTimeout(done,5));controller.abort();await cancelled;
   for(let i=0;i<100&&!aborted;i++)await new Promise(done=>setTimeout(done,5));assert.equal(aborted,true);
 });

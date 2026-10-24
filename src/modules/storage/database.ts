@@ -2,6 +2,7 @@ import { createStorageClient } from './client';
 import { DATABASE_NAME } from './migrations';
 import { authentication } from '../auth/runtime';
 import { StorageError } from './types';
+import { usageAccess } from '../usage/runtime';
 
 const initializeStorage = createStorageClient(async () => {
   // Lazy import also keeps a missing native module recoverable on this screen.
@@ -11,7 +12,7 @@ const initializeStorage = createStorageClient(async () => {
   const auth = authentication.getSnapshot();
   if (!auth.ready) throw new StorageError('validation','로그인 상태를 확인 중이에요. 잠시 후 다시 시도해 주세요.');
   return auth.account?.id ?? '';
-});
+}, usageAccess);
 
 export async function getStorage() {
   await authentication.start();
