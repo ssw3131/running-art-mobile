@@ -320,8 +320,12 @@ def compatibility():
     assert find(capture('cold-link-back'), 'tab-archive').get('selected') == 'true'
     shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///runs', APP)
     time.sleep(1)
-    run_id = query("SELECT id FROM running_sessions WHERE status='completed' LIMIT 1")[0]['id']
-    tap('run-row-' + run_id)
+    run_id = query("SELECT id FROM running_sessions WHERE status='completed' AND course_outcome IS NULL LIMIT 1")[0]['id']
+    assert find(capture('legacy-free-run-excluded'), 'run-row-' + run_id) is None
+    # Legacy records remain directly readable and shareable, even though the
+    # archive's completed-course list excludes free running.
+    shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///runs/' + run_id, APP)
+    time.sleep(1)
     seek('경로 링크 공유'); capture('legacy-run-share')
     tap('service-back'); tap('service-back')
     tap('service-menu'); seek('open-development'); tap('open-development')
