@@ -427,6 +427,8 @@ finally:
     cleanup_errors = []
     try: q.adb('reverse', '--remove', 'tcp:54431')
     except Exception: cleanup_errors.append({'command': ['adb', 'reverse'], 'error': 'Could not remove local backend forwarding'})
+    try: q.adb('reverse', '--remove', 'tcp:443')
+    except Exception: cleanup_errors.append({'command': ['adb', 'reverse'], 'error': 'Could not remove compute forwarding'})
     for command in [('am', 'force-stop', q.APP), ('pm', 'clear', q.APP), ('pm', 'uninstall', emulator_auth.PACKAGE), ('wm', 'size', 'reset'), ('wm', 'density', 'reset'),
                     ('settings', 'put', 'system', 'font_scale', '1.0'),
                     ('am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'),

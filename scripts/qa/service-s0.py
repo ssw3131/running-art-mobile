@@ -164,7 +164,8 @@ def navigation():
     shell('input', 'keyevent', '4')
     assert find(capture('system-back-home'), 'service-home') is not None
     tap('home-more-runs')
-    assert find(capture('archive-runs'), 'runs-refresh') is not None
+    assert find(capture('archive-saved-from-home'), '저장 코스').get('selected') == 'true'
+    tap('완주 기록')
     tap('tab-account'); tap('tab-archive')
     assert find(capture('archive-view-after-tab'), 'runs-refresh') is not None
     tap('tab-courses'); draft('draft-after-system-back')
@@ -290,6 +291,7 @@ def scaled():
     tap('tab-account'); capture('scaled-account')
     tap('service-menu'); capture('scaled-menu'); tap('service-back')
     tap('tab-home'); tap('home-more-courses'); seek('course-row-' + 'd'*32); tap('course-row-' + 'd'*32)
+    seek('course-edit-name');tap('course-edit-name')
     seek('course-rename-input'); tap('course-rename-input')
     shell('input', 'keycombination', '113', '29'); shell('input', 'text', 'S0_keyboard')
     tree = capture('scaled-keyboard')
@@ -315,7 +317,7 @@ def compatibility():
     tree = capture('gpx-chooser')
     assert any(n.get('package') == 'com.android.intentresolver' for n in nodes(tree))
     shell('input', 'keyevent', '4'); tap('service-back')
-    assert find(capture('cold-link-back'), 'tab-home').get('selected') == 'true'
+    assert find(capture('cold-link-back'), 'tab-archive').get('selected') == 'true'
     shell('am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'runningart:///runs', APP)
     time.sleep(1)
     run_id = query("SELECT id FROM running_sessions WHERE status='completed' LIMIT 1")[0]['id']

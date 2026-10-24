@@ -12,7 +12,7 @@
 - 상위가 Git 저장소가 아니어서 앱 create_worktree 도구는 `Not a git repository`를 반환했다. 모바일 Git에서 `git worktree add -b feat/signup-membership ../running-art-signup c3285e1...`로 분리했다.
 - 기본 모바일 `9ac006c`의 사용자 미커밋 정책/설치 문서, 홈 작업 폴더, 코스20km, 도메인, .guidance-resume은 수정하지 않았다. 초안 사본만 이 브랜치에 포함했다.
 - 이 브랜치는 이미 홈의 ServiceStack/콜백/홈 두 상태 및 기준 commit의 도메인 변경을 포함한다. 홈 후속 commit이 생기면 그 차이를 통합하되 **회원 완료 기준**을 단순 `auth.account` 기준으로 되돌리지 않는다. 과거 MembershipPrompt는 삭제했으므로 복원하지 않는다.
-- 코스20km는 별도 `feat/course-distance-20km`이며 미통합이다. 그 [체크리스트](../../../running-art-distance-20km/docs/quality/course-generation-figma-checklist.md)와 status의 검증 보류를 유지한다. 최종 통합에서 route inventory와 공통 `_layout`/ServiceStack·콜백·문서 충돌을 대조한다.
+- 이 계획 시작 당시 코스20km는 별도 `feat/course-distance-20km`였다. 통합본에 보존한 [체크리스트](../quality/course-generation-figma-checklist.md)와 실행 기록으로 당시 검증 범위를 구분한다. 최종 통합에서 route inventory와 공통 `_layout`/ServiceStack·콜백·문서 충돌을 대조한다.
 
 ## 공통 진입
 

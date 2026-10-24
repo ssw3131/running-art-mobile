@@ -5,6 +5,10 @@ project_id = "runpen-ci"
 [functions.delete-account]
 verify_jwt = false
 
+# The handler verifies the current Auth user, including revoked/withdrawn users.
+[functions.usage]
+verify_jwt = false
+
 [api]
 enabled = true
 port = 54321

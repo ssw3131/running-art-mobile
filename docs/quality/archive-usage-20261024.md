@@ -57,7 +57,7 @@ DB는 실제 PostgreSQL이며 Auth/회원 테이블에는 합성 계정을 사�
 | 360dp 다크·글꼴 1.4배·긴 이름·지도 오프라인 경로·횟수 시트 | 공통 화면 로직 | 최종 APK 실화면 확인 |
 | 20km 입력·탭 복귀 후 조건 보존·기기 계산 옵션 제거 | 공통 로직 검사 | 최종 APK 통과 |
 
-근거는 `android36-*-contract.log`, `android29-*-contract.log` 및 각 폴더의 `checks.json`, `extended-checks.json`, `recovery-checks.json`, `native-checks.json`이다. [실제 화면 모음](../../test-results/archive/index.html)에서 원본 PNG를 열 수 있다.
+근거는 `android36-*-contract.log`, `android29-*-contract.log` 및 각 폴더의 `checks.json`, `extended-checks.json`, `recovery-checks.json`, `native-checks.json`이다. 로컬 실제 화면 모음은 `test-results/archive/index.html`이며 원본 PNG를 열 수 있다. 이 생성물은 Git 저장소에 포함하지 않는다.
 
 정리 완료: 2026-10-24T23:04:43+09:00. 전용 두 AVD의 앱 합성 자료와 외부 인증 도우미를 삭제하고 활성 서비스 없음/에뮬레이터 종료를 확인했다(`android-cleanup.json`). 이번 격리 PostgreSQL만 종료했다(`postgres-stop.log`). 원본 작업 폴더·기존 에뮬레이터·휴대폰의 자료를 삭제하거나 설치하지 않았다.
 

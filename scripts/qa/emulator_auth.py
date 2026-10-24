@@ -50,6 +50,7 @@ def seed(q, role='service'):
         import uuid
         q.OWNER = str(uuid.UUID(value['session']['user']['id']))
         q.adb('reverse', 'tcp:54431', 'tcp:54431')
+        q.adb('reverse', 'tcp:443', 'tcp:54431')
         q.shell('am', 'force-stop', q.APP)
         q.adb('push', str(fixture), '/data/local/tmp/runpen-emulator-session.json')
         output = q.shell('am', 'instrument', '-w', PACKAGE + '/.EmulatorAuth').decode()

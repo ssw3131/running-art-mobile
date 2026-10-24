@@ -28,11 +28,8 @@ def drawing(q):
 def generation_flow(q):
     q.tap('tab-courses')
     drawing(q)
-    q.seek('route-diagnostics')
-    tree = q.capture('s2a-before-grid')
-    if q.find(tree, 'route-diagnostics').get('content-desc') == '개발 검증 정보':
-        q.tap('route-diagnostics')
-    q.seek('dataset-grid'); q.tap('dataset-grid')
+    # Public fixture roads come from the isolated compute backend, never from
+    # a hidden development switch in the production service UI.
     q.seek('distance-7'); q.tap('distance-7'); q.tap('calculate-route')
     q.capture('s2a-confirm-cancel-before')
     q.tap('generation-confirm-cancel')
@@ -56,7 +53,7 @@ def generation_flow(q):
     assert selected.startswith('유사도 ') and '예상 러닝 시간 약' in selected
     q.tap('generation-detail')
     detail = q.capture('s2a-detail-top')
-    assert q.find(detail, 'candidate-detail') is not None
+    assert q.find(detail, 'course-detail') is not None
     q.seek('course-save-name'); q.tap('course-save-name')
     q.shell('input', 'keycombination', '113', '29'); q.shell('input', 'text', 'S0_DRAFT')
     tree = q.capture('s2a-name-keyboard')
@@ -74,10 +71,10 @@ def generation_flow(q):
     assert len(rows) == 1
     saved = rows[0]
     assert format(saved['length_km'], '.2f') + ' km' in selected
-    q.tap('course-save')
+    assert q.find(q.capture('s2a-save-state-transition'), 'course-save') is None
     assert q.query("SELECT count(*) AS n FROM saved_courses WHERE name='S0_DRAFT'")[0]['n'] == 1
     q.capture('s2a-saved')
-    q.seek('candidate-export'); q.tap('candidate-export')
+    q.seek('course-export-gpx'); q.tap('course-export-gpx')
     chooser = q.capture('s2a-gpx-chooser')
     deadline = time.monotonic() + 20
     while not any(n.get('package') == 'com.android.intentresolver' for n in chooser.iter('node')) and time.monotonic() < deadline:
@@ -85,8 +82,11 @@ def generation_flow(q):
         chooser = q.capture('s2a-gpx-chooser-ready')
     assert any(n.get('package') == 'com.android.intentresolver' for n in chooser.iter('node'))
     q.shell('input', 'keyevent', '4')
-    q.seek('generation-saved-list'); q.tap('generation-saved-list')
-    assert q.find(q.capture('s2a-archive-destination'), '저장한 코스') is not None
+    q.tap('service-back'); q.tap('tab-archive')
+    assert q.find(q.capture('s2a-archive-destination'), '저장 코스') is not None
+    q.seek('course-row-'+saved['id']);q.tap('course-row-'+saved['id'])
+    assert q.find(q.capture('s2a-saved-reopened'),'course-save') is None
+    q.tap('service-back')
     assert q.query("SELECT snapshot_hash FROM saved_courses WHERE id='" + saved['id'] + "'")[0]['snapshot_hash'] == saved['snapshot_hash']
     (q.OUT / 's2a-result.json').write_text(json.dumps({
         'selected': selected, 'savedId': saved['id'], 'snapshotHash': saved['snapshot_hash'],
@@ -100,7 +100,6 @@ def scaled_generation(q, launch):
     try:
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.tap('tab-courses'); q.seek('shape-star'); q.capture('s2a-large-shapes')
-        q.seek('route-diagnostics'); q.tap('route-diagnostics'); q.seek('dataset-grid'); q.tap('dataset-grid')
         q.tap('calculate-route'); q.capture('s2a-large-confirm')
         # The fixed sheet footer is outside its body ScrollView.
         q.tap('generation-confirm-cancel')

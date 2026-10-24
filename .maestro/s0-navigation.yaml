@@ -16,7 +16,7 @@ name: S0 five tabs and menu return
     id: tab-run
 - tapOn:
     id: tab-archive
-- assertVisible: 저장한 코스
+- assertVisible: 저장 코스
 - tapOn:
     id: tab-account
 - assertVisible:

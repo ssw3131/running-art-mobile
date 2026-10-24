@@ -158,6 +158,7 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: https://localhost:54431
           EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_isolated_ci
           EXPO_PUBLIC_PROFILE_PHOTOS_ENABLED: 'false'
+          EXPO_PUBLIC_COMPUTE_BASE_URL: https://localhost/api
         run: |
           python -m unittest discover -s scripts/qa -p 'test_*.py'
           npm run prebuild:android

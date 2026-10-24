@@ -60,7 +60,8 @@ def service_s234(q, launch):
     q.seek('result-detail');q.tap('result-detail')
     assert q.find(q.capture('s3-retry-finished'),'run-rechallenge') is not None
     launch('courses?view=runs');q.capture('s3-monthly-records')
-    assert q.find(q.capture('s3-monthly-retry-record'),'run-row-'+run_id) is not None
+    assert q.find(q.capture('s3-stopped-excluded'),'run-row-'+run_id) is None
+    assert q.query(f"SELECT count(*) n FROM running_sessions WHERE id='{run_id}' AND course_outcome='stopped'")[0]['n']==1
     (q.OUT/'s234-result.json').write_text(json.dumps({'runId':run_id,'retryId':newer['id'],'oldRunUnchanged':True,'pickerCancel':True,'restoredOptions':restored}),encoding='utf8')
     q.tap('tab-home')
     print('PASS: S2b/c selectors/picker cancel, S4 map/focus/settings/touch lock/pause restoration and S3 separate retry/monthly records',flush=True)

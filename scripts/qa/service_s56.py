@@ -27,8 +27,8 @@ def service_s56(q, launch):
     q.shell('sqlite3',q.DB,'INSERT INTO running_sessions(id,status,started_at,ended_at,checkpoint_at,resumed_at,owner_id,distance_m,active_ms,course_id,course_name,course_snapshot_json,course_snapshot_hash,course_outcome) VALUES('+','.join(map(literal,values))+');')
     try:
         launch('run-result?id='+run_id)
-        assert q.find(q.capture('s5-result'),'run-result-badge') is not None
-        q.seek('run-result-share');q.tap('run-result-share')
+        assert q.find(q.capture('s5-result'),'completion-first-badge') is not None
+        q.seek('공유 이미지 만들기');q.tap('공유 이미지 만들기')
         q.capture('s5-card-options')
         for key in ['card-nickname','card-date']:
             assert q.find(q.capture('current'),key).get('checked')=='true'
@@ -68,7 +68,7 @@ def service_s56(q, launch):
         feed=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',feed[16:24])==(1080,1350)
         (q.OUT/'s5-card-feed-private.png').write_bytes(feed)
         launch('account');q.seek('badge-'+entry['snapshot']['shape']);q.capture('s5-account-badge')
-        q.tap('badge-'+entry['snapshot']['shape']);assert q.find(q.capture('s5-badge-record'),'run-distance') is not None
+        q.tap('badge-'+entry['snapshot']['shape']);assert q.find(q.capture('s5-badge-record'),'completion-first-badge') is not None
         launch('service-info');q.capture('s6-menu')
         q.seek('support-about');q.tap('support-about');q.capture('s6-about');q.tap('service-back')
         q.seek('support-guide');q.tap('support-guide');q.capture('s6-guide');q.tap('service-back')
@@ -99,7 +99,7 @@ def service_s56(q, launch):
         # Density/font changes recreate the activity; cold-launch the target only
         # after applying them so an old activity cannot consume the deep link.
         q.shell('am','force-stop',q.APP)
-        launch('run-result?id='+run_id);q.seek('run-result-share');q.capture('s5-result-large-font')
+        launch('run-result?id='+run_id);q.seek('공유 이미지 만들기');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
         (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':False,'saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
     except Exception:

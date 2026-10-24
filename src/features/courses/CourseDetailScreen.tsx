@@ -43,7 +43,7 @@ export default function CourseDetailScreen() {
     const ticket=++revision.current;setError('');
     try {
       const db=await getStorage(); let snapshot:CourseSnapshot,nameValue:string,savedId:string|null=null;
-      if(draft){snapshot=draft.snapshot;nameValue=draft.name??`${courseShapes[snapshot.shape]} 코스`;savedId=await db.courses.findHash(encodeSnapshot(snapshot).hash);if(savedId)nameValue=(await db.courses.get(savedId)).name;}
+      if(draft){snapshot=draft.snapshot;nameValue=candidateDrafts.get(draft.id,owner)?.name??`${courseShapes[snapshot.shape]} 코스`;savedId=await db.courses.findHash(encodeSnapshot(snapshot).hash);if(savedId)nameValue=(await db.courses.get(savedId)).name;}
       else if(params.id){
         try{const saved=await db.courses.get(params.id);snapshot=saved.snapshot;nameValue=saved.name;savedId=saved.id;}
         catch(cause){
@@ -121,7 +121,7 @@ export default function CourseDetailScreen() {
           {!!notice&&<AppText testID="course-save-notice" accessibilityLiveRegion="polite">{notice}</AppText>}
           {!!error&&<AppText testID="course-detail-error" accessibilityRole="alert" accessibilityLiveRegion="assertive" style={{color:c.danger}}>{error}</AppText>}
           {!current.savedId?<View style={{gap:12}}>
-            <TextInput accessibilityLabel="저장할 코스 이름" testID="course-save-name" value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/>
+            <TextInput accessibilityLabel="저장할 코스 이름" testID="course-save-name" value={name} onChangeText={value=>{setName(value);if(draft)candidateDrafts.edit(draft.id,owner,{name:value});}} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/>
             <Button testID="course-save" label="코스 저장하기" disabled={busy||!name.trim()} onPress={save}/>
             <Button variant="secondary" label="GPX 파일 내보내기" disabled onPress={()=>{}}/>
             {draft&&<Button variant="secondary" label="재설정 및 재생성하기" onPress={()=>{if(router.canGoBack())router.back();else openServiceTab('/route-lab');}}/>}

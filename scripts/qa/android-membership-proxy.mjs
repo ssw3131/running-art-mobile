@@ -4,9 +4,28 @@ import { request } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { isolatedSupabase } from './isolated-supabase.mjs';
 import { ANDROID_KEY } from './prepare-membership-fixture.mjs';
+import { createUsageBackend } from '../../supabase/functions/_shared/usage-backend.ts';
+import { createUsageHandler } from '../../supabase/functions/usage/handler.ts';
+import { createComputeServer } from '../../server/route-compute/server.mjs';
+import { response } from '../../tests/helpers/compute-contract.mjs';
 const { env, url } = isolatedSupabase();
-const server = createServer({ key: readFileSync('.cache/qa-membership/tls/server.key'), cert: readFileSync('.cache/qa-membership/tls/server.crt') }, (req, res) => {
+const usage = createUsageBackend({url:url.href,serviceKey:env.SERVICE_ROLE_KEY,identityKey:'isolated-android-usage-key-never-production'});
+const handler = createUsageHandler(usage);
+// The production HTTP handler and engine run on a public deterministic grid.
+// Only road sourcing is replaced; Auth, membership, ledger and app calls are real.
+const compute = createComputeServer({run:async input=>response(input),close:async()=>{}},{usage,ingress:()=>{}});
+compute.listen(54432,'127.0.0.1');
+const server = createServer({ key: readFileSync('.cache/qa-membership/tls/server.key'), cert: readFileSync('.cache/qa-membership/tls/server.crt') }, async (req, res) => {
   if (req.url === '/healthz') { res.writeHead(200); res.end('ready'); return; }
+  if (req.url === '/functions/v1/usage') {
+    const chunks=[]; for await (const chunk of req) chunks.push(chunk);
+    const result=await handler(new Request('http://localhost/functions/v1/usage',{method:req.method,headers:req.headers,body:Buffer.concat(chunks)}));
+    res.writeHead(result.status,Object.fromEntries(result.headers));res.end(Buffer.from(await result.arrayBuffer()));return;
+  }
+  if (req.url === '/api/v1/routes') {
+    const upstream=request({hostname:'127.0.0.1',port:54432,path:'/v1/routes',method:req.method,headers:req.headers},response=>{res.writeHead(response.statusCode,response.headers);response.pipe(res);});
+    upstream.on('error',()=>{if(!res.headersSent)res.writeHead(502);res.end();});req.on('aborted',()=>upstream.destroy());req.pipe(upstream);return;
+  }
   if (!/^\/(rest|storage)\/v1\//.test(req.url ?? '') && !/^\/auth\/v1\/(token|user|logout)(?:\?|$)/.test(req.url ?? '')) { res.writeHead(404); res.end(); return; }
   if (req.headers.apikey !== ANDROID_KEY) { res.writeHead(403); res.end(); return; }
   const headers = { ...req.headers, host: url.host, apikey: env.ANON_KEY };
@@ -21,4 +40,4 @@ const server = createServer({ key: readFileSync('.cache/qa-membership/tls/server
   req.on('aborted', () => upstream.destroy()); req.pipe(upstream);
 });
 server.listen(54431, '127.0.0.1', () => console.log('Isolated Android TLS transport listening on loopback 54431'));
-for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => server.close(() => process.exit(0)));
+for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => {compute.close();server.close(()=>process.exit(0));});

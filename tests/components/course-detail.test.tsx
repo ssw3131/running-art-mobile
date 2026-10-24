@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import CourseDetailScreen from '../../src/features/courses/CourseDetailScreen';
 import { CourseError } from '../../src/modules/courses/model';
+import { candidateDrafts } from '../../src/features/course-generation/model';
 let mockParams:any, mockLast:any, mockActive:any, mockSaved:any;
 const mockNavigate=jest.fn(),mockSave=jest.fn(),mockGet=jest.fn();
 const snapshot={schemaVersion:1,engineVersion:'0.2',source:'osm',shape:'heart',origin:{lat:37,lng:127},targetKm:3,lengthKm:3,score:80,route:[[127,37],[127.01,37],[127,37]],target:[[127,37],[127.01,37],[127,37]]};
@@ -16,8 +17,16 @@ jest.mock('../../src/modules/map/MapSurface',()=>()=>null);
 jest.mock('../../src/features/terrain/use-terrain',()=>({useTerrain:()=>({state:{status:'idle',profile:null}})}));
 jest.mock('../../src/features/terrain/TerrainPanel',()=>()=>null);
 beforeEach(()=>{
+ candidateDrafts.clear();
  mockParams={id:'a'.repeat(32)};mockLast=null;mockActive=null;mockSaved='a'.repeat(32);
  mockGet.mockReset().mockResolvedValue({id:mockSaved,name:'저장 하트',snapshot});mockSave.mockReset().mockResolvedValue({id:'b'.repeat(32),created:true});mockNavigate.mockReset();
+});
+test('unsaved candidate name survives leaving detail and reopening without using a save',async()=>{
+ mockSaved=null;const id=candidateDrafts.put(snapshot as any,0,'owner');mockParams={draft:id};
+ const view=await render(<CourseDetailScreen/>);await waitFor(()=>screen.getByTestId('course-save-name'));
+ await fireEvent.changeText(screen.getByTestId('course-save-name'),'내 새 코스');await view.unmount();
+ await render(<CourseDetailScreen/>);await waitFor(()=>expect(screen.getByTestId('course-save-name').props.value).toBe('내 새 코스'));
+ expect(mockSave).not.toHaveBeenCalled();
 });
 test('saved course starts without saving again, unfinished active session returns to that run',async()=>{
  const view=await render(<CourseDetailScreen/>);

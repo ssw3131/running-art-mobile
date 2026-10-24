@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, unlink } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isolatedSupabase } from './isolated-supabase.mjs';
@@ -15,7 +16,7 @@ const must = (result, description) => { assert.equal(result.error, null, descrip
 const persist = state => writeFile(statePath, JSON.stringify(state), { mode: 0o600 });
 
 export async function membershipFixture(command, role = 'service', output = '.cache/emulator-auth/session.json') {
-  const { admin, client } = isolatedSupabase();
+  const { admin, client, env } = isolatedSupabase();
   let state;
   if (command === 'prepare') {
     await mkdir(folder, { recursive: true });
@@ -42,6 +43,14 @@ export async function membershipFixture(command, role = 'service', output = '.ca
     const result = must(await admin.auth.admin.createUser({ email, password, email_confirm: true,
       app_metadata: { runpen_qa_run: state.run }, user_metadata: { runpen_nickname: '러너' } }), 'Create isolated Auth account');
     record.owner = result.user.id; state.accounts[name] = record; await persist(state);
+    // A synthetic provider identity only in the exclusive loopback Auth DB.
+    // Production authentication still requires a server-verified social identity.
+    const db=new URL(env.DB_URL);assert.ok(['localhost','127.0.0.1'].includes(db.hostname));
+    assert.match(record.owner,/^[a-f0-9-]{36}$/);
+    const sub=`android-${state.run}-${name}`;
+    const sql=`insert into auth.identities(id,user_id,provider_id,provider,identity_data) values('${randomUUID()}','${record.owner}','${sub}','google','${JSON.stringify({sub,email})}'::jsonb);`;
+    const inserted=spawnSync('psql',['-X','-v','ON_ERROR_STOP=1'],{input:sql,encoding:'utf8',env:{...process.env,PGHOST:db.hostname,PGPORT:db.port,PGUSER:db.username,PGPASSWORD:decodeURIComponent(db.password),PGDATABASE:db.pathname.slice(1)}});
+    assert.equal(inserted.status,0,'Insert isolated synthetic provider identity');
     return record;
   };
   const login = async record => {
