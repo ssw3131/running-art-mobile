@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { AppText, Button, Toggle } from '@/components/ui';
@@ -34,6 +34,21 @@ export default function CourseDetailScreen() {
   const [editing,setEditing]=useState(false),[name,setName]=useState(''),[expanded,setExpanded]=useState(false);
   const [showTarget,setShowTarget]=useState(true),[background,setBackground]=useState(true);
   const revision=useRef(0),working=useRef(false),exporting=useRef<AbortController|null>(null);
+  const scrollRef=useRef<ScrollView>(null),saveInput=useRef<TextInput>(null),renameInput=useRef<TextInput>(null);
+  const revealName=useCallback(()=>{
+    const input=[saveInput.current,renameInput.current].find(value=>value?.isFocused());
+    if(!input)return;
+    // Include the shared header's screen offset, as in the existing course editor.
+    // Android otherwise only keeps the caret visible and can clip the input border.
+    scrollRef.current?.getNativeScrollRef()?.measureInWindow((_x,y)=>{
+      if(input.isFocused())scrollRef.current?.scrollResponderScrollNativeHandleToKeyboard(input,y+16,true);
+    });
+  },[]);
+  useEffect(()=>{
+    const listener=Keyboard.addListener('keyboardDidShow',revealName);
+    return()=>listener.remove();
+  },[revealName]);
+  const focusName=()=>{if(Keyboard.isVisible())revealName();};
   const draft=useMemo(()=>candidateDrafts.get(params.draft,owner||'guest'),[params.draft,owner]);
   const routeKey=JSON.stringify([params.id,params.runId,params.draft]);
   const current=data?.owner===owner&&data.routeKey===routeKey?data:null;
@@ -92,7 +107,7 @@ export default function CourseDetailScreen() {
   });
   const continuation=courseContinuation(current?.last??null,current?.activeId??null);
   return <KeyboardAvoidingView style={{flex:1,backgroundColor:c.background}} behavior={Platform.OS==='ios'?'padding':undefined}>
-    <ScrollView testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30,gap:24}}>
+    <ScrollView ref={scrollRef} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30,gap:24}}>
       {!current&&!error&&<ActivityIndicator accessibilityLabel="코스 불러오는 중" color={c.action}/>}
       {!current&&!!error&&<View style={{padding:24,gap:12}}><AppText accessibilityRole="alert" testID="course-detail-error">{error}</AppText><Button variant="outline" label="다시 확인" onPress={()=>void refresh()}/></View>}
       {current&&<>
@@ -108,7 +123,7 @@ export default function CourseDetailScreen() {
           </View>
           <View style={{gap:16}}>
             <View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="caption" style={{color:c.muted,width:70}}>코스명</AppText><AppText weight="bold" style={{flex:1}}>{current.name}</AppText><Pressable accessibilityRole="button" accessibilityLabel="코스 이름 수정" testID="course-edit-name" onPress={()=>setEditing(value=>!value)} style={{minWidth:48,minHeight:48,justifyContent:'center'}}><Image source={require('../../../assets/archive/edit.svg')} style={{width:16,height:16}} contentFit="contain" accessible={false}/></Pressable></View>
-            {editing&&<View style={{gap:10}}><TextInput accessibilityLabel="코스 이름" testID="course-rename-input" value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/><Button label="이름 적용" disabled={busy||!name.trim()} onPress={rename}/></View>}
+            {editing&&<View style={{gap:10}}><TextInput ref={renameInput} onFocus={focusName} accessibilityLabel="코스 이름" testID="course-rename-input" value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/><Button label="이름 적용" disabled={busy||!name.trim()} onPress={rename}/></View>}
             <AppText variant="label">코스 기준 위치   {centerLabel(current.snapshot.origin)}</AppText>
             <AppText variant="label">전체 거리   {current.snapshot.lengthKm.toFixed(2)} km</AppText>
             <AppText variant="label">예상 러닝 시간   약 {estimatedRunningMinutes(current.snapshot.lengthKm)}분</AppText>
@@ -121,7 +136,7 @@ export default function CourseDetailScreen() {
           {!!notice&&<AppText testID="course-save-notice" accessibilityLiveRegion="polite">{notice}</AppText>}
           {!!error&&<AppText testID="course-detail-error" accessibilityRole="alert" accessibilityLiveRegion="assertive" style={{color:c.danger}}>{error}</AppText>}
           {!current.savedId?<View style={{gap:12}}>
-            <TextInput accessibilityLabel="저장할 코스 이름" testID="course-save-name" value={name} onChangeText={value=>{setName(value);if(draft)candidateDrafts.edit(draft.id,owner,{name:value});}} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/>
+            <TextInput ref={saveInput} onFocus={focusName} accessibilityLabel="저장할 코스 이름" testID="course-save-name" value={name} onChangeText={value=>{setName(value);if(draft)candidateDrafts.edit(draft.id,owner,{name:value});}} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/>
             <Button testID="course-save" label="코스 저장하기" disabled={busy||!name.trim()} onPress={save}/>
             <Button variant="secondary" label="GPX 파일 내보내기" disabled onPress={()=>{}}/>
             {draft&&<Button variant="secondary" label="재설정 및 재생성하기" onPress={()=>{if(router.canGoBack())router.back();else openServiceTab('/route-lab');}}/>}
