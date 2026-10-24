@@ -4,16 +4,31 @@ import { AppState } from 'react-native';
 import HomeScreen from '../../src/features/service/HomeScreen';
 
 let mockAuth: any;
+let mockFocusEpoch = 0;
 const mockRead = jest.fn(), mockNavigate = jest.fn(), mockPush = jest.fn();
 jest.mock('../../src/features/auth/use-auth', () => ({ useAuth: () => mockAuth }));
 jest.mock('../../src/modules/storage/database', () => ({ getStorage: async () => ({ home: { read: () => mockRead() } }) }));
 jest.mock('expo-router', () => ({ router: { navigate: (...args: any[]) => mockNavigate(...args), push: (...args: any[]) => mockPush(...args) },
-  useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]) }));
+  useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect, mockFocusEpoch]) }));
 jest.mock('../../src/features/service/HomePreview', () => ({ HomePreview: () => null }));
 const data = (owner = 'A') => ({ owner, monthStart: 0, monthEnd: 1, monthlyDistanceM: 3200, runCount: 0, currentStreak: 0, latestCompleted: null, courseCount: 0, courses: [], recent: [] });
 const run = { id: 'a'.repeat(32), status: 'completed', distanceM: 3200, activeMs: 100000, startedAt: 1000, courseName: null };
-beforeEach(() => { jest.useFakeTimers(); mockAuth = { ready: true, account: { id: 'A', name: '러너' } }; mockRead.mockReset(); mockNavigate.mockReset(); mockPush.mockReset(); AppState.currentState = 'active'; });
+beforeEach(() => { jest.useFakeTimers(); mockFocusEpoch = 0; mockAuth = { ready: true, account: { id: 'A', name: '러너' } }; mockRead.mockReset(); mockNavigate.mockReset(); mockPush.mockReset(); AppState.currentState = 'active'; });
 afterEach(() => { jest.useRealTimers(); });
+
+test('returning home keeps existing rows during refresh so native scroll is not reset', async () => {
+  let finish!: (value: any) => void;
+  const history = { ...data(), runCount: 1, recent: [{ run, paths: [] }] };
+  mockRead.mockResolvedValueOnce(history).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+  const view = await render(<HomeScreen />);
+  expect(screen.getByTestId('home-run-' + run.id)).toBeVisible();
+  mockFocusEpoch++;
+  await view.rerender(<HomeScreen />);
+  expect(screen.queryByTestId('home-loading')).toBeNull();
+  expect(screen.getByTestId('home-run-' + run.id)).toBeVisible();
+  await act(async () => finish(history));
+  expect(screen.getByTestId('home-run-' + run.id)).toBeVisible();
+});
 
 test('UI-HOME-01: loading/error are distinct from initial, explicit retry shows empty home', async () => {
   let reject!: (error: Error) => void;
