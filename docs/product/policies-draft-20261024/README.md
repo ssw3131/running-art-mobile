@@ -29,5 +29,5 @@
 - AI·쿠키·외부 서비스·상품·기록 보관 등의 조항은 원문을 유지했다. 현재 모바일과의 차이는 [기존 정책 대조](../policy-reconciliation-20261014.md)를 후속 수정에 활용한다.
 - 운영 DB의 정책 등록·앱 문안 교체·동의 이력 생성·지원 SQL·공지 게시·이메일 발송은 실행하지 않았다.
 
-원본 초안 기록은 기본 모바일 작업 폴더의 `docs/history/executed-plans/2026-10-24-1502-policy-drafts.md`에 보존되어 있다. 이 가입 작업 폴더에는 본문 세 파일을 그대로 복사했으며 [시험 등록 준비](../../development/test-policy-publication-20261024.md)를 추가했다. 원래 초안/기록은 수정하지 않았다.
+원본 초안 기록은 [운영 정보 반영 실행 이력](../../history/executed-plans/2026-10-24-1502-policy-drafts.md)에 보존되어 있다. 이 가입 작업 폴더에는 본문 세 파일을 그대로 복사했으며 [시험 등록 준비](../../development/test-policy-publication-20261024.md)를 추가했다. 원래 초안/기록은 수정하지 않았다.
 
