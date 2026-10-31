@@ -222,3 +222,17 @@ Git worktree는 기본 checkout 하나였고 복구 원본에는 .git이 없었�
 최신 main `1040e52`도 bundle/실제 clone/fsck로 복원 확인했으며, 완료된 앞선 로컬 브랜치3개는 각 PR 병합·동일 tree·bundle 복원 확인 후 정리했다. 후속 수정은 동일 기본 폴더의 `codex/notice-readiness-20261031` 브랜치에서 진행한다.
 
 - 마지막 갱신: 2026-10-31T21:48:44.5970157+09:00
+
+## main 재현과 공지 조회 상한 · A7 실제 검증 후속
+
+PR #35의 [검사 41202906223](https://github.com/ssw3131/running-art-mobile/actions/runs/41202906223)는 Android 29/36·빠른 검사·API·필수 게이트를 모두 통과했다. Android 29의 7단계/36의 15단계와 자료 보존·정리도 재시도 없이 통과했다. main a554e6a의 [후속 검사 41206130930](https://github.com/ssw3131/running-art-mobile/actions/runs/41206130930)에서는 Android 36 공지 상세 로딩이 30초를 넘겨 실패했다. 30초 대기만으로 해결됐다고 기록하지 않는다. 전체 산출물·run 정보·실패 로그는 C: 백업 validation/main-a554e6a-*에 보존했다.
+
+loadNotices()는 원격 요청이 실패해야 저장본을 읽는데, 공지 RPC에는 응답 상한이 없었다. 공지 읽기만 10초의 deadline/AbortSignal로 제한해 전송 계층이 취소를 무시해도 기존 저장본/오류 처리로 진행한다. 늦은 응답이 캐시를 덮어쓰지 않으며 정상 빈 목록은 정상 응답으로 유지한다. 서버 RPC 이름·인자·데이터 형식·문의 제출은 그대로다. 정상/빈 응답·정지/취소 무시·늦은 응답·저장본 없음·즉시 실패를 포함한 새 회귀5개와 기존 공지 UI2개, 타입·린트를 로컬에서 통과했다. 최초 회귀 테스트 표의 배열 인자 작성 오류 2건은 테스트 표 수정으로 해결했으며 제품 실패와 구분한다. 이 보완의 PR/main Android 판정은 후속 확인 전까지 미검증이다.
+
+사용자가 기존 앱 자료 삭제를 허용하고 A7(SM-A750N/Android10)을 연결했다. 기존 설치 APK를 C:에 보존했고 새 테스트 키와 서명이 달라 최초 1회 승인된 제거/재설치를 했다. 사용자가 직접 로그인한 후 개발용에서 USB Metro·홈·빈 보관함·로컬 임시 문구 Fast Refresh/원복을 확인했다. preview로 -r 교체 설치해 Metro 없이 홈·보관함·서비스 소개 상세/뒤로와 로그인·UID·최초 설치시각 유지를 확인했다.
+
+최신 a554e6a [개발용 41206135949](https://github.com/ssw3131/running-art-mobile/actions/runs/41206135949)/[preview 41206138228](https://github.com/ssw3131/running-art-mobile/actions/runs/41206138228)도 성공했고, 공통 인증서·ARM64/ARMv7·해시·버전 증가·JS 포함 여부를 대조했다. preview→개발용215616962→preview215617838 순서로 제거 없이 교체했고 매번 로그인·UID·최초 설치시각(22:14:27)이 유지됐다. 마지막 preview는 Metro 종료·ADB 8081 전달 제거 후 홈/빈 보관함/소개 상세/뒤로를 확인했다. 현재 폰 APK에는 위 공지 응답 상한 보완이 아직 없다. 보관함이 비어 있어 비어 있지 않은 코스/러닝 내용 보존, 야외 GPS·배터리는 미검증이다.
+
+GitHub에 검증 브랜치의 문구 변경4520631을 만든 뒤 PC의 preview.ps1 Sync로 내려받아, 같은 개발용 APK/Metro에서 문구 표시와 원복을 확인했다. a816000으로 원복해 제품 소스 tree를 main과 다시 일치시켰다. 클라우드에서 작성한 변경이라고 주장하지 않는다. 첫 Metro 준비 상태 진단은 HTTP200 Content가 Byte[]인데 문자열로 검사해 잘못 실패했고, 응답 디코딩 후 정상 판정했다. 원래 진단 결과도 보존했다.
+
+Codex Cloud 환경 running-art-mobile은 사용자가 게시했고 도구 목록의 runnable=true를 확인했다. 별도 새 클라우드 검증 작업 생성 요청은 진행 중이며 실제 setup/fast 성공으로 기록하지 않는다. 다른 PC의 직접 다운로드도 미검증이다. 실제 폰 화면·로그는 개인 C: 백업 validation/phone-a7에만 보존한다.

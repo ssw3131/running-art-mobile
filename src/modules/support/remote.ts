@@ -5,9 +5,26 @@ import { validateInquiry, type InquiryInput, type InquiryReceipt } from './model
 export function createSupportRemote(client: Pick<SupabaseClient, 'rpc'>) {
   return {
     async notices() {
-      const { data, error } = await client.rpc('get_service_notices');
-      if (error) throw error;
-      return parseNotices(data);
+      const controller = new AbortController();
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      // A stalled auth/transport must not prevent the last-good cache fallback.
+      // The deadline also covers transports that ignore cancellation.
+      const deadline = new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error('Notice request timed out'));
+          controller.abort();
+        }, 10_000);
+      });
+      try {
+        const { data, error } = await Promise.race([
+          client.rpc('get_service_notices').abortSignal(controller.signal),
+          deadline,
+        ]);
+        if (error) throw error;
+        return parseNotices(data);
+      } finally {
+        clearTimeout(timer);
+      }
     },
     async submit(owner: string, requestId: string, input: InquiryInput): Promise<InquiryReceipt> {
       const valid = validateInquiry(input);
