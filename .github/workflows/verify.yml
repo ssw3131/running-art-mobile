@@ -172,11 +172,20 @@ jobs:
           python -m unittest discover -s scripts/qa -p 'test_*.py'
           npm run prebuild:android
           python scripts/qa/android-membership-tls.py prepare
+          export RUNPEN_KEYSTORE="$RUNNER_TEMP/runpen-qa.p12"
+          export RUNPEN_STORE_PASSWORD=isolated-qa-only RUNPEN_KEY_PASSWORD=isolated-qa-only
+          export RUNPEN_KEY_ALIAS=runpen-qa RUNPEN_VERSION_CODE=1
+          "$JAVA_HOME/bin/keytool" -genkeypair -keystore "$RUNPEN_KEYSTORE" -storetype PKCS12 -storepass:env RUNPEN_STORE_PASSWORD -keypass:env RUNPEN_KEY_PASSWORD -alias "$RUNPEN_KEY_ALIAS" -keyalg RSA -keysize 2048 -validity 2 -dname 'CN=RunPen Isolated CI'
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2
+          ./gradlew assembleRelease -I ../scripts/ci/handset-signing.gradle -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2
           cd ..
           python scripts/qa/check-apk.py android/app/build/outputs/apk/release/app-release.apk
+          "$JAVA_HOME/bin/keytool" -exportcert -keystore "$RUNPEN_KEYSTORE" -storepass:env RUNPEN_STORE_PASSWORD -alias "$RUNPEN_KEY_ALIAS" -file "$RUNNER_TEMP/runpen-qa.der"
+          expected="$(sha256sum "$RUNNER_TEMP/runpen-qa.der" | cut -d ' ' -f 1)"
+          actual="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs android/app/build/outputs/apk/release/app-release.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
+          test "$actual" = "$expected"
+          echo 'Shared signing configuration and APK certificate verified with an isolated key.'
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -208,6 +217,7 @@ jobs:
           fi
           supabase stop --no-backup || cleanup_status=1
           rm -f .cache/qa-supabase-status.json .cache/qa-membership/tls/ca.key .cache/qa-membership/tls/server.key
+          rm -f "$RUNNER_TEMP/runpen-qa.p12" "$RUNNER_TEMP/runpen-qa.der"
           exit "$cleanup_status"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
