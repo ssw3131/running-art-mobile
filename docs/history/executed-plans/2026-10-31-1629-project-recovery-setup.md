@@ -43,3 +43,12 @@
 
 - 임시 Git 저장소로 Sync의 미커밋 차단·clean fast-forward·로컬 ahead 보존을 검증했다. 첫 시험의 PowerShell7→5 모듈 경로 상속 오류는 시험 환경을 분리해 재통과했다. 변경 후 타입/린트 재통과.
 - 고정 키와 공개 앱 설정의 handset-build 등록 완료. 클라우드 환경은 현재 저장된 구성이 없어 실제 신규 작업 검증은 후속이다.
+
+### PR #32 병합·첫 휴대폰 빌드 실패 후속
+- PR #32 ac4c9b9의 전체 Verify 41186053089(타입/린트/로직/UI·격리 API·Android29/36·화면 비교·verification-gate) 통과 후 squash merge. main ad36ab2로 기본 폴더를 안전한 Sync 명령으로 전환, 추적 파일 차이 없음.
+- development 41188727820에서 sdkmanager가 hosted runner의 PATH에 없어 exit127로 실패했다. preview 41188782463도 같은 단계에서 종료됐다. 설정 검증/신뢰 커밋 확인은 통과했고 APK 생성 단계는 실행되지 않았다. 실패 로그는 C: 백업에 보존했다.
+- 독립 sdkmanager 호출을 제거하고 기존 Verify에서 두 Android 빌드가 성공한 Gradle의 SDK/NDK 준비 경로를 그대로 사용한다. 생성된 네이티브 프로젝트의 버전 설정을 따른다. 필수 검사를 생략하지 않는다.
+
+- 최초 main ad36ab2의 Android29는 에뮬레이터 연결 소실 뒤 adb install 180초 시간 초과로 종료했다. 보고서 생성 전 실패이며 원본 job 로그를 C:에 보존했다.
+- PR33의 새 서명 검증은 앱 빌드·인증서 일치까지 통과했으나 기존 instrumentation 도우미가 기본 QA 키로 서명되어 앱의 임의 새 키와 불일치했다. AUTH-guest-gate 통과 이후 SecurityException과 정리 통과를 기록했다.
+- 검사 도우미와 대상의 기존 QA 인증서를 유지하도록 기본 debug.keystore를 임시 PKCS12로 변환해 공통 서명 경로를 검사한다. CI 전용 versionCode2 적용도 실제 APK에서 확인해 초기화 실행을 증명한다. 실제 휴대폰 고정 키는 계속 PR 검사에 제공하지 않는다.
