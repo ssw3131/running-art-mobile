@@ -1,5 +1,7 @@
 # 현재 상태와 인수인계
 
+**2026-10-31 최종 main 검사 후속:** PR #34/main `1040e52`에서 Android 36 공지 상세를 로딩 중에 검사해 실패했다. 로딩 완료만 최대30초 관찰하는 QA 보완과 단위14개를 확인했다. 후속 PR/main의 최종 판정은 Actions와 C: 백업의 CURRENT-PROGRESS.md를 따른다. 제품 본문·오프라인 검증은 유지하고 원래 실패 자료도 보존했다. [상세 기록](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md).
+
 **2026-10-31 클라우드 중심 환경 전환 부분 완료:** 기본 폴더는 `D:\running-art\running-art-mobile`이다. 구현 main `e8452b6`의 PR/main 전체 CI와 개발용·독립 실행용 ARM APK 빌드가 통과했다. C: 백업/복원/해시 검증 후 지정한 9개 경로를 정리했고 Node24.21.0·ADB37.0.1·Metro Android 번들을 확인했다. Windows USB 미리보기는 IPv4 우선 시작으로 보완했다. 저장된 Codex Cloud 환경·연결된 휴대폰이 없어 신규 Cloud 작업, 실제 새로고침·독립 실행·로그인/GPS·교체 자료 유지, 다른 PC 확인은 미검증이다. 전체 로컬 Android 복구는 중단했으며 완료가 아니다. [현재 사용 안내](../development/cloud-preview.md) · [실행 결과와 승인 원문](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md).
 
 
