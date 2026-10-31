@@ -12,6 +12,10 @@
 
 스크립트는 고정 Node를 공식 SHA-256으로 확인하고 프로젝트 내부에 설치합니다. 설치에는 nodejs.org, registry.npmjs.org 및 잠금 파일의 배포 호스트 접근이 필요합니다. 개인 서명키·운영 관리 자격 증명을 이 환경에 제공하지 않습니다. 빠른 검사는 기존 CI의 격리 API/Android 검증을 대체하지 않습니다.
 
+공식 [클라우드 환경 안내](https://learn.chatgpt.com/docs/environments/cloud-environments)에 따라 새 작업에서 Work in > Cloud로 환경을 고릅니다. 환경 준비 대화에는 저장소와 위 설치 명령을 지정합니다. Save draft만으로 끝내지 말고 Publish 후 Environment published를 확인합니다. 그 다음 Start a new task로 main의 실제 HEAD·Git 상태·setup/fast 결과를 확인합니다. 준비 구성을 바꿀 때는 Settings > Codex Cloud > Environments의 … > Edit에서 수정하고 Republish합니다. 기존 작업과 새 작업의 준비 상태를 구분합니다.
+
+검증 요청 예시: “저장소 지침을 읽고 bash scripts/cloud.sh setup과 bash scripts/cloud.sh fast를 실행해 줘. 파일 수정·커밋·푸시 없이 HEAD, Git 상태, Node/npm 버전, 명령별 종료 코드와 검사 결과를 알려줘. Android 도구 설치나 크레딧 구매는 하지 마.”
+
 스크립트 추가와 실제 환경 게시는 별개입니다. 새 클라우드 작업에서 위 명령의 성공을 확인해야 클라우드 세팅 완료입니다.
 
 `codex/` 작업 브랜치에서 수정하고 확인할 시점에 커밋·push합니다. 클라우드 미커밋 수정은 PC로 실시간 전송되지 않습니다. 완료 조건은 PR 필수 검사·main 반영 확인과 사용한 임시 작업 폴더 정리입니다.
@@ -52,6 +56,8 @@ GitHub Actions의 **Handset APK → Run workflow**에서 워크플로 브랜치�
 두 종류는 `com.runningart.mobile.dev` 및 동일 고정 테스트 서명으로 교체 설치합니다. 동시에 설치되는 별도 앱이 아닙니다. ARM64와 ARMv7을 포함해 기존 32비트 A10e도 대상으로 합니다. 기존 Verify의 x86_64·localhost APK는 CI 전용입니다.
 
 versionCode는 2020-01-01 이후 빌드 시점의 초 값입니다. 오래된 APK로 돌아갈 때 버전 제한이 생길 수 있으며 자동 삭제로 해결하지 않습니다.
+
+현재 설치본보다 낮은 versionCode의 다른 종류 APK로 전환하려면 원하는 종류를 새로 빌드해 교체합니다. 특히 preview 설치 뒤 Metro를 켜는 것만으로 개발 모드가 되지 않습니다. development APK로 교체하고 USB Connect/Start를 실행합니다. 자료를 보존하려면 버전 제한을 앱 삭제로 해결하지 않습니다.
 
 성공한 실행의 Artifacts에서 묶음을 받아 압축을 풀면 APK, metadata.json, SHA-256, 한글 설치 안내가 있습니다. 해당 산출물 접근이 가능한 GitHub 로그인이 필요하며 소스 클론·Node·Android Studio는 필요하지 않습니다. 현재 저장소는 공개이므로 서명키나 비밀 자료를 산출물에 넣지 않습니다. 휴대폰으로 직접 받아 설치할 수도 있습니다. 다른 Windows PC에서 APK 자체를 실행하려면 별도 에뮬레이터가 필요합니다.
 
