@@ -4,6 +4,21 @@ import json
 import struct
 import time
 
+
+def wait_notice_detail(q, timeout=30):
+    """Observe loading completion without tapping again or retrying the scenario."""
+    deadline = time.monotonic() + timeout
+    attempt = 0
+    while True:
+        attempt += 1
+        tree = q.capture(f's6-notice-detail-wait-{attempt:02d}')
+        if q.find(tree, '공지 불러오는 중') is None:
+            return
+        if time.monotonic() >= deadline:
+            raise RuntimeError('Notice detail stayed loading beyond the readiness deadline')
+        time.sleep(.25)
+
+
 def service_s56(q, launch):
     assert q.SERIAL.startswith('emulator-')
     run_id='5'*32
@@ -88,6 +103,7 @@ def service_s56(q, launch):
         q.seek('support-notices');q.tap('support-notices');q.seek('notice-s56-qa')
         assert any('오프라인 저장본' in n.get('text','') for n in q.capture('s6-notices').iter('node'))
         q.tap('notice-s56-qa')
+        wait_notice_detail(q)
         detail=q.capture('s6-notice-detail')
         assert any('운영 게시물이 아닙니다.' in n.get('text','') for n in detail.iter('node'))
         assert any('오프라인 저장본' in n.get('text','') for n in detail.iter('node'))
