@@ -2,7 +2,7 @@
 
 기본 개발은 Codex 클라우드, PC는 Node/npm/ADB/Metro 미리보기다. [클라우드·PC·APK 안내](docs/development/cloud-preview.md)를 따른다. PC에 전체 Java/SDK/에뮬레이터를 기본 설치하지 않는다. 새 작업은 기본 폴더에서 브랜치를 바꾸고, 진짜 동시 작업에만 임시 worktree를 쓴다. 완료 조건은 필수 PR 검사·main 반영 확인과 임시 폴더 정리다. 과거 전체 로컬 복구 실행은 완료로 간주하지 않는다.
 
-2026-11-01 A7의 최신 설치본은 main ddfeb87의 독립 실행 preview215622498이다. 새 Cloud 작업 검증과 main 후속 판정은 docs/handoff/status.md를 확인한다. 폰의 실제 조회 오류·미검증 기능을 전체 성공으로 기록하지 않는다.
+2026-11-01 A7의 최신 설치본은 main ddfeb87의 독립 실행 preview215622498이다. main 전체 CI는 통과했으며 새 Cloud 작업의 실제 검증은 후속이다. docs/handoff/status.md를 확인한다. 폰의 실제 조회 오류·미검증 기능을 전체 성공으로 기록하지 않는다.
 
 # Running Art Mobile — 작업 지침
 

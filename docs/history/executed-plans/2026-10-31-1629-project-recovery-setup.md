@@ -2,7 +2,7 @@
 
 - 기록 생성: 2026-10-31T16:29:49+09:00 (Asia/Seoul)
 - 실행 시작: 2026-10-31T16:29:49+09:00
-- 상태: 부분 완료 — 전체 로컬 복구 중단, 최신 A7 확인·Cloud 게시; main/신규 Cloud 검증 후속
+- 상태: 부분 완료 — 구현·main·A7 확인, 새 Cloud/외부 검증 후속; 전체 로컬 복구 중단
 - 기록 유형: 실행 시작 시 계획 작성
 - 요청·계획 출처: 사용자 요청 “D:\running-art 기존 파일에서 이정도 살려놨어 프로젝트 세팅 다시해보려고해”
 
@@ -209,7 +209,7 @@ Git worktree는 기본 checkout 하나였고 복구 원본에는 .git이 없었�
 
 ```
 
-- 마지막 갱신: 2026-10-31T20:32:51.1666066+09:00
+- 마지막 갱신: 2026-11-01T01:19:05.9638398+09:00
 
 ## 최종 main 후속 검사: 공지 상세 로딩 대기 보완
 
@@ -221,7 +221,7 @@ Git worktree는 기본 checkout 하나였고 복구 원본에는 .git이 없었�
 
 최신 main `1040e52`도 bundle/실제 clone/fsck로 복원 확인했으며, 완료된 앞선 로컬 브랜치3개는 각 PR 병합·동일 tree·bundle 복원 확인 후 정리했다. 후속 수정은 동일 기본 폴더의 `codex/notice-readiness-20261031` 브랜치에서 진행한다.
 
-- 마지막 갱신: 2026-10-31T21:48:44.5970157+09:00
+- 마지막 갱신: 2026-11-01T01:19:05.9638398+09:00
 
 ## main 재현과 공지 조회 상한 · A7 실제 검증 후속
 
@@ -246,3 +246,13 @@ Codex Cloud 환경 running-art-mobile은 사용자가 게시했고 도구 목록
 [preview 41213224402](https://github.com/ssw3131/running-art-mobile/actions/runs/41213224402)는 성공했다. versionCode215622498, 115386065바이트, SHA256 29af66b5fb297b7643668708fa002a8d72fd8ca4873a1adae91707439111f0c6이다. 기존 공통 인증서·앱 ID·ARM64/ARMv7·native fingerprint와 내장 JavaScript를 대조했다. A7에 00:26:48 KST install -r로 업데이트하고 로그인·UID·최초 설치 시각22:14:27을 유지했다. Metro/USB 전달 없이 홈·빈 보관함·서비스 소개 상세/뒤로 및 최종 홈을 확인했다. 공지는 기존 운영 조회 오류와 재확인 버튼을 표시했으며 정상 조회/공지 내용 검증이 아니다. 야외 GPS·배터리·비어 있지 않은 기록 보존은 미검증이다. 개인 화면과 설치 근거는 C: validation/phone-a7/final-preview-ddfeb87-verification.json 및 관련 PNG/XML에만 보관한다.
 
 게시된 Codex Cloud 환경은 runnable=true다. 새 작업 생성 도구가 3600초 후 시간 초과됐고 목록에 해당 작업이 없었다. 기존 CLI로 1회 시도했으나 이 workspace에 사용 가능한 환경이 없다는 오류로 종료했다. 게시 실패나 새 작업 검사 성공으로 해석하지 않는다. 사용자에게 웹의 게시된 환경에서 main 검증 작업을 시작하고 링크를 알려 달라고 요청했다. 추가 크레딧은 구매하지 않았다. 실제 새 Cloud 검사와 다른 PC 다운로드는 후속이다.
+
+## 2026-11-01 01:16 main 전체 판정과 마무리 기록
+
+main ddfeb87의 [Verify 41213220006](https://github.com/ssw3131/running-art-mobile/actions/runs/41213220006), run_attempt2와 verification-gate가 통과했다. fast/API 및 Android36 15단계, Android29 7단계, 기준4화면 차이0, 원래 자료 보존/정리를 확인했다. Android29 최초 준비 실패 뒤 해당 작업과 종속 게이트만 1회 재실행했으며 기능 검사 자체는 1회·retries0이다. 초기화 실패가 재실행에서 재현되지 않았으나 내부 시작 로그가 없으므로 근본 원인은 단정하지 않는다. 최초 실패·재실행 요청·각 단계 산출물을 C: validation/main-ddfeb87-*에 함께 보존했다.
+
+C: implementation-handoff-docs.bundle만으로 새 restore-main-ddfeb87-proof 경로에 main을 clone하고 fsck·clean checkout, 원래 PR35/36 및 문서 초안 브랜치의 커밋 복원을 확인했다. 원본 6727개와 정리 대상729개 해시는 확인했으며, 기존 9개 경로·867461693바이트의 정리는 재실행하지 않았다. source .env.local도 원본 백업과 해시가 같다. 실제 남은 앱 도구는 Node와 ADB platform-tools다.
+
+[문서 PR #37](https://github.com/ssw3131/running-art-mobile/pull/37)은 앱 코드를 바꾸지 않고 환경 게시/새 작업 구분, APK 전환과 현재 확인 범위를 정리한다. 최종 병합 커밋·bundle·실제 복원 근거는 C: LATEST-MAIN.json, 로컬 브랜치 정리와 전체 파일 판정은 CURRENT-PROGRESS.md 및 BACKUP-INTEGRITY.json을 따른다. 개인 화면·키·환경 값은 로컬 보호 백업에만 둔다.
+
+현재 A7의 실제 설치/확인 소스는 ddfeb87 preview215622498이다. 새 Codex Cloud 작업의 setup/fast, 다른 PC 직접 다운로드, 실서버 공지 정상 조회, 비어 있지 않은 기록의 내용 보존과 야외 GPS/배터리는 후속이다. Cloud 환경 게시만으로 전체 계획을 완료로 기록하지 않는다. 테스트 키의 다른 PC 복구용 암호 보관은 C: USER-ACTIONS.md의 수동 단계다. 추가 크레딧 구매·요금 한도 변경·운영 서버/DB/정책 게시·Play 배포는 하지 않았다.

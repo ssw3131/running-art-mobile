@@ -2,7 +2,7 @@
 
 **2026-11-01 최소 PC 환경·A7 확인:** 기본 폴더는 `D:\running-art\running-art-mobile`이다. C: 백업/복원/해시 확인 후 지정한 9개 경로를 정리했고 Node·ADB·Metro 최소 환경을 검증했다. 기본 폴더 하나에서 브랜치를 바꾸며 실제 동시 작업에만 임시 worktree를 쓴다.
 
-[PR #36](https://github.com/ssw3131/running-art-mobile/pull/36)의 공지 읽기 10초 상한은 필수 검사(로컬 회귀7개·타입·린트, CI Android36 15단계·화면 비교)를 통과해 main `ddfeb87`에 병합했다. [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/41213220006)의 첫 Android29는 앱 빌드 전 격리 Supabase 시작에서 실패했다. 내부 시작 로그가 산출물에 없어 근본 원인은 미확정이며 후속 판정 전까지 main 전체 통과가 아니다.
+[PR #36](https://github.com/ssw3131/running-art-mobile/pull/36)의 공지 읽기 10초 상한을 main `ddfeb87`에 병합했고 [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/41213220006)가 통과했다. 빠른 검사·API·Android36 15단계/Android29 7단계·화면 비교·자료 보존/정리를 확인했다. 첫 Android29는 앱 빌드 전 격리 Supabase 시작에서 실패해 그 작업과 종속 게이트만 1회 재실행했다. 재실행의 기능 반복은 없었고 원래 실패를 보존했다. 하위 시작 로그가 없어 첫 실패의 근본 원인은 미확정이다.
 
 [최신 preview APK](https://github.com/ssw3131/running-art-mobile/actions/runs/41213224402)는 `ddfeb87`, versionCode `215622498`이다. 00:26 KST A7에 삭제 없이 업데이트했고 로그인·UID·최초 설치 시각을 유지했다. Metro/USB 8081 전달 없이 홈·빈 보관함·서비스 소개 상세/뒤로를 확인하고 홈으로 복귀했다. 앞서 개발용/preview 양방향 교체와 GitHub 브랜치 Sync 후 Fast Refresh/원복도 확인했다. 현재 폰은 preview이므로 Metro 미리보기로 전환하려면 현재 설치본보다 새 versionCode의 development APK를 빌드해 교체한다.
 
