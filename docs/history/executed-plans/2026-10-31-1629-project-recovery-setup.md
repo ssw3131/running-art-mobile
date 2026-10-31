@@ -2,7 +2,7 @@
 
 - 기록 생성: 2026-10-31T16:29:49+09:00 (Asia/Seoul)
 - 실행 시작: 2026-10-31T16:29:49+09:00
-- 상태: 부분 완료 — 전체 로컬 복구 중단, Cloud/실기 확인 후속
+- 상태: 부분 완료 — 전체 로컬 복구 중단, 최신 A7 확인·Cloud 게시; main/신규 Cloud 검증 후속
 - 기록 유형: 실행 시작 시 계획 작성
 - 요청·계획 출처: 사용자 요청 “D:\running-art 기존 파일에서 이정도 살려놨어 프로젝트 세팅 다시해보려고해”
 
@@ -12,7 +12,7 @@
 
 ## 실행 결과
 
-진행 중.
+전체 로컬 복구 계획은 중단했고 승인된 Cloud 중심 구성으로 전환했다. 최신 결과·실패·미검증 범위는 아래 2026-11-01 후속 기록을 따른다.
 
 ## 검증
 
@@ -22,7 +22,7 @@
 
 ## 남은 작업과 종료
 
-계속 진행 중: 복구된 환경 설정 대조·필요 파일 보존, 전용 경로 확정, Android 도구/의존성 설치, prebuild·검사, 기록 갱신.
+최초 계획의 전체 Android 복구는 중단했다. Cloud/CI/최소 PC 환경으로 전환한 뒤 아래 후속 기록에 실제 결과를 추가한다.
 
 ## 2026-10-31T17:34:40.7698461+09:00 사용자 승인 계획 변경·재개
 
@@ -236,3 +236,13 @@ loadNotices()는 원격 요청이 실패해야 저장본을 읽는데, 공지 RP
 GitHub에 검증 브랜치의 문구 변경4520631을 만든 뒤 PC의 preview.ps1 Sync로 내려받아, 같은 개발용 APK/Metro에서 문구 표시와 원복을 확인했다. a816000으로 원복해 제품 소스 tree를 main과 다시 일치시켰다. 클라우드에서 작성한 변경이라고 주장하지 않는다. 첫 Metro 준비 상태 진단은 HTTP200 Content가 Byte[]인데 문자열로 검사해 잘못 실패했고, 응답 디코딩 후 정상 판정했다. 원래 진단 결과도 보존했다.
 
 Codex Cloud 환경 running-art-mobile은 사용자가 게시했고 도구 목록의 runnable=true를 확인했다. 별도 새 클라우드 검증 작업 생성 요청은 진행 중이며 실제 setup/fast 성공으로 기록하지 않는다. 다른 PC의 직접 다운로드도 미검증이다. 실제 폰 화면·로그는 개인 C: 백업 validation/phone-a7에만 보존한다.
+
+## 2026-11-01 최신 main·A7 확인과 클라우드 생성 실패
+
+[PR #36](https://github.com/ssw3131/running-art-mobile/pull/36), head 5dc4e506882c47298c6633c87ed9aad2d6703db3의 [필수 검사 41210145717](https://github.com/ssw3131/running-art-mobile/actions/runs/41210145717)가 통과했다. Android36 15단계와 공지 오프라인 상세/뒤로, 기준 화면 비교, 자료 정리를 확인하고 main ddfeb87d562aa7230a4161737a35685bfbb8367b로 squash merge했다. PC도 안전한 Sync로 해당 main에 맞췄다.
+
+[main 41213220006](https://github.com/ssw3131/running-art-mobile/actions/runs/41213220006)의 첫 Android29 작업은 supabase start에서 종료 코드1로 실패했다. 앱 빌드와 기능 검사는 시작하지 않았다. 내부 시작 로그가 산출물에 포함되지 않아 근본 원인은 미확정이다. 같은 소스의 API/Android36 초기화는 통과했다. 원래 작업 로그·첫 실행 상태를 C: validation/main-ddfeb87-api29-attempt1.log 및 main-ddfeb87-attempt1-jobs.json에 보존했다. 전체 실행 종료 후 해당 실패 작업만 새 러너에서 1회 재실행해 재현 여부를 확인한다. 앱 assertion을 성공할 때까지 반복하거나 검사 기준을 완화하지 않는다.
+
+[preview 41213224402](https://github.com/ssw3131/running-art-mobile/actions/runs/41213224402)는 성공했다. versionCode215622498, 115386065바이트, SHA256 29af66b5fb297b7643668708fa002a8d72fd8ca4873a1adae91707439111f0c6이다. 기존 공통 인증서·앱 ID·ARM64/ARMv7·native fingerprint와 내장 JavaScript를 대조했다. A7에 00:26:48 KST install -r로 업데이트하고 로그인·UID·최초 설치 시각22:14:27을 유지했다. Metro/USB 전달 없이 홈·빈 보관함·서비스 소개 상세/뒤로 및 최종 홈을 확인했다. 공지는 기존 운영 조회 오류와 재확인 버튼을 표시했으며 정상 조회/공지 내용 검증이 아니다. 야외 GPS·배터리·비어 있지 않은 기록 보존은 미검증이다. 개인 화면과 설치 근거는 C: validation/phone-a7/final-preview-ddfeb87-verification.json 및 관련 PNG/XML에만 보관한다.
+
+게시된 Codex Cloud 환경은 runnable=true다. 새 작업 생성 도구가 3600초 후 시간 초과됐고 목록에 해당 작업이 없었다. 기존 CLI로 1회 시도했으나 이 workspace에 사용 가능한 환경이 없다는 오류로 종료했다. 게시 실패나 새 작업 검사 성공으로 해석하지 않는다. 사용자에게 웹의 게시된 환경에서 main 검증 작업을 시작하고 링크를 알려 달라고 요청했다. 추가 크레딧은 구매하지 않았다. 실제 새 Cloud 검사와 다른 PC 다운로드는 후속이다.

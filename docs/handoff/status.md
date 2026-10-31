@@ -1,10 +1,12 @@
 # 현재 상태와 인수인계
 
-**2026-10-31 클라우드 중심 환경 후속 검증:** 기본 폴더는 D:\running-art\running-art-mobile이다. C: 백업/복원/해시 확인 후 지정한 9개 경로를 정리했고 Node·ADB·Metro 최소 환경을 검증했다. A7에서 사용자 직접 로그인, 개발용/preview 양방향 자료 유지 교체, GitHub 작업 브랜치 동기화 후 Fast Refresh/원복, Metro 없는 홈·빈 보관함·서비스 소개 상세/뒤로를 확인했다. 최종 설치본은 a554e6a preview215617838이며 Metro와 USB 8081 전달은 종료했다.
+**2026-11-01 최소 PC 환경·A7 확인:** 기본 폴더는 `D:\running-art\running-art-mobile`이다. C: 백업/복원/해시 확인 후 지정한 9개 경로를 정리했고 Node·ADB·Metro 최소 환경을 검증했다. 기본 폴더 하나에서 브랜치를 바꾸며 실제 동시 작업에만 임시 worktree를 쓴다.
 
-PR #35 전체 검사는 통과했지만 main a554e6a의 Android 36에서 공지 로딩이 30초를 초과했다. 공지 RPC에 10초 상한을 두어 저장본/오류 처리로 진행하는 보완과 로컬 회귀7개·타입·린트를 확인했다. 이 보완의 PR/main·최신 APK 반영은 후속이다. 원래 실패를 보존하며 단순 QA 대기로 해결됐다고 기록하지 않는다.
+[PR #36](https://github.com/ssw3131/running-art-mobile/pull/36)의 공지 읽기 10초 상한은 필수 검사(로컬 회귀7개·타입·린트, CI Android36 15단계·화면 비교)를 통과해 main `ddfeb87`에 병합했다. [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/41213220006)의 첫 Android29는 앱 빌드 전 격리 Supabase 시작에서 실패했다. 내부 시작 로그가 산출물에 없어 근본 원인은 미확정이며 후속 판정 전까지 main 전체 통과가 아니다.
 
-Codex Cloud 환경은 게시/runnable=true를 확인했으나 신규 작업의 실제 setup/fast는 아직 미검증이다. 다른 PC 다운로드·비어 있지 않은 기록 보존·야외 GPS/배터리도 미검증이다. 전체 로컬 Android 복구는 중단했으며 완료가 아니다. [사용 안내](../development/cloud-preview.md) · [실행/실패/승인 원문](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md).
+[최신 preview APK](https://github.com/ssw3131/running-art-mobile/actions/runs/41213224402)는 `ddfeb87`, versionCode `215622498`이다. 00:26 KST A7에 삭제 없이 업데이트했고 로그인·UID·최초 설치 시각을 유지했다. Metro/USB 8081 전달 없이 홈·빈 보관함·서비스 소개 상세/뒤로를 확인하고 홈으로 복귀했다. 앞서 개발용/preview 양방향 교체와 GitHub 브랜치 Sync 후 Fast Refresh/원복도 확인했다. 현재 폰은 preview이므로 Metro 미리보기로 전환하려면 현재 설치본보다 새 versionCode의 development APK를 빌드해 교체한다.
+
+Codex Cloud 환경 게시/runnable=true는 확인했으나 새 Cloud 작업의 실제 setup/fast는 미검증이다. 생성 도구 시간 초과와 CLI 환경 조회 실패로 웹 작업 시작을 요청했다. 실서버 공지는 기존 조회 오류 안내를 다시 관찰했으며 정상 조회 통과가 아니다. 다른 PC 다운로드·비어 있지 않은 기록 보존·야외 GPS/배터리도 미검증이다. 전체 로컬 Android 복구는 중단한 이전 계획이다. [사용 안내](../development/cloud-preview.md) · [실행·실패·승인 원문](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md).
 
 **2026-10-24 가입·홈·코스20km 통합 A7 설치 완료:** `running-art-signup/feat/signup-membership`에서 완료된 코스 생성60개 파일을 통합하고 로컬480/Jest95·타입/린트/서버/API/정책 검사를 통과했다. 실제 지도에서 발견한 입력 key 중복을 수정해 관련10개·타입/린트 재통과 후21:00:33 최종 APK를 자료 유지 설치했다. 계산 서버 `course1024` 트래픽100%·5표본 전체 해시 일치, A7 장소 검색·고래20km5후보/추천 정보·저장 전 안내와 사용자 직접 가입 완료/재시작을 확인했다. 원래 빈 기록·설정/권한·로그인 보존, 도우미 정리/서비스 없음·USB 분리 가능. **진행 중인 기록 보관함은 미포함이며 통합본 전체 격리 Android/CI/PR/main 병합·정식 약관은 후속**이다. 기본 모바일 제품 소스는 아직 이 통합본이 아니며 아래 과거 미통합/실제 동의 대기 문단보다 이번 확인 범위만 우선한다. [통합/설치 검증](../quality/signup-course-phone-20261024.md).
 
