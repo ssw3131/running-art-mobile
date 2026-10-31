@@ -63,8 +63,8 @@ jobs:
         with:
           node-version: '24.21.0'
           cache: npm
-      - run: npm ci
-      - run: npm run qa:fast
+      - run: bash scripts/cloud.sh setup
+      - run: bash scripts/cloud.sh fast
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
