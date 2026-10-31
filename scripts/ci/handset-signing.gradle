@@ -1,0 +1,17 @@
+gradle.afterProject { project, state ->
+    if (project.path == ':app' && project.plugins.hasPlugin('com.android.application')) {
+        def android = project.extensions.getByName('android')
+        def required = ['RUNPEN_KEYSTORE', 'RUNPEN_STORE_PASSWORD', 'RUNPEN_KEY_PASSWORD', 'RUNPEN_KEY_ALIAS', 'RUNPEN_VERSION_CODE']
+        required.each { name ->
+            if (!System.getenv(name)) throw new GradleException("Missing required signing input: " + name)
+        }
+        def signing = android.signingConfigs.findByName('runpenCi') ?: android.signingConfigs.create('runpenCi')
+        signing.storeFile = project.file(System.getenv('RUNPEN_KEYSTORE'))
+        signing.storePassword = System.getenv('RUNPEN_STORE_PASSWORD')
+        signing.keyAlias = System.getenv('RUNPEN_KEY_ALIAS')
+        signing.keyPassword = System.getenv('RUNPEN_KEY_PASSWORD')
+        android.defaultConfig.versionCode = Integer.parseInt(System.getenv('RUNPEN_VERSION_CODE'))
+        android.buildTypes.getByName('debug').signingConfig = signing
+        android.buildTypes.getByName('release').signingConfig = signing
+    }
+}
