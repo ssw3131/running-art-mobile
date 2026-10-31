@@ -19,4 +19,7 @@ aapt = sdk / ('build-tools/36.0.0/aapt.exe' if os.name == 'nt' else 'build-tools
 badging = subprocess.check_output([str(aapt), 'dump', 'badging', str(apk)], text=True, encoding='utf8')
 assert "package: name='com.runningart.mobile.dev'" in badging
 assert 'application-debuggable' not in badging, 'Test APK must exercise the release runtime'
+expected_version = os.environ.get('RUNPEN_VERSION_CODE')
+if expected_version:
+    assert f"versionCode='{int(expected_version)}'" in badging, 'Signing initialization versionCode not applied'
 print(json.dumps({'status': 'passed', 'applicationId': 'com.runningart.mobile.dev', 'sha256': hashlib.sha256(apk.read_bytes()).hexdigest(), 'testHooksAbsent': True}))

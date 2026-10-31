@@ -172,10 +172,11 @@ jobs:
           python -m unittest discover -s scripts/qa -p 'test_*.py'
           npm run prebuild:android
           python scripts/qa/android-membership-tls.py prepare
+          # Keep the existing instrumentation helpers and target signed by the same QA certificate.
           export RUNPEN_KEYSTORE="$RUNNER_TEMP/runpen-qa.p12"
           export RUNPEN_STORE_PASSWORD=isolated-qa-only RUNPEN_KEY_PASSWORD=isolated-qa-only
-          export RUNPEN_KEY_ALIAS=runpen-qa RUNPEN_VERSION_CODE=1
-          "$JAVA_HOME/bin/keytool" -genkeypair -keystore "$RUNPEN_KEYSTORE" -storetype PKCS12 -storepass:env RUNPEN_STORE_PASSWORD -keypass:env RUNPEN_KEY_PASSWORD -alias "$RUNPEN_KEY_ALIAS" -keyalg RSA -keysize 2048 -validity 2 -dname 'CN=RunPen Isolated CI'
+          export RUNPEN_KEY_ALIAS=runpen-qa RUNPEN_VERSION_CODE=2
+          "$JAVA_HOME/bin/keytool" -importkeystore -noprompt -srckeystore android/app/debug.keystore -srcstorepass android -srckeypass android -srcalias androiddebugkey -destkeystore "$RUNPEN_KEYSTORE" -deststoretype PKCS12 -deststorepass:env RUNPEN_STORE_PASSWORD -destkeypass:env RUNPEN_KEY_PASSWORD -destalias "$RUNPEN_KEY_ALIAS"
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease -I ../scripts/ci/handset-signing.gradle -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2
@@ -185,7 +186,7 @@ jobs:
           expected="$(sha256sum "$RUNNER_TEMP/runpen-qa.der" | cut -d ' ' -f 1)"
           actual="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs android/app/build/outputs/apk/release/app-release.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
           test "$actual" = "$expected"
-          echo 'Shared signing configuration and APK certificate verified with an isolated key.'
+          echo 'Shared signing configuration and APK certificate verified with the shared QA fixture certificate.'
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
