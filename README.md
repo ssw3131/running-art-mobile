@@ -1,5 +1,8 @@
 # RunPen — Running Art Mobile
 
+**2026-10-31 클라우드 중심 개발·최소 PC 환경:** Codex 클라우드에서 수정/검사하고 GitHub Actions에서 휴대폰용 development/preview APK를 수동 생성한다. 기본 PC 폴더는 `D:\running-art\running-art-mobile`이며 Node·ADB·Metro를 사용한다. C: 백업·복원 검증 후 복구 원본과 불필요한 로컬 빌드 도구/압축파일을 정리했다. 구현 PR/main 전체 CI와 두 APK 빌드는 통과했으며, 실제 신규 Cloud 작업·휴대폰/다른 PC 검증은 남았다. 아래 과거 로컬 전체 빌드 안내보다 [현재 사용법](docs/development/cloud-preview.md)과 [실행 결과·남은 작업](docs/history/executed-plans/2026-10-31-1629-project-recovery-setup.md)을 우선한다.
+
+
 **2026-10-13 21:32 S2a 휴대폰 후속 완료:** SM-S942N(Android 17)에 21:17:49 최신 APK를 자료 유지 설치했다. 5탭·직접 그리기·확인/탭 취소·강남 서버 14.56초/5후보·2순위 저장/중복 방지/GPX·러닝 준비·조건 수정/재시작을 확인했다. 시험 코스 업로드/삭제 동기화와 기존 3코스·5러닝·1,659좌표·1메모 해시·로그인/설정 보존, 도우미·내부 복구본 정리 완료. 서비스 없음·USB 분리 가능. A7 S2a·야외/장시간은 후속이며 다음 새 기능은 S2b다. [폰 검증](docs/quality/course-generation-phone-20261013.md)을 아래 휴대폰 미설치 표현보다 우선한다.
 
 **2026-10-13 S2a 완료(PC·격리 Android):** 조건→확인→서버/기기 계산→후보·점선→상세·명시적 저장/GPX/러닝 준비를 연결했다. 기존 9도형·3/5/7km·직접 그리기와 엔진/저장 형식을 유지한다. 로직 431·UI 22·Python 6·HTTP 182·격리 DB 2, 최종 PR/main API 36 전체 12단계·API 29 호환 5단계·정적 4화면 차이 0·원본 보존/정리를 통과했다. 최신 APK의 실제 강남 서버 계산·동일 후보 저장/러닝 준비도 확인했다. **휴대폰 미설치·서버/운영 DB 배포 없음.** 다음 새 기능은 **S2b 12도형·거리 범위 확대**, S2c 이미지 입력과 S1 약관 게시/동의 통합은 후속이다. [계약](docs/development/course-generation.md)·[검증/실제 화면](docs/quality/course-generation-20261013.md).

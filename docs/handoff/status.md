@@ -1,6 +1,6 @@
 # 현재 상태와 인수인계
 
-**2026-10-31 클라우드 중심 환경 전환 진행:** 최신 main c04963e에서 복구한 기본 폴더는 D:\running-art\running-art-mobile이다. Node24.21.0/npm/ADB37.0.1 최소 설치와 빠른 검사, C: 전체 보존 대상 백업·bundle/미커밋 복원 확인을 마쳤다. 클라우드 설치 스크립트·안전한 PC 동기화·개발/독립 실행 APK 수동 CI를 구성 중이다. 전체 로컬 Android 복구는 중단했으며 완료가 아니다. 실제 클라우드 신규 작업·휴대폰/다른 PC·APK 교체 설치·PR/main·정리는 아직 미완료다. [새 사용 안내](../development/cloud-preview.md) · [실행 기록](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md).
+**2026-10-31 클라우드 중심 환경 전환 부분 완료:** 기본 폴더는 `D:\running-art\running-art-mobile`이다. 구현 main `e8452b6`의 PR/main 전체 CI와 개발용·독립 실행용 ARM APK 빌드가 통과했다. C: 백업/복원/해시 검증 후 지정한 9개 경로를 정리했고 Node24.21.0·ADB37.0.1·Metro Android 번들을 확인했다. Windows USB 미리보기는 IPv4 우선 시작으로 보완했다. 저장된 Codex Cloud 환경·연결된 휴대폰이 없어 신규 Cloud 작업, 실제 새로고침·독립 실행·로그인/GPS·교체 자료 유지, 다른 PC 확인은 미검증이다. 전체 로컬 Android 복구는 중단했으며 완료가 아니다. [현재 사용 안내](../development/cloud-preview.md) · [실행 결과와 승인 원문](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md).
 
 
 **2026-10-24 가입·홈·코스20km 통합 A7 설치 완료:** `running-art-signup/feat/signup-membership`에서 완료된 코스 생성60개 파일을 통합하고 로컬480/Jest95·타입/린트/서버/API/정책 검사를 통과했다. 실제 지도에서 발견한 입력 key 중복을 수정해 관련10개·타입/린트 재통과 후21:00:33 최종 APK를 자료 유지 설치했다. 계산 서버 `course1024` 트래픽100%·5표본 전체 해시 일치, A7 장소 검색·고래20km5후보/추천 정보·저장 전 안내와 사용자 직접 가입 완료/재시작을 확인했다. 원래 빈 기록·설정/권한·로그인 보존, 도우미 정리/서비스 없음·USB 분리 가능. **진행 중인 기록 보관함은 미포함이며 통합본 전체 격리 Android/CI/PR/main 병합·정식 약관은 후속**이다. 기본 모바일 제품 소스는 아직 이 통합본이 아니며 아래 과거 미통합/실제 동의 대기 문단보다 이번 확인 범위만 우선한다. [통합/설치 검증](../quality/signup-course-phone-20261024.md).

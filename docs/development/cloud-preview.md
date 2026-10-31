@@ -27,7 +27,7 @@ powershell -ExecutionPolicy Bypass -File .\preview.ps1 Connect -Serial DEVICE_SE
 powershell -ExecutionPolicy Bypass -File .\preview.ps1 Start
 ```
 
-Setup은 Node·ADB·잠금 파일 의존성만 준비합니다. USB 디버깅 승인은 휴대폰에서 합니다. Connect는 명시한 기기에 8081 포트를 전달하며 앱을 설치/삭제하지 않습니다. 개발용 APK를 설치한 휴대폰에서 개발 서버 주소 http://127.0.0.1:8081 로 연결합니다. Start는 USB 포트 전달에 맞게 localhost로 실행합니다.
+Setup은 Node·ADB·잠금 파일 의존성만 준비합니다. USB 디버깅 승인은 휴대폰에서 합니다. Connect는 명시한 기기에 8081 포트를 전달하며 앱을 설치/삭제하지 않습니다. 개발용 APK를 설치한 휴대폰에서 개발 서버 주소 http://127.0.0.1:8081 로 연결합니다. Start는 USB 포트 전달에 맞게 IPv4 localhost로 실행합니다. Node의 주소 선택 옵션은 Metro 실행 중에만 적용하고 종료 시 원래 값으로 복원합니다.
 
 클라우드 변경 확인 시 Metro를 종료하고 다음 명령을 실행합니다.
 

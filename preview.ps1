@@ -37,7 +37,15 @@ try {
             if ($LASTEXITCODE -ne 0) { throw 'Native fingerprint failed' }
             Write-Output 'Compare this fingerprint with the installed development APK metadata. Native changes require a new APK.'
         }
-        'Start' { & npm.cmd run start -- --localhost; if ($LASTEXITCODE -ne 0) { throw 'Metro failed' } }
+        'Start' {
+            $previousNodeOptions = $env:NODE_OPTIONS
+            try {
+                # Keep Metro on the IPv4 loopback used by USB preview.
+                $env:NODE_OPTIONS = ($previousNodeOptions + ' --dns-result-order=ipv4first').Trim()
+                & npm.cmd run start -- --localhost
+                if ($LASTEXITCODE -ne 0) { throw 'Metro failed' }
+            } finally { $env:NODE_OPTIONS = $previousNodeOptions }
+        }
         'Check' { & npm.cmd run check; if ($LASTEXITCODE -ne 0) { throw 'Source checks failed' } }
         'Devices' { & adb.exe devices -l; if ($LASTEXITCODE -ne 0) { throw 'ADB failed' } }
         'Connect' {
