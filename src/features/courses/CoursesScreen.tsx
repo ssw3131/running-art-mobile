@@ -63,6 +63,6 @@ export default function CoursesScreen({embedded=false}:{embedded?:boolean}) {
     })}
     {current&&state.more&&<Button compact variant="outline" label="더 보기" disabled={busy} onPress={()=>void fetchPage(state.rows.length)}/>}
     {current&&state.ready&&!state.rows.length&&<Button label="새 코스 만들기" onPress={()=>router.navigate("/route-lab")}/>}
-    <Button compact variant="outline" testID="courses-refresh" label="새로고침 · 브랜치 확인" disabled={busy} onPress={()=>void fetchPage(0)}/>
+    <Button compact variant="outline" testID="courses-refresh" label="새로고침" disabled={busy} onPress={()=>void fetchPage(0)}/>
   </ScrollView></View>;
 }
