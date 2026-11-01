@@ -1,5 +1,7 @@
 # 문서 목차
 
+**프로젝트를 공유받았다면:** [참여자용 설치·사용 안내](development/project-usage.md) → [클라우드·PC·APK 상세](development/cloud-preview.md).
+
 **2026-10-13 검증 자동화:** [작업 브랜치·CI 운영](development/verification-ci.md) · [실행 결과와 증거](quality/verification-ci-20261013.md) · [S0 휴대폰 설치/검증](quality/service-s0-phone-20261013.md). APK·서버 자동 배포는 별도 보류한다.
 
 **서비스 개발 시작:** [제품 개요](product/overview.md) → [Figma 화면별 기획·결정 목록](product/figma-service-analysis.md) → [현재 비즈니스 모델](product/business-model.md) → [S0~S8 개발 계획](planning/service-implementation.md) → [실제 현재 상태](handoff/status.md). 2026-10-11 전체 UI 분석과 사용자 최신 상품 표를 반영했다. 이후 개발에서도 기본 문맥으로 사용한다.
@@ -22,7 +24,7 @@
 
 **로컬 코스 저장·목록·상세·이름 변경·삭제와 PC·에뮬레이터·휴대폰 검증을 완료**했습니다. 후속 GPX 내보내기와 실제 휴대폰 파일 전달·오프라인 취소/재시도도 완료했습니다. 2026-10-01 R2 개발용 주소의 실제 표본 배포·공개 검사·첫 버전 전환을 완료했고 일반 앱의 R2 연결·휴대폰 영구 캐시 검증도 완료했습니다. 4-4 전국 공급·갱신/복구·용량 운영도 PC와 개발용 R2에서 완료했고 전국 APK의 실제 휴대폰 검증은 사용자 결정으로 후속입니다. 코스 시뮬레이션 구현·PC·에뮬레이터 검증도 완료했고 실제 휴대폰 검증은 후속입니다. [코스 저장 사용법](development/saved-courses.md)·[검증](quality/saved-courses-verification.md), 전체 순서는 [로드맵](planning/roadmap.md), 최신 상태는 [인수인계](handoff/status.md)를 기준으로 확인합니다.
 
-개발 환경은 [Android 개발 환경 설정과 실행](development/android-studio.md)을 중심 안내로 사용합니다. 확정 구성, 새 PC 최초 설정, 매일 실행, 정상 확인을 한 문서에서 볼 수 있습니다.
+기본 개발 환경은 [참여자용 설치·사용 안내](development/project-usage.md)와 [클라우드·PC·APK 상세](development/cloud-preview.md)를 따릅니다. PC에서 직접 Android를 빌드할 때는 [전체 로컬 환경 안내](development/android-studio.md)를 사용합니다.
 
 | 분야 | 문서 | 내용 |
 | --- | --- | --- |
