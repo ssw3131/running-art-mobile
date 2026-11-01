@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**처음 참여하는 분:** [설치·사용 안내 — 개발 / PC 화면 확인 / 폰 검증](docs/development/project-usage.md). 목적별 준비물·설치 명령·APK 받는 법을 먼저 확인하세요.
+
 **2026-10-31 클라우드 중심 개발·최소 PC 환경:** Codex 클라우드에서 수정/검사하고 GitHub Actions에서 휴대폰용 development/preview APK를 수동 생성한다. 기본 PC 폴더는 `D:\running-art\running-art-mobile`이며 Node·ADB·Metro를 사용한다. C: 백업·복원 검증 후 복구 원본과 불필요한 로컬 빌드 도구/압축파일을 정리했다. 구현 PR/main 전체 CI와 두 APK 빌드는 통과했으며, 실제 신규 Cloud 작업·휴대폰/다른 PC 검증은 남았다. 아래 과거 로컬 전체 빌드 안내보다 [현재 사용법](docs/development/cloud-preview.md)과 [실행 결과·남은 작업](docs/history/executed-plans/2026-10-31-1629-project-recovery-setup.md)을 우선한다.
 
 
