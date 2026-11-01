@@ -34,8 +34,9 @@ export function GenerationDistanceInput({ value, onChange }: { value: number; on
       }
       if (direction === 'horizontal') select(touchStart.current + gesture.dx);
     },
-    onPanResponderRelease: (_event, gesture) => {
-      if (direction === 'horizontal') select(touchStart.current + gesture.dx);
+    onPanResponderRelease: (event, gesture) => {
+      // PanResponder dx stops at the last move; release can carry a later endpoint.
+      if (direction === 'horizontal') select(event.nativeEvent.locationX);
       else if (direction === 'pending' && Math.max(Math.abs(gesture.dx), Math.abs(gesture.dy)) <= 6) select(touchStart.current);
       direction = 'pending';
     },
