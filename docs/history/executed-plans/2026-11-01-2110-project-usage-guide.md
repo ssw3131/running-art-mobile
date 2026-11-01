@@ -27,3 +27,11 @@ preview.ps1·.env.example·Handset APK workflow 및 cloud-preview.md와 명령·
 ## 2026-11-01T21:14:06+09:00 커밋·푸시 후속
 
 사용자 요청으로 문서 변경 6개를 codex/project-usage-guide 브랜치에 커밋하고 origin으로 push한다. 문서 링크와 diff를 재확인했다. main 병합·APK 생성·운영 환경 변경은 이번 요청에 포함하지 않는다.
+
+## 2026-11-01T21:17:04+09:00 GitHub 중심 폰 검증 안내 — 실행 전 계획
+
+사용자 요청에 따라 검증자의 기본 경로를 GitHub Actions 다운로드 → 폰 검증 → GitHub Issues 결과 등록으로 수정한다. 다운로드와 APK 생성 권한을 구분하고 결과 양식을 제공한다. 기존 문서 브랜치에 커밋·push한다. 실행 기록 스킬을 이어 적용한다.
+
+### 후속 결과
+
+GitHub 다운로드·폰 검증·Issues 결과 등록 절차와 결과 양식을 반영했다. 로컬 링크 및 git diff --check 통과. 문서만 변경하여 앱 검사는 실행하지 않았다. 기존 브랜치에 커밋·push하며 main 병합은 별도다.

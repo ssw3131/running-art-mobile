@@ -23,17 +23,50 @@ GitHub: 작업 브랜치 → PR → 필수 CI → main 병합·검사
 
 기본 PC에는 Git·프로젝트 Node/npm·ADB·Metro를 사용한다. Android Studio·Java·전체 Android SDK·에뮬레이터는 직접 로컬 빌드할 때 준비한다. 클라우드의 미커밋 변경은 PC로 전송되지 않는다. 서버·DB·정책 배포는 소스 동기화나 APK 설치와 별개다.
 
-## 폰 검증만 하기
+## 폰 검증만 하기 — GitHub로 진행
 
-소스 클론·개발 도구·USB 디버깅이 필요 없다.
+기본 흐름은 **GitHub에서 preview APK 받기 → 폰에 설치·검증 → GitHub Issues에 결과 남기기**다. 소스 클론·개발 도구·USB 디버깅은 필요 없다. 개발자에게 매번 APK 파일을 전달받을 필요도 없다.
 
-1. 담당자에게 **preview APK**와 metadata.json, 검증 항목을 받는다.
-2. 직접 받으려면 [GitHub Actions](https://github.com/ssw3131/running-art-mobile/actions)의 성공한 **Handset APK** 실행에서 Artifacts의 `runpen-preview-…` 묶음을 내려받는다. 접근 가능한 GitHub 로그인이 필요하다.
-3. 압축을 풀고 APK를 폰으로 옮긴다. 필요하면 해당 브라우저·파일 앱의 ‘알 수 없는 앱 설치’를 허용한다.
-4. 기존 RunPen 위에 업데이트 설치하고 실행한다. preview는 PC·Metro 없이 실행하지만 로그인·온라인 데이터에는 인터넷이 필요하다.
-5. 기기 모델/Android 버전, metadata.json의 소스 SHA/versionCode, 재현 순서·기대/실제 결과와 화면을 담당자에게 전달한다.
+### 1. 검증할 APK 다운로드
 
-**앱 삭제나 데이터 초기화로 설치 오류를 해결하지 않는다.** 기존 기록이 사라질 수 있다. 버전·서명 오류가 나면 담당자에게 전달한다. Artifacts는 7일 후 만료되므로 필요한 APK·메타데이터·해시는 따로 보관한다.
+1. GitHub에 로그인하고 [저장소 Actions](https://github.com/ssw3131/running-art-mobile/actions)에서 **Handset APK**를 선택한다.
+2. 검증 요청에 지정된 브랜치·커밋의 성공한 실행을 연다. 단순히 최신 실행을 고르지 말고 대상 버전을 확인한다.
+3. 하단 **Artifacts**에서 `runpen-preview-…` 묶음을 내려받고 압축을 푼다. APK와 metadata.json·SHA-256·설치 안내가 함께 들어 있다.
+
+다운로드에는 산출물에 접근 가능한 GitHub 로그인이 필요하며 워크플로 실행 권한은 필요하지 않다. Artifacts는 7일 후 만료되므로 필요한 APK·메타데이터·해시는 별도로 보관한다. 만료된 경우 새 빌드를 요청한다.
+
+### 2. 폰에 설치하고 검증
+
+APK를 Android 폰으로 옮겨 설치한다. 필요하면 해당 브라우저·파일 앱의 ‘알 수 없는 앱 설치’를 허용한다. 기존 RunPen 위에 업데이트 설치하고 요청받은 항목을 확인한다.
+
+preview는 PC·Metro 없이 실행하지만 로그인·온라인 데이터에는 인터넷이 필요하다. **앱 삭제나 데이터 초기화로 설치 오류를 해결하지 않는다.** 기존 기록이 사라질 수 있다. 버전·서명 오류가 나면 오류 내용과 기존/새 APK 버전을 남긴다.
+
+### 3. GitHub Issues에 결과 등록
+
+[GitHub Issues](https://github.com/ssw3131/running-art-mobile/issues)에서 기존 관련 이슈를 확인하고, 있으면 댓글로 결과를 추가한다. 새 문제면 New issue로 등록한다. 정상 확인 결과도 관련 검증 이슈에 남겨 어떤 버전을 어디까지 확인했는지 공유한다. Issues 작성에는 저장소의 해당 기능 접근 권한이 필요하다.
+
+다음 양식을 본문에 복사한다. 계정·토큰·개인 위치 등은 캡처와 로그에서 제외한다.
+
+```text
+검증 대상: 브랜치 / 소스 SHA / versionCode (metadata.json 참고)
+APK 빌드: GitHub Actions 실행 링크
+기기: 모델 / Android 버전
+검증 항목:
+재현 순서:
+기대한 결과:
+실제 결과: 정상 / 오류 / 미검증 및 이유
+첨부: 화면 캡처·녹화·오류 메시지
+```
+
+### APK를 직접 생성할 권한이 있는 경우
+
+검증 담당자에게 Actions 실행 권한이 있으면 직접 빌드할 수 있다.
+
+1. Actions → Handset APK → **Run workflow**를 선택한다.
+2. 워크플로 브랜치는 `main`, `source_ref`는 검증할 `main` 또는 `codex/*` 브랜치 등 허용된 소스, `kind`는 **preview**로 지정한다.
+3. 실행 성공 후 Artifacts에서 내려받는다. 환경 승인 대기가 나타나면 승인 권한자의 처리를 기다린다.
+
+실행 버튼이나 권한이 없으면 개발 담당자에게 대상 브랜치의 preview 빌드를 요청하고, 성공한 실행에서 직접 다운로드한다. 빌드 설정·서명키를 검증 담당자의 PC에 설치할 필요는 없다.
 
 ## PC에서 화면 확인
 
@@ -115,7 +148,7 @@ Actions 실행 권한과 기존 `handset-build` 설정이 필요하다. [GitHub 
 
 | 역할 | 추가로 받을 자료 |
 | --- | --- |
-| 폰 검증 | preview APK·메타데이터·검증 항목 |
+| 폰 검증 | 검증할 Actions 실행 링크·브랜치/버전·검증 항목·결과를 남길 Issues 링크 |
 | PC 화면 확인 | development APK·앱용 환경 설정값·작업 브랜치 |
 | 개발 | 클라우드 환경 준비 안내·작업 범위·브랜치 |
 | APK 생성 | Actions 실행 권한·기존 빌드 설정 사용 안내 |
