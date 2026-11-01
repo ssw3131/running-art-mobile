@@ -1,5 +1,13 @@
 # 현재 상태와 인수인계
 
+## 2026-11-01 Cloud 수정 main 검증 완료·재게시 대기
+
+[PR #39](https://github.com/ssw3131/running-art-mobile/pull/39)의 슬라이더 최종 위치 수정은 main `5126eda`에 squash 병합됐다. [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/41280344071)는 fast/API/API36 기능15단계/API29 기능7단계·자료 보존/정리·네 화면 차이0·필수 게이트까지 통과했다. 두 Android 모두 시나리오 재시도0. API29의 완료 후 UI 덤프 전송 경고1과 준비 대기(API36 7/API29 4)는 보존했다. 현재 게시 환경의 clean main에서도 setup/fast 7단계 전체 통과, 작업 브랜치 정리 완료다.
+
+PR38 UI 계층 실패·스크롤바 차이, 이전 main `05d5022`의 슬라이더9km 실패 및 네트워크/홈 권한 실패를 [실행 기록](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md)에 유지했다. 사용자 승인 account 기준1장 갱신 이후 기준·마스크·허용 오차는 변경하지 않았다.
+
+**남은 작업은 환경 재게시와 새 작업 setup/fast 실제 검증이다.** 제공된 도구로 재게시/새 작업 생성은 할 수 없어 사용자 화면 조작이 필요하다. 최신 main 준비 요청과 `Edit → Republish → Start a new task` 절차는 [환경 안내](../development/cloud-preview.md)에 준비했다. 현재 작업의 성공을 새 작업 검증으로 간주하지 않는다. 아래 문단은 과거 진행 경과다.
+
 ## 2026-11-01 16:06 A7 USB Metro 미리보기 연결
 
 main `5126eda`의 [전체 Verify](https://github.com/ssw3131/running-art-mobile/actions/runs/41280344071)와 필수 게이트 통과 후 [development APK](https://github.com/ssw3131/running-art-mobile/actions/runs/41281070442)(versionCode `215677929`)를 A7에 삭제 없이 교체했다. 기존 preview `215622498`과 서명 일치·버전 증가·설치 해시를 확인했다. Google 로그인·빈 코스/러닝/완주 기록·동기화 꺼짐/대기0·설정·런타임 권한·UID/최초 설치 시각/자료 디렉터리 식별자를 유지했다.
