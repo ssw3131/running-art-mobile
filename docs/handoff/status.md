@@ -8,6 +8,12 @@ PR38 UI 계층 실패·스크롤바 차이, 이전 main `05d5022`의 슬라이�
 
 **남은 작업은 환경 재게시와 새 작업 setup/fast 실제 검증이다.** 제공된 도구로 재게시/새 작업 생성은 할 수 없어 사용자 화면 조작이 필요하다. 최신 main 준비 요청과 `Edit → Republish → Start a new task` 절차는 [환경 안내](../development/cloud-preview.md)에 준비했다. 현재 작업의 성공을 새 작업 검증으로 간주하지 않는다. 아래 문단은 과거 진행 경과다.
 
+## 2026-11-01 16:06 A7 USB Metro 미리보기 연결
+
+main `5126eda`의 [전체 Verify](https://github.com/ssw3131/running-art-mobile/actions/runs/41280344071)와 필수 게이트 통과 후 [development APK](https://github.com/ssw3131/running-art-mobile/actions/runs/41281070442)(versionCode `215677929`)를 A7에 삭제 없이 교체했다. 기존 preview `215622498`과 서명 일치·버전 증가·설치 해시를 확인했다. Google 로그인·빈 코스/러닝/완주 기록·동기화 꺼짐/대기0·설정·런타임 권한·UID/최초 설치 시각/자료 디렉터리 식별자를 유지했다.
+
+PC는 기본 폴더에서 검증된 main을 Sync했고 USB8081·Metro를 실행해 실제 홈 연결과 reload 후 복귀를 확인했다. **현재 폰은 development이며 Metro와 USB 연결을 켜 둔 상태**다. PR #39 작업 브랜치는 사용하지 않았고, main에 병합된 커밋의 최종 검사가 끝난 뒤 설치했다. 기존 C: 백업은 그대로다. 비어 있지 않은 기록·야외 GPS/배터리는 이번에 검증하지 않았다. [실행·검증·로그 위치](../history/executed-plans/2026-11-01-1530-pc-metro-preview.md).
+
 ## 2026-11-01 Cloud 홈 준비·캡처 안정화
 
 PR #38의 첫 Android UI 계층 오류와 재실행 화면 차이를 보존했다. 사용자 승인으로 마이페이지 기준 한 장만 안정 상태로 갱신하고, 기준과 독립적인 연속 프레임 준비 검사를 추가했다. 수정본 setup/fast 및 Python QA18개, PR CI 전체 통과 후 main `05d5022`에 병합했다. 이후 main CI `41270028546`에서 API36 슬라이더가 가로 이동 후 9km에 멈춰 실패했다. fast/API/API29는 통과했다. 손을 뗀 좌표 반영 수정·양방향 회귀 검사와 최종 setup/fast 7단계는 통과했고 원격 PR/main 검증을 진행하며, 전체 완료·환경 재게시 완료로 간주하지 않는다.
