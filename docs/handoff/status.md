@@ -6,6 +6,10 @@
 **이 휴대폰은 Metro 없이 실행되며 USB 분리 가능**하다. 포트 전달 없이 홈·완전 종료 후 재실행을 확인했고 검사 도우미 제거·서비스 없음을 확인했다. 야외 GPS·잠금 장시간·배터리 실측은 후속이다. 다음 업데이트도 이 휴대폰의 기존 서명에 맞춰야 한다. A7 development·PC Metro는 이번에 변경하지 않았다. [설치·서명 차이·검증 근거](../history/executed-plans/2026-11-01-2104-s942n-outdoor-preview.md).
 
 
+## 2026-11-01 참여자용 설치·사용 안내
+
+[공유용 안내](../development/project-usage.md)에 폰 검증·Windows Metro·클라우드 개발의 준비물과 명령, APK 생성/교체·문제 해결을 정리했다. 폰 검증은 GitHub Actions에서 preview 다운로드 → 폰 확인 → Issues 결과 등록을 기본 경로로 안내하며 다운로드와 빌드 실행 권한을 구분했다. README와 문서 목차에서 연결했다. 문서만 변경했으며 기존 환경 재게시·새 작업 검증 등 남은 작업의 상태는 유지한다.
+
 ## 2026-11-01 Cloud 수정 main 검증 완료·재게시 대기
 
 [PR #39](https://github.com/ssw3131/running-art-mobile/pull/39)의 슬라이더 최종 위치 수정은 main `5126eda`에 squash 병합됐다. [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/41280344071)는 fast/API/API36 기능15단계/API29 기능7단계·자료 보존/정리·네 화면 차이0·필수 게이트까지 통과했다. 두 Android 모두 시나리오 재시도0. API29의 완료 후 UI 덤프 전송 경고1과 준비 대기(API36 7/API29 4)는 보존했다. 현재 게시 환경의 clean main에서도 setup/fast 7단계 전체 통과, 작업 브랜치 정리 완료다.
