@@ -311,3 +311,25 @@ PR38 최종 실행41267112616은 필수 검사 전체 통과 후 main 05d5022로
 ### 2026-11-01T14:43:27+09:00 슬라이더 수정본 로컬 결과
 
 기존 release 계산으로 양방향 회귀 검사를 실행하면 10km 기대/9km 실제, 1km 기대/2km 실제로 실패했다. 수정본 관련 UI5개는 통과했고 세로 스크롤 거리 보존도 유지됐다. setup 종료0, fast 7단계 전체 통과, git diff --check 통과. 이전 fast 도구 요청은 실행 전 중단되어 로그가 생성되지 않았으며, 이후 실제 실행의 결과로 구분한다. 원격 main 직접 fetch 결과는 05d5022로 현재 작업 기준과 일치한다. 이번 Android 실패에서 이벤트 원본은 수집되지 않아 실제 dx 값은 미확정이며, 확인된 오래된 이동량 사용 결함과 동일 증상 회귀 재현을 근거로 수정했다. 최종 Android PR/main 검증은 후속이다.
+
+## 2026-11-01T15:34:54+09:00 PR39 병합·main 검증·재게시 준비 후속
+
+사용자가 PR39부터 필수 검사·squash merge·main 검사·브랜치 정리·환경 재게시와 새 작업 setup/fast까지 계속 진행하도록 요청했다. 기존 계획을 이어 실행하며 실패 기록과 검사 기준을 유지한다.
+
+- PR39 head57a6cbf / 검사 merge ref41f4b8d의 실행41278065069 attempt1은 fast/API/Android36/verification-gate 전체 통과. API36 기능15단계·재시도0·자료 보존/정리 통과, 정적 네 화면 차이0. 슬라이더 XML에서 10 km 및 distance-10 selected=true 확인. UI 계층 준비 대기1·전송 경고0은 원본 보고서에 보존했다. 산출물13072603126.
+- squash merge 결과 main5126edab30d3b1ba56b45977055c10d9f0ec00d0. 로컬/원격 작업 브랜치 codex/slider-release-position 정리, 깨끗한 로컬 main 및 원격 main 일치를 확인했다.
+- 현재 게시 환경의 clean main5126eda에서 setup/fast 종료0. fast는 2026-11-01T06:20:20.346Z~06:21:08.350Z, dirty=false, 7단계 전체 passed. test-results/main-5126eda-local에 보고서/로그 보존. 새 게시 버전·새 작업 검증과 구분한다.
+- 이전 main05d5022 실패의 ZIP/로그를 test-results/main-05d5022-failure에 추가 보존했다. 원본 ZIP SHA-256은 5dee9723d60db93b4606dae0356b44afbe5f6fdef47570eb54f2df31aa84874a. 기존 PR38 첫 UI 계층 실패·두 번째 스크롤바 차이와 네트워크/홈 권한 실패 기록도 유지한다.
+- 런타임 스킬을 재확인했다. 환경 상태는 현재 관측/connected, 네트워크 정책 enforced, revision1이다. 제공된 도구에는 환경 설정 변경·재게시·새 작업 생성 기능과 브라우저 제어 기능이 없다. 실제 재게시·새 작업 실행을 완료했다고 기록하지 않는다. 최신 main 기준 준비 요청과 사용자 화면 절차를 cloud-preview.md에 정리한다.
+
+main 실행41280344071의 API36/API29 최종 결과는 아래에 후속 기록한다.
+
+### 2026-11-01T16:02:57+09:00 main 최종 검증 결과 — 코드 반영 완료, 재게시/새 작업 대기
+
+[main 실행41280344071](https://github.com/ssw3131/running-art-mobile/actions/runs/41280344071) attempt1은 scope/fast/API/Android36/Android29/verification-gate 전체 성공이다.
+
+- API36 job124770872251/artifact13074057770: 기능15단계, retries0, 자료 보존·정리 통과. 슬라이더 10km 선택 확인. 네 정적 화면 차이0. UI 계층 준비 대기7, 전송 경고0.
+- API29 job124770872265/artifact13073408794: 기능7단계, retries0, 자료 보존·정리 통과. UI 계층 준비 대기4, 완료 영수증을 충족한 전송 경고1을 원본 보고서에 보존했다.
+- gate124778983460 성공. PR39 및 main 모두 최초 실행 통과로, 기존 실패 실행을 재실행하거나 기준·마스크·허용 오차를 변경하지 않았다.
+
+앱 수정·PR 필수 검사·squash merge·main 전체 검사·완료 작업 브랜치 정리는 완료했다. 최신 main의 설치 절차와 재게시/새 작업 검증 요청을 cloud-preview.md에 준비했다. 문서 기록 변경은 별도 docs PR로 검증·병합한다. 이 기록 변경은 앱·설치 스크립트·검사와 무관하다. 실제 환경 설정 편집/Republish, Environment published 확인, Start a new task 후 setup/fast는 현재 도구로 실행할 수 없어 사용자 화면 조작이 남는다. 기존 환경의 clean main 성공을 새 작업 성공으로 대체하지 않는다. 전체 복구 계획의 상태는 부분 완료를 유지한다.

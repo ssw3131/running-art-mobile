@@ -18,7 +18,7 @@
 
 공식 [클라우드 환경 안내](https://learn.chatgpt.com/docs/environments/cloud-environments)에 따라 새 작업에서 Work in > Cloud로 환경을 고릅니다. 환경 준비 대화에는 저장소와 위 설치 명령을 지정합니다. Save draft만으로 끝내지 말고 Publish 후 Environment published를 확인합니다. 그 다음 Start a new task로 main의 실제 HEAD·Git 상태·setup/fast 결과를 확인합니다. 준비 구성을 바꿀 때는 Settings > Codex Cloud > Environments의 … > Edit에서 수정하고 Republish합니다. 기존 작업과 새 작업의 준비 상태를 구분합니다.
 
-홈 준비 수정의 PR 병합 후 재게시할 설정:
+재게시할 설정(홈 준비 PR #38 및 슬라이더 PR #39의 main 반영 포함):
 
 - 저장소: `ssw3131/running-art-mobile`, 기준 브랜치: 최신 `main`.
 - 설치 명령: 저장소 루트에서 `bash scripts/cloud.sh setup`.
@@ -27,6 +27,18 @@
 - 재게시 후 새 작업에서 `git ls-remote origin refs/heads/main`과 `git rev-parse HEAD`를 대조하고 `setup`, `fast`의 종료 코드와 보고서를 확인합니다. 기존 작업의 성공만으로 새 작업까지 완료 처리하지 않습니다.
 
 검증 요청 예시: “저장소 지침을 읽고 bash scripts/cloud.sh setup과 bash scripts/cloud.sh fast를 실행해 줘. 파일 수정·커밋·푸시 없이 HEAD, Git 상태, Node/npm 버전, 명령별 종료 코드와 검사 결과를 알려줘. Android 도구 설치나 크레딧 구매는 하지 마.”
+
+### 재게시 화면에서 전달할 준비 요청
+
+Settings > Codex Cloud > Environments에서 이 저장소의 기존 환경을 찾고 `… > Edit`를 선택합니다. 준비 대화에 다음 요청을 전달합니다.
+
+> 저장소 ssw3131/running-art-mobile의 최신 main을 사용하세요. 저장소 루트에서 bash scripts/cloud.sh setup을 실행하세요. 실제 HOME은 유지하고 HOME/.expo 생성과 쓰기 권한을 확인하세요. 최초 생성에 필요한 홈 쓰기 권한, 이후 .expo 쓰기 권한과 실행 네트워크 권한을 허용된 방식으로 사용하세요. 기존 패키지 관리자 허용 정책과 상속된 프록시·CA 설정은 유지하세요. 운영 키 추가, 검사 생략, node_modules 수동 수정은 하지 마세요. 준비 결과의 HEAD와 설치 종료 코드를 제시하세요.
+
+준비 결과를 검토한 후 `Republish`를 누르고 `Environment published`를 확인합니다. `Save draft`만 누른 상태는 게시 완료가 아닙니다. 이어 `Start a new task`로 새 작업을 열거나 새 작업 화면의 `Work in > Cloud`에서 방금 게시한 환경을 선택합니다. 새 작업에 다음 검증 요청을 전달합니다.
+
+> Cloud Environment 런타임 스킬과 저장소 지침을 읽고 환경 상태·실제 HOME·권한을 확인하세요. 비밀 값은 출력하지 마세요. 원격 main을 직접 조회하고 HEAD·Git 상태를 확인하세요. 미커밋 변경이 없으면 최신 main으로 맞춘 뒤 bash scripts/cloud.sh setup과 bash scripts/cloud.sh fast를 실행하세요. 허용된 네트워크 및 HOME/.expo 쓰기 권한을 사용하고 프록시·CA를 유지하세요. 파일 수정·커밋·푸시·검사 생략·node_modules 수동 수정은 하지 마세요. 게시 구성 버전, HEAD/원격 main SHA, 명령별 종료 코드와 test-results/fast/report.json의 source·dirty·status를 알려주세요.
+
+화면 명칭은 공식 환경 안내에 따른 경로이며 현재 대화에서는 사용자 설정 화면을 직접 제어하거나 확인하지 못합니다. 새 작업의 실제 결과가 확인될 때까지 재게시/새 작업 검증은 미완료로 유지합니다.
 
 스크립트 추가와 실제 환경 게시는 별개입니다. 새 클라우드 작업에서 위 명령의 성공을 확인해야 클라우드 세팅 완료입니다.
 

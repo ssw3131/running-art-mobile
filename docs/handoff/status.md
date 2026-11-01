@@ -1,5 +1,13 @@
 # 현재 상태와 인수인계
 
+## 2026-11-01 Cloud 수정 main 검증 완료·재게시 대기
+
+[PR #39](https://github.com/ssw3131/running-art-mobile/pull/39)의 슬라이더 최종 위치 수정은 main `5126eda`에 squash 병합됐다. [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/41280344071)는 fast/API/API36 기능15단계/API29 기능7단계·자료 보존/정리·네 화면 차이0·필수 게이트까지 통과했다. 두 Android 모두 시나리오 재시도0. API29의 완료 후 UI 덤프 전송 경고1과 준비 대기(API36 7/API29 4)는 보존했다. 현재 게시 환경의 clean main에서도 setup/fast 7단계 전체 통과, 작업 브랜치 정리 완료다.
+
+PR38 UI 계층 실패·스크롤바 차이, 이전 main `05d5022`의 슬라이더9km 실패 및 네트워크/홈 권한 실패를 [실행 기록](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md)에 유지했다. 사용자 승인 account 기준1장 갱신 이후 기준·마스크·허용 오차는 변경하지 않았다.
+
+**남은 작업은 환경 재게시와 새 작업 setup/fast 실제 검증이다.** 제공된 도구로 재게시/새 작업 생성은 할 수 없어 사용자 화면 조작이 필요하다. 최신 main 준비 요청과 `Edit → Republish → Start a new task` 절차는 [환경 안내](../development/cloud-preview.md)에 준비했다. 현재 작업의 성공을 새 작업 검증으로 간주하지 않는다. 아래 문단은 과거 진행 경과다.
+
 ## 2026-11-01 Cloud 홈 준비·캡처 안정화
 
 PR #38의 첫 Android UI 계층 오류와 재실행 화면 차이를 보존했다. 사용자 승인으로 마이페이지 기준 한 장만 안정 상태로 갱신하고, 기준과 독립적인 연속 프레임 준비 검사를 추가했다. 수정본 setup/fast 및 Python QA18개, PR CI 전체 통과 후 main `05d5022`에 병합했다. 이후 main CI `41270028546`에서 API36 슬라이더가 가로 이동 후 9km에 멈춰 실패했다. fast/API/API29는 통과했다. 손을 뗀 좌표 반영 수정·양방향 회귀 검사와 최종 setup/fast 7단계는 통과했고 원격 PR/main 검증을 진행하며, 전체 완료·환경 재게시 완료로 간주하지 않는다.
