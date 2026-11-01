@@ -256,3 +256,31 @@ C: implementation-handoff-docs.bundle만으로 새 restore-main-ddfeb87-proof �
 [문서 PR #37](https://github.com/ssw3131/running-art-mobile/pull/37)은 앱 코드를 바꾸지 않고 환경 게시/새 작업 구분, APK 전환과 현재 확인 범위를 정리한다. 최종 병합 커밋·bundle·실제 복원 근거는 C: LATEST-MAIN.json, 로컬 브랜치 정리와 전체 파일 판정은 CURRENT-PROGRESS.md 및 BACKUP-INTEGRITY.json을 따른다. 개인 화면·키·환경 값은 로컬 보호 백업에만 둔다.
 
 현재 A7의 실제 설치/확인 소스는 ddfeb87 preview215622498이다. 새 Codex Cloud 작업의 setup/fast, 다른 PC 직접 다운로드, 실서버 공지 정상 조회, 비어 있지 않은 기록의 내용 보존과 야외 GPS/배터리는 후속이다. Cloud 환경 게시만으로 전체 계획을 완료로 기록하지 않는다. 테스트 키의 다른 PC 복구용 암호 보관은 C: USER-ACTIONS.md의 수동 단계다. 추가 크레딧 구매·요금 한도 변경·운영 서버/DB/정책 게시·Play 배포는 하지 않았다.
+
+
+## 2026-11-01T10:03:57+09:00 Cloud 홈 준비 후속 — 실행 전 계획
+
+사용자 요청에 따라 실제 홈과 권한을 확인하고 `.expo` 준비 후 fast를 실행했다. 이 진단·디렉터리 준비 부분은 사후 기록이다. passwd/HOME 모두 `/home/agent`, 홈 소유자는 agent(0700)이며 샌드박스 쓰기 제한이 있었다. 홈 쓰기 권한으로 `.expo`를 생성하고 해당 디렉터리 쓰기·네트워크 권한으로 fast 7단계를 모두 통과했다.
+
+이하 설치 절차 변경은 실행 시작 시 계획 작성이다: `scripts/cloud.sh setup`에 실제 HOME의 `.expo` 생성과 쓰기 가능 여부 확인을 추가한다. 설치 안내에 최초 생성 시 홈 쓰기, 이후 `.expo` 쓰기 및 네트워크 권한을 명시한다. 수정한 setup을 검증하고 결과·인수인계·목록을 갱신한다. 검사 생략, node_modules 수동 수정, 커밋·푸시는 하지 않는다.
+
+### 2026-11-01T10:07:15+09:00 후속 결과
+
+홈 준비 후 main dc01251의 fast는 종료 코드0, 7단계 전체 통과(로직493 통과/기존1 skip, Jest18 suites/108 tests 통과). 검사 생략 설정이나 node_modules 수동 수정은 하지 않았다. `test-results/fast/report.json`에 clean HEAD 결과가 있다. 이후 설치 스크립트에 HOME/.expo 생성·쓰기 검사를 추가하고 bash -n 및 수정 setup 재실행 종료 코드0을 확인했다. npm ci의 기존 postinstall은 정상 실행했다. 설치 안내에 샌드박스 네트워크 및 홈/.expo 쓰기 권한을 명시했다.
+
+요청 범위의 로컬 수정·검증 완료. 커밋·푸시·게시 환경 재게시 및 새 작업 재검증은 하지 않았으므로 새 작업의 자동 반영은 미완료다. 전체 기존 계획은 부분 완료로 유지한다.
+
+## 2026-11-01T10:09:03+09:00 최종 검증·PR/main 반영 — 실행 전 계획
+
+사용자가 커밋·푸시·PR 필수 검사·squash merge·완료 브랜치 정리를 승인했다. 기존 로컬 변경을 검토하고 최종 setup/fast를 실행한다. 네트워크·홈 권한 실패와 해결 근거를 보존한 뒤 작업 브랜치를 PR로 반영하고 main 검사와 정리를 확인한다. 최신 main의 환경 준비 설정을 재게시 가능한 형태로 준비하되 실제 새 환경 검증과 구분한다.
+
+### 실패·해결 근거
+
+- 기본 실행 샌드박스에서 git ls-remote와 setup의 curl이 proxy:8080 연결 오류로 실패했다(setup 종료7). fast도 고정 Node 부재로 종료1이었다.
+- environment_status는 현재 관측/connected 및 enforced를 보고했고 정책 파일은 GitHub·Node.js·npm을 허용했다. proxy 이름 해석은 성공했지만 TCP 연결이 EPERM이었다. 추가 네트워크 권한으로 동일 프록시 TCP 및 GitHub HTTPS200, fetch, setup이 성공했다. 프록시·CA 설정은 유지했고 비밀 값은 출력하지 않았다.
+- 이어 fast의 타입 검사는 통과했지만 Expo lint가 /home/agent/.expo mkdir ENOENT로 실패했다. passwd/HOME은 /home/agent, agent 소유0700이나 기본 샌드박스에서 쓰기 불가였다. 존재하지 않는 .expo 경로만 쓰기 허용한 첫 생성도 Read-only file system으로 실패했다. 부모 홈에 쓰기 권한을 허용해 .expo(0700)를 생성했고 이후 .expo 쓰기 권한으로 fast 7단계 전체 통과했다.
+- 검사 생략·HOME 변경·node_modules 수동 수정 없이 해결했다. npm ci의 저장소 기존 postinstall은 정상 실행했다.
+
+### 최종 수정본 로컬 검증
+
+`bash scripts/cloud.sh setup`과 `bash scripts/cloud.sh fast` 모두 종료0. fast 실행 2026-11-01T01:09:23.372Z ~ 2026-11-01T01:10:22.895Z (UTC; KST는 +9시간), 7단계 전체 passed. 기준 HEAD dc01251에 본 PR의 미커밋 변경을 적용한 수정본이며 clean HEAD 검증과 구분한다. bash -n 및 git diff --check도 통과했다. 검토 결과 앱 코드·검사 기준·의존성 잠금 파일 변경은 없으며, setup 홈 준비 두 줄과 설치/실행 기록만 변경했다. 재게시 준비 설정은 cloud-preview.md에 보존했다. PR 필수 검사 및 병합 결과는 해당 PR/Actions의 실제 상태를 따른다.

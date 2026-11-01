@@ -1,5 +1,10 @@
 # 현재 상태와 인수인계
 
+## 2026-11-01 Cloud 홈 준비·fast 실제 통과
+
+main `dc01251`에서 실제 HOME `/home/agent`와 소유자/0700을 확인했다. 샌드박스 권한으로 `.expo` 준비 후 fast 7단계 전체 통과(로직493/기존 skip1, Jest108). 설치 스크립트의 HOME/.expo 준비·쓰기 확인과 권한 안내를 로컬 반영했고 수정 setup도 종료 코드0이다. 최종 수정본의 setup/fast도 종료0이며 PR/main 반영을 진행한다. 환경 재게시·다음 새 작업 재검증은 별도 후속이다. [실행 기록](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md)을 따른다.
+
+
 **2026-11-01 최소 PC 환경·A7 확인:** 기본 폴더는 `D:\running-art\running-art-mobile`이다. C: 백업/복원/해시 확인 후 지정한 9개 경로를 정리했고 Node·ADB·Metro 최소 환경을 검증했다. 기본 폴더 하나에서 브랜치를 바꾸며 실제 동시 작업에만 임시 worktree를 쓴다.
 
 [PR #36](https://github.com/ssw3131/running-art-mobile/pull/36)의 공지 읽기 10초 상한을 main `ddfeb87`에 병합했고 [main 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/41213220006)가 통과했다. 빠른 검사·API·Android36 15단계/Android29 7단계·화면 비교·자료 보존/정리를 확인했다. 첫 Android29는 앱 빌드 전 격리 Supabase 시작에서 실패해 그 작업과 종속 게이트만 1회 재실행했다. 재실행의 기능 반복은 없었고 원래 실패를 보존했다. 하위 시작 로그가 없어 첫 실패의 근본 원인은 미확정이다.

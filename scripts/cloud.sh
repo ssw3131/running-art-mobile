@@ -6,6 +6,8 @@ mode=setup
 if (( $# > 0 )); then mode="$1"; fi
 export EXPO_NO_DOTENV=1 CI=1
 if [[ "$mode" == setup ]]; then
+  mkdir -p "${HOME:?HOME must point to the current user home}/.expo"
+  [[ -w "$HOME/.expo" ]] || { echo "Expo requires write access to $HOME/.expo"; exit 1; }
   if [[ ! -x .tools/node-linux/bin/node ]]; then
     [[ "$(uname -s)" == Linux && "$(uname -m)" == x86_64 ]] || { echo "Expected Linux x86_64"; exit 1; }
     mkdir -p .cache/downloads .tools/node-linux
