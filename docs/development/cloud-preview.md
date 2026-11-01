@@ -10,9 +10,21 @@
 - 타입·린트: `bash scripts/cloud.sh check`
 - 빠른 검사: `bash scripts/cloud.sh fast`
 
+설치 단계는 현재 사용자의 `HOME/.expo`를 준비하고 쓰기 권한을 확인합니다. `HOME`을 다른 경로로 바꾸지 않습니다. 실행 샌드박스에서는 최초 디렉터리 생성에 실제 홈의 쓰기 권한이 필요하며, 이후 setup/check/fast에는 `.expo` 쓰기 권한을 허용합니다. 네트워크가 제한된 실행에서는 추가 네트워크 권한도 필요합니다. 상속된 프록시·CA 설정을 유지합니다. 폴더 생성만으로 후속 명령의 샌드박스 권한이 자동 부여되지는 않습니다.
+
+2026-11-01 게시 환경에서 `/home/agent`(agent 소유, 0700)를 확인하고 `.expo` 생성 및 쓰기 권한 부여 후 main `dc01251`의 fast 7단계를 통과했습니다. 기본 샌드박스는 프록시 연결을 EPERM으로 차단했고, 네트워크 권한 추가 후 setup이 성공했습니다. 새 작업에서도 위 설치·실행 권한과 실제 결과를 확인합니다.
+
 스크립트는 고정 Node를 공식 SHA-256으로 확인하고 프로젝트 내부에 설치합니다. 설치에는 nodejs.org, registry.npmjs.org 및 잠금 파일의 배포 호스트 접근이 필요합니다. 개인 서명키·운영 관리 자격 증명을 이 환경에 제공하지 않습니다. 빠른 검사는 기존 CI의 격리 API/Android 검증을 대체하지 않습니다.
 
 공식 [클라우드 환경 안내](https://learn.chatgpt.com/docs/environments/cloud-environments)에 따라 새 작업에서 Work in > Cloud로 환경을 고릅니다. 환경 준비 대화에는 저장소와 위 설치 명령을 지정합니다. Save draft만으로 끝내지 말고 Publish 후 Environment published를 확인합니다. 그 다음 Start a new task로 main의 실제 HEAD·Git 상태·setup/fast 결과를 확인합니다. 준비 구성을 바꿀 때는 Settings > Codex Cloud > Environments의 … > Edit에서 수정하고 Republish합니다. 기존 작업과 새 작업의 준비 상태를 구분합니다.
+
+홈 준비 수정의 PR 병합 후 재게시할 설정:
+
+- 저장소: `ssw3131/running-art-mobile`, 기준 브랜치: 최신 `main`.
+- 설치 명령: 저장소 루트에서 `bash scripts/cloud.sh setup`.
+- 최초 준비에는 실제 사용자 홈의 디렉터리 생성 권한, 검사에는 `$HOME/.expo` 쓰기 권한을 허용합니다. 권한 항목이 없는 준비 UI에서는 준비 요청에 이 요구를 명시하고 실제 실행에서 확인합니다.
+- 기존 패키지 관리자 네트워크 허용 정책과 상속된 프록시·CA를 유지합니다. 실행 샌드박스에서 추가 네트워크 권한이 필요하면 부여합니다. 비밀 값이나 운영 키를 추가하지 않습니다.
+- 재게시 후 새 작업에서 `git ls-remote origin refs/heads/main`과 `git rev-parse HEAD`를 대조하고 `setup`, `fast`의 종료 코드와 보고서를 확인합니다. 기존 작업의 성공만으로 새 작업까지 완료 처리하지 않습니다.
 
 검증 요청 예시: “저장소 지침을 읽고 bash scripts/cloud.sh setup과 bash scripts/cloud.sh fast를 실행해 줘. 파일 수정·커밋·푸시 없이 HEAD, Git 상태, Node/npm 버전, 명령별 종료 코드와 검사 결과를 알려줘. Android 도구 설치나 크레딧 구매는 하지 마.”
 

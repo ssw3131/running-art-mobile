@@ -256,3 +256,47 @@ C: implementation-handoff-docs.bundle만으로 새 restore-main-ddfeb87-proof �
 [문서 PR #37](https://github.com/ssw3131/running-art-mobile/pull/37)은 앱 코드를 바꾸지 않고 환경 게시/새 작업 구분, APK 전환과 현재 확인 범위를 정리한다. 최종 병합 커밋·bundle·실제 복원 근거는 C: LATEST-MAIN.json, 로컬 브랜치 정리와 전체 파일 판정은 CURRENT-PROGRESS.md 및 BACKUP-INTEGRITY.json을 따른다. 개인 화면·키·환경 값은 로컬 보호 백업에만 둔다.
 
 현재 A7의 실제 설치/확인 소스는 ddfeb87 preview215622498이다. 새 Codex Cloud 작업의 setup/fast, 다른 PC 직접 다운로드, 실서버 공지 정상 조회, 비어 있지 않은 기록의 내용 보존과 야외 GPS/배터리는 후속이다. Cloud 환경 게시만으로 전체 계획을 완료로 기록하지 않는다. 테스트 키의 다른 PC 복구용 암호 보관은 C: USER-ACTIONS.md의 수동 단계다. 추가 크레딧 구매·요금 한도 변경·운영 서버/DB/정책 게시·Play 배포는 하지 않았다.
+
+
+## 2026-11-01T10:03:57+09:00 Cloud 홈 준비 후속 — 실행 전 계획
+
+사용자 요청에 따라 실제 홈과 권한을 확인하고 `.expo` 준비 후 fast를 실행했다. 이 진단·디렉터리 준비 부분은 사후 기록이다. passwd/HOME 모두 `/home/agent`, 홈 소유자는 agent(0700)이며 샌드박스 쓰기 제한이 있었다. 홈 쓰기 권한으로 `.expo`를 생성하고 해당 디렉터리 쓰기·네트워크 권한으로 fast 7단계를 모두 통과했다.
+
+이하 설치 절차 변경은 실행 시작 시 계획 작성이다: `scripts/cloud.sh setup`에 실제 HOME의 `.expo` 생성과 쓰기 가능 여부 확인을 추가한다. 설치 안내에 최초 생성 시 홈 쓰기, 이후 `.expo` 쓰기 및 네트워크 권한을 명시한다. 수정한 setup을 검증하고 결과·인수인계·목록을 갱신한다. 검사 생략, node_modules 수동 수정, 커밋·푸시는 하지 않는다.
+
+### 2026-11-01T10:07:15+09:00 후속 결과
+
+홈 준비 후 main dc01251의 fast는 종료 코드0, 7단계 전체 통과(로직493 통과/기존1 skip, Jest18 suites/108 tests 통과). 검사 생략 설정이나 node_modules 수동 수정은 하지 않았다. `test-results/fast/report.json`에 clean HEAD 결과가 있다. 이후 설치 스크립트에 HOME/.expo 생성·쓰기 검사를 추가하고 bash -n 및 수정 setup 재실행 종료 코드0을 확인했다. npm ci의 기존 postinstall은 정상 실행했다. 설치 안내에 샌드박스 네트워크 및 홈/.expo 쓰기 권한을 명시했다.
+
+요청 범위의 로컬 수정·검증 완료. 커밋·푸시·게시 환경 재게시 및 새 작업 재검증은 하지 않았으므로 새 작업의 자동 반영은 미완료다. 전체 기존 계획은 부분 완료로 유지한다.
+
+## 2026-11-01T10:09:03+09:00 최종 검증·PR/main 반영 — 실행 전 계획
+
+사용자가 커밋·푸시·PR 필수 검사·squash merge·완료 브랜치 정리를 승인했다. 기존 로컬 변경을 검토하고 최종 setup/fast를 실행한다. 네트워크·홈 권한 실패와 해결 근거를 보존한 뒤 작업 브랜치를 PR로 반영하고 main 검사와 정리를 확인한다. 최신 main의 환경 준비 설정을 재게시 가능한 형태로 준비하되 실제 새 환경 검증과 구분한다.
+
+### 실패·해결 근거
+
+- 기본 실행 샌드박스에서 git ls-remote와 setup의 curl이 proxy:8080 연결 오류로 실패했다(setup 종료7). fast도 고정 Node 부재로 종료1이었다.
+- environment_status는 현재 관측/connected 및 enforced를 보고했고 정책 파일은 GitHub·Node.js·npm을 허용했다. proxy 이름 해석은 성공했지만 TCP 연결이 EPERM이었다. 추가 네트워크 권한으로 동일 프록시 TCP 및 GitHub HTTPS200, fetch, setup이 성공했다. 프록시·CA 설정은 유지했고 비밀 값은 출력하지 않았다.
+- 이어 fast의 타입 검사는 통과했지만 Expo lint가 /home/agent/.expo mkdir ENOENT로 실패했다. passwd/HOME은 /home/agent, agent 소유0700이나 기본 샌드박스에서 쓰기 불가였다. 존재하지 않는 .expo 경로만 쓰기 허용한 첫 생성도 Read-only file system으로 실패했다. 부모 홈에 쓰기 권한을 허용해 .expo(0700)를 생성했고 이후 .expo 쓰기 권한으로 fast 7단계 전체 통과했다.
+- 검사 생략·HOME 변경·node_modules 수동 수정 없이 해결했다. npm ci의 저장소 기존 postinstall은 정상 실행했다.
+
+### 최종 수정본 로컬 검증
+
+`bash scripts/cloud.sh setup`과 `bash scripts/cloud.sh fast` 모두 종료0. fast 실행 2026-11-01T01:09:23.372Z ~ 2026-11-01T01:10:22.895Z (UTC; KST는 +9시간), 7단계 전체 passed. 기준 HEAD dc01251에 본 PR의 미커밋 변경을 적용한 수정본이며 clean HEAD 검증과 구분한다. bash -n 및 git diff --check도 통과했다. 검토 결과 앱 코드·검사 기준·의존성 잠금 파일 변경은 없으며, setup 홈 준비 두 줄과 설치/실행 기록만 변경했다. 재게시 준비 설정은 cloud-preview.md에 보존했다. PR 필수 검사 및 병합 결과는 해당 PR/Actions의 실제 상태를 따른다.
+
+## 2026-11-01T11:28:02+09:00 화면 캡처 안정화 — 실행 전 계획
+
+사용자가 후속 수정을 요청했다. PR38 첫 실행은 UI 계층 수집 실패, 동일 소스 진단 재실행은 Android 기능15·자료 보존/정리 통과 후 마이페이지 스크롤 표시줄8896픽셀 차이로 실패했다. 다른 세 화면은 차이0이다. 두 로그/산출물은 PR 본문과 test-results/pr38-attempt1, pr38-attempt2에 보존했다.
+
+기준 이미지와 비교해 성공 프레임을 고르는 방식은 사용하지 않는다. 정적 화면 캡처에 초기 정착 대기와 연속 프레임 안정 조건·시간 상한·원본 샘플/해시 기록을 추가한다. 실패하면 그대로 실패한다. 실제 실패 이미지를 직접 검토했으나 기존 기준은 일시적인 표시줄을 포함하므로, 안정 상태 기준 한 장 갱신 여부는 사용자 확인 중이다. 마스크·비교 허용 오차·제품 UI·node_modules는 수정하지 않는다. 회귀 검증 후 기존 PR에 반영하고 필수 검사·main 반영/정리를 이어간다.
+
+### 2026-11-01T11:53:06+09:00 기준 갱신 승인과 구현
+
+사용자가 “안정 상태로 1장 갱신”을 선택했다. PR38 attempt2의 수정하지 않은 account-current.png를 기준으로 복사하고 이전 해시·실행/산출물·검토 근거를 baseline.json에 기록했다. 원본·현재·차이를 직접 대조했으며 8896픽셀은 오른쪽 스크롤 표시줄이다. 다른 세 PNG·마스크·허용 오차·환경 기준은 유지한다. 프레임 준비는 기준 참조 없이 2초 정착 후 1초 동일 프레임을 요구하며 12초 상한/실패 전파/원본·샘플·해시를 남긴다. Python QA17개 통과. 실제 최종 Android 검증은 후속 CI에서 확인한다.
+
+### 캡처 수정본 로컬 검증
+
+setup/fast 종료0, fast7단계 전체 통과. Python QA18개(프레임 변화/불안정/캡처 오류/시간 상한 회귀 포함), git diff --check 통과. 보존된 attempt2 이미지로 새 기준을 재비교하면 네 화면 차이0이며 새 Android 캡처 코드 실증과 구분한다. 원래 attempt2 zip/실패 보고서는 test-results/pr38-attempt2에 보존하고 재비교는 /tmp 사본에서만 수행했다. 기준 승인으로 이전 “기준 이미지 유지” 계획 중 account 한 장만 변경했다.
+
+최초 [CI attempt1](https://github.com/ssw3131/running-art-mobile/actions/runs/41259978754/attempts/1)과 [attempt2](https://github.com/ssw3131/running-art-mobile/actions/runs/41259978754/attempts/2)의 실패를 보존한다. 첫 UI 계층 오류는 재현되지 않았으나 원인은 미확정이며, 이번 캡처 정착 변경으로 해당 오류까지 해결했다고 주장하지 않는다. 새 PR 필수 검사 후 병합을 진행한다.
