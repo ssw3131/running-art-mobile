@@ -284,3 +284,19 @@ C: implementation-handoff-docs.bundle만으로 새 restore-main-ddfeb87-proof �
 ### 최종 수정본 로컬 검증
 
 `bash scripts/cloud.sh setup`과 `bash scripts/cloud.sh fast` 모두 종료0. fast 실행 2026-11-01T01:09:23.372Z ~ 2026-11-01T01:10:22.895Z (UTC; KST는 +9시간), 7단계 전체 passed. 기준 HEAD dc01251에 본 PR의 미커밋 변경을 적용한 수정본이며 clean HEAD 검증과 구분한다. bash -n 및 git diff --check도 통과했다. 검토 결과 앱 코드·검사 기준·의존성 잠금 파일 변경은 없으며, setup 홈 준비 두 줄과 설치/실행 기록만 변경했다. 재게시 준비 설정은 cloud-preview.md에 보존했다. PR 필수 검사 및 병합 결과는 해당 PR/Actions의 실제 상태를 따른다.
+
+## 2026-11-01T11:28:02+09:00 화면 캡처 안정화 — 실행 전 계획
+
+사용자가 후속 수정을 요청했다. PR38 첫 실행은 UI 계층 수집 실패, 동일 소스 진단 재실행은 Android 기능15·자료 보존/정리 통과 후 마이페이지 스크롤 표시줄8896픽셀 차이로 실패했다. 다른 세 화면은 차이0이다. 두 로그/산출물은 PR 본문과 test-results/pr38-attempt1, pr38-attempt2에 보존했다.
+
+기준 이미지와 비교해 성공 프레임을 고르는 방식은 사용하지 않는다. 정적 화면 캡처에 초기 정착 대기와 연속 프레임 안정 조건·시간 상한·원본 샘플/해시 기록을 추가한다. 실패하면 그대로 실패한다. 실제 실패 이미지를 직접 검토했으나 기존 기준은 일시적인 표시줄을 포함하므로, 안정 상태 기준 한 장 갱신 여부는 사용자 확인 중이다. 마스크·비교 허용 오차·제품 UI·node_modules는 수정하지 않는다. 회귀 검증 후 기존 PR에 반영하고 필수 검사·main 반영/정리를 이어간다.
+
+### 2026-11-01T11:53:06+09:00 기준 갱신 승인과 구현
+
+사용자가 “안정 상태로 1장 갱신”을 선택했다. PR38 attempt2의 수정하지 않은 account-current.png를 기준으로 복사하고 이전 해시·실행/산출물·검토 근거를 baseline.json에 기록했다. 원본·현재·차이를 직접 대조했으며 8896픽셀은 오른쪽 스크롤 표시줄이다. 다른 세 PNG·마스크·허용 오차·환경 기준은 유지한다. 프레임 준비는 기준 참조 없이 2초 정착 후 1초 동일 프레임을 요구하며 12초 상한/실패 전파/원본·샘플·해시를 남긴다. Python QA17개 통과. 실제 최종 Android 검증은 후속 CI에서 확인한다.
+
+### 캡처 수정본 로컬 검증
+
+setup/fast 종료0, fast7단계 전체 통과. Python QA18개(프레임 변화/불안정/캡처 오류/시간 상한 회귀 포함), git diff --check 통과. 보존된 attempt2 이미지로 새 기준을 재비교하면 네 화면 차이0이며 새 Android 캡처 코드 실증과 구분한다. 원래 attempt2 zip/실패 보고서는 test-results/pr38-attempt2에 보존하고 재비교는 /tmp 사본에서만 수행했다. 기준 승인으로 이전 “기준 이미지 유지” 계획 중 account 한 장만 변경했다.
+
+최초 [CI attempt1](https://github.com/ssw3131/running-art-mobile/actions/runs/41259978754/attempts/1)과 [attempt2](https://github.com/ssw3131/running-art-mobile/actions/runs/41259978754/attempts/2)의 실패를 보존한다. 첫 UI 계층 오류는 재현되지 않았으나 원인은 미확정이며, 이번 캡처 정착 변경으로 해당 오류까지 해결했다고 주장하지 않는다. 새 PR 필수 검사 후 병합을 진행한다.

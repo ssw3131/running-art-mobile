@@ -1,5 +1,9 @@
 # 현재 상태와 인수인계
 
+## 2026-11-01 Cloud 홈 준비·캡처 안정화
+
+PR #38의 첫 Android UI 계층 오류와 재실행 화면 차이를 보존했다. 사용자 승인으로 마이페이지 기준 한 장만 안정 상태로 갱신하고, 기준과 독립적인 연속 프레임 준비 검사를 추가했다. 수정본 setup/fast 및 Python QA18개는 통과했으며 새 PR CI·main 반영은 진행 중이다.
+
 ## 2026-11-01 Cloud 홈 준비·fast 실제 통과
 
 main `dc01251`에서 실제 HOME `/home/agent`와 소유자/0700을 확인했다. 샌드박스 권한으로 `.expo` 준비 후 fast 7단계 전체 통과(로직493/기존 skip1, Jest108). 설치 스크립트의 HOME/.expo 준비·쓰기 확인과 권한 안내를 로컬 반영했고 수정 setup도 종료 코드0이다. 최종 수정본의 setup/fast도 종료0이며 PR/main 반영을 진행한다. 환경 재게시·다음 새 작업 재검증은 별도 후속이다. [실행 기록](../history/executed-plans/2026-10-31-1629-project-recovery-setup.md)을 따른다.

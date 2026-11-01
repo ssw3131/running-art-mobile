@@ -22,6 +22,7 @@ from course_generation_figma import inputs as figma_inputs, real_course as figma
 from service_s234 import service_s234
 from service_s56 import service_s56
 from storage_readiness import wait_for_storage
+from visual_readiness import capture_settled
 import emulator_auth
 from signup_membership import signup_membership, wait_home
 
@@ -242,6 +243,7 @@ def capture_visuals():
     try:
         for tab in ['home', 'run', 'archive', 'account']:
             q.tap('tab-' + tab); q.capture('visual-' + tab)
+            capture_settled(lambda remaining: q.adb('exec-out', 'screencap', '-p', timeout=remaining), q.OUT, 'visual-' + tab)
             if int(environment['api']) >= 36:
                 raw = q.shell('dumpsys', 'window', 'displays').decode()
                 (q.OUT / ('visual-' + tab + '-display.txt')).write_text(raw, encoding='utf8')
