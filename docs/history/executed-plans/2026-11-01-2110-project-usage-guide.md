@@ -35,3 +35,7 @@ preview.ps1·.env.example·Handset APK workflow 및 cloud-preview.md와 명령·
 ### 후속 결과
 
 GitHub 다운로드·폰 검증·Issues 결과 등록 절차와 결과 양식을 반영했다. 로컬 링크 및 git diff --check 통과. 문서만 변경하여 앱 검사는 실행하지 않았다. 기존 브랜치에 커밋·push하며 main 병합은 별도다.
+
+## 2026-11-01T21:23:23+09:00 PR 병합 후속
+
+사용자 병합 요청으로 PR #43을 생성했다. 최신 main의 폰 설치 기록과 실행 목록 추가가 겹쳐 두 기록을 모두 보존해 충돌을 해결했다. 로컬 링크·diff 재확인 후 PR 필수 검사, squash merge 및 main 반영을 확인한다.
