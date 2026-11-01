@@ -56,3 +56,23 @@ test('vertical scrolling preserves distance while horizontal dragging and taps a
     expect(screen.getByTestId('distance-value')).toHaveTextContent('1 km');
   } finally { creation.mockRestore(); }
 });
+
+
+test.each([
+  { start: 0, lastMove: 267, end: 300, intermediate: 9, final: 10 },
+  { start: 300, lastMove: 33, end: 0, intermediate: 2, final: 1 },
+])('release uses the endpoint when the last move only reached $intermediate km', async ({ start, lastMove, end, intermediate, final }) => {
+  const creation = jest.spyOn(PanResponder, 'create');
+  try {
+    await render(<Distance />);
+    const gesture = creation.mock.calls.at(-1)![0];
+    const event = (x: number) => ({ nativeEvent: { locationX: x } }) as any;
+    const movement = { dx: lastMove - start, dy: 0 } as any;
+    await act(() => gesture.onPanResponderGrant!(event(start), { dx: 0, dy: 0 } as any));
+    await act(() => gesture.onPanResponderMove!(event(lastMove), movement));
+    expect(screen.getByTestId('distance-value')).toHaveTextContent(`${intermediate} km`);
+    // Native PanResponder does not update gesture.dx on touch release.
+    await act(() => gesture.onPanResponderRelease!(event(end), movement));
+    expect(screen.getByTestId('distance-value')).toHaveTextContent(`${final} km`);
+  } finally { creation.mockRestore(); }
+});

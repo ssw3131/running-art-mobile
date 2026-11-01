@@ -300,3 +300,14 @@ C: implementation-handoff-docs.bundle만으로 새 restore-main-ddfeb87-proof �
 setup/fast 종료0, fast7단계 전체 통과. Python QA18개(프레임 변화/불안정/캡처 오류/시간 상한 회귀 포함), git diff --check 통과. 보존된 attempt2 이미지로 새 기준을 재비교하면 네 화면 차이0이며 새 Android 캡처 코드 실증과 구분한다. 원래 attempt2 zip/실패 보고서는 test-results/pr38-attempt2에 보존하고 재비교는 /tmp 사본에서만 수행했다. 기준 승인으로 이전 “기준 이미지 유지” 계획 중 account 한 장만 변경했다.
 
 최초 [CI attempt1](https://github.com/ssw3131/running-art-mobile/actions/runs/41259978754/attempts/1)과 [attempt2](https://github.com/ssw3131/running-art-mobile/actions/runs/41259978754/attempts/2)의 실패를 보존한다. 첫 UI 계층 오류는 재현되지 않았으나 원인은 미확정이며, 이번 캡처 정착 변경으로 해당 오류까지 해결했다고 주장하지 않는다. 새 PR 필수 검사 후 병합을 진행한다.
+
+
+## 2026-11-01T13:48:53+09:00 main 슬라이더 실패 수정 — 실행 전 계획
+
+PR38 최종 실행41267112616은 필수 검사 전체 통과 후 main 05d5022로 squash 병합했다. 로컬 main 동기화와 완료 브랜치 정리를 확인했다. 이후 main 실행41270028546의 API36은 가로 슬라이더에서 10km 대신 9km로 남아 실패했다(산출물13069296921). fast/API/API29는 통과했다. 실패 전후 XML의 슬라이더 경계는 [147,680][935,806]으로 동일하고 3km→9km 변화가 관측됐다.
+
+실행 시작 시 계획 작성: React Native PanResponder의 release가 마지막 move의 dx를 갱신하지 않고 전달하는 것을 확인했다. 손을 뗀 이벤트의 실제 slider 내부 좌표를 반영하도록 수정하고, 마지막 move와 release 위치가 다른 양방향 회귀 검사를 추가한다. 기존 세로 스크롤 보존·가로 제스처 조건과 Android의 10km 기대값은 유지한다. setup/fast 및 PR/main 전체 필수 검사를 실행하고 실패 이력을 보존한다. UI 기준 이미지·허용 오차·node_modules는 수정하지 않는다.
+
+### 2026-11-01T14:43:27+09:00 슬라이더 수정본 로컬 결과
+
+기존 release 계산으로 양방향 회귀 검사를 실행하면 10km 기대/9km 실제, 1km 기대/2km 실제로 실패했다. 수정본 관련 UI5개는 통과했고 세로 스크롤 거리 보존도 유지됐다. setup 종료0, fast 7단계 전체 통과, git diff --check 통과. 이전 fast 도구 요청은 실행 전 중단되어 로그가 생성되지 않았으며, 이후 실제 실행의 결과로 구분한다. 원격 main 직접 fetch 결과는 05d5022로 현재 작업 기준과 일치한다. 이번 Android 실패에서 이벤트 원본은 수집되지 않아 실제 dx 값은 미확정이며, 확인된 오래된 이동량 사용 결함과 동일 증상 회귀 재현을 근거로 수정했다. 최종 Android PR/main 검증은 후속이다.
