@@ -1,4 +1,10 @@
 # 현재 상태와 인수인계
+## 2026-11-01 21:18 SM-S942N 야외 테스트용 preview 설치
+
+검증된 main 8fa5cdc의 [preview 빌드](https://github.com/ssw3131/running-art-mobile/actions/runs/41304640664)(versionCode215697928)를 연결된 SM-S942N(Android17/API37)에 교체 설치했다. 기존 앱과 Actions 키가 달라, 기존 Expo 테스트 키와 일치하는 인증서로 기기용 사본을 재서명했다. 서명 외 1,461개 페이로드 항목 일치·실제 설치 해시·로그인·4코스/11러닝/1,918좌표/1메모 해시 보존을 확인했다. RunPen 삭제/초기화 없음.
+
+**이 휴대폰은 Metro 없이 실행되며 USB 분리 가능**하다. 포트 전달 없이 홈·완전 종료 후 재실행을 확인했고 검사 도우미 제거·서비스 없음을 확인했다. 야외 GPS·잠금 장시간·배터리 실측은 후속이다. 다음 업데이트도 이 휴대폰의 기존 서명에 맞춰야 한다. A7 development·PC Metro는 이번에 변경하지 않았다. [설치·서명 차이·검증 근거](../history/executed-plans/2026-11-01-2104-s942n-outdoor-preview.md).
+
 
 ## 2026-11-01 Cloud 수정 main 검증 완료·재게시 대기
 
