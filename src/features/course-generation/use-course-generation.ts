@@ -79,7 +79,10 @@ export function useCourseGeneration() {
   const [centerState, setCenterState] = useState<CenterState>(() => ({ center: getRememberedCourseCenter(datasets.seoul.input.origin), position: null, location: { kind: 'idle' } }));
   const center = useMemo(() => createCenterController(expoLocationProvider, getRememberedCourseCenter(datasets.seoul.input.origin), (value) => {
     setCenterState(value);
-    rememberCourseCenter(value.center);
+    // A loading/denied update from a fresh controller still contains its
+    // fallback center. Do not let that overwrite the last successfully chosen
+    // point while the location request is pending.
+    if (value.location.kind === 'located' || value.cameraTarget) rememberCourseCenter(value.center);
     if (value.cameraTarget && value.location.kind === 'located') setValidCenter(true);
   }), []);
   const [mapReady, setMapReady] = useState(false);
@@ -112,7 +115,6 @@ export function useCourseGeneration() {
   useFocusEffect(useCallback(() => {
     // A tab refocus must not replace the user's chosen center with GPS.
     if (datasetId === 'seoul' && shouldLocateCourseOnEntry()) {
-      if (__DEV__) console.info('[COURSE_CENTER] automatic locate');
       markCourseEntryLocationAttempted();
       void center.locate();
     }

@@ -83,7 +83,6 @@ export default function CourseGenerationScreen() {
   }, [homeParams.homeSection, homeParams.homeRequest, choosing, shapeY]);
   const showConfirmation = () => {
     if (g.cannotCalculate || busy) return;
-    if (__DEV__) console.info('[COURSE_CENTER] confirm', JSON.stringify({ state: g.centerState.center, controller: g.center.get().center, displayed: current.origin }));
     setRegenerating(false);
     setNotice('');
     setConfirmation({ ...current, origin: { ...current.origin }, customTemplate: current.customTemplate?.map(p => ({ ...p })) });
