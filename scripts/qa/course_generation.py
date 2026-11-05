@@ -125,20 +125,22 @@ def scaled_generation(q, launch):
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.tap('tab-courses')
         # Resizing the activity and opening this tab can recreate the native map.
-        # Keep the location/map visible until the real form is ready; scrolling
-        # immediately to shapes must not race native map/location initialization.
+        # Capture the chosen center first, then reveal the scrollable CTA and
+        # wait until the native map/location state enables it.
         deadline = time.monotonic() + 30
+        tree = q.capture('s2a-large-location-ready')
+        selected = q.find(tree, 'selected-center')
+        assert selected is not None, 'Capture the chosen center before scrolling'
+        origin = re.findall(r'-?\d+\.\d+', selected.get('text'))
+        assert len(origin) == 2, 'The isolated QA origin must use explicit coordinates'
         while True:
+            q.seek('calculate-route', allow_disabled=True)
             tree = q.capture('s2a-large-location-ready')
             button = q.find(tree, 'calculate-route')
             if button is not None and button.get('enabled') == 'true':
                 break
             assert time.monotonic() < deadline, 'Generation form did not become ready after display change'
             time.sleep(.5)
-        selected = q.find(tree, 'selected-center')
-        assert selected is not None, 'Capture the chosen center before scrolling'
-        origin = re.findall(r'-?\d+\.\d+', selected.get('text'))
-        assert len(origin) == 2, 'The isolated QA origin must use explicit coordinates'
         q.seek('shape-star'); q.capture('s2a-large-shapes')
         q.seek('calculate-route'); q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
         assert q.find(confirmation, '탐색 중심: ' + ', '.join(origin)) is not None, 'Page scrolling must preserve the chosen map center'
