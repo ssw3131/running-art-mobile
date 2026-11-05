@@ -12,7 +12,7 @@ def service_s234(q, launch):
     for shape in ['dog','crown']:
         q.seek('shape-'+shape);q.tap('shape-'+shape)
         assert q.find(q.capture('s2b-selected-'+shape),'shape-'+shape).get('selected')=='true'
-    q.seek('distance-10');q.tap('distance-10');q.tap('calculate-route')
+    q.seek('distance-10');q.tap('distance-10');q.seek('calculate-route');q.tap('calculate-route')
     q.capture('s2b-ten-km-confirm');q.tap('generation-confirm-cancel')
     q.seek('shape-image');q.tap('shape-image');q.capture('s2c-image-entry');q.tap('image-shape-pick')
     q.capture('s2c-system-picker');q.shell('input','keyevent','4');q.tap('image-shape-cancel')
@@ -92,7 +92,7 @@ def image_acceptance(q):
             time.sleep(1)
         assert apply is not None and apply.get('enabled')=='true','Real native image did not produce a usable contour'
         assert q.find(tree,'image-shape-edit') is not None
-        q.tap('image-shape-apply');q.capture('s2c-applied-outline');q.tap('calculate-route')
+        q.tap('image-shape-apply');q.capture('s2c-applied-outline');q.seek('calculate-route');q.tap('calculate-route')
         q.capture('s2c-outline-confirm');q.tap('generation-confirm-cancel')
     finally:
         q.shell('content','delete','--uri','content://media/external/images/media','--where',"_display_name='runpen-contour-qa.png'")

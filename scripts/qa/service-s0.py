@@ -187,10 +187,10 @@ def calculation():
     if find(tree, 'route-diagnostics').get('content-desc') == '개발 검증 정보':
         tap('route-diagnostics')
     seek('dataset-grid'); tap('dataset-grid')
-    tap('distance-7'); tap('calculate-route'); tap('tab-home'); tap('tab-courses')
+    tap('distance-7'); seek('calculate-route'); tap('calculate-route'); tap('tab-home'); tap('tab-courses')
     tree = capture('calculation-after-blur')
     assert find(tree, 'calculation-cancelled') is not None
-    tap('distance-3'); tap('calculate-route')
+    tap('distance-3'); seek('calculate-route'); tap('calculate-route')
     for _ in range(30):
         tree = capture('calculation-progress')
         if find(tree, 'calculation-done') is not None:

@@ -60,7 +60,7 @@ def real_course(q):
     distance(q,11)
     assert '11' in q.find(q.capture('figma-distance-11'),'distance-value').get('text')
     distance(q,20); q.seek('shape-whale'); q.tap('shape-whale')
-    q.tap('calculate-route'); q.capture('figma-real-confirm'); q.tap('generation-confirm')
+    q.seek('calculate-route'); q.tap('calculate-route'); q.capture('figma-real-confirm'); q.tap('generation-confirm')
     started=time.monotonic()
     while time.monotonic()-started<240:
         tree=q.capture('figma-real-progress')

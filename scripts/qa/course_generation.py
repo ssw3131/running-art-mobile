@@ -45,15 +45,15 @@ def generation_flow(q):
     drawing(q)
     # Public fixture roads come from the isolated compute backend, never from
     # a hidden development switch in the production service UI.
-    q.seek('distance-7'); q.tap('distance-7'); q.tap('calculate-route')
+    q.seek('distance-7'); q.tap('distance-7'); q.seek('calculate-route'); q.tap('calculate-route')
     q.capture('s2a-confirm-cancel-before')
     q.tap('generation-confirm-cancel')
     assert q.find(q.capture('s2a-confirm-cancelled'), 'calculation-running') is None
-    q.tap('calculate-route'); q.tap('generation-confirm')
+    q.seek('calculate-route'); q.tap('calculate-route'); q.tap('generation-confirm')
     q.tap('tab-home'); q.tap('tab-courses')
     assert q.find(q.capture('s2a-calculation-after-blur'), 'calculation-cancelled') is not None
     q.tap('generation-edit-footer'); q.seek('distance-3'); q.tap('distance-3')
-    q.tap('calculate-route'); q.capture('s2a-confirm'); q.tap('generation-confirm')
+    q.seek('calculate-route'); q.tap('calculate-route'); q.capture('s2a-confirm'); q.tap('generation-confirm')
     for _ in range(30):
         tree = q.capture('s2a-progress')
         if q.find(tree, 'calculation-done') is not None: break
@@ -140,7 +140,7 @@ def scaled_generation(q, launch):
         origin = re.findall(r'-?\d+\.\d+', selected.get('text'))
         assert len(origin) == 2, 'The isolated QA origin must use explicit coordinates'
         q.seek('shape-star'); q.capture('s2a-large-shapes')
-        q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
+        q.seek('calculate-route'); q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
         assert q.find(confirmation, '탐색 중심: ' + ', '.join(origin)) is not None, 'Page scrolling must preserve the chosen map center'
         # The fixed sheet footer is outside its body ScrollView.
         q.tap('generation-confirm-cancel')
