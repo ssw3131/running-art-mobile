@@ -1,5 +1,5 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { AppModal, AppText, Button, Tabs, Toggle } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
@@ -24,6 +24,7 @@ import { PlaceSearch } from './PlaceSearch';
 import { DifficultyTag } from './DifficultyTag';
 import { estimatedRunningMinutes, paceExplanation, similarityExplanation, similarityPercent } from './recommendation-metrics';
 import { useRecommendationTerrain } from './use-recommendation-terrain';
+import { consumeCourseLocation } from './location-picker-handoff';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const routeColors = { route: '#FF5264', target: '#5197FE' };
@@ -40,6 +41,9 @@ export default function CourseGenerationScreen() {
   const [confirmation, setConfirmation] = useState<GenerationConditions | null>(null);
   const [regenerating, setRegenerating] = useState(false);
   const [place, setPlace] = useState<{ address: string; lat: number; lng: number } | null>(null);
+  const generationRef = useRef(g);
+  const placeRef = useRef(setPlace);
+  useLayoutEffect(() => { generationRef.current = g; placeRef.current = setPlace; }, [g, setPlace]);
   const [showTarget, setShowTarget] = useState(true);
   const [imageOpen, setImageOpen] = useState(false);
   const [notice, setNotice] = useState('');
@@ -54,6 +58,14 @@ export default function CourseGenerationScreen() {
   const terrain = useRecommendationTerrain(routes, !choosing && !busy);
   const locationLabel = (origin: {lat: number; lng: number}) => place && Math.abs(place.lat-origin.lat)<0.00001 && Math.abs(place.lng-origin.lng)<0.00001 ? place.address : centerLabel(origin);
   useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, []));
+  useFocusEffect(useCallback(() => {
+    const picked = consumeCourseLocation();
+    if (!picked) return;
+    const state = generationRef.current;
+    state.changeSearch(); state.center.choose(picked.origin); state.setFixedCenter(true);
+    state.setValidCenter(true); state.setMapMoving(false);
+    placeRef.current(picked.address ? { ...picked.origin, address: picked.address } : null);
+  }, []));
   const [draftOwner,setDraftOwner]=useState(auth.account?.id);
   if(draftOwner!==auth.account?.id){
     setDraftOwner(auth.account?.id);setConfirmation(null);setImageOpen(false);setPlace(null);
@@ -96,17 +108,17 @@ export default function CourseGenerationScreen() {
       router.push({ pathname: '/course-candidate', params: { draft, ...(run ? { intent: 'run' } : {}) } });
     } catch { setNotice('선택한 코스를 열지 못했어요. 다시 생성해 주세요.'); }
   };
-  const selection = {
-    target: g.centerState.cameraTarget,
-    onMoveStart: () => { g.changeSearch(); g.setFixedCenter(false); g.center.beginMove(); g.setMapMoving(true); },
-    onMoveEnd: (origin: { lat: number; lng: number } | null) => { g.setValidCenter(!!origin); if (origin) g.center.move(origin); g.setMapMoving(false); },
-    onReady: g.setMapReady,
-  };
+  const openLocationPicker = () => router.push({ pathname: '/course-location-picker', params: {
+    lat: String(current.origin.lat), lng: String(current.origin.lng), ...(place ? { address: place.address } : {}),
+  } });
+  const previewSelection = useMemo(() => ({ target: g.centerState.cameraTarget, onMoveStart: () => undefined, onMoveEnd: () => undefined, onReady: g.setMapReady }), [g.centerState.cameraTarget, g.setMapReady]);
   const map = <View style={[styles.map, { backgroundColor: c.navigation, borderRadius: choosing ? radius.card : 0 }]}>
-    <MapSurface key={g.datasetId} styleUrl={styleUrl ?? ''} position={choosing && !g.dataset.synthetic ? g.centerState.position : null}
+    <MapSurface key={g.datasetId} styleUrl={styleUrl ?? ''} position={null}
       origin={choosing ? current.origin : result?.origin ?? current.origin} syntheticRoads={g.roads}
       routeOverlay={choosing ? null : g.overlay} showTarget={showTarget} routeColors={routeColors}
-      centerSelection={choosing && !g.dataset.synthetic ? selection : undefined} />
+      centerSelection={choosing && !g.dataset.synthetic ? previewSelection : undefined} interactive={!choosing} />
+    {choosing && !g.dataset.synthetic && <Pressable testID="course-map-preview-open" accessibilityRole="button" accessibilityLabel="지도에서 위치 선택"
+      onPress={openLocationPicker} style={StyleSheet.absoluteFill} />}
     {choosing && !g.dataset.synthetic && <View pointerEvents="none" style={styles.crosshair}>
       <View style={[styles.crossLine, { width: 26, height: 2 }]} /><View style={[styles.crossLine, { width: 2, height: 26 }]} />
       <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.selected, borderWidth: 2, borderColor: c.surface }} />
@@ -136,8 +148,9 @@ export default function CourseGenerationScreen() {
           g.changeSearch(); g.center.choose(selected.center); g.setFixedCenter(true); g.setValidCenter(true); g.setMapMoving(false);
           setPlace({ address: selected.address, ...selected.center });
         }} />}
-        <AppText testID="selected-center" variant="label">{g.mapMoving ? '지도 이동 중… 손을 놓으면 중심이 선택돼요.' : !g.validCenter ? '지원 범위 밖이에요. 지도를 이동해 주세요.' : `탐색 중심 ${locationLabel(current.origin)}`}</AppText>
+        <AppText testID="selected-center" variant="label">{!g.validCenter ? '지원 범위 밖이에요.' : `탐색 중심 ${locationLabel(current.origin)}`}</AppText>
         {map}
+        {!g.dataset.synthetic && <Button variant="outline" testID="course-map-preview-select" label="지도에서 위치 선택" onPress={openLocationPicker} />}
         {!g.dataset.synthetic && <><MapCredits /><AppText testID={`route-location-${g.centerState.location.kind}`} variant="caption" style={{ color: c.subtle }}>{locationMessage(g.centerState)}</AppText></>}
         <AppText variant="caption" style={{ color: c.subtle }}>지도 중심 주변 {g.dataset.synthetic ? g.dataset.input.options.radiusKm : generationRadiusKm(g.targetKm)}km에서 코스를 찾아요. 실제 출발 지점은 러닝 준비에서 선택해요.</AppText>
         <GenerationDistanceInput key={`distance-${auth.account?.id ?? 'guest'}`} value={g.targetKm} onChange={km => { g.changeSearch(); g.setTargetKm(km); }} />
@@ -155,6 +168,7 @@ export default function CourseGenerationScreen() {
           <DrawingPreview template={g.customTemplate} /><AppText style={{ flex: 1 }} variant="label">사용자 도형을 사용해요. 직접 그리기에서 수정할 수 있어요.</AppText></View>}
         <AppText variant="caption" style={{ color: c.muted }}>새 코스 생성에는 인터넷 연결이 필요해요. 저장한 코스는 오프라인에서도 달릴 수 있어요.</AppText>
         {status}
+        <Button ref={generateButton} testID="calculate-route" label="코스 생성하기" leading={<GenerationIcon name="generate" />} disabled={g.cannotCalculate || busy} onPress={showConfirmation} />
       </> : <>
         {status}
         {map}
@@ -190,9 +204,8 @@ export default function CourseGenerationScreen() {
         {!!result?.result.candidates.length && <AppText variant="caption" testID="course-start-position">{result.liveRoads ? '코스 어디서든 양방향으로 출발할 수 있어요. 코스까지의 접근 경로는 저장 후 러닝 준비에서 확인해요.' : '개발 검증용 가상 코스예요. 실제 러닝에는 사용할 수 없어요.'}</AppText>}
       </>}
     </ScrollView>
-    <View style={[styles.footer, { borderColor: c.divider, backgroundColor: c.surface }]}>
-      {choosing ? <Button ref={generateButton} testID="calculate-route" label="코스 생성하기" leading={<GenerationIcon name="generate" />} disabled={g.cannotCalculate || busy} onPress={showConfirmation} />
-        : result?.result.candidates.length ? <View style={{ gap: 8 }}>
+    {!choosing && <View style={[styles.footer, { borderColor: c.divider, backgroundColor: c.surface }]}>
+      {result?.result.candidates.length ? <View style={{ gap: 8 }}>
           <Button compact variant="outline" testID="generation-regenerate" label="같은 조건으로 다시 생성" disabled={busy} onPress={() => {
             setRegenerating(true); setConfirmation({ origin: { ...result.origin }, shape: result.options.shape, targetKm: result.options.targetKm, customTemplate: result.options.customTemplate?.map(point => ({ ...point })) });
           }} />
@@ -200,7 +213,7 @@ export default function CourseGenerationScreen() {
           {result.liveRoads && <Button testID="generation-run" label="실시간 러닝 시작하기" leading={<GenerationIcon name="run" />} onPress={() => detail(true)} />}
         </View>
           : <Button testID="generation-edit-footer" label="조건 설정으로 돌아가기" onPress={() => chooseTab('conditions')} />}
-    </View>
+    </View>}
     <AppModal presentation="sheet" visible={!!confirmation} title={regenerating ? '같은 조건으로 다시 생성할까요?' : '현재 설정으로 코스 생성할까요?'} onClose={() => setConfirmation(null)} returnFocusRef={generateButton}
       footer={<View style={{ gap: space.sm }}><Button label="코스 생성하기" testID="generation-confirm" leading={<GenerationIcon name="confirm" />} onPress={confirm} />
         <Button compact variant="outline" label="취소" testID="generation-confirm-cancel" onPress={() => setConfirmation(null)} /></View>}>

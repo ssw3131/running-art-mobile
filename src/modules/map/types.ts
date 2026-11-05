@@ -9,6 +9,7 @@ export type MapSurfaceProps = {
   simulationPosition?: [number, number];
   routeOverlay?: RouteOverlay | null;
   showTarget?: boolean;
+  interactive?: boolean;
   routeColors?: { route: string; target: string };
   terrainOverlay?: {
     segments: FeatureCollection<LineString>; direction: FeatureCollection<LineString>;
