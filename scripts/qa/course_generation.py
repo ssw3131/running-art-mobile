@@ -143,7 +143,11 @@ def scaled_generation(q, launch):
             time.sleep(.5)
         q.seek('shape-star'); q.capture('s2a-large-shapes')
         q.seek('calculate-route'); q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
-        assert q.find(confirmation, '탐색 중심: ' + ', '.join(origin)) is not None, 'Page scrolling must preserve the chosen map center'
+        center_text = next((n.get('text', '') for n in confirmation.iter('node') if n.get('text', '').startswith('탐색 중심: ')), '')
+        confirmed_origin = re.findall(r'-?\d+\.\d+', center_text)
+        assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
+            for before, after in zip(origin, confirmed_origin)), (
+                f'Page scrolling must preserve the chosen map center: before={origin}, after={confirmed_origin}')
         # The fixed sheet footer is outside its body ScrollView.
         q.tap('generation-confirm-cancel')
         q.seek('shape-custom'); q.tap('shape-custom'); q.seek('drawing-cancel'); q.tap('drawing-cancel')
