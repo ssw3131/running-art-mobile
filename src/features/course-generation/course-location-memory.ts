@@ -1,14 +1,16 @@
 import type { Origin } from '@/modules/route-engine/types';
 
-let rememberedCenter: { owner: string | null; origin: Origin } | null = null;
+// The selected map point is temporary screen state, not account data. Keep it
+// across tab remounts and guest-to-account auth transitions in this JS session.
+let rememberedCenter: Origin | null = null;
 let automaticLocationAttempted = false;
 
-export function getRememberedCourseCenter(owner: string | null, fallback: Origin): Origin {
-  return rememberedCenter?.owner === owner ? rememberedCenter.origin : fallback;
+export function getRememberedCourseCenter(fallback: Origin): Origin {
+  return rememberedCenter ?? fallback;
 }
 
-export function rememberCourseCenter(owner: string | null, origin: Origin): void {
-  rememberedCenter = { owner, origin: { ...origin } };
+export function rememberCourseCenter(origin: Origin): void {
+  rememberedCenter = { ...origin };
 }
 
 export function shouldLocateCourseOnEntry(): boolean {

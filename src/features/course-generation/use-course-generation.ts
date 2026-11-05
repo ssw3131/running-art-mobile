@@ -76,13 +76,12 @@ export function useCourseGeneration() {
   const [deviceOnly, setDeviceOnly] = useState(false);
   const [fixedCenter, setFixedCenter] = useState(false);
   const [validCenter, setValidCenter] = useState(true);
-  const centerOwner = authentication.getSnapshot().account?.id ?? null;
-  const [centerState, setCenterState] = useState<CenterState>(() => ({ center: getRememberedCourseCenter(centerOwner, datasets.seoul.input.origin), position: null, location: { kind: 'idle' } }));
-  const center = useMemo(() => createCenterController(expoLocationProvider, getRememberedCourseCenter(centerOwner, datasets.seoul.input.origin), (value) => {
+  const [centerState, setCenterState] = useState<CenterState>(() => ({ center: getRememberedCourseCenter(datasets.seoul.input.origin), position: null, location: { kind: 'idle' } }));
+  const center = useMemo(() => createCenterController(expoLocationProvider, getRememberedCourseCenter(datasets.seoul.input.origin), (value) => {
     setCenterState(value);
-    rememberCourseCenter(centerOwner, value.center);
+    rememberCourseCenter(value.center);
     if (value.cameraTarget && value.location.kind === 'located') setValidCenter(true);
-  }), [centerOwner]);
+  }), []);
   const [mapReady, setMapReady] = useState(false);
   const [mapMoving, setMapMoving] = useState(false);
   const returningFromSettings = useRef(false);
