@@ -19,6 +19,7 @@ import { FIGMA_SHAPE_VERSION } from '@/modules/route-engine/figma-contours';
 
 import { compareReference } from '@/modules/route-engine/verification';
 import type { GenerationConditions } from './model';
+import { getRememberedCourseCenter, rememberCourseCenter } from './course-location-memory';
 import { getStorage } from '@/modules/storage/database';
 import { authentication } from '@/modules/auth/runtime';
 import { parseComputeRequest, type ComputeRequest } from '@/modules/route-compute/contract';
@@ -75,11 +76,13 @@ export function useCourseGeneration() {
   const [deviceOnly, setDeviceOnly] = useState(false);
   const [fixedCenter, setFixedCenter] = useState(false);
   const [validCenter, setValidCenter] = useState(true);
-  const [centerState, setCenterState] = useState<CenterState>({ center: datasets.seoul.input.origin, position: null, location: { kind: 'idle' } });
-  const center = useMemo(() => createCenterController(expoLocationProvider, datasets.seoul.input.origin, (value) => {
+  const centerOwner = authentication.getSnapshot().account?.id ?? null;
+  const [centerState, setCenterState] = useState<CenterState>(() => ({ center: getRememberedCourseCenter(centerOwner, datasets.seoul.input.origin), position: null, location: { kind: 'idle' } }));
+  const center = useMemo(() => createCenterController(expoLocationProvider, getRememberedCourseCenter(centerOwner, datasets.seoul.input.origin), (value) => {
     setCenterState(value);
+    rememberCourseCenter(centerOwner, value.center);
     if (value.cameraTarget && value.location.kind === 'located') setValidCenter(true);
-  }), []);
+  }), [centerOwner]);
   const [mapReady, setMapReady] = useState(false);
   const [mapMoving, setMapMoving] = useState(false);
   const returningFromSettings = useRef(false);
