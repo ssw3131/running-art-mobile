@@ -12,11 +12,14 @@ export const runPenTabs: readonly NavigationTab[] = [
 /** Presentation only. Caller supplies the bottom inset and handles route changes. */
 export function BottomTabBar({ value, onChange, tabs = runPenTabs, bottomInset = 0 }: { value: string; onChange(value: string): void; tabs?: readonly NavigationTab[]; bottomInset?: number }) {
   const c = useThemeColors();
-  return <View style={{ backgroundColor: c.navigation, paddingTop: 11, paddingBottom: Math.max(16, bottomInset), paddingHorizontal: 30 }}>
-    <View style={{ flexDirection: 'row', alignItems: 'stretch', justifyContent: 'space-between', minHeight: 63 }}>
+  // Keep the whole bar at Figma's 90dp when the system inset allows it.
+  const bottomPadding = Math.max(16, bottomInset);
+  const rowHeight = Math.max(50, 90 - 11 - bottomPadding);
+  return <View style={{ backgroundColor: c.navigation, paddingTop: 11, paddingBottom: bottomPadding, paddingHorizontal: 30 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'stretch', justifyContent: 'space-between', height: rowHeight }}>
       {tabs.map(tab => <Pressable key={tab.value} testID={`tab-${tab.value}`} accessibilityRole="tab" accessibilityLabel={tab.label}
         accessibilityState={{ selected: value === tab.value, disabled: !!tab.disabled }} disabled={tab.disabled} onPress={() => onChange(tab.value)}
-        style={({ pressed }) => ({ flex: 1, minHeight: 50, paddingHorizontal: 2, paddingVertical: 10.5, alignItems: 'center', justifyContent: 'flex-start', gap: 5, opacity: tab.disabled ? 0.45 : pressed ? 0.7 : 1 })}>
+        style={({ pressed }) => ({ flex: 1, minHeight: 50, paddingHorizontal: 2, alignItems: 'center', justifyContent: 'center', gap: 5, opacity: tab.disabled ? 0.45 : pressed ? 0.7 : 1 })}>
         <Icon name={tab.icon} />
         <AppText variant="navigation" weight="bold" style={{ color: value === tab.value ? c.selected : c.muted, textAlign: 'center', width: '100%' }}>{tab.label}</AppText>
       </Pressable>)}

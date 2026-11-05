@@ -58,7 +58,7 @@ function InitialHome({ shape, setShape }: { shape: Shape; setShape(value: Shape)
 function Stats({ data }: { data: HomeData }) {
   const c = useThemeColors(), { fontScale } = useWindowDimensions(), latest = data.latestCompleted;
   const stats = [
-    { id: 'latest', label: '최근 러닝 기록', value: latest ? km(latest.distanceM) : '—', unit: latest ? 'km' : '', detail: latest ? date(latest.startedAt) : '아직 기록이 없어요', icon: require('../../../assets/home/sneaker.svg'), width: 20, height: 20 },
+    { id: 'latest', label: '최근 러닝', value: latest ? km(latest.distanceM) : '—', unit: latest ? 'km' : '', detail: latest ? date(latest.startedAt) : '아직 기록이 없어요', icon: require('../../../assets/home/sneaker.svg'), width: 20, height: 20 },
     { id: 'streak', label: '연속 러닝', value: String(data.currentStreak), unit: '일', detail: data.currentStreak ? '지금도 이어지는 중!' : '첫 러닝을 시작해 보세요', icon: require('../../../assets/home/flame.svg'), width: 16, height: 16 },
     { id: 'monthly', label: '달린 거리', value: data.monthlyDistanceM ? km(data.monthlyDistanceM) : '0', unit: 'km', detail: '이번 달 누적', icon: require('../../../assets/home/trophy.svg'), width: 16, height: 16 },
   ];
