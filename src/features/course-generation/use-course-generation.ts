@@ -112,6 +112,7 @@ export function useCourseGeneration() {
   useFocusEffect(useCallback(() => {
     // A tab refocus must not replace the user's chosen center with GPS.
     if (datasetId === 'seoul' && shouldLocateCourseOnEntry()) {
+      if (__DEV__) console.info('[COURSE_CENTER] automatic locate');
       markCourseEntryLocationAttempted();
       void center.locate();
     }
