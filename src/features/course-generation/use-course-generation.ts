@@ -112,8 +112,8 @@ export function useCourseGeneration() {
   }, [homeParams.homeRequest, homeParams.homeShape, homeParams.homeSection, cancel, completed]));
   useFocusEffect(useCallback(() => {
     // A tab refocus must not replace the user's chosen center with GPS.
-    if (datasetId === 'seoul' && shouldLocateCourseOnEntry(centerOwner)) {
-      markCourseEntryLocationAttempted(centerOwner);
+    if (datasetId === 'seoul' && shouldLocateCourseOnEntry()) {
+      markCourseEntryLocationAttempted();
       void center.locate();
     }
     const subscription = AppState.addEventListener('change', (next) => {
@@ -125,7 +125,7 @@ export function useCourseGeneration() {
       }
     });
     return () => { subscription.remove(); center.beginMove(); setMapMoving(false); cancel('화면을 나가 계산을 취소했어요.'); };
-  }, [cancel, center, centerOwner, datasetId]));
+  }, [cancel, center, datasetId]));
 
   const reset = () => {
     cancel(); setCompleted(null); setSelected(0); setSeconds(0);
