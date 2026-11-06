@@ -1,28 +1,26 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { AppModal, AppText, Button, Toggle } from '@/components/ui';
+import { AppText, Button } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import DrawingEditor, { DrawingPreview } from '@/features/route-lab/DrawingEditor';
 import { courseFromCalculation } from '@/features/route-lab/saved-course';
-import { courseShapes } from '@/modules/courses/model';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import { SERVICE_SHAPES } from '@/modules/route-engine/service-shapes';
 import type { ShapeId } from '@/modules/route-engine/types';
 import { useThemeColors } from '@/theme/ThemeProvider';
-import { radius, space } from '@/theme/tokens';
+import { radius } from '@/theme/tokens';
 import { candidateDrafts, centerLabel, sameConditions, type GenerationConditions } from './model';
+import { RecommendationResults } from './RecommendationResults';
+import { GenerationConfirmationSheet } from './GenerationConfirmationSheet';
 import { GenerationIcon } from './GenerationIcon';
 import { GenerationDistanceInput } from './GenerationDistanceInput';
-import { MapCredits } from './MapCredits';
 import ImageShapeEditor from './ImageShapeEditor';
 import { locationMessage, useCourseGeneration } from './use-course-generation';
 import { candidateOverlay } from '@/modules/route-engine/geojson';
 import { openServiceTab } from '@/features/service/open-service-tab';
 import { PlaceSearch } from './PlaceSearch';
-import { DifficultyTag } from './DifficultyTag';
-import { estimatedRunningMinutes, paceExplanation, similarityExplanation, similarityPercent } from './recommendation-metrics';
 import { useRecommendationTerrain } from './use-recommendation-terrain';
 import { consumeCourseLocation } from './location-picker-handoff';
 
@@ -83,6 +81,7 @@ export default function CourseGenerationScreen() {
   }, [homeParams.homeSection, homeParams.homeRequest, choosing, shapeY]);
   const showConfirmation = () => {
     if (g.cannotCalculate || busy) return;
+    Keyboard.dismiss();
     setRegenerating(false);
     setNotice('');
     setConfirmation({ ...current, origin: { ...current.origin }, customTemplate: current.customTemplate?.map(p => ({ ...p })) });
@@ -99,10 +98,11 @@ export default function CourseGenerationScreen() {
     }
     g.start(agreed); scroll.current?.scrollTo({ y: 0, animated: false });
   };
-  const detail = (run = false) => {
+  const detail = (run = false, index = g.selected, mapOnly = false) => {
     if (!result) return;
     try {
-      const draft = candidateDrafts.put(courseFromCalculation(result, g.selected), g.selected + 1, auth.account?.id ?? 'guest');
+      const draft = candidateDrafts.put(courseFromCalculation(result, index), index + 1, auth.account?.id ?? 'guest');
+      if (mapOnly) { router.push({ pathname: '/course-map', params: { draft, target: showTarget ? '1' : '0' } }); return; }
       const saved = candidateDrafts.get(draft, auth.account?.id ?? 'guest')?.savedId;
       if (run && saved) { openServiceTab({ pathname: '/run', params: { courseId: saved } }); return; }
       router.push({ pathname: '/course-candidate', params: { draft, ...(run ? { intent: 'run' } : {}) } });
@@ -116,7 +116,7 @@ export default function CourseGenerationScreen() {
     <MapSurface key={g.datasetId} styleUrl={styleUrl ?? ''} position={null}
       origin={choosing ? current.origin : result?.origin ?? current.origin} syntheticRoads={g.roads}
       routeOverlay={choosing ? null : g.overlay} showTarget={showTarget} routeColors={routeColors}
-      centerSelection={choosing && !g.dataset.synthetic ? previewSelection : undefined} interactive={!choosing} />
+      centerSelection={choosing && !g.dataset.synthetic ? previewSelection : undefined} interactive={false} />
     {choosing && !g.dataset.synthetic && <Pressable testID="course-map-preview-open" accessibilityRole="button" accessibilityLabel={`지도에서 위치 선택. 탐색 중심 ${centerLabel(current.origin)}`}
       onPress={openLocationPicker} style={[StyleSheet.absoluteFill, { bottom: 40 }]} />}
     {choosing && !g.dataset.synthetic && <View pointerEvents="none" style={styles.crosshair}>
@@ -139,10 +139,10 @@ export default function CourseGenerationScreen() {
   </View>;
   return <View style={[styles.screen, { backgroundColor: c.background }]} testID="course-generation">
     {imageOpen && <ImageShapeEditor onCancel={() => setImageOpen(false)} onApply={points => { g.changeSearch(); g.setCustomTemplate(points); g.setShape('custom'); setImageOpen(false); }} />}
-    <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
+    {choosing ? <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
       {!!notice && <AppText accessibilityRole="alert">{notice}</AppText>}
       {!!g.pendingRequest && <View style={{ gap: 10 }}><AppText>확인이 끝나지 않은 생성 작업이 있어요. 이전 결과를 복원해 주세요. 추가 횟수는 사용하지 않습니다.</AppText><Button label="이전 생성 결과 복원" disabled={busy} onPress={g.restore}/></View>}
-      {choosing ? <>
+      {<>
         {changed && <AppText testID="generation-changed" variant="label">이전 계산 결과를 보관하고 있어요. 다시 생성하면 새 조건이 적용돼요.</AppText>}
         {!!result && <Button compact variant="outline" testID="generation-view-results" label="이전 추천 코스 보기" onPress={() => chooseTab('results')} />}
         <AppText variant="heading" weight="bold">1. 출발 위치</AppText>
@@ -181,61 +181,12 @@ export default function CourseGenerationScreen() {
           <Button ref={generateButton} testID="calculate-route" label="코스 생성하기" leading={<GenerationIcon name="generate" />} disabled={g.cannotCalculate || busy} onPress={showConfirmation} />
           <AppText testID="generation-charge-notice" variant="caption" weight="medium" style={[styles.chargeNotice, { color: c.subtle }]}>코스를 생성하면 보유한 횟수가 1회 차감됩니다.</AppText>
         </View>
-      </> : <>
-        {status}
-        {map}
-        {!g.dataset.synthetic && <MapCredits />}
-        {g.overlay && <Toggle label="도형 점선" testID="generation-target-toggle" checked={showTarget} onChange={setShowTarget} />}
-        <View style={[styles.results, { backgroundColor: c.navigation }]}>
-          <View style={styles.headingRow}><AppText weight="bold">추천 코스 {result?.result.candidates.length ?? 0}개</AppText>
-            <Button compact variant="outline" label="조건 수정" testID="generation-edit" onPress={() => chooseTab('conditions')} /></View>
-          {result ? <>
-            <AppText testID="generation-result-conditions" variant="label">대상 도형: {courseShapes[result.options.shape]} · 목표 {result.options.targetKm} km{'\n'}탐색 중심: {locationLabel(result.origin)}</AppText>
-            {changed && <AppText variant="caption">조건을 수정했어요. 아래는 이전 조건으로 생성한 결과예요.</AppText>}
-            {result.result.candidates.map((candidate, index) => <Pressable key={index} testID={`candidate-${index}`} accessibilityRole="button"
-              accessibilityLabel={`유사도 ${similarityPercent(candidate.score.raw)}% · ${candidate.score.lengthKm.toFixed(2)} km · 예상 러닝 시간 약 ${estimatedRunningMinutes(candidate.score.lengthKm)}분`} accessibilityState={{ selected: g.selected === index }}
-              onPress={() => g.setSelected(index)} style={[styles.candidate, { backgroundColor: c.surface, borderColor: g.selected === index ? c.selected : c.divider }]}>
-              <View style={[styles.rank, { backgroundColor: g.selected === index ? c.action : c.navigation }]}>
-                <AppText weight="black" style={{ color: g.selected === index ? c.onAction : c.text }}>{similarityPercent(candidate.score.raw)}%</AppText></View>
-              <View style={{ flex: 1, gap: 6 }}>
-                <View style={styles.headingRow}><AppText variant="caption">유사도 : <AppText variant="caption" weight="black">{similarityPercent(candidate.score.raw)}%</AppText></AppText>
-                  <DifficultyTag state={result.liveRoads ? terrain.states[index] ?? { kind: 'loading' } : undefined} /></View>
-                <AppText variant="caption" style={{ color: c.muted }}>총 러닝 거리 : <AppText variant="label" weight="bold">{candidate.score.lengthKm.toFixed(2)}km</AppText></AppText>
-                <AppText variant="caption" style={{ color: c.muted }}>예상 러닝 시간 : <AppText variant="label" weight="bold">약 {estimatedRunningMinutes(candidate.score.lengthKm)}분</AppText></AppText>
-              </View>
-            </Pressable>)}
-            {!result.result.candidates.length && <AppText testID="generation-empty">조건에 맞는 코스가 없어요. 위치·거리·도형을 바꿔 다시 생성해 보세요.</AppText>}
-          </> : <AppText testID="generation-no-result">{busy ? '주변 길을 살펴보고 있어요.' : '조건을 설정하고 코스를 생성해 주세요.'}</AppText>}
-        </View>
-        {!!result?.result.candidates.length && <>
-          <AppText variant="caption" style={{ color: c.subtle }}>{similarityExplanation}</AppText>
-          <AppText variant="caption" style={{ color: c.subtle }}>{paceExplanation}</AppText>
-          <AppText variant="caption" style={{ color: c.subtle }}>난이도는 평균 절대 경사도 기준이에요. 초급 3% 미만 · 중급 3~6% 미만 · 상급 6% 이상이며 추천 순서에는 반영하지 않아요.</AppText>
-          {terrain.states.some(state => state.kind === 'error') && <Button compact variant="outline" label="난이도 다시 조회" testID="recommendation-terrain-retry" onPress={terrain.retry} />}
-        </>}
-        {!!result?.result.candidates.length && <AppText variant="caption" testID="course-start-position">{result.liveRoads ? '코스 어디서든 양방향으로 출발할 수 있어요. 코스까지의 접근 경로는 저장 후 러닝 준비에서 확인해요.' : '개발 검증용 가상 코스예요. 실제 러닝에는 사용할 수 없어요.'}</AppText>}
       </>}
-    </ScrollView>
-    {!choosing && <View style={[styles.footer, { borderColor: c.divider, backgroundColor: c.surface }]}>
-      {result?.result.candidates.length ? <View style={{ gap: 8 }}>
-          <Button compact variant="outline" testID="generation-regenerate" label="같은 조건으로 다시 생성" disabled={busy} onPress={() => {
-            setRegenerating(true); setConfirmation({ origin: { ...result.origin }, shape: result.options.shape, targetKm: result.options.targetKm, customTemplate: result.options.customTemplate?.map(point => ({ ...point })) });
-          }} />
-          <Button compact variant="outline" testID="generation-detail" label="선택한 코스 상세보기" onPress={() => detail()} />
-          {result.liveRoads && <Button testID="generation-run" label="실시간 러닝 시작하기" leading={<GenerationIcon name="run" />} onPress={() => detail(true)} />}
-        </View>
-          : <Button testID="generation-edit-footer" label="조건 설정으로 돌아가기" onPress={() => chooseTab('conditions')} />}
-    </View>}
-    <AppModal presentation="sheet" visible={!!confirmation} title={regenerating ? '같은 조건으로 다시 생성할까요?' : '현재 설정으로 코스 생성할까요?'} onClose={() => setConfirmation(null)} returnFocusRef={generateButton}
-      footer={<View style={{ gap: space.sm }}><Button label="코스 생성하기" testID="generation-confirm" leading={<GenerationIcon name="confirm" />} onPress={confirm} />
-        <Button compact variant="outline" label="취소" testID="generation-confirm-cancel" onPress={() => setConfirmation(null)} /></View>}>
-      {confirmation && <View style={[styles.sectionBox, { backgroundColor: c.navigation, width: '100%' }]}>
-        <AppText variant="label">탐색 중심: {centerLabel(confirmation.origin)}</AppText>
-        <AppText variant="label">목표 러닝 거리: {confirmation.targetKm} km</AppText>
-        <AppText variant="label">코스 모양: {courseShapes[confirmation.shape]}</AppText>
-      </View>}
-      <AppText variant="caption" style={{ color: c.muted }}>설정한 조건으로 최대 5개 코스를 찾아요. 주변 길에 따라 후보가 적거나 없을 수 있어요. 생성 중에는 취소할 수 있어요.</AppText>
-    </AppModal>
+    </ScrollView> : <RecommendationResults g={g} terrain={terrain} location={locationLabel(result?.origin ?? current.origin)}
+      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => chooseTab('conditions')} onDetail={index => detail(false, index)}
+      onMap={() => detail(false, g.selected, true)} onRun={() => detail(true)} status={status} />}
+    <GenerationConfirmationSheet conditions={confirmation} location={confirmation ? locationLabel(confirmation.origin) : ''}
+      regenerating={regenerating} onClose={() => setConfirmation(null)} onConfirm={confirm} returnFocusRef={generateButton} />
     {g.drawingOpen && <DrawingEditor initial={g.customTemplate} onCancel={() => g.setDrawingOpen(false)}
       onApply={template => { g.changeSearch(); g.setCustomTemplate(template.map(p => ({ ...p }))); g.setShape('custom'); g.setDrawingOpen(false); }} />}
   </View>;

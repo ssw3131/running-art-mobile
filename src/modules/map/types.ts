@@ -10,6 +10,7 @@ export type MapSurfaceProps = {
   routeOverlay?: RouteOverlay | null;
   showTarget?: boolean;
   interactive?: boolean;
+  onUserMoveStart?(): void;
   routeColors?: { route: string; target: string };
   terrainOverlay?: {
     segments: FeatureCollection<LineString>; direction: FeatureCollection<LineString>;

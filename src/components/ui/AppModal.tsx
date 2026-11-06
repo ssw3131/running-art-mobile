@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { AccessibilityInfo, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { AccessibilityInfo, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { fonts, radius, typography } from '@/theme/tokens';
 import { useThemeColors } from '@/theme/ThemeProvider';
@@ -11,8 +11,9 @@ export type AppModalProps = {
   busy?: boolean; dismissOnBackdrop?: boolean; icon?: ReactNode; footer?: ReactNode;
   returnFocusRef?: RefObject<View | null>;
   presentation?: 'dialog' | 'sheet';
+  sheetHandle?: boolean; contentContainerStyle?: StyleProp<ViewStyle>;
 };
-export function AppModal({ visible, title, children, onClose, busy = false, dismissOnBackdrop = false, icon, footer, returnFocusRef, presentation = 'dialog' }: AppModalProps) {
+export function AppModal({ visible, title, children, onClose, busy = false, dismissOnBackdrop = false, icon, footer, returnFocusRef, presentation = 'dialog', sheetHandle = false, contentContainerStyle }: AppModalProps) {
   const c = useThemeColors(); const insets = useSafeAreaInsets(); const titleRef = useRef<Text>(null);
   const opened = useRef(false); const focusReturned = useRef(false);
   const restoreFocus = useCallback(() => {
@@ -27,16 +28,17 @@ export function AppModal({ visible, title, children, onClose, busy = false, dism
     return () => clearTimeout(timer);
   }, [visible, restoreFocus]);
   const close = () => { if (!busy) onClose(); };
-  return <Modal visible={visible} transparent animationType="fade" onRequestClose={close} onDismiss={restoreFocus}
+  return <Modal visible={visible} transparent animationType={presentation === 'sheet' && sheetHandle ? 'slide' : 'fade'} onRequestClose={close} onDismiss={restoreFocus}
     onShow={() => { if (titleRef.current) AccessibilityInfo.sendAccessibilityEvent(titleRef.current, 'focus'); }}>
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: c.overlay }}>
       <Pressable accessible={false} onPress={dismissOnBackdrop ? close : undefined} style={{ position: 'absolute', inset: 0 }} />
       <View pointerEvents="box-none" style={{ flex: 1, justifyContent: presentation === 'sheet' ? 'flex-end' : 'center', paddingHorizontal: presentation === 'sheet' ? 0 : 24, paddingTop: Math.max(insets.top, 24), paddingBottom: presentation === 'sheet' ? 0 : Math.max(insets.bottom, 24) }}>
         <View accessibilityViewIsModal style={{ width: '100%', maxWidth: presentation === 'sheet' ? 480 : 348, alignSelf: 'center', maxHeight: '100%', backgroundColor: c.surface,
           borderRadius: radius.card, paddingHorizontal: 24, paddingVertical: 25, gap: 25,
-          ...(presentation === 'sheet' ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0, paddingBottom: Math.max(insets.bottom, 24) } : {}),
+          ...(presentation === 'sheet' ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0, ...(sheetHandle ? { paddingTop: 61 } : {}), paddingBottom: Math.max(insets.bottom, 24) } : {}),
           boxShadow: '0px 0px 5px rgba(0,0,0,0.15)' }}>
-          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ gap: 10, alignItems: 'center' }}>
+          {sheetHandle && <View accessible={false} style={{ position: 'absolute', top: 12, alignSelf: 'center', width: 60, height: 7, borderRadius: 4, backgroundColor: c.secondary }} />}
+          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[{ gap: 10, alignItems: 'center' }, contentContainerStyle]}>
             {icon}
             <Text ref={titleRef} accessible accessibilityRole="header" style={{ width: '100%', textAlign: 'center', color: c.text, fontFamily: fonts.noto.bold, ...typography.heading, includeFontPadding: false }}>{title}</Text>
             {children}

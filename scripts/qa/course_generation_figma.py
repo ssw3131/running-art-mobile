@@ -78,7 +78,7 @@ def real_course(q):
         cards.append(card)
     percentages=[int(re.search(r'유사도 (\d+)%',card).group(1)) for card in cards]
     assert percentages==sorted(percentages,reverse=True)
-    q.tap('generation-regenerate'); q.capture('figma-regenerate-confirm'); q.tap('generation-confirm-cancel')
+    q.tap('generation-edit'); q.tap('calculate-route'); q.capture('figma-regenerate-confirm'); q.tap('generation-confirm-cancel')
     q.tap('generation-run'); q.capture('figma-unsaved-run-detail')
     q.seek('saved-course-run', allow_disabled=True)
     assert q.find(q.capture('figma-save-required'),'saved-course-run').get('enabled')=='false'

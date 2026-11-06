@@ -15,7 +15,7 @@ export const privateScreens = [
   ['account-profile', '프로필 편집'],
   ['account-settings', '설정'], ['account-sync', '개인 기록 동기화'], ['account-withdraw', '회원 탈퇴'],
   ['map', '내 주변 지도'], ['storage', '저장소 테스트'], ['courses/[id]', '코스 상세'],
-  ['course-location-picker', '출발 위치 선택'],
+  ['course-location-picker', '출발 위치 선택'], ['course-map', '지도에서 코스 보기'],
   ['course-candidate', '코스 상세'], ['guidance', ''], ['runs/index', '러닝 기록 목록'], ['runs/[id]', '러닝 상세'],
   ['road-file-lab', '도로 파일 검증'], ['road-cache-lab', '영구 도로 캐시'], ['environment', '개발 환경'],
   ['ui-preview', 'UI 미리보기'], ['service-notices', '공지사항'], ['service-notice', '공지사항'],
@@ -62,7 +62,7 @@ export function ServiceStack() {
     header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back menu={!!auth.account} /> }}>
     <Stack.Protected guard={access === 'service'}>
       {privateScreens.map(([name, title]) => <Stack.Screen key={name} name={name} options={{ title,
-        headerShown: name !== '(tabs)' && name !== 'guidance' && name !== 'course-location-picker',
+        headerShown: name !== '(tabs)' && name !== 'guidance' && name !== 'course-location-picker' && name !== 'course-map',
         ...(name === 'service-info' || name === 'course-candidate' ? { header: () => <ServiceHeader title={title} back menu={false} /> } : {}),
       }} />)}
     </Stack.Protected>

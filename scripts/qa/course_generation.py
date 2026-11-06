@@ -66,7 +66,7 @@ def generation_flow(q):
     q.seek('candidate-1'); q.tap('candidate-1')
     selected = q.find(q.capture('s2a-selected'), 'candidate-1').get('content-desc')
     assert selected.startswith('유사도 ') and '예상 러닝 시간 약' in selected
-    q.tap('generation-detail')
+    q.seek('candidate-detail-1'); q.tap('candidate-detail-1')
     detail = q.capture('s2a-detail-top')
     assert q.find(detail, 'course-detail') is not None
     q.seek('course-save-name'); q.tap('course-save-name')
@@ -78,7 +78,7 @@ def generation_flow(q):
     keyboard_tops = [int(y) for y in re.findall(r'type=ime frame=\[\d+,(\d+)\]\[\d+,\d+\][^\r\n]*visible=true', display)]
     assert keyboard_tops and input_bottom < min(keyboard_tops), 'Candidate name is obscured by keyboard'
     q.shell('input', 'keyevent', '4')
-    q.tap('tab-account'); q.tap('tab-courses'); q.tap('generation-detail')
+    q.tap('tab-account'); q.tap('tab-courses'); q.seek('candidate-detail-1'); q.tap('candidate-detail-1')
     q.seek('course-save-name')
     assert q.find(q.capture('s2a-name-restored'), 'course-save-name').get('text') == 'S0_DRAFT'
     q.seek('course-save'); q.tap('course-save')
