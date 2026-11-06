@@ -125,14 +125,22 @@ def scaled_generation(q, launch):
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.tap('tab-courses')
         # Resizing the activity and opening this tab can recreate the native map.
-        # Capture the chosen center first, then reveal the scrollable CTA and
-        # wait until the native map/location state enables it.
+        # The screen starts an automatic location request when the tab opens.
+        # Wait for that request to settle before recording the center; otherwise
+        # this check compares the initial fixture center with the later GPS fix
+        # and mistakes normal location startup for a scroll-induced change.
         deadline = time.monotonic() + 30
-        tree = q.capture('s2a-large-location-ready')
+        while True:
+            tree = q.capture('s2a-large-location-ready')
+            if q.find(tree, 'route-location-located') is not None:
+                break
+            assert time.monotonic() < deadline, 'Course location did not settle after display change'
+            time.sleep(.5)
         selected = q.find(tree, 'selected-center')
         assert selected is not None, 'Capture the chosen center before scrolling'
         origin = re.findall(r'-?\d+\.\d+', selected.get('text'))
         assert len(origin) == 2, 'The isolated QA origin must use explicit coordinates'
+        deadline = time.monotonic() + 30
         while True:
             q.seek('calculate-route', allow_disabled=True)
             tree = q.capture('s2a-large-location-ready')
