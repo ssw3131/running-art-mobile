@@ -123,7 +123,7 @@ def service_s56(q, launch):
         deadline=time.monotonic()+30
         while True:
             result=q.capture('s5-result-large-font-ready')
-            if q.find(result,'run-result-title') is not None: break
+            if q.find(result,'completion-first-badge') is not None: break
             assert time.monotonic()<deadline,'Run result screen did not load after display change'
             time.sleep(.5)
         q.seek('공유 이미지 만들기');q.capture('s5-result-large-font')
