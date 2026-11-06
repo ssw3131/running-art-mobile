@@ -133,7 +133,7 @@ def scaled_generation(q, launch):
         while True:
             tree = q.capture('s2a-large-location-ready')
             settled = any(q.find(tree, f'route-location-{state}') is not None
-                          for state in ('located', 'idle', 'denied', 'services-disabled', 'unavailable'))
+                          for state in ('located', 'idle', 'denied', 'services-disabled', 'unavailable', 'timeout', 'cancelled'))
             if settled:
                 break
             assert time.monotonic() < deadline, 'Course location remained in flight after display change'
