@@ -125,16 +125,18 @@ def scaled_generation(q, launch):
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.tap('tab-courses')
         # Resizing the activity and opening this tab can recreate the native map.
-        # The screen starts an automatic location request when the tab opens.
-        # Wait for that request to settle before recording the center; otherwise
-        # this check compares the initial fixture center with the later GPS fix
-        # and mistakes normal location startup for a scroll-induced change.
+        # A display change may refocus the course tab after its one-shot GPS
+        # request was cancelled on blur. Either a located fix or a settled idle/
+        # unavailable state is safe to baseline; only 'loading' can still move
+        # the selected center after the scroll assertion begins.
         deadline = time.monotonic() + 30
         while True:
             tree = q.capture('s2a-large-location-ready')
-            if q.find(tree, 'route-location-located') is not None:
+            settled = any(q.find(tree, f'route-location-{state}') is not None
+                          for state in ('located', 'idle', 'denied', 'services-disabled', 'unavailable'))
+            if settled:
                 break
-            assert time.monotonic() < deadline, 'Course location did not settle after display change'
+            assert time.monotonic() < deadline, 'Course location remained in flight after display change'
             time.sleep(.5)
         selected = q.find(tree, 'selected-center')
         assert selected is not None, 'Capture the chosen center before scrolling'
