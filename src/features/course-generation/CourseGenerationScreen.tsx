@@ -1,14 +1,14 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { AppModal, AppText, Button, Tabs, Toggle } from '@/components/ui';
+import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { AppModal, AppText, Button, Toggle } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import DrawingEditor, { DrawingPreview } from '@/features/route-lab/DrawingEditor';
 import { courseFromCalculation } from '@/features/route-lab/saved-course';
 import { courseShapes } from '@/modules/courses/model';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
-import { SERVICE_SHAPES, generationRadiusKm } from '@/modules/route-engine/service-shapes';
+import { SERVICE_SHAPES } from '@/modules/route-engine/service-shapes';
 import type { ShapeId } from '@/modules/route-engine/types';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
@@ -117,12 +117,19 @@ export default function CourseGenerationScreen() {
       origin={choosing ? current.origin : result?.origin ?? current.origin} syntheticRoads={g.roads}
       routeOverlay={choosing ? null : g.overlay} showTarget={showTarget} routeColors={routeColors}
       centerSelection={choosing && !g.dataset.synthetic ? previewSelection : undefined} interactive={!choosing} />
-    {choosing && !g.dataset.synthetic && <Pressable testID="course-map-preview-open" accessibilityRole="button" accessibilityLabel="지도에서 위치 선택"
-      onPress={openLocationPicker} style={StyleSheet.absoluteFill} />}
+    {choosing && !g.dataset.synthetic && <Pressable testID="course-map-preview-open" accessibilityRole="button" accessibilityLabel={`지도에서 위치 선택. 탐색 중심 ${centerLabel(current.origin)}`}
+      onPress={openLocationPicker} style={[StyleSheet.absoluteFill, { bottom: 40 }]} />}
     {choosing && !g.dataset.synthetic && <View pointerEvents="none" style={styles.crosshair}>
       <View style={[styles.crossLine, { width: 26, height: 2 }]} /><View style={[styles.crossLine, { width: 2, height: 26 }]} />
       <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.selected, borderWidth: 2, borderColor: c.surface }} />
     </View>}
+    {choosing && !g.dataset.synthetic && <Pressable testID="route-locate" accessibilityRole="button" accessibilityLabel="현재 위치"
+      accessibilityState={{ disabled: g.centerState.location.kind === 'loading', busy: g.centerState.location.kind === 'loading' }}
+      disabled={g.centerState.location.kind === 'loading'} onPress={() => { Keyboard.dismiss(); g.locate(); }} style={styles.mapLocateTarget}>
+      <View style={[styles.mapLocateButton, { backgroundColor: c.surface, borderColor: c.outline }]}>
+        {g.centerState.location.kind === 'loading' ? <ActivityIndicator size="small" color={c.text} /> : <GenerationIcon name="locate" />}
+      </View>
+    </Pressable>}
     {g.dataset.synthetic && <View style={styles.mapNote}><AppText variant="caption">가상 도로 · 실제 길 아님</AppText></View>}
   </View>;
   const status = <View testID={`calculation-${g.state.kind}`} accessibilityLiveRegion="polite" style={[styles.status, { backgroundColor: c.navigation }]}>
@@ -132,27 +139,23 @@ export default function CourseGenerationScreen() {
   </View>;
   return <View style={[styles.screen, { backgroundColor: c.background }]} testID="course-generation">
     {imageOpen && <ImageShapeEditor onCancel={() => setImageOpen(false)} onApply={points => { g.changeSearch(); g.setCustomTemplate(points); g.setShape('custom'); setImageOpen(false); }} />}
-    <Tabs options={[{ value: 'conditions', label: '조건 설정' }, { value: 'results', label: '추천 코스' }]}
-      value={g.tab} onChange={value => chooseTab(value as 'conditions' | 'results')} />
     <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
       {!!notice && <AppText accessibilityRole="alert">{notice}</AppText>}
       {!!g.pendingRequest && <View style={{ gap: 10 }}><AppText>확인이 끝나지 않은 생성 작업이 있어요. 이전 결과를 복원해 주세요. 추가 횟수는 사용하지 않습니다.</AppText><Button label="이전 생성 결과 복원" disabled={busy} onPress={g.restore}/></View>}
       {choosing ? <>
         {changed && <AppText testID="generation-changed" variant="label">이전 계산 결과를 보관하고 있어요. 다시 생성하면 새 조건이 적용돼요.</AppText>}
-        <View style={styles.headingRow}><AppText variant="heading" weight="bold">1. 출발 위치</AppText>
-          <Pressable testID="route-locate" accessibilityRole="button" accessibilityLabel="현재 위치" disabled={g.centerState.location.kind === 'loading'}
-            onPress={g.locate} style={[styles.locate, { backgroundColor: c.secondary }]}>
-            <GenerationIcon name="locate" /><AppText variant="label">현재 위치</AppText>
-          </Pressable></View>
-        {!g.dataset.synthetic && <PlaceSearch key={`place-${auth.account?.id ?? 'guest'}`} center={current.origin} onChoose={selected => {
+        {!!result && <Button compact variant="outline" testID="generation-view-results" label="이전 추천 코스 보기" onPress={() => chooseTab('results')} />}
+        <AppText variant="heading" weight="bold">1. 출발 위치</AppText>
+        {!g.dataset.synthetic && <PlaceSearch variant="course" key={`place-${auth.account?.id ?? 'guest'}`} center={current.origin} onChoose={selected => {
           g.changeSearch(); g.center.choose(selected.center); g.setFixedCenter(true); g.setValidCenter(true); g.setMapMoving(false);
           setPlace({ address: selected.address, ...selected.center });
         }} />}
-        <AppText testID="selected-center" variant="label">{!g.validCenter ? '지원 범위 밖이에요.' : `탐색 중심 ${locationLabel(current.origin)}`}</AppText>
+        {!g.validCenter && <AppText accessibilityRole="alert" variant="label">지원 범위 밖이에요.</AppText>}
         {map}
-        {!g.dataset.synthetic && <Button variant="outline" testID="course-map-preview-select" label="지도에서 위치 선택" onPress={openLocationPicker} />}
-        {!g.dataset.synthetic && <><MapCredits /><AppText testID={`route-location-${g.centerState.location.kind}`} variant="caption" style={{ color: c.subtle }}>{locationMessage(g.centerState)}</AppText></>}
-        <AppText variant="caption" style={{ color: c.subtle }}>지도 중심 주변 {g.dataset.synthetic ? g.dataset.input.options.radiusKm : generationRadiusKm(g.targetKm)}km에서 코스를 찾아요. 실제 출발 지점은 러닝 준비에서 선택해요.</AppText>
+        {['denied', 'services-disabled', 'timeout', 'unavailable'].includes(g.centerState.location.kind) && <AppText variant="caption" accessibilityLiveRegion="polite" style={{ color: c.subtle }}>{locationMessage(g.centerState)}</AppText>}
+        {!g.dataset.synthetic && <Button variant="outline" testID="course-map-preview-select" label="지도에서 위치 선택" leading={<GenerationIcon name="mapPin" />} onPress={openLocationPicker}
+          contentStyle={[styles.locationButton, { borderColor: c.subtle, backgroundColor: c.background === '#FFFFFF' ? '#FCFCFC' : c.surface }]}
+          labelStyle={{ fontSize: 18, lineHeight: 27.6, color: c.background === '#FFFFFF' ? '#1E1E1E' : c.text }} />}
         <GenerationDistanceInput key={`distance-${auth.account?.id ?? 'guest'}`} value={g.targetKm} onChange={km => { g.changeSearch(); g.setTargetKm(km); }} />
         <AppText variant="heading" weight="bold" style={styles.section}>3. 코스 모양</AppText>
         <View testID="generation-shapes" onLayout={event => setShapeY(event.nativeEvent.layout.y)} style={styles.shapes}>{SERVICE_SHAPES.map(shape => <Pressable key={shape.id} testID={`shape-${shape.id}`} accessibilityRole="button"
@@ -161,14 +164,23 @@ export default function CourseGenerationScreen() {
           <View style={styles.shapeIcon}><GenerationIcon name={shape.id} /></View>
           <AppText variant="label" weight="bold" style={{ color: g.shape === shape.id ? c.selected : c.subtle, textAlign: 'center' }}>{shape.name}</AppText>
         </Pressable>)}</View>
-        <Button variant="outline" testID="shape-custom" label="도형 직접 그리기" leading={<GenerationIcon name="draw" />}
-          onPress={() => { g.changeSearch(); g.setDrawingOpen(true); }} />
-        <Button variant="outline" testID="shape-image" label="도형 이미지 업로드하기" leading={<GenerationIcon name="image" />} onPress={() => { g.changeSearch(); setImageOpen(true); }} />
+        <View style={styles.shapeActions}>
+          <Button variant="outline" testID="shape-custom" label="도형 직접 그리기" leading={<GenerationIcon name="draw" />}
+            contentStyle={[styles.shapeActionButton, { borderColor: c.outline, backgroundColor: c.background === '#FFFFFF' ? '#FCFCFC' : c.surface }]}
+            labelStyle={{ fontSize: 20, lineHeight: 29, color: c.background === '#FFFFFF' ? '#1E1E1E' : c.text }}
+            onPress={() => { g.changeSearch(); g.setDrawingOpen(true); }} />
+          <Button variant="outline" testID="shape-image" label="도형 이미지 업로드하기" leading={<GenerationIcon name="image" />}
+            contentStyle={[styles.shapeActionButton, { borderColor: c.outline, backgroundColor: c.background === '#FFFFFF' ? '#FCFCFC' : c.surface }]}
+            labelStyle={{ fontSize: 20, lineHeight: 29, color: c.background === '#FFFFFF' ? '#1E1E1E' : c.text }}
+            onPress={() => { g.changeSearch(); setImageOpen(true); }} />
+        </View>
         {g.shape === 'custom' && g.customTemplate && <View testID="selected-custom-shape" style={styles.row}>
           <DrawingPreview template={g.customTemplate} /><AppText style={{ flex: 1 }} variant="label">사용자 도형을 사용해요. 직접 그리기에서 수정할 수 있어요.</AppText></View>}
-        <AppText variant="caption" style={{ color: c.muted }}>새 코스 생성에는 인터넷 연결이 필요해요. 저장한 코스는 오프라인에서도 달릴 수 있어요.</AppText>
-        {status}
-        <Button ref={generateButton} testID="calculate-route" label="코스 생성하기" leading={<GenerationIcon name="generate" />} disabled={g.cannotCalculate || busy} onPress={showConfirmation} />
+        {g.state.kind !== 'idle' && status}
+        <View style={styles.generateAction}>
+          <Button ref={generateButton} testID="calculate-route" label="코스 생성하기" leading={<GenerationIcon name="generate" />} disabled={g.cannotCalculate || busy} onPress={showConfirmation} />
+          <AppText testID="generation-charge-notice" variant="caption" weight="medium" style={[styles.chargeNotice, { color: c.subtle }]}>코스를 생성하면 보유한 횟수가 1회 차감됩니다.</AppText>
+        </View>
       </> : <>
         {status}
         {map}
@@ -236,7 +248,12 @@ const styles = StyleSheet.create({
   map: { height: 288, overflow: 'hidden' }, mapNote: { position: 'absolute', top: 8, left: 8, padding: 6, backgroundColor: '#FFFFFFEE' },
   crosshair: { position: 'absolute', top: '50%', left: '50%', width: 26, height: 26, marginLeft: -13, marginTop: -13, justifyContent: 'center', alignItems: 'center' },
   crossLine: { position: 'absolute', backgroundColor: '#FC5602' },
-  locate: { minHeight: 48, paddingHorizontal: 12, borderRadius: 24, flexDirection: 'row', alignItems: 'center', gap: 5 },
+  mapLocateTarget: { position: 'absolute', right: 25, top: 20, width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+  mapLocateButton: { width: 46, height: 46, borderRadius: 23, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  shapeActions: { marginTop: 38, gap: 15 },
+  shapeActionButton: { minHeight: 60, borderRadius: 10, borderWidth: 1, justifyContent: 'flex-start', paddingHorizontal: 19, paddingVertical: 10, gap: 14 },
+  locationButton: { minHeight: 50, borderRadius: 10, borderWidth: 1, gap: 14, paddingVertical: 10 },
+  generateAction: { marginTop: 38, gap: 14 }, chargeNotice: { textAlign: 'center', lineHeight: 20 },
   section: { marginTop: 20 }, sectionBox: { padding: 16, gap: 12, borderRadius: 16 },
   shapes: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 }, shape: { minHeight: 96, borderWidth: 1, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 8, paddingHorizontal: 4, gap: 8 },
   shapeIcon: { height: 48, justifyContent: 'center', alignItems: 'center' },

@@ -13,14 +13,16 @@ const assets = {
   strawberry: { source: require('../../../assets/generation/strawberry.svg'), width: 38, height: 38.0002 },
   cloud: { source: require('../../../assets/generation/cloud.svg'), width: 50.0017, height: 27.0006 },
   crown: { source: require('../../../assets/generation/crown.svg'), width: 52, height: 27 },
-  image: { source: require('../../../assets/generation/image.svg'), width: 20, height: 20 },
+  image: { source: require('../../../assets/generation/figma-20261106/image.svg'), width: 20, height: 20 },
   heart: { source: require('../../../assets/generation/heart.svg'), width: 40.0004, height: 34.0002 },
   star: { source: require('../../../assets/generation/star.svg'), width: 42.0003, height: 39 },
   cat: { source: require('../../../assets/generation/cat.svg'), width: 38.0479, height: 43.0035 },
   fish: { source: require('../../../assets/generation/fish.svg'), width: 48.0004, height: 29.9978 },
-  locate: { source: require('../../../assets/generation/locate.svg'), width: 16, height: 16 },
-  draw: { source: require('../../../assets/generation/draw.svg'), width: 20, height: 20 },
-  generate: { source: require('../../../assets/generation/generate.svg'), width: 25.5, height: 24.666 },
+  locate: { source: require('../../../assets/generation/figma-20261106/locate.svg'), width: 16, height: 16 },
+  draw: { source: require('../../../assets/generation/figma-20261106/draw.svg'), width: 20, height: 20 },
+  generate: { source: require('../../../assets/generation/figma-20261106/generate.svg'), width: 22, height: 22 },
+  mapPin: { source: require('../../../assets/generation/figma-20261106/map-pin.svg'), width: 20, height: 20 },
+  search: { source: require('../../../assets/generation/figma-20261106/search.svg'), width: 20.5, height: 20.5 },
   confirm: { source: require('../../../assets/generation/generate-confirm.svg'), width: 20, height: 20 },
   run: { source: require('../../../assets/generation/run.svg'), width: 22, height: 22 },
 };
@@ -36,10 +38,6 @@ export function GenerationIcon({ name }: { name: keyof typeof assets | keyof typ
   if (name in figmaAssets) return <Image source={figmaAssets[name as keyof typeof figmaAssets]} accessible={false} contentFit="contain"
     style={{ width: 48, height: 48, transform: ['crown', 'bone'].includes(name) ? [{ scaleX: -1 }] : undefined }} />;
   const asset = assets[name as keyof typeof assets];
-  if (name === 'generate') return <View accessible={false} style={{ width: 22, height: 22 }}>
-    <Image source={asset.source} contentFit="contain" accessible={false}
-      style={{ position: 'absolute', left: -2.5, top: -5 / 3, width: asset.width, height: asset.height }} />
-  </View>;
   // Figma's star/cat/fish layers have a mirrored parent; preserve the original SVG dimensions.
   return <View accessible={false} style={{ width: asset.width, height: asset.height }}>
     <Image source={asset.source} contentFit="contain" accessible={false} style={{ width: asset.width, height: asset.height,

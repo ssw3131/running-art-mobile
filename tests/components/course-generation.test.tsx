@@ -140,3 +140,24 @@ test('UI-GEN-08: real-map updates preserve place input and an open distance draf
   expect(screen.getByTestId('place-search-input')).toHaveDisplayValue('');
   expect(screen.queryByTestId('distance-input')).toBeNull();
 });
+
+test('UI-GEN-09: current location queries GPS without opening the picker and blocks duplicate requests', async () => {
+  mockG.dataset.synthetic = false;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('route-locate'));
+  expect(mockG.locate).toHaveBeenCalledTimes(1);
+  expect(mockPush).not.toHaveBeenCalled();
+  mockG.centerState.location = { kind: 'loading' };
+  await screen.rerender(<CourseGenerationScreen />);
+  expect(screen.getByTestId('route-locate')).toBeDisabled();
+});
+
+test('UI-GEN-10: removing the tabs still allows returning to a previous result without generating again', async () => {
+  mockG.completed = completed(); mockG.shape = 'fish';
+  const previous = mockG.completed;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('generation-view-results'));
+  expect(mockG.setTab).toHaveBeenCalledWith('results');
+  expect(mockG.completed).toBe(previous);
+  expect(mockG.start).not.toHaveBeenCalled();
+});

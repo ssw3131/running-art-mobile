@@ -5,8 +5,10 @@ import { AppText, Button, TextField } from '@/components/ui';
 import { searchPlaces, type PlaceResult } from '@/modules/map/place-search';
 import type { Origin } from '@/modules/route-engine/types';
 import { useThemeColors } from '@/theme/ThemeProvider';
+import { fonts } from '@/theme/tokens';
+import { GenerationIcon } from './GenerationIcon';
 
-export function PlaceSearch({ center, onChoose, compact = false }: { center: Origin; onChoose(place: PlaceResult): void; compact?: boolean }) {
+export function PlaceSearch({ center, onChoose, compact = false, variant = 'default' }: { center: Origin; onChoose(place: PlaceResult): void; compact?: boolean; variant?: 'default' | 'course' }) {
   const c = useThemeColors();
   const [query, setQuery] = useState(''), [results, setResults] = useState<PlaceResult[]>([]);
   const [message, setMessage] = useState(''), [loading, setLoading] = useState(false);
@@ -30,17 +32,17 @@ export function PlaceSearch({ center, onChoose, compact = false }: { center: Ori
   };
   const choose = (place: PlaceResult) => { cancel(); setResults([]); setQuery(place.name); Keyboard.dismiss(); onChoose(place); };
   return <View style={{ gap: 8 }}>
-    {compact ? <View style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: c.border, borderRadius: 24, backgroundColor: c.surface, paddingLeft: 16, paddingRight: 6 }}>
+    {compact || variant === 'course' ? <View style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: variant === 'course' ? c.muted : c.border, borderRadius: 24, backgroundColor: c.surface, paddingLeft: 16, paddingRight: variant === 'course' ? 8 : 6 }}>
       <TextInput accessibilityLabel="현재 위치 또는 장소 검색" testID="place-search-input" value={query} maxLength={120}
         placeholder="현재 위치 또는 장소 검색" placeholderTextColor={c.placeholder} returnKeyType="search"
         onSubmitEditing={() => void search()} onChangeText={value => { cancel(); setQuery(value); setResults([]); setMessage(''); }}
-        style={{ flex: 1, minHeight: 46, paddingVertical: 8, color: c.text, fontSize: 14 }} />
+        style={{ flex: 1, minHeight: 46, paddingVertical: 8, paddingHorizontal: 0, color: c.text, fontSize: variant === 'course' ? 16 : 14, ...(variant === 'course' ? { fontFamily: fonts.noto.regular, includeFontPadding: false } : {}) }} />
       <Pressable testID="place-search-submit" accessibilityRole="button" accessibilityLabel="장소 검색" accessibilityState={{ disabled: loading }} disabled={loading}
         onPress={() => void search()} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
-        <View accessible={false} style={{ width: 19, height: 19 }}>
+        {variant === 'course' ? <GenerationIcon name="search" /> : <View accessible={false} style={{ width: 19, height: 19 }}>
           <View style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: c.text }} />
           <View style={{ position: 'absolute', left: 12, top: 12, width: 7, height: 2, borderRadius: 1, backgroundColor: c.text, transform: [{ rotate: '45deg' }] }} />
-        </View>
+        </View>}
       </Pressable>
     </View> : <>
       <TextField label="장소·주소 검색" placeholder="현재 위치 또는 장소 검색" testID="place-search-input" value={query} maxLength={120}

@@ -71,11 +71,11 @@ def screens():
             (q.OUT/'permission-granted.txt').write_text('foreground', encoding='utf8')
             q.tap('While using the app')
             continue
-        if q.find(tree, 'route-location-loading') is None:
+        if q.find(tree, 'route-locate').get('enabled') == 'true':
             break
         q.adb('emu', 'geo', 'fix', str(s['route'][0][0]), str(s['route'][0][1]), '0', '10')
         time.sleep(1)
-    screen('02-create-map', 'selected-center', 'courses')
+    screen('02-create-map', 'course-map-preview-open', 'courses')
     q.seek('distance-3'); q.tap('distance-3'); q.tap('shape-star')
     screen('03-create-options', 'distance-3', 'courses')
     q.tap('tab-run'); screen('04-run', 'run-start', 'run')

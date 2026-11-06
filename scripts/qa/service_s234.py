@@ -7,7 +7,7 @@ import zlib
 
 def service_s234(q, launch):
     assert q.SERIAL.startswith('emulator-')
-    q.tap('tab-courses');q.tap('조건 설정')
+    q.tap('tab-courses');q.seek('generation-edit');q.tap('generation-edit')
     q.seek('shape-heart')
     for shape in ['dog','crown']:
         q.seek('shape-'+shape);q.tap('shape-'+shape)

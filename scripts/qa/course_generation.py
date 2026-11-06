@@ -129,19 +129,19 @@ def scaled_generation(q, launch):
         # inspect the explicit center and scroll the form; test that invariant
         # directly instead of waiting for an unrelated device-service result.
         tree = q.capture('s2a-large-location-ready')
-        selected = q.find(tree, 'selected-center')
+        selected = q.find(tree, 'course-map-preview-open')
         assert selected is not None, 'Capture the chosen center before scrolling'
-        origin = re.findall(r'-?\d+\.\d+', selected.get('text'))
+        origin = re.findall(r'-?\d+\.\d+', selected.get('content-desc', ''))
         assert len(origin) == 2, 'The isolated QA origin must use explicit coordinates'
         q.seek('shape-star'); q.capture('s2a-large-shapes')
         q.seek('calculate-route', allow_disabled=True)
         tree = q.capture('s2a-large-scrolled')
         button = q.find(tree, 'calculate-route')
         assert button is not None, 'The generation button remains in the scrollable form'
-        q.seek('selected-center', allow_disabled=True)
+        seek_above(q, 'course-map-preview-open')
         tree = q.capture('s2a-large-center-restored')
-        current = q.find(tree, 'selected-center')
-        confirmed_origin = re.findall(r'-?\d+\.\d+', current.get('text') if current else '')
+        current = q.find(tree, 'course-map-preview-open')
+        confirmed_origin = re.findall(r'-?\d+\.\d+', current.get('content-desc', '') if current else '')
         assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
             for before, after in zip(origin, confirmed_origin)), (
                 f'Page scrolling must preserve the chosen map center: before={origin}, after={confirmed_origin}')

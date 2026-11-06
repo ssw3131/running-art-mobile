@@ -137,17 +137,17 @@ def navigation():
     tap('tab-courses')
     before = capture('center-before-tab')
     for _ in range(15):
-        if find(before, 'route-location-loading') is None:
+        if find(before, 'route-locate').get('enabled') == 'true':
             break
         time.sleep(1)
         before = capture('center-before-tab')
-    assert find(before, 'route-location-loading') is None, 'Initial location has not settled'
-    center = find(before, 'selected-center').get('text')
+    assert find(before, 'route-locate').get('enabled') == 'true', 'Initial location has not settled'
+    center = find(before, 'course-map-preview-open').get('content-desc')
     lat, lng = map(float, re.findall(r'-?\d+\.\d+', center))
     assert 33 <= lat < 39 and 124 <= lng < 132, 'QA origin must be inside Korea before testing server generation'
     adb('emu', 'geo', 'fix', '127', '37', '0', '10')
     tap('tab-home'); tap('tab-courses')
-    assert find(capture('center-after-tab'), 'selected-center').get('text') == center
+    assert find(capture('center-after-tab'), 'course-map-preview-open').get('content-desc') == center
     seek('distance-3'); tap('distance-3'); seek('shape-star'); tap('shape-star')
     def draft(name):
         seek('distance-3')
