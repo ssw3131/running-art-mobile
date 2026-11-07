@@ -35,7 +35,8 @@ export default function CourseDetailScreen() {
   const [editing,setEditing]=useState(false),[name,setName]=useState('');
   const [showTarget,setShowTarget]=useState(true);
   const revision=useRef(0),working=useRef(false),exporting=useRef<AbortController|null>(null);
-  const scrollY=useRef(0);
+  const scrollY=useRef(0),keyboardTop=useRef<number|null>(null);
+  const [keyboardInset,setKeyboardInset]=useState(0);
   const scrollRef=useRef<ScrollView>(null),saveInput=useRef<TextInput>(null),renameInput=useRef<TextInput>(null);
   const revealName=useCallback(()=>{
     const input=[saveInput.current,renameInput.current].find(value=>value?.isFocused());
@@ -45,16 +46,17 @@ export default function CourseDetailScreen() {
     requestAnimationFrame(()=>{
       if(!input.isFocused())return;
       input.measureInWindow((_x,y,_width,height)=>{
-        const keyboardTop=Keyboard.metrics()?.screenY;
-        if(!input.isFocused()||keyboardTop===undefined)return;
-        const overlap=y+height+16-keyboardTop;
-        if(overlap>0)scrollRef.current?.scrollTo({y:scrollY.current+overlap,animated:true});
+        const top=keyboardTop.current??Keyboard.metrics()?.screenY;
+        if(!input.isFocused()||top===undefined)return;
+        const overlap=y+height+16-top;
+        if(overlap>0)scrollRef.current?.scrollTo({y:scrollY.current+overlap,animated:false});
       });
     });
   },[]);
   useEffect(()=>{
-    const listener=Keyboard.addListener('keyboardDidShow',revealName);
-    return()=>listener.remove();
+    const shown=Keyboard.addListener('keyboardDidShow',event=>{keyboardTop.current=event.endCoordinates.screenY;setKeyboardInset(event.endCoordinates.height);revealName();});
+    const hidden=Keyboard.addListener('keyboardDidHide',()=>{keyboardTop.current=null;setKeyboardInset(0);});
+    return()=>{shown.remove();hidden.remove();};
   },[revealName]);
   const focusName=()=>{if(Keyboard.isVisible())revealName();};
   const draft=useMemo(()=>candidateDrafts.get(params.draft,owner||'guest'),[params.draft,owner]);
@@ -131,7 +133,7 @@ export default function CourseDetailScreen() {
   });
   const continuation=courseContinuation(current?.last??null,current?.activeId??null);
   return <KeyboardAvoidingView style={{flex:1,backgroundColor:c.background}} behavior={Platform.OS==='ios'?'padding':undefined}>
-    <ScrollView ref={scrollRef} onScroll={event=>{scrollY.current=event.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} onLayout={()=>{if(Keyboard.isVisible())revealName();}} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30,gap:24}}>
+    <ScrollView ref={scrollRef} onContentSizeChange={()=>{if(Keyboard.isVisible())revealName();}} onScroll={event=>{scrollY.current=event.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} onLayout={()=>{if(Keyboard.isVisible())revealName();}} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30+keyboardInset,gap:24}}>
       {!current&&!error&&<ActivityIndicator accessibilityLabel="코스 불러오는 중" color={c.action}/>}
       {!current&&!!error&&<View style={{padding:24,gap:12}}><AppText accessibilityRole="alert" testID="course-detail-error">{error}</AppText><Button variant="outline" label="다시 확인" onPress={()=>void refresh()}/></View>}
       {current&&<>
