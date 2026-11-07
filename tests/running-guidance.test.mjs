@@ -181,3 +181,8 @@ test('a GPS gap cannot satisfy off-route or stationary arrival dwell time', () =
   for (let i = 20; i < 23; i++) assert.notEqual(arrival.ingest({ position: end, timestamp: i * 1000, accuracy: 5 }).status, 'arrived');
   assert.equal(arrival.ingest({ position: end, timestamp: 23000, accuracy: 5 }).status, 'arrived');
 });
+
+test('a stopped course remains in saved courses with an unfinished badge',async t=>{
+ const f=await fixture(t);const run=await f.runs.start(f.course.id,gps(0));f.time(1000);await f.runs.append([gps(1000)]);await f.runs.transition(run.id,'completed');
+ assert.equal((await f.runs.get(run.id)).courseOutcome,'stopped');assert.equal((await f.courses.list())[0].unfinished,true);
+});

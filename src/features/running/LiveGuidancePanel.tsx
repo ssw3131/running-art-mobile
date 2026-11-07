@@ -14,6 +14,7 @@ import { durationLabel, elapsedMs, currentPaceLabel, statusLabel, type Run, type
 import { router } from 'expo-router';
 import { ModeSwitch, RunningControls } from './RunningControls';
 import { useThemeColors } from '@/theme/ThemeProvider';
+import { useDeviceHeading } from './use-device-heading';
 import { fonts } from '@/theme/tokens';
 
 const navy='#0D213C';
@@ -23,6 +24,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   headerAccessory?:ReactNode; onRetryNavigation?():void; simulationState?:GuidanceState; simulationPace?:string; onSettings?():void; onPauseResume():void; onFinish():void; onPermission():void; error:string;
 }) {
   const c=useThemeColors();
+  const heading=useDeviceHeading(guide.options.mode==='map');
   const card={...cardBase,backgroundColor:c.surface};
   const {height}=useWindowDimensions();
   const compact=height<800;
@@ -64,7 +66,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
     <View style={{flexDirection:'row',gap:10}}>{[{label:'남은 거리',value:`${remaining} km`},{label:'러닝 시간',value:durationLabel(elapsed)},{label:'현재 페이스',value:pace}].map(item=><View key={item.label} style={{flex:1,alignItems:'center',gap:4}}><AppText variant="caption" style={{color:c.muted}}>{item.label}</AppText><AppText family="roboto" weight="black" numberOfLines={1} adjustsFontSizeToFit style={{fontSize:24,color:c.text}}>{item.value}</AppText></View>)}</View>
   </View>;
   return <SafeAreaView style={{flex:1,backgroundColor:focus?background:c.navigation}} edges={['top','bottom','left','right']}>
-    {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={guide.course.snapshot.route} state={state} positionLabel={simulationState?"시뮬레이션 위치로 지도 이동":"현재 GPS 위치로 지도 이동"} recenterAtBottom/></View>}
+    {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap heading={heading} route={guide.course.snapshot.route} state={state} positionLabel={simulationState?"시뮬레이션 위치로 지도 이동":"현재 GPS 위치로 지도 이동"} recenterAtBottom/></View>}
     {headerAccessory}
     {focus?<ScrollView contentContainerStyle={{flexGrow:1,paddingHorizontal:32,paddingTop:compact?16:30,gap:compact?8:20,paddingBottom:20,alignItems:'center'}}>
       <AppText testID="run-status" weight="bold" style={{color:'#FFFFFF',fontSize:compact?20:24,textAlign:'center'}}>{title}</AppText>

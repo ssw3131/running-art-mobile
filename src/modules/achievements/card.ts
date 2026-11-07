@@ -4,9 +4,9 @@ import { homePathSvg, type HomePath } from '../home/model.ts';
 import { courseShapes, type CourseSnapshot } from '../courses/model.ts';
 import { durationLabel, paceLabel, type Run, type RunPoint } from '../running/model.ts';
 
-export type CardOptions = { format: 'story' | 'feed'; nickname: boolean; date: boolean };
+export type CardOptions = { format: 'story' | 'feed' | 'card'; nickname: boolean; date: boolean };
 export const defaultCardOptions: CardOptions = { format: 'story', nickname: true, date: true };
-export const cardSize = (format: CardOptions['format']) => ({ width: 1080, height: format === 'story' ? 1920 : 1350 });
+export const cardSize = (format: CardOptions['format']) => ({ width: 1080, height: format === 'story' ? 1920 : format==='feed'?1350:903 });
 export function cardContent(run: Run, course: CourseSnapshot | null, points: readonly RunPoint[], name: string, options: CardOptions) {
   if (run.status !== 'completed') throw new Error('Only completed runs can be shared');
   const paths: HomePath[] = [];

@@ -13,6 +13,8 @@ import SavedCourseChooser from '@/features/running/SavedCourseChooser';
 import CourseRunPreparation from '@/features/running/CourseRunPreparation';
 import LiveGuidancePanel from '@/features/running/LiveGuidancePanel';
 import type { GuidanceOptions, RunGuidance } from '@/modules/running/guidance';
+import { runFinishDestination } from '@/modules/running/finish-destination';
+import { openServiceTab } from '@/features/service/open-service-tab';
 import { guidanceNative } from '@/modules/guidance/native';
 
 export default function RunScreen() {
@@ -79,7 +81,7 @@ export default function RunScreen() {
     if (!run) return;
     const id = run.id;
     Alert.alert(run.courseOutcome === 'arrival-pending' ? '완주 기록을 저장할까요?' : '러닝을 종료할까요?', '현재까지 기록을 저장합니다. 종료 후에는 새 도전으로 시작하며, 여러 날의 기록을 합쳐 완주로 인정하지 않아요. 동기화를 켜둔 계정은 연결되면 서버에도 저장됩니다.', [
-      { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.setParams({ courseId: undefined }); router.push({ pathname: '/run-result', params: { id } }); }) },
+      { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.setParams({ courseId: undefined }); const destination=runFinishDestination(await(await getStorage()).runs.get(id));if(destination.pathname==='/run-result')router.push(destination);else openServiceTab(destination); }) },
     ]);
   }
   function options(value: GuidanceOptions) {

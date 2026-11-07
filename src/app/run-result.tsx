@@ -9,7 +9,6 @@ import { courseShapes } from '@/modules/courses/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { openServiceTab } from '@/features/service/open-service-tab';
 import { badgeImages } from '@/features/achievements/badge-images';
-import { AwardBadges } from '@/features/achievements/AwardBadges';
 
 export default function RunResultScreen() {
   const params = useLocalSearchParams<{ id: string }>(), id = typeof params.id === 'string' ? params.id : '';
@@ -35,11 +34,10 @@ export default function RunResultScreen() {
         <AppText testID="run-result-badge" weight="bold">{courseShapes[data.course!.snapshot.shape]} · {badge?.count ?? 0}회 완주</AppText>
       </View>}
       <RunMetrics run={data.run} />
-      {finished&&<AwardBadges awards={data.achievements.awards??[]}/>}
-      <AppText variant="caption" style={{ color: colors.subtle }}>활동 시간은 일시정지를 제외하며 GPS 대기 시간을 포함해요. 누적 완주 {data.achievements.finishedCourses}회 · 연속 러닝 {data.achievements.currentStreak}일</AppText>
+      {!finished&&<AppText variant="caption" style={{ color: colors.subtle }}>활동 시간은 일시정지를 제외하며 GPS 대기 시간을 포함해요. 누적 완주 {data.achievements.finishedCourses}회 · 연속 러닝 {data.achievements.currentStreak}일</AppText>}
       <Button label="공유하기" testID="run-result-share" leading={<Icon name="share" />} onPress={() => router.push({ pathname: '/run-card', params: { id } })} />
-      <Button label="기록 상세" testID="result-detail" variant="outline" onPress={() => router.push({ pathname: '/runs/[id]', params: { id } })} />
-      <Button label="홈으로" variant="outline" onPress={() => openServiceTab('/')} />
+      <Button label="완주 기록 보관함으로 이동" testID="result-detail" variant="outline" onPress={() => openServiceTab({pathname:'/courses',params:{view:'runs'}})} />
+      <Button label="홈으로 이동" variant="secondary" onPress={() => openServiceTab('/')} />
     </>}
   </ScrollView>;
 }

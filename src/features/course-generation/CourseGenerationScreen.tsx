@@ -176,7 +176,7 @@ export default function CourseGenerationScreen() {
         <View testID="generation-shapes" onLayout={event => setShapeY(event.nativeEvent.layout.y)} style={styles.shapes}>{SERVICE_SHAPES.map(shape => <Pressable key={shape.id} testID={`shape-${shape.id}`} accessibilityRole="button"
           accessibilityLabel={shape.name} accessibilityState={{ selected: g.shape === shape.id }} onPress={() => { g.changeSearch(); g.setShape(shape.id as ShapeId); }}
           style={[styles.shape, { width: shapeWidth, borderColor: g.shape === shape.id ? c.selected : c.border, backgroundColor: g.shape === shape.id ? '#FFF0E8' : c.surface }]}>
-          <View style={styles.shapeIcon}><GenerationIcon name={shape.id} /></View>
+          <View style={styles.shapeIcon}><GenerationIcon name={shape.id} color={g.shape===shape.id?c.selected:c.subtle} /></View>
           <AppText variant="label" weight="bold" style={{ color: g.shape === shape.id ? c.selected : c.subtle, textAlign: 'center' }}>{shape.name}</AppText>
         </Pressable>)}</View>
         <View style={styles.shapeActions}>

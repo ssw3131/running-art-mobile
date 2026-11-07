@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent,render,screen } from '@testing-library/react-native';
 import { router } from 'expo-router';
 import LiveGuidancePanel from '../../src/features/running/LiveGuidancePanel';
+jest.mock('../../src/features/running/use-device-heading',()=>({useDeviceHeading:()=>undefined}));
 jest.mock('expo-router',()=>({router:{push:jest.fn()}}));
 jest.mock('../../src/features/guidance/GuidanceMap',()=>({__esModule:true,default:()=>null}));
 jest.mock('../../src/modules/running/runtime',()=>({running:{retryNavigation:jest.fn()}}));

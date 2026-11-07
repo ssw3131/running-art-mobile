@@ -15,6 +15,16 @@ export function ShareCard({ content, format, canvasRef, onReady, onError }: { co
     { id: 'timer', label: '활동 시간', value: content.duration, icon: require('../../../assets/achievements/timer.svg') },
     { id: 'pace', label: '평균 페이스', value: content.pace, icon: require('../../../assets/achievements/pace.svg') },
   ];
+  if(format==='card')return <View ref={canvasRef} collapsable={false} onLayout={()=>ready('layout')} style={{width:360,height:301,overflow:'hidden',borderRadius:20}}>
+    <Image source={{uri:cardGradient(format)}} onLoad={()=>ready('gradient')} onError={onError} style={StyleSheet.absoluteFill}/>
+    <View style={{position:'absolute',top:20,left:28,right:28,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+      <View style={{gap:3,flex:1}}>{content.nickname&&<Text allowFontScaling={false} style={{fontFamily:fonts.noto.bold,fontSize:14,color:'#111111'}}>{content.nickname}</Text>}{content.date&&<Text allowFontScaling={false} style={{fontFamily:fonts.noto.medium,fontSize:10,color:'#111111'}}>{content.date}</Text>}</View>
+      <View style={{alignItems:'center'}}><Image source={require('../../../assets/achievements/brand-runner.png')} onLoad={()=>ready('runner')} onError={onError} style={{width:50,height:25}} contentFit="cover"/><Image source={require('../../../assets/achievements/brand-name.png')} onLoad={()=>ready('brand')} onError={onError} style={{width:50,height:13}} contentFit="contain"/></View>
+    </View>
+    <Text allowFontScaling={false} style={{position:'absolute',top:80,left:20,right:20,fontFamily:fonts.noto.bold,fontSize:16,textAlign:'center',color:'#FFF500'}}>{content.title} · {content.outcome.includes('완주')?'완주':'러닝 기록'}</Text>
+    <View style={{position:'absolute',top:110,left:20,right:20,height:140,borderRadius:10,backgroundColor:'#FFF7F2',padding:8}}>{content.pathUri?<Image source={{uri:content.pathUri}} onLoad={()=>ready('path')} onError={onError} style={{flex:1}} contentFit="contain"/>:<Text>저장된 경로가 없어요</Text>}</View>
+    <View style={{position:'absolute',bottom:16,left:20,right:20,flexDirection:'row',gap:5}}>{metrics.map(metric=><View key={metric.id} style={{flex:1,backgroundColor:'#FFC2D7',borderRadius:4,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:3,padding:4}}><Image source={metric.icon} onLoad={()=>ready(metric.id)} onError={onError} style={{width:16,height:16}}/><Text allowFontScaling={false} numberOfLines={1} adjustsFontSizeToFit style={{fontFamily:fonts.roboto.black,fontSize:11,color:'#4F2430',flexShrink:1}}>{metric.value}</Text></View>)}</View>
+  </View>;
   return <View ref={canvasRef} collapsable={false} onLayout={() => ready('layout')} style={{ width: 360, height: cardSize(format).height / 3, backgroundColor: '#FA417F' }}>
     <Image source={{ uri: cardGradient(format) }} onLoad={() => ready('gradient')} onError={onError} style={StyleSheet.absoluteFill} />
     {(content.nickname || content.date) && <View style={{ position: 'absolute', left: 22, right: 22, top: feed ? 16 : 26, minHeight: 35, gap: 2 }}>

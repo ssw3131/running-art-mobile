@@ -7,12 +7,11 @@ import { Image } from 'expo-image';
 import { getStorage } from '@/modules/storage/database';
 import { courseErrorMessage } from '@/modules/courses/model';
 import { createGuidance } from '@/modules/guidance/engine';
-import { courseProjection } from '@/modules/guidance/loop-engine';
-import { positionAt, prepareRoute } from '@/modules/guidance/geometry';
 import GuidanceMap from '@/features/guidance/GuidanceMap';
 import { startReadiness, validateRunCourse, type RunCourse } from '@/modules/running/guidance';
 import type { Fix } from '@/modules/running/model';
 import { AppText as Text, AppModal, Button } from '@/components/ui';
+import { usePreparationApproach } from './use-preparation-approach';
 import { RunningControls } from './RunningControls';
 
 export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(): void }) {
@@ -44,15 +43,17 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
     const state=AppState.addEventListener('change',value=>{if(value==='background'){generation.current++;locating.current=null;subscription.current?.remove();subscription.current=null;setFix(null);}if(value==='active'&&!subscription.current)void locate();});
     return()=>{generation.current++;locating.current=null;subscription.current?.remove();subscription.current=null;clearInterval(timer);state.remove();};
   },[locate]));
-  const readiness=course?startReadiness(course,fix,now):null;
+  const approach=usePreparationApproach(course,fix);
+  const readiness=course?startReadiness(course,fix,now,approach.plan):null;
   const preview=course?createGuidance(course.snapshot.route).snapshot():null;
   if(preview){preview.phase='approach';preview.lapStart=null;
-    if(fix){preview.position=[fix.longitude,fix.latitude];const nearest=courseProjection(course!.snapshot.route,preview.position);preview.returnPath=[preview.position,positionAt(prepareRoute(course!.snapshot.route),nearest.meters)];}
+    if(fix){preview.position=[fix.longitude,fix.latitude];if(approach.plan)preview.returnPath=approach.plan.path;}
   }
   const finish=()=>Alert.alert('러닝 준비를 마칠까요?','코스 선택 화면으로 돌아갑니다.',[{text:'취소',style:'cancel'},{text:'확인',onPress:()=>router.setParams({courseId:undefined})}]);
   return <View style={{flex:1}}>
     {course&&preview&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={course.snapshot.route} state={preview} positionLabel="현재 위치로 이동" showPosition={!!fix} recenterAtBottom onRecenter={()=>{if(!fix)void locate();}} recenterBottom={180+insets.bottom}/></View>}
     <View pointerEvents="box-none" style={{flex:1,paddingTop:insets.top+12,paddingHorizontal:26}}>
+      {!!approach.error&&<Button compact variant="outline" label={approach.error} onPress={approach.retry}/>}
       {!!error&&<Button compact variant="outline" label={error} onPress={()=>void locate()}/>}
     </View>
     <View style={{paddingHorizontal:26,paddingBottom:8}}><Button testID="run-simulation-open" compact variant="outline" label="러닝 시뮬레이션 · 30배속" disabled={busy||!course} onPress={()=>router.push({pathname:'/run-simulation',params:{courseId:id}})}/></View>
