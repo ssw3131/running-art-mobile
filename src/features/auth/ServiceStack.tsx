@@ -20,7 +20,7 @@ export const privateScreens = [
   ['road-file-lab', '도로 파일 검증'], ['road-cache-lab', '영구 도로 캐시'], ['environment', '개발 환경'],
   ['ui-preview', 'UI 미리보기'], ['service-notices', '공지사항'], ['service-notice', '공지사항'],
   ['service-inquiry', '문의'], ['service-guide', '사용법'], ['service-faq', '자주 묻는 질문'],
-  ['service-about', 'RunPen 소개'], ['run-result', '러닝 결과'], ['run-card', '공유하기'],
+  ['service-about', 'RunPen 소개'], ['run-settings', '러닝 설정'], ['run-result', '러닝 결과'], ['run-card', '공유하기'],
   ['+not-found', ''],
 ] as const;
 

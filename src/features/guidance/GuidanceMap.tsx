@@ -1,3 +1,4 @@
+import { Image as AssetImage } from 'expo-image';
 import { Camera, GeoJSONSource, Layer, Map, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -50,7 +51,7 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
         <Layer id="guidance-dot" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#147FC1', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 4 }} />
       </GeoJSONSource>}
     </Map>
-    <Pressable testID="guidance-recenter" accessibilityLabel={positionLabel} accessibilityRole="button" style={[styles.recenter,recenterAtBottom&&{top:undefined,bottom:44}]} onPress={() => setFollow(true)}><Text style={styles.cross}>◎</Text></Pressable>
+    <Pressable testID="guidance-recenter" accessibilityLabel={positionLabel} accessibilityRole="button" style={[styles.recenter,recenterAtBottom&&{top:undefined,bottom:240,left:32,right:undefined}]} onPress={() => setFollow(true)}><AssetImage source={require('../../../assets/running/locate.svg')} style={{width:16,height:16}} /></Pressable>
     <View style={styles.credits}>
       <Text style={styles.credit}>{online ? '© OpenStreetMap contributors' : '배경 지도 없이 경로 표시'}</Text>
       {online && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/')}><Image source={require('@/assets/images/maptiler-logo.png')} style={{ width: 60, height: 16 }} resizeMode="contain" /></Pressable>}

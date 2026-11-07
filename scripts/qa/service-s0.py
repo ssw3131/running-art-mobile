@@ -274,9 +274,12 @@ def course_preparation():
     adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
     tap('tab-home'); tap('home-more-courses'); tap('course-row-' + 'f'*32)
     seek('course-run'); tap('course-run')
-    assert find(capture('course-preparation-tab'), 'tab-run').get('selected') == 'true'
+    tap('run-preparation-confirm')
+    assert find(capture('course-preparation-map'), 'tab-run') is None
     for _ in range(2):
-        tap('tab-home'); tap('tab-run')
+        shell('input','keyevent','3')
+        shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///run',APP)
+        time.sleep(1)
     for _ in range(12):
         seek('run-course-start')
         tree = capture('course-preparation-return')
@@ -287,8 +290,8 @@ def course_preparation():
     else:
         raise RuntimeError('Course preparation did not recover after tab refocus')
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
-    tap('tab-home')
-    print('PASS: course detail enters retained run tab; preparation survives tab refocus without starting GPS recording')
+    tap('run-finish');tap('확인');tap('tab-home')
+    print('PASS: course detail enters full map preparation; foreground recovery preserves readiness without recording')
 
 
 def scaled():
