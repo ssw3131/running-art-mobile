@@ -1,4 +1,4 @@
-import { Link, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { Link, Tabs, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, AppState, Linking, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import { running } from '@/modules/running/runtime';
 import { MAX_GAP_MS, runErrorMessage, statusLabel, type Run, type RunPoint } from '@/modules/running/model';
 import RunPath from '@/features/running/RunPath';
 import { RunButton, RunStats, useRunStyles } from '@/features/running/ui';
+import SavedCourseChooser from '@/features/running/SavedCourseChooser';
 import CourseRunPreparation from '@/features/running/CourseRunPreparation';
 import LiveGuidancePanel from '@/features/running/LiveGuidancePanel';
 import type { GuidanceOptions, RunGuidance } from '@/modules/running/guidance';
@@ -37,7 +38,7 @@ export default function RunScreen() {
   }, [owner]);
   useFocusEffect(useCallback(() => {
     if (!supported || owner===null) return;
-    setReady(false);setRun(null);setGuide(null);setError(''); revision.current='';
+    setError(''); revision.current='';
     setBusy(working.current);
     const request = ++generation.current;
     let polling = false, ticks = 0;
@@ -86,9 +87,13 @@ export default function RunScreen() {
     void act(async () => { await (await getStorage()).runs.setGuidanceOptions(run.id, value); if (!value.voice) guidanceNative?.silenceLive(); });
   }
   const permission=()=>void Linking.openSettings().catch(()=>setError('앱 설정을 열지 못했어요. 기기 설정에서 위치 권한을 확인해 주세요.'));
-  if(run && guide && loadedOwner===owner) return <LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPermission={permission} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/>;
+  const immersive=!!courseId||!!(run&&guide&&loadedOwner===owner);
+  const screenOptions=<Tabs.Screen options={{headerShown:!immersive,tabBarStyle:immersive?{display:'none'}:undefined}}/>;
+  if(run && guide && loadedOwner===owner) return <>{screenOptions}<LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPermission={permission} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/></>;
+  if(supported&&ready&&!run&&courseId)return <>{screenOptions}<SafeAreaView style={{flex:1}} edges={['top','bottom','left','right']}><CourseRunPreparation key={courseId} id={courseId} busy={busy} onStart={startOrResume}/>{!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}</SafeAreaView></>;
+  if(supported&&ready&&loadedOwner===owner&&!run&&!courseId)return <>{screenOptions}<SavedCourseChooser key={owner} onFreeStart={startOrResume} busy={busy}/></>;
   const last = points[points.length - 1];
-  return <SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>
+  return <>{screenOptions}<SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>{guide || courseId ? '코스 러닝' : '러닝 기록'}</Text>
     <Text style={styles.body}>GPS로 달린 경로를 이 기기에 저장해요. 인터넷 없이도 기록할 수 있어요.</Text>
     {!supported ? <Text>러닝 추적은 Android 앱에서 사용해 주세요.</Text> : <>
@@ -111,5 +116,5 @@ export default function RunScreen() {
       <RunButton title="위치 권한 설정" id="run-settings" disabled={busy} onPress={() => void Linking.openSettings().catch(() => setError('앱 설정을 열지 못했어요. 기기 설정에서 위치 권한을 확인해 주세요.'))} />
     </>}
     <Link href="/runs" style={styles.link}>러닝 기록 목록</Link>
-  </ScrollView></SafeAreaView>;
+  </ScrollView></SafeAreaView></>;
 }

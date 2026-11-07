@@ -41,3 +41,24 @@ export function createPlaceSearch(fetcher: typeof fetch = fetch) {
   };
 }
 export const searchPlaces = createPlaceSearch();
+
+/** Reverse lookup uses the existing map provider; never log the precise point or key. */
+export function createReverseGeocode(fetcher: typeof fetch = fetch) {
+  return async (origin: Origin, key: string | undefined, signal: AbortSignal): Promise<string> => {
+    if (!Number.isFinite(origin.lat) || !Number.isFinite(origin.lng) || origin.lat < 33 || origin.lat >= 39 || origin.lng < 124 || origin.lng >= 132 || !key?.trim()) throw new Error('주소를 확인할 수 없어요.');
+    const controller = new AbortController(), abort = () => controller.abort();
+    signal.addEventListener('abort', abort, { once: true });
+    if (signal.aborted) controller.abort();
+    const timer = setTimeout(abort, 10000);
+    try {
+      const params = new URLSearchParams({ key: key.trim(), language: 'ko', limit: '1', types: 'address,road' });
+      const response = await fetcher(`https://api.maptiler.com/geocoding/${origin.lng},${origin.lat}.json?${params}`, { signal: controller.signal, credentials: 'omit' });
+      if (!response.ok) throw new Error('reverse');
+      const result = parsePlaces(await response.json())[0];
+      if (!result || signal.aborted) throw new Error('reverse');
+      return result.address;
+    } catch { throw new Error('주소를 확인하지 못했어요.'); }
+    finally { clearTimeout(timer); signal.removeEventListener('abort', abort); }
+  };
+}
+export const reverseGeocode = createReverseGeocode();

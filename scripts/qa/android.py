@@ -22,6 +22,7 @@ from course_generation_figma import inputs as figma_inputs, real_course as figma
 from service_s234 import service_s234
 from service_s56 import service_s56
 from storage_readiness import wait_for_storage
+from emulator_readiness import wait_package_service
 from visual_readiness import capture_settled
 import emulator_auth
 from signup_membership import signup_membership, wait_home
@@ -136,6 +137,7 @@ build_helper()
 for script in ['course-gps-fixture.mjs', 'free-loop-fixture.mjs']:
     run(['node', 'scripts/qa/' + script])
 q.adb('root'); q.adb('wait-for-device')
+(args.output / 'package-readiness.json').write_text(json.dumps(wait_package_service(q.shell)), encoding='utf8')
 q.adb('install', '-r', '--no-streaming', str(args.apk), timeout=180)
 q.adb('install', '-r', '--no-streaming', str(emulator_auth.build(ROOT, sdk)))
 q.adb('push', str(ROOT / '.cache/running-qa/ui-dump.jar'), '/data/local/tmp/running-ui-dump.jar')

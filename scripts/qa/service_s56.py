@@ -43,7 +43,7 @@ def service_s56(q, launch):
     try:
         launch('run-result?id='+run_id)
         assert q.find(q.capture('s5-result'),'completion-first-badge') is not None
-        q.seek('공유 이미지 만들기');q.tap('공유 이미지 만들기')
+        q.seek('공유하기');q.tap('공유하기')
         q.capture('s5-card-options')
         for key in ['card-nickname','card-date']:
             assert q.find(q.capture('current'),key).get('checked')=='true'
@@ -119,7 +119,14 @@ def service_s56(q, launch):
         # Density/font changes recreate the activity; cold-launch the target only
         # after applying them so an old activity cannot consume the deep link.
         q.shell('am','force-stop',q.APP)
-        launch('run-result?id='+run_id);q.seek('공유 이미지 만들기');q.capture('s5-result-large-font')
+        launch('run-result?id='+run_id)
+        deadline=time.monotonic()+30
+        while True:
+            result=q.capture('s5-result-large-font-ready')
+            if q.find(result,'completion-first-badge') is not None: break
+            assert time.monotonic()<deadline,'Run result screen did not load after display change'
+            time.sleep(.5)
+        q.seek('공유하기');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
         (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':False,'saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
     except Exception:

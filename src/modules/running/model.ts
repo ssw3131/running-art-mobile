@@ -54,3 +54,16 @@ export function paceLabel(ms: number, distance: number) {
   return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')} /km`;
 }
 export const statusLabel: Record<RunStatus, string> = { running: '러닝 중', paused: '일시정지', interrupted: '기록 중단', completed: '완료' };
+
+/** Recent accepted fixes only: never bridge pauses, GPS gaps, or stale fixes. */
+export function currentPaceLabel(points: readonly RunPoint[], now: number, running = true) {
+  const last = points.at(-1);
+  if (!running || !last || now < last.timestamp || now - last.timestamp > MAX_GAP_MS) return '—';
+  let distance = 0, first = last;
+  for (let i = points.length - 2; i >= 0; i--) {
+    const point = points[i];
+    if (point.segment !== last.segment || point.timestamp < now - 30000 || first.timestamp <= point.timestamp || first.timestamp - point.timestamp > MAX_GAP_MS) break;
+    distance += distanceMeters(point, first); first = point;
+  }
+  return paceLabel(last.timestamp - first.timestamp, distance);
+}

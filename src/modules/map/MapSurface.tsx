@@ -10,7 +10,7 @@ import { useThemeColors } from '@/theme/ThemeProvider';
 
 const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
-function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terrainOverlay, origin, syntheticRoads, centerSelection, showTarget = true, routeColors, onRetry, onFailure }: Props & { onRetry(): void; onFailure(): void }) {
+function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terrainOverlay, origin, syntheticRoads, centerSelection, showTarget = true, routeColors, interactive = true, onUserMoveStart, onRetry, onFailure }: Props & { onRetry(): void; onFailure(): void }) {
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
   const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
@@ -68,6 +68,12 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terr
         testID="native-map"
         style={styles.fill}
         mapStyle={syntheticRoads ? syntheticStyle : styleUrl}
+        dragPan={interactive}
+        touchZoom={interactive}
+        doubleTapZoom={interactive}
+        doubleTapHoldZoom={interactive}
+        touchRotate={interactive}
+        touchPitch={interactive}
         attribution
         logo={false}
         compass
@@ -75,12 +81,14 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terr
           if (event.nativeEvent.userInteraction && !userMoving.current) {
             userMoving.current = true;
             selection.current?.onMoveStart();
+            onUserMoveStart?.();
           }
         }}
         onRegionIsChanging={(event) => {
           if (event.nativeEvent.userInteraction && !userMoving.current) {
             userMoving.current = true;
             selection.current?.onMoveStart();
+            onUserMoveStart?.();
           }
         }}
         onRegionDidChange={(event) => {

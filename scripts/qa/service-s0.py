@@ -137,17 +137,17 @@ def navigation():
     tap('tab-courses')
     before = capture('center-before-tab')
     for _ in range(15):
-        if find(before, 'route-location-loading') is None:
+        if find(before, 'route-locate').get('enabled') == 'true':
             break
         time.sleep(1)
         before = capture('center-before-tab')
-    assert find(before, 'route-location-loading') is None, 'Initial location has not settled'
-    center = find(before, 'selected-center').get('text')
+    assert find(before, 'route-locate').get('enabled') == 'true', 'Initial location has not settled'
+    center = find(before, 'course-map-preview-open').get('content-desc')
     lat, lng = map(float, re.findall(r'-?\d+\.\d+', center))
     assert 33 <= lat < 39 and 124 <= lng < 132, 'QA origin must be inside Korea before testing server generation'
     adb('emu', 'geo', 'fix', '127', '37', '0', '10')
     tap('tab-home'); tap('tab-courses')
-    assert find(capture('center-after-tab'), 'selected-center').get('text') == center
+    assert find(capture('center-after-tab'), 'course-map-preview-open').get('content-desc') == center
     seek('distance-3'); tap('distance-3'); seek('shape-star'); tap('shape-star')
     def draft(name):
         seek('distance-3')
@@ -187,10 +187,10 @@ def calculation():
     if find(tree, 'route-diagnostics').get('content-desc') == '개발 검증 정보':
         tap('route-diagnostics')
     seek('dataset-grid'); tap('dataset-grid')
-    tap('distance-7'); tap('calculate-route'); tap('tab-home'); tap('tab-courses')
+    tap('distance-7'); seek('calculate-route'); tap('calculate-route'); tap('tab-home'); tap('tab-courses')
     tree = capture('calculation-after-blur')
     assert find(tree, 'calculation-cancelled') is not None
-    tap('distance-3'); tap('calculate-route')
+    tap('distance-3'); seek('calculate-route'); tap('calculate-route')
     for _ in range(30):
         tree = capture('calculation-progress')
         if find(tree, 'calculation-done') is not None:
@@ -274,9 +274,12 @@ def course_preparation():
     adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
     tap('tab-home'); tap('home-more-courses'); tap('course-row-' + 'f'*32)
     seek('course-run'); tap('course-run')
-    assert find(capture('course-preparation-tab'), 'tab-run').get('selected') == 'true'
+    tap('run-preparation-confirm')
+    assert find(capture('course-preparation-map'), 'tab-run') is None
     for _ in range(2):
-        tap('tab-home'); tap('tab-run')
+        shell('input','keyevent','3')
+        shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///run',APP)
+        time.sleep(1)
     for _ in range(12):
         seek('run-course-start')
         tree = capture('course-preparation-return')
@@ -287,8 +290,8 @@ def course_preparation():
     else:
         raise RuntimeError('Course preparation did not recover after tab refocus')
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
-    tap('tab-home')
-    print('PASS: course detail enters retained run tab; preparation survives tab refocus without starting GPS recording')
+    tap('run-finish');tap('확인');tap('tab-home')
+    print('PASS: course detail enters full map preparation; foreground recovery preserves readiness without recording')
 
 
 def scaled():

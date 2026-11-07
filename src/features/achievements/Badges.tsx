@@ -1,3 +1,5 @@
+import { Image } from 'expo-image';
+import { badgeImages } from './badge-images';
 import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { AppText } from '@/components/ui';
@@ -18,8 +20,8 @@ export function Badges({ badges }: { badges: ShapeBadge[] }) {
         accessibilityLabel={`${name}, ${badge.count}회 완주, 첫 완주 기록 보기`}
         onPress={() => router.push({ pathname: '/runs/[id]', params: { id: badge.firstRunId } })}
         style={{ width: 96, alignItems: 'center', gap: 6, paddingVertical: 8 }}>
-        <View style={{ width: 80, height: 80, borderRadius: 40, borderWidth: 2, borderColor: c.selected, backgroundColor: c.navigation, justifyContent: 'center', alignItems: 'center' }}>
-          {icon ? <GenerationIcon name={icon} /> : badge.shape === 'custom' ? <GenerationIcon name="draw" /> : <LegacyShapeIcon shape={badge.shape} />}
+        <View style={{ width: 80, height: 80, borderRadius: 40,  backgroundColor: c.navigation, justifyContent: 'center', alignItems: 'center' }}>
+          {badgeImages[badge.shape]?<Image source={badgeImages[badge.shape]} style={{width:80,height:80}}/>:icon ? <GenerationIcon name={icon} /> : badge.shape === 'custom' ? <GenerationIcon name="draw" /> : <LegacyShapeIcon shape={badge.shape} />}
         </View>
         <AppText variant="caption" weight="bold" style={{ textAlign: 'center' }}>{name}</AppText>
         <AppText variant="caption" style={{ color: c.muted }}>{badge.count}회 완주</AppText>
