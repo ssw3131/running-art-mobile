@@ -1,4 +1,4 @@
-import { CourseError, type SavedCourse } from './model.ts';
+import { CourseError, courseName, encodeSnapshot, type CourseSnapshot, type SavedCourse } from './model.ts';
 import { courseGpx, GPX_MIME_TYPE } from './gpx.ts';
 
 export class CourseExportError extends Error {
@@ -46,4 +46,11 @@ export function createCourseExporter(services: CourseExportServices) {
       active = false;
     }
   };
+}
+
+/** A valid export document for a transient candidate; no repository write. */
+export function candidateForExport(snapshot: CourseSnapshot, name: string, now = Date.now()): SavedCourse {
+  const copy = encodeSnapshot(snapshot), data = copy.snapshot;
+  return { id: copy.hash.slice(0, 32), name: courseName(name), snapshot: data,
+    source: data.source, shape: data.shape, targetKm: data.targetKm, lengthKm: data.lengthKm, score: data.score, createdAt: now, updatedAt: now };
 }

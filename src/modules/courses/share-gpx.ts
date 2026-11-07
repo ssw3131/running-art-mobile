@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { getStorage } from '../storage/database';
-import { CourseExportError, createCourseExporter } from './export';
+import { CourseExportError, createCourseExporter, candidateForExport } from './export';
 
 let sequence = 0;
 let sharing = false;
@@ -49,9 +49,7 @@ export const shareRunCourseGpx = createCourseExporter({ ...nativeExporter, load:
 
 /** Sharing a candidate is independent of saving it and consumes no save allowance. */
 export async function shareCourseSnapshotGpx(snapshot: import('./model').CourseSnapshot, name: string, signal?: AbortSignal): Promise<'closed' | 'cancelled'> {
-  const { validateSnapshot, courseName } = await import('./model');
-  const data = validateSnapshot(snapshot), title = courseName(name), now = Date.now();
-  const exporter = createCourseExporter({ ...nativeExporter, load: async () => ({ id: 'candidate', name: title, snapshot: data,
-    source: data.source, shape: data.shape, targetKm: data.targetKm, lengthKm: data.lengthKm, score: data.score, createdAt: now, updatedAt: now }) });
+  const course = candidateForExport(snapshot, name);
+  const exporter = createCourseExporter({ ...nativeExporter, load: async () => course });
   return exporter('candidate', signal);
 }
