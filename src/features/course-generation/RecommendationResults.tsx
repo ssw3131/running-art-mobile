@@ -11,6 +11,7 @@ import { estimatedRunningMinutes, similarityPercent } from './recommendation-met
 import { DifficultyTag } from './DifficultyTag';
 import { TargetVisibilityButton } from './TargetVisibilityButton';
 import { GenerationIcon } from './GenerationIcon';
+import { useRecommendationApproach } from './use-recommendation-approach';
 
 export function RecommendationResults({ g, terrain, location, showTarget, onTarget, onEdit, onDetail, onMap, onRun, status }: {
   g: ReturnType<typeof useCourseGeneration>; terrain: ReturnType<typeof useRecommendationTerrain>; location: string; showTarget: boolean;
@@ -18,6 +19,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
 }) {
   const c = useThemeColors(), { height, fontScale } = useWindowDimensions();
   const result = g.completed, busy = g.state.kind === 'running', candidates = result?.result.candidates ?? [];
+  const walking=useRecommendationApproach(result??null,!busy);
   return <View testID="recommendation-results" style={{ flex: 1 }}>
     <View testID="recommendation-fixed-map" style={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 16, borderBottomWidth: 1, borderColor: c.divider }}>
       <View style={styles.heading}><AppText variant="caption" style={{ flex: 1 }} numberOfLines={2}>출발지 : {location}</AppText>
@@ -41,10 +43,11 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
             accessibilityState={{ selected: g.selected === index }} onPress={() => g.setSelected(index)} style={[styles.selection, { flexWrap: fontScale >= 1.4 ? 'wrap' : 'nowrap' }]}>
             <View style={[styles.rank, { backgroundColor: g.selected === index ? c.action : c.navigation }]}>
               <AppText family="roboto" weight="black" style={{ fontSize: 20, color: g.selected === index ? c.onAction : c.text }}>{similarityPercent(candidate.score.raw)}%</AppText></View>
-            <View style={{ flex: 1, minWidth: 110, gap: 3 }}>
+            <View style={{ flex: 1, minWidth: 110, gap: 6 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}><AppText style={[styles.label, { color: c.muted }]}>코스 난이도 :</AppText><DifficultyTag state={result?.liveRoads ? terrain.states[index] ?? { kind: 'loading' } : undefined} /></View>
               <AppText style={[styles.label, { color: c.muted }]}>총 러닝 거리 : <AppText weight="bold" style={styles.value}>{candidate.score.lengthKm.toFixed(2)}km</AppText></AppText>
               <AppText style={[styles.label, { color: c.muted }]}>예상 러닝 시간 : <AppText weight="bold" style={styles.value}>약 {estimatedRunningMinutes(candidate.score.lengthKm)}분</AppText></AppText>
+              <AppText style={[styles.label,{color:c.muted}]}>코스까지 이동 거리 : <AppText weight="bold" style={styles.value}>{walking[index]?.kind==='ready'?`${(walking[index].distanceM!/1000).toFixed(2)}km`:walking[index]?.kind==='error'?'확인 불가':'조회 중'}</AppText></AppText>
             </View>
           </Pressable>
           <Pressable testID={`candidate-detail-${index}`} accessibilityRole="button" accessibilityLabel={`${index + 1}번 추천 코스 상세보기`} onPress={() => onDetail(index)} style={styles.detail}>
@@ -66,8 +69,8 @@ const styles = StyleSheet.create({
   heading: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   mapOpen: { position: 'absolute', right: 24, bottom: 18, width: 46, height: 46, borderRadius: 23, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   list: { padding: 0, gap: 12 },
-  card: { minHeight: 100, flexDirection: 'row', alignItems: 'center', borderRadius: 14, borderWidth: 1.5, overflow: 'hidden' },
-  selection: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 12, paddingVertical: 12 },
+  card: { minHeight: 120, flexDirection: 'row', alignItems: 'center', borderRadius: 14, borderWidth: 1.5, overflow: 'hidden' },
+  selection: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 16, paddingLeft: 16, paddingVertical: 16 },
   rank: { minWidth: 56, minHeight: 56, padding: 4, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  label: { fontSize: 13, lineHeight: 20 }, value: { fontSize: 15, lineHeight: 20 }, detail: { width: 64, minHeight: 100, flexDirection: 'row', gap: 2, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
+  label: { fontSize: 13, lineHeight: 18 }, value: { fontSize: 14, lineHeight: 18 }, detail: { width: 60, minHeight: 120, flexDirection: 'row', gap: 2, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
 });

@@ -12,7 +12,8 @@ import type { ShapeId } from '@/modules/route-engine/types';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { radius } from '@/theme/tokens';
 import { candidateDrafts, centerLabel, sameConditions, type GenerationConditions } from './model';
-import { confirmResetGeneration } from './reset-generation';
+import { RegenerationSheet } from './RegenerationSheet';
+import { consumeRegeneration } from './regeneration-request';
 import { Image } from 'expo-image';
 import { usePointAddress } from './use-point-address';
 import { RecommendationResults } from './RecommendationResults';
@@ -42,6 +43,7 @@ export default function CourseGenerationScreen() {
   const scroll = useRef<ScrollView>(null), generateButton = useRef<View>(null);
   const [confirmation, setConfirmation] = useState<GenerationConditions | null>(null);
   const [regenerating, setRegenerating] = useState(false);
+  const [resetOpen,setResetOpen]=useState(false);
   const [place, setPlace] = useState<{ address: string; lat: number; lng: number } | null>(null);
   const generationRef = useRef(g);
   const placeRef = useRef(setPlace);
@@ -61,7 +63,7 @@ export default function CourseGenerationScreen() {
   const addressOrigin = choosing ? current.origin : result?.origin ?? current.origin;
   const pointAddress = usePointAddress(addressOrigin, place && Math.abs(place.lat-addressOrigin.lat)<0.00001 && Math.abs(place.lng-addressOrigin.lng)<0.00001 ? place.address : '');
   const locationLabel = (origin: {lat: number; lng: number}) => place && Math.abs(place.lat-origin.lat)<0.00001 && Math.abs(place.lng-origin.lng)<0.00001 ? place.address : pointAddress.label;
-  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, []));
+  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false);setResetOpen(false); }, []));
   useFocusEffect(useCallback(() => {
     const picked = consumeCourseLocation();
     if (!picked) return;
@@ -73,11 +75,15 @@ export default function CourseGenerationScreen() {
   useFocusEffect(useCallback(() => {
     if (!homeParams.resetRequest || resetRequest.current === homeParams.resetRequest) return;
     resetRequest.current = homeParams.resetRequest;
-    generationRef.current.reset(); generationRef.current.setTab('conditions');
-  }, [homeParams.resetRequest]));
+    const agreed=consumeRegeneration(homeParams.resetRequest,auth.account?.id??'guest'),state=generationRef.current;
+    if(!agreed){state.reset();state.setTab('conditions');return;}
+    state.setTargetKm(agreed.targetKm);state.setShape(agreed.shape);state.setCustomTemplate(agreed.customTemplate??null);
+    state.center.choose(agreed.origin);state.setFixedCenter(true);state.setValidCenter(true);state.setMapMoving(false);
+    state.start(agreed);
+  }, [homeParams.resetRequest,auth.account?.id]));
   const [draftOwner,setDraftOwner]=useState(auth.account?.id);
   if(draftOwner!==auth.account?.id){
-    setDraftOwner(auth.account?.id);setConfirmation(null);setImageOpen(false);setPlace(null);
+    setDraftOwner(auth.account?.id);setConfirmation(null);setImageOpen(false);setPlace(null);setResetOpen(false);
   }
   const chooseTab = (tab: 'conditions' | 'results') => { g.setTab(tab); };
   useEffect(() => {
@@ -112,7 +118,7 @@ export default function CourseGenerationScreen() {
   const detail = (run = false, index = g.selected, mapOnly = false) => {
     if (!result) return;
     try {
-      const draft = candidateDrafts.put(courseFromCalculation(result, index), index + 1, auth.account?.id ?? 'guest');
+      const draft = candidateDrafts.put(courseFromCalculation(result, index), index + 1, auth.account?.id ?? 'guest',result.result.candidates.length);
       if (mapOnly) { router.push({ pathname: '/course-map', params: { draft, target: showTarget ? '1' : '0' } }); return; }
       const saved = candidateDrafts.get(draft, auth.account?.id ?? 'guest')?.savedId;
       if (run && saved) { openServiceTab({ pathname: '/run', params: { courseId: saved } }); return; }
@@ -182,11 +188,11 @@ export default function CourseGenerationScreen() {
         <View style={styles.shapeActions}>
           <Button variant="outline" testID="shape-custom" label="도형 직접 그리기" leading={<GenerationIcon name="draw" />}
             contentStyle={[styles.shapeActionButton, { borderColor: c.outline, backgroundColor: c.background === '#FFFFFF' ? '#FCFCFC' : c.surface }]}
-            labelStyle={{ fontSize: 20, lineHeight: 29, color: c.background === '#FFFFFF' ? '#1E1E1E' : c.text }}
+            labelStyle={{ fontSize: 18, lineHeight: 26, color: c.background === '#FFFFFF' ? '#1E1E1E' : c.text }}
             onPress={() => { g.changeSearch(); g.setDrawingOpen(true); }} />
           <Button variant="outline" testID="shape-image" label="도형 이미지 업로드하기" leading={<GenerationIcon name="image" />}
             contentStyle={[styles.shapeActionButton, { borderColor: c.outline, backgroundColor: c.background === '#FFFFFF' ? '#FCFCFC' : c.surface }]}
-            labelStyle={{ fontSize: 20, lineHeight: 29, color: c.background === '#FFFFFF' ? '#1E1E1E' : c.text }}
+            labelStyle={{ fontSize: 18, lineHeight: 26, color: c.background === '#FFFFFF' ? '#1E1E1E' : c.text }}
             onPress={() => { g.changeSearch(); setImageOpen(true); }} />
         </View>
         {g.shape === 'custom' && g.customTemplate && <View testID="selected-custom-shape" style={styles.row}>
@@ -198,8 +204,9 @@ export default function CourseGenerationScreen() {
         </View>
       </>}
     </ScrollView> : <RecommendationResults g={g} terrain={terrain} location={locationLabel(result?.origin ?? current.origin)}
-      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => confirmResetGeneration(() => { candidateDrafts.discardUnsaved(auth.account?.id ?? 'guest'); g.reset(); chooseTab('conditions'); })} onDetail={index => detail(false, index)}
+      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => setResetOpen(true)} onDetail={index => detail(false, index)}
       onMap={() => detail(false, g.selected, true)} onRun={() => detail(true)} status={status} />}
+    <RegenerationSheet visible={resetOpen} count={result?.result.candidates.length??0} onClose={()=>setResetOpen(false)} onConfirm={()=>{setResetOpen(false);if(resultConditions&&!busy){candidateDrafts.discardUnsaved(auth.account?.id??'guest');g.start(resultConditions);}}}/>
     <GenerationConfirmationSheet conditions={confirmation} location={confirmation ? locationLabel(confirmation.origin) : ''}
       regenerating={regenerating} onClose={() => setConfirmation(null)} onConfirm={confirm} returnFocusRef={generateButton} />
     {g.drawingOpen && <DrawingEditor initial={g.customTemplate} onCancel={() => g.setDrawingOpen(false)}
@@ -217,7 +224,7 @@ const styles = StyleSheet.create({
   mapLocateTarget: { position: 'absolute', right: 25, top: 20, width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   mapLocateButton: { width: 46, height: 46, borderRadius: 23, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   shapeActions: { marginTop: 38, gap: 15 },
-  shapeActionButton: { minHeight: 60, borderRadius: 10, borderWidth: 1, justifyContent: 'flex-start', paddingHorizontal: 19, paddingVertical: 10, gap: 14 },
+  shapeActionButton: { minHeight: 40, borderRadius: 10, borderWidth: 1, justifyContent: 'flex-start', paddingHorizontal: 19, paddingVertical: 7, gap: 14 },
   locationButton: { minHeight: 50, borderRadius: 10, borderWidth: 1, gap: 14, paddingVertical: 10 },
   generateAction: { marginTop: 38, gap: 14 }, chargeNotice: { textAlign: 'center', lineHeight: 20 },
   section: { marginTop: 20 }, sectionBox: { padding: 16, gap: 12, borderRadius: 16 },

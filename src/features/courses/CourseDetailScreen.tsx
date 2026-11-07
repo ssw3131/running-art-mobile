@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Alert, ToastAndroid, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { AppText, Button } from '@/components/ui';
@@ -18,7 +18,8 @@ import { TargetVisibilityButton } from '@/features/course-generation/TargetVisib
 import { CourseInformation, courseDuration } from './CourseInformation';
 import { GenerationIcon } from '@/features/course-generation/GenerationIcon';
 import { usePointAddress } from '@/features/course-generation/use-point-address';
-import { confirmResetGeneration } from '@/features/course-generation/reset-generation';
+import { RegenerationSheet } from '@/features/course-generation/RegenerationSheet';
+import { requestRegeneration } from '@/features/course-generation/regeneration-request';
 import { useTerrain } from '@/features/terrain/use-terrain';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
@@ -34,6 +35,7 @@ export default function CourseDetailScreen() {
   const [data,setData]=useState<Detail|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
   const [editing,setEditing]=useState(false),[name,setName]=useState('');
   const [showTarget,setShowTarget]=useState(true);
+  const [resetOpen,setResetOpen]=useState(false);
   const revision=useRef(0),working=useRef(false),exporting=useRef<AbortController|null>(null);
   const scrollY=useRef(0),keyboardTop=useRef<number|null>(null);
   const [keyboardInset,setKeyboardInset]=useState(0);
@@ -82,7 +84,7 @@ export default function CourseDetailScreen() {
       if(ticket===revision.current&&(authentication.getSnapshot().account?.id??'')===owner){setData({owner,routeKey,name:nameValue,snapshot,savedId,last,activeId:active?.id??null});setName(nameValue);}
     }catch(cause){if(ticket===revision.current)setError(cause instanceof Error?cause.message:'코스를 확인하지 못했어요.');}
   },[draft,owner,params.id,params.runId,routeKey]);
-  useFocusEffect(useCallback(()=>{void refresh();return()=>{revision.current++;exporting.current?.abort();};},[refresh]));
+  useFocusEffect(useCallback(()=>{void refresh();return()=>{revision.current++;exporting.current?.abort();setResetOpen(false);};},[refresh]));
   async function mutate(task:(check:()=>void)=>Promise<void>) {
     if(working.current||!current)return;working.current=true;setBusy(true);setError('');setNotice('');
     const ticket=revision.current,captured=owner;
@@ -94,10 +96,10 @@ export default function CourseDetailScreen() {
     if(current!.savedId)return current!.savedId;
     const db=await getStorage();check();const result=await db.courses.save(current!.snapshot,name);check();
     if(draft)candidateDrafts.edit(draft.id,owner,{name,savedId:result.id});
-    setData({...current!,name,savedId:result.id});setEditing(false);setNotice(result.created?'코스를 저장했어요.':'이미 저장한 코스를 열었어요.');
+    setData({...current!,name,savedId:result.id});setEditing(false);
     return result.id;
   };
-  const save=()=>void mutate(async check=>{await ensureSaved(check);});
+  const save=()=>void mutate(async check=>{await ensureSaved(check);check();ToastAndroid.show('해당 코스가 코스 보관함에 저장 되었습니다.',ToastAndroid.LONG);});
   const rename=()=>void mutate(async check=>{
     if(current!.savedId){const db=await getStorage();check();await db.courses.rename(current!.savedId,name);check();}
     if(draft)candidateDrafts.edit(draft.id,owner,{name});setData({...current!,name});setEditing(false);
@@ -127,12 +129,16 @@ export default function CourseDetailScreen() {
     router.push({pathname:'/course-map',params:{draft:id,target:showTarget?'1':'0'}});
   };
   const openTerrain=()=>{if(!current)return;const id=candidateDrafts.put(current.snapshot,draft?.rank??0,owner);router.push({pathname:'/course-terrain',params:{draft:id}});};
-  const resetGeneration=()=>confirmResetGeneration(()=>{
+  const resetGeneration=()=>setResetOpen(true);
+  const regenerate=()=>{if(!current)return;setResetOpen(false);
+    const snapshot=current.snapshot;
+    const request=requestRegeneration(owner,{origin:snapshot.origin,shape:snapshot.shape,targetKm:snapshot.targetKm,customTemplate:snapshot.customTemplate});
     candidateDrafts.discardUnsaved(owner);
-    openServiceTab({pathname:'/route-lab',params:{resetRequest:String(Date.now())}});
-  });
+    openServiceTab({pathname:'/route-lab',params:{resetRequest:request}});
+  };
   const continuation=courseContinuation(current?.last??null,current?.activeId??null);
   return <KeyboardAvoidingView style={{flex:1,backgroundColor:c.background}} behavior={Platform.OS==='ios'?'padding':undefined}>
+    <RegenerationSheet visible={resetOpen} count={draft?.candidateCount??Math.max(1,candidateDrafts.count(owner))} onClose={()=>setResetOpen(false)} onConfirm={regenerate}/>
     <ScrollView ref={scrollRef} onContentSizeChange={()=>{if(Keyboard.isVisible())revealName();}} onScroll={event=>{scrollY.current=event.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} onLayout={()=>{if(Keyboard.isVisible())revealName();}} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30+keyboardInset,gap:24}}>
       {!current&&!error&&<ActivityIndicator accessibilityLabel="코스 불러오는 중" color={c.action}/>}
       {!current&&!!error&&<View style={{padding:24,gap:12}}><AppText accessibilityRole="alert" testID="course-detail-error">{error}</AppText><Button variant="outline" label="다시 확인" onPress={()=>void refresh()}/></View>}
@@ -161,7 +167,6 @@ export default function CourseDetailScreen() {
           {!!notice&&<AppText testID="course-save-notice" accessibilityLiveRegion="polite">{notice}</AppText>}
           {!!error&&<AppText testID="course-detail-error" accessibilityRole="alert" accessibilityLiveRegion="assertive" style={{color:c.danger}}>{error}</AppText>}
           <View style={{gap:10}}>
-            {!current.savedId&&<TextInput ref={saveInput} onFocus={focusName} accessibilityLabel="저장할 코스 이름" testID="course-save-name" value={name} onChangeText={value=>{setName(value);if(draft)candidateDrafts.edit(draft.id,owner,{name:value});}} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/>}
             <View style={{flexDirection:'row',gap:6}}>
               <Button testID="course-save" variant="outline" label={current.savedId?'저장된 코스':'코스 저장하기'} disabled={busy} onPress={save} style={{flex:1}} contentStyle={{borderWidth:1}} labelStyle={{fontSize:16,color:c.muted}}/>
               <Button testID="course-export-gpx" variant="outline" label="GPX파일 다운" disabled={busy} onPress={exportGpx} style={{flex:1}} contentStyle={{borderWidth:1}} labelStyle={{fontSize:16,color:c.muted}}/>

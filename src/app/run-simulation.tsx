@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { AppState, View } from 'react-native';
+import { Alert, AppState, BackHandler, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppModal, AppText, Button } from '@/components/ui';
 import { simulationSettings } from '@/features/running/simulation-settings';
@@ -14,11 +14,15 @@ import { createRunningSimulation } from '@/modules/running/simulation';
 import { planApproach } from '@/modules/running/navigation';
 import { defaultGuidanceOptions, validateRunCourse, type GuidanceOptions, type RunCourse } from '@/modules/running/guidance';
 import type { Run } from '@/modules/running/model';
+import { runFinishDestination } from '@/modules/running/finish-destination';
+import { openServiceTab } from '@/features/service/open-service-tab';
 
 export default function RunSimulationScreen(){
   const {courseId}=useLocalSearchParams<{courseId?:string}>(),auth=useAuth(),owner=auth.account?.id,insets=useSafeAreaInsets();
   const session=useRef<ReturnType<typeof createRunningSimulation>|null>(null),ticket=useRef(0),ownsActivity=useRef(false),focused=useRef(false),settingsToken=useRef('');
   const [settingsId,setSettingsId]=useState(''),[loadedKey,setLoadedKey]=useState('');
+  const recordId=useRef(''),savingRef=useRef(false),finishedRef=useRef(false),finishRef=useRef<()=>void>(()=>{});
+  const [saving,setSaving]=useState(false);
   const sessionKey=`${owner??''}/${courseId??''}`;
   const [active,setActive]=useState<ReturnType<typeof createRunningSimulation>|null>(null),[retry,setRetry]=useState(0),[planning,setPlanning]=useState(false);
   const [course,setCourse]=useState<RunCourse|null>(null),[state,setState]=useState<ReturnType<ReturnType<typeof createRunningSimulation>['snapshot']>|null>(null),[error,setError]=useState(''),[settings,setSettings]=useState(false),[options,setOptions]=useState<GuidanceOptions>({...defaultGuidanceOptions,voice:false,background:false});
@@ -31,13 +35,35 @@ export default function RunSimulationScreen(){
       const saved=await db.courses.get(courseId??'');
       if(closed||authentication.getSnapshot().account?.id!==owner)return;
       const value=validateRunCourse({id:saved.id,name:saved.name,snapshot:saved.snapshot});
+      recordId.current=await db.runs.newSimulationId();savingRef.current=false;finishedRef.current=false;
+      if(closed||authentication.getSnapshot().account?.id!==owner)return;
       guidanceActivity.set(true);ownsActivity.current=true;setLoadedKey(sessionKey);setCourse(value);session.current=createRunningSimulation(value.snapshot.route);setActive(session.current);const token=simulationSettings.create(owner??'',{...defaultGuidanceOptions,voice:false,background:false});settingsToken.current=token;setSettingsId(token);setState(session.current.play(clock()));
     }catch(cause){if(!closed)setError(cause instanceof Error?cause.message:'시뮬레이션을 열지 못했어요.');}})();
     const timer=setInterval(()=>{if(!closed&&focused.current&&AppState.currentState==='active'&&session.current?.snapshot().playing)setState(session.current.update(clock()));},100);
     const lifecycle=AppState.addEventListener('change',value=>{if(value!=='active'&&session.current)setState(session.current.pause(clock()));});
     return()=>{closed=true;simulationSettings.clear(settingsToken.current);ticket.current=current+1;clearInterval(timer);lifecycle.remove();session.current?.pause(clock());session.current=null;if(ownsActivity.current){guidanceActivity.set(false);ownsActivity.current=false;}};
   },[courseId,owner,sessionKey]);
-  useFocusEffect(useCallback(()=>{if(!courseId)return;focused.current=true;const prefs=simulationSettings.get(settingsToken.current,owner??'');if(prefs?.ended)router.back();else if(prefs)setOptions(prefs.options);return()=>{focused.current=false;if(session.current)setState(session.current.pause(clock()));};},[courseId,owner]));
+  const persist=useCallback(async()=>{
+    if(savingRef.current||finishedRef.current||!session.current||!recordId.current||!courseId)return;
+    savingRef.current=true;setSaving(true);setError('');
+    const current=session.current,request=recordId.current;
+    setState(current.pause(clock()));
+    try{
+      const db=await getStorage(),recording=current.recording();
+      const saved=await db.runs.saveSimulation({id:request,courseId,...recording},owner??'');
+      if(session.current!==current||authentication.getSnapshot().account?.id!==owner)return;
+      finishedRef.current=true;
+      const destination=runFinishDestination(saved);
+      if(destination.pathname==='/run-result')router.replace(destination);else openServiceTab(destination);
+    }catch(cause){if(session.current===current)setError(cause instanceof Error?cause.message:'기록을 저장하지 못했어요. 종료 버튼으로 다시 시도해 주세요.');}
+    finally{savingRef.current=false;setSaving(false);}
+  },[courseId,owner]);
+  useEffect(()=>{finishRef.current=()=>{void persist();};},[persist]);
+  const confirmFinish=()=>{if(savingRef.current)return;Alert.alert('러닝을 마칠까요?','시뮬레이션 기록을 저장하고 종료해요.',[{text:'취소',style:'cancel'},{text:'종료',onPress:()=>void persist()}]);};
+  useEffect(()=>{if(state?.status==='arrived')void persist();},[state?.status,persist]);
+  useFocusEffect(useCallback(()=>{if(!courseId)return;focused.current=true;const prefs=simulationSettings.get(settingsToken.current,owner??'');if(prefs?.ended)finishRef.current();else if(prefs)setOptions(prefs.options);
+    const back=BackHandler.addEventListener('hardwareBackPress',()=>{Alert.alert('러닝을 마칠까요?','시뮬레이션 기록을 저장하고 종료해요.',[{text:'취소',style:'cancel'},{text:'종료',onPress:()=>finishRef.current()}]);return true;});
+    return()=>{back.remove();focused.current=false;if(session.current)setState(session.current.pause(clock()));};},[courseId,owner]));
   const spoken=useRef(new Set<string>()),lastSpeech=useRef(-Infinity);
   useEffect(()=>{spoken.current.clear();lastSpeech.current=-Infinity;return()=>{guidanceNative?.silenceLive();};},[active]);
   useEffect(()=>{
@@ -64,13 +90,13 @@ export default function RunSimulationScreen(){
   const run:Run={id:'simulation',status:state.playing||planning?'running':'paused',startedAt:0,endedAt:null,activeMs:state.elapsedMs,checkpointAt:state.elapsedMs,distanceM:state.distanceM,pointCount:0,rejectedCount:0,lastTimestamp:state.elapsedMs,segment:0,breakPending:0,resumedAt:0,reason:null};
   const command=(value:'depart'|'return'|'normal')=>{active.command(value);setState(active.play(clock()));};
   return <View style={{flex:1,marginTop:-insets.top}}>
-    <LiveGuidancePanel headerAccessory={<View style={{marginHorizontal:8,backgroundColor:'#FFF0E8',borderRadius:10,paddingHorizontal:8,paddingVertical:4,gap:2}}><AppText style={{fontSize:11,color:'#9C4308',textAlign:'center'}}>{state.status==='arrived'?'시뮬레이션 완주 · 실제 기록 저장 없음':`시뮬레이션 ${state.speed}배속 · 실제 기록 저장 없음`}</AppText><View style={{flexDirection:'row',gap:8,justifyContent:'center'}}>{planning&&<Button compact variant="outline" label="종료" onPress={()=>router.back()}/>}<Button compact label="이탈" testID="running-simulation-depart" disabled={planning} onPress={()=>command('depart')}/><Button compact label="복귀" testID="running-simulation-return" disabled={planning} onPress={()=>command('return')}/><Button compact variant="outline" label="배속·다시 시작" disabled={planning} onPress={()=>{setState(active.pause(clock()));setSettings(true);}}/></View></View>} onRetryNavigation={()=>setRetry(n=>n+1)} run={run} guide={{course,checkpoint:active.checkpoint(),options,state}} points={[]} now={state.elapsedMs} busy={planning} error={error} simulationState={state} simulationPace={state.playing&&state.status!=='weak'?'6:00 /km':'—'} onOptions={setOptions} onSettings={()=>{setState(active.pause(clock()));simulationSettings.set(settingsId,owner??'',options);router.push({pathname:'/run-settings',params:{simulation:settingsId}});}} onPauseResume={()=>setState(state.playing?active.pause(clock()):active.play(clock()))} onFinish={()=>router.back()} onPermission={()=>{}}/>
+    <LiveGuidancePanel headerAccessory={<View style={{marginHorizontal:8,backgroundColor:'#FFF0E8',borderRadius:10,paddingHorizontal:8,paddingVertical:4,gap:2}}><AppText style={{fontSize:11,color:'#9C4308',textAlign:'center'}}>{saving?'시뮬레이션 기록 저장 중…':`시뮬레이션 ${state.speed}배속 · 모의 기록 저장`}</AppText><View style={{flexDirection:'row',gap:8,justifyContent:'center'}}>{planning&&<Button compact variant="outline" label="종료" onPress={confirmFinish}/>}<Button compact label="이탈" testID="running-simulation-depart" disabled={planning||saving} onPress={()=>command('depart')}/><Button compact label="복귀" testID="running-simulation-return" disabled={planning||saving} onPress={()=>command('return')}/><Button compact variant="outline" label="배속·다시 시작" disabled={planning||saving} onPress={()=>{setState(active.pause(clock()));setSettings(true);}}/></View></View>} onRetryNavigation={()=>setRetry(n=>n+1)} run={run} guide={{course,checkpoint:active.checkpoint(),options,state}} points={[]} now={state.elapsedMs} busy={planning||saving} error={error} simulationState={state} simulationPace={state.playing&&state.status!=='weak'?'6:00 /km':'—'} onOptions={setOptions} onSettings={()=>{setState(active.pause(clock()));simulationSettings.set(settingsId,owner??'',options);router.push({pathname:'/run-settings',params:{simulation:settingsId}});}} onPauseResume={()=>setState(state.playing?active.pause(clock()):active.play(clock()))} onFinish={confirmFinish} onPermission={()=>{}}/>
 
     <AppModal visible={settings} title="러닝 시뮬레이션" onClose={()=>setSettings(false)} footer={<Button compact label="계속 보기" onPress={()=>{setSettings(false);setState(active.play(clock()));}}/>}>
       <AppText>기준 페이스 6분/km의 가상 위치를 실제 러닝 안내 로직에 전달해요. 지도·집중 모드와 이탈·복귀를 시험할 수 있어요.</AppText>
       <View style={{flexDirection:'row',gap:8}}>{[5,10,30].map(speed=><Button key={speed} compact label={`${speed}배속`} variant={state.speed===speed?'primary':'outline'} onPress={()=>setState(active.speed(speed,clock()))}/>)}</View>
-      <Button compact variant="outline" label="처음부터 다시 시작" onPress={()=>{session.current=createRunningSimulation(course.snapshot.route);setState(session.current.snapshot());setSettings(false);setActive(session.current);setState(session.current.play(clock()));}}/>
-      <Button compact variant="outline" label="시뮬레이션 종료" onPress={()=>router.back()}/>
+      <Button compact variant="outline" label="처음부터 다시 시작" onPress={()=>{if(savingRef.current)return;session.current=createRunningSimulation(course.snapshot.route);setState(session.current.snapshot());setSettings(false);setActive(session.current);setState(session.current.play(clock()));}}/>
+      <Button compact variant="outline" label="시뮬레이션 종료" onPress={confirmFinish}/>
     </AppModal>
   </View>;
 }

@@ -19,7 +19,7 @@ export function cardContent(run: Run, course: CourseSnapshot | null, points: rea
   const stride = Math.max(1, Math.ceil(paths.reduce((sum, path) => sum + path.length, 0) / 2000));
   const previewPaths = paths.map(path => path.filter((_, index) => index === 0 || index === path.length - 1 || index % stride === 0));
   return {
-    title: course ? `${courseShapes[course.shape]} 코스` : '오늘의 러닝',
+    title: `${run.reason?.startsWith('[시뮬레이션]')?'시뮬레이션 · ':''}${course ? `${courseShapes[course.shape]} 코스` : '오늘의 러닝'}`,
     outcome: run.courseOutcome === 'finished' && course ? '완주를 축하합니다.' : '달린 길을 기록했어요.',
     nickname: options.nickname ? [...name.normalize('NFC').replace(/[\p{Cc}\p{Cf}]/gu, '').trim()].slice(0, 20).join('') || '러너' : null,
     date: options.date ? `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일` : null,

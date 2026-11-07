@@ -102,10 +102,10 @@ test('UI-GEN-05: zero candidates and failure remain explicit and allow editing',
   await render(<CourseGenerationScreen />);
   expect(screen.getByTestId('generation-empty')).toBeVisible();
   expect(screen.queryByTestId('candidate-detail-0')).toBeNull();
-  const alert = jest.spyOn(Alert, 'alert');
   await fireEvent.press(screen.getByTestId('generation-edit'));
-  alert.mock.lastCall?.[2]?.find(x => x.text === '확인')?.onPress?.(); alert.mockRestore();
-  expect(mockG.setTab).toHaveBeenCalledWith('conditions');
+  expect(mockG.start).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByText('취소'));
+  expect(mockG.start).not.toHaveBeenCalled();
   mockG.tab = 'results'; mockG.completed = null; mockG.state = { kind: 'error', message: '도로 자료를 받을 수 없어요.' };
   await screen.rerender(<CourseGenerationScreen />);
   expect(screen.getByTestId('calculation-error')).toHaveTextContent('도로 자료를 받을 수 없어요.');
@@ -122,16 +122,20 @@ test('UI-GEN-06: a condition changed while confirmation was open must be confirm
   expect(screen.getByText('조건이 바뀌었어요. 현재 조건을 다시 확인해 주세요.')).toBeVisible();
 });
 
-test('UI-GEN-07: reset returns to conditions without generating or discarding the result', async () => {
+test('UI-GEN-07: regeneration confirmation preserves results on cancel and uses the original conditions once confirmed', async () => {
   mockG.tab = 'results'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
   const result = mockG.completed;
   await render(<CourseGenerationScreen />);
-  const alert = jest.spyOn(Alert, 'alert');
   await fireEvent.press(screen.getByTestId('generation-edit'));
-  alert.mock.lastCall?.[2]?.find(x => x.text === '확인')?.onPress?.(); alert.mockRestore();
-  expect(mockG.setTab).toHaveBeenCalledWith('conditions');
+  expect(mockG.start).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByText('취소'));
+  expect(mockG.start).not.toHaveBeenCalled();
   expect(mockG.start).not.toHaveBeenCalled();
   expect(mockG.completed).toBe(result);
+  await fireEvent.press(screen.getByTestId('generation-edit'));
+  await fireEvent.press(screen.getByTestId('regeneration-confirm'));
+  expect(mockG.start).toHaveBeenCalledTimes(1);
+  expect(mockG.start).toHaveBeenCalledWith({origin:result.origin,...result.options});
 });
 
 test('UI-GEN-08: real-map updates preserve place input and an open distance draft', async () => {

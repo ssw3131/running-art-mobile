@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import CourseDetailScreen from '../../src/features/courses/CourseDetailScreen';
 import { CourseError } from '../../src/modules/courses/model';
@@ -16,16 +16,19 @@ jest.mock('../../src/features/service/open-service-tab',()=>({openServiceTab:(..
 jest.mock('../../src/modules/map/MapSurface',()=>()=>null);
 jest.mock('../../src/features/terrain/use-terrain',()=>({useTerrain:()=>({state:{status:'idle',profile:null}})}));
 jest.mock('../../src/features/terrain/TerrainPanel',()=>()=>null);
+jest.mock('../../src/features/usage/use-usage',()=>({useUsage:()=>({data:{generation:{used:2,total:5}},error:'',refresh:jest.fn()})}));
 beforeEach(()=>{
- candidateDrafts.clear();
+ candidateDrafts.clear();jest.spyOn(ToastAndroid,'show').mockImplementation(()=>{});
  mockParams={id:'a'.repeat(32)};mockLast=null;mockActive=null;mockSaved='a'.repeat(32);
  mockGet.mockReset().mockResolvedValue({id:mockSaved,name:'저장 하트',snapshot});mockSave.mockReset().mockResolvedValue({id:'b'.repeat(32),created:true});mockNavigate.mockReset();mockExportSnapshot.mockReset().mockResolvedValue('closed');
 });
 test('unsaved candidate name survives leaving detail and reopening without using a save',async()=>{
  mockSaved=null;const id=candidateDrafts.put(snapshot as any,0,'owner');mockParams={draft:id};
- const view=await render(<CourseDetailScreen/>);await waitFor(()=>screen.getByTestId('course-save-name'));
- await fireEvent.changeText(screen.getByTestId('course-save-name'),'내 새 코스');await view.unmount();
- await render(<CourseDetailScreen/>);await waitFor(()=>expect(screen.getByTestId('course-save-name').props.value).toBe('내 새 코스'));
+ const view=await render(<CourseDetailScreen/>);await waitFor(()=>screen.getByTestId('course-edit-name'));
+ expect(screen.queryByTestId('course-save-name')).toBeNull();
+ await fireEvent.press(screen.getByTestId('course-edit-name'));
+ await fireEvent.changeText(screen.getByTestId('course-rename-input'),'내 새 코스');await fireEvent.press(screen.getByText('이름 적용'));await view.unmount();
+ await render(<CourseDetailScreen/>);await waitFor(()=>expect(screen.getByTestId('course-title')).toHaveTextContent('내 새 코스'));
  expect(mockSave).not.toHaveBeenCalled();
 });
 test('saved course starts without saving again, unfinished active session returns to that run',async()=>{
@@ -51,6 +54,7 @@ test('deleted original opens immutable copy without saving; explicit save switch
  expect(mockSave).not.toHaveBeenCalled();expect(screen.getByTestId('course-run')).toBeEnabled();
  await fireEvent.press(screen.getByTestId('course-save'));await waitFor(()=>expect(screen.getByTestId('course-run')).toBeTruthy());
  expect(mockSave).toHaveBeenCalledTimes(1);expect(screen.getByTestId('course-save')).toHaveTextContent('저장된 코스');
+ expect(ToastAndroid.show).toHaveBeenCalledWith('해당 코스가 코스 보관함에 저장 되었습니다.',ToastAndroid.LONG);
 });
 
 test('unsaved run saves once then navigates; a failed save never starts running',async()=>{
@@ -74,24 +78,24 @@ test('unsaved GPX export does not save or spend allowance',async()=>{
  await waitFor(()=>expect(mockExportSnapshot).toHaveBeenCalledWith(snapshot,'하트 코스',expect.anything()));expect(mockSave).not.toHaveBeenCalled();
 });
 test('reset warning cancels safely and confirms clearing only transient unsaved candidates',async()=>{
- const alert=jest.spyOn(Alert,'alert');mockSaved=null;const unsaved=candidateDrafts.put(snapshot as any,1,'owner');mockParams={draft:unsaved};
+ mockSaved=null;const unsaved=candidateDrafts.put(snapshot as any,1,'owner');mockParams={draft:unsaved};
  const saved=candidateDrafts.put({...snapshot,targetKm:4} as any,2,'owner');candidateDrafts.edit(saved,'owner',{savedId:'saved'});
  await render(<CourseDetailScreen/>);await waitFor(()=>screen.getByTestId('course-reset'));
  await fireEvent.press(screen.getByTestId('course-reset'));
- const buttons=alert.mock.lastCall?.[2];expect(alert.mock.lastCall?.[1]).toBe('현재 생성된 코스중 저장하지 않은 코스는 삭제됩니다.');
+ expect(screen.getByText('추천 코스를 삭제하고\n재생성할까요?')).toBeVisible();
  expect(candidateDrafts.get(unsaved,'owner')).not.toBeNull();expect(mockNavigate).not.toHaveBeenCalled();
- await buttons?.find(x=>x.text==='확인')?.onPress?.();
- expect(candidateDrafts.get(unsaved,'owner')).toBeNull();expect(candidateDrafts.get(saved,'owner')).not.toBeNull();expect(mockSave).not.toHaveBeenCalled();alert.mockRestore();
+ await fireEvent.press(screen.getByText('취소'));
+ expect(candidateDrafts.get(unsaved,'owner')).not.toBeNull();
+ await fireEvent.press(screen.getByTestId('course-reset'));
+ await fireEvent.press(screen.getByTestId('regeneration-confirm'));
+ expect(candidateDrafts.get(unsaved,'owner')).toBeNull();expect(candidateDrafts.get(saved,'owner')).not.toBeNull();expect(mockSave).not.toHaveBeenCalled();
 });
 
-test('difficulty criteria expand locally and terrain opens the same private snapshot without saving',async()=>{
+test('difficulty criteria stay expanded and terrain opens the same private snapshot without saving',async()=>{
  const {router}=require('expo-router');router.push.mockClear();
  await render(<CourseDetailScreen/>);await waitFor(()=>screen.getByTestId('course-terrain-open'));
- expect(screen.queryByTestId('course-difficulty-content')).toBeNull();
- await fireEvent.press(screen.getByTestId('course-difficulty-criteria'));
- expect(screen.getByText('경사 기준 난이도')).toBeTruthy();
- await fireEvent.press(screen.getByTestId('course-difficulty-criteria'));
- expect(screen.queryByTestId('course-difficulty-content')).toBeNull();
+ expect(screen.getByTestId('course-difficulty-content')).toBeVisible();
+ expect(screen.queryByTestId('course-save-name')).toBeNull();
  await fireEvent.press(screen.getByTestId('course-terrain-open'));
  const destination=router.push.mock.lastCall[0];expect(destination.pathname).toBe('/course-terrain');
  expect(candidateDrafts.get(destination.params.draft,'owner')?.snapshot).toEqual(snapshot);
