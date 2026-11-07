@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Alert, Pressable, ScrollView, View } from 'react-native';
 import { Image } from 'expo-image';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText, Button, Icon } from '@/components/ui';
 import { Toggle } from '@/components/ui/ChoiceControl';
 import { getStorage } from '@/modules/storage/database';
@@ -16,6 +17,7 @@ import { useAuth } from '@/features/auth/use-auth';
 
 const cardBase={padding:20,borderRadius:20,gap:16,backgroundColor:'#FFFFFF',boxShadow:'0px 0px 10px rgba(0,0,0,0.12)'} as const;
 export default function RunSettingsScreen(){
+  const insets=useSafeAreaInsets();
   const c=useThemeColors(),card={...cardBase,backgroundColor:c.surface};
   const {runId}=useLocalSearchParams<{runId?:string}>(),auth=useAuth(),owner=auth.account?.id;
   const [prefs,setPrefs]=useState<AccountPreferences|null>(null),[options,setOptions]=useState<GuidanceOptions>(defaultAccountPreferences.guidance),[error,setError]=useState(''),[busy,setBusy]=useState(false);
@@ -23,7 +25,7 @@ export default function RunSettingsScreen(){
   useFocusEffect(useCallback(()=>{const ticket=++epoch.current;setPrefs(null);setError('');void(async()=>{try{const db=await getStorage(),p=await db.account.preferences(),g=runId?await db.runs.guidance(runId):null;if(ticket===epoch.current&&(authentication.getSnapshot().account?.id??'')===(owner??'')){setPrefs(p);setOptions(g?.options??p.guidance);}}catch{if(ticket===epoch.current)setError('러닝 설정을 불러오지 못했어요.');}})();return()=>{epoch.current++;};},[owner,runId]));
   async function change(next:GuidanceOptions){if(!prefs||saving.current)return;saving.current=true;setBusy(true);setError('');const ticket=epoch.current;try{const db=await getStorage();if(ticket!==epoch.current)return;await db.account.savePreferences({...prefs,guidance:next});if(runId)await db.runs.setGuidanceOptions(runId,next);if(!next.voice)guidanceNative?.silenceLive();if(ticket===epoch.current){setPrefs({...prefs,guidance:next});setOptions(next);}}catch{if(ticket===epoch.current)setError('설정을 저장하지 못했어요. 다시 시도해 주세요.');}finally{saving.current=false;setBusy(false);}}
   function finish(){Alert.alert('러닝을 종료할까요?',runId?'현재까지의 러닝 기록을 저장하고 종료합니다.':'코스 선택 화면으로 돌아갑니다.',[{text:'취소',style:'cancel'},{text:'종료',onPress:()=>{if(!runId){openServiceTab({pathname:'/run',params:{courseId:undefined}});return;}if(saving.current)return;saving.current=true;setBusy(true);void running.finish(runId).then(()=>{openServiceTab({pathname:'/run',params:{courseId:undefined}});router.push({pathname:'/run-result',params:{id:runId}});},()=>setError('러닝을 종료하지 못했어요. 다시 시도해 주세요.')).finally(()=>{saving.current=false;setBusy(false);});}}]);}
-  return <ScrollView style={{flex:1,backgroundColor:c.background}} contentContainerStyle={{paddingHorizontal:32,paddingTop:40,paddingBottom:24,gap:16,flexGrow:1}}>
+  return <ScrollView style={{flex:1,backgroundColor:c.background}} contentContainerStyle={{paddingHorizontal:32,paddingTop:40,paddingBottom:24+insets.bottom,gap:16,flexGrow:1}}>
     <View style={card}>
       <View style={{flexDirection:'row',gap:10,alignItems:'center'}}><Image source={require('../../assets/running/map.svg')} style={{width:24,height:24}}/><View style={{flex:1,gap:3}}><AppText weight="bold" style={{fontSize:20}}>러닝 화면 설정</AppText><AppText style={{fontSize:12,color:c.muted}}>러닝 중 어떤 화면을 기본으로 할지 설정합니다.</AppText></View></View>
       <View accessibilityRole="radiogroup" style={{flexDirection:'row',justifyContent:'space-between',gap:20}}>{(['map','focus'] as const).map(mode=><Pressable key={mode} accessibilityRole="radio" accessibilityLabel={mode==='map'?'지도 모드':'집중 모드'} accessibilityState={{checked:options.mode===mode,disabled:!prefs||busy}} disabled={!prefs||busy} onPress={()=>void change({...options,mode})} style={{minHeight:44,flexDirection:'row',alignItems:'center',gap:7}}><Image source={options.mode===mode?require('../../assets/running/radio-on.svg'):require('../../assets/running/radio-off.svg')} style={{width:24,height:24}} accessible={false}/><AppText style={{fontSize:16}}>{mode==='map'?'지도 모드':'집중 모드'}</AppText></Pressable>)}</View>

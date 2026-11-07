@@ -26,7 +26,7 @@ function SavedCourseItem({course}:{course:CourseSummary}){
       <View style={{flexDirection:'row',alignItems:'center',gap:5}}><AppText weight="bold" numberOfLines={1} style={{flexShrink:1,fontSize:16}}>{course.name}</AppText>{course.unfinished&&<AppText testID={`run-in-progress-${course.id}`} weight="bold" style={{fontSize:10,color:'#FC5602',backgroundColor:'#FFF0E8',paddingHorizontal:4,borderRadius:3}}>진행중</AppText>}</View>
       <View style={{flexDirection:'row',gap:10,flexWrap:'wrap'}}><AppText family="roboto" weight="bold" style={{fontSize:14}}>{course.lengthKm.toFixed(2)} km</AppText><AppText family="roboto" style={{fontSize:14}}>{courseDuration(estimatedRunningMinutes(course.lengthKm)??0)}</AppText></View>
       <AppText numberOfLines={1} style={{fontSize:13,color:c.muted}}>{failed?'주소를 확인하지 못했어요.':address.label}</AppText>
-    </View><Icon name="chevronRight"/>
+    </View><Icon name="chevronRight" color={c.muted}/>
   </Pressable>;
 }
 export default function SavedCourseChooser({onFreeStart,busy:starting}:{onFreeStart():void;busy:boolean}){
