@@ -34,8 +34,8 @@ const figmaAssets = {
   whale: require('../../../assets/generation/figma-20261024/whale.svg'), turtle: require('../../../assets/generation/figma-20261024/turtle.svg'),
   cat: require('../../../assets/generation/figma-20261024/cat.svg'), dog: require('../../../assets/generation/figma-20261024/dog.svg'),
 };
-export function GenerationIcon({ name }: { name: keyof typeof assets | keyof typeof figmaAssets }) {
-  if (name in figmaAssets) return <Image source={figmaAssets[name as keyof typeof figmaAssets]} accessible={false} contentFit="contain"
+export function GenerationIcon({ name, color }: { name: keyof typeof assets | keyof typeof figmaAssets; color?:string }) {
+  if (name in figmaAssets) return <Image tintColor={color} source={figmaAssets[name as keyof typeof figmaAssets]} accessible={false} contentFit="contain"
     style={{ width: 48, height: 48, transform: ['crown', 'bone'].includes(name) ? [{ scaleX: -1 }] : undefined }} />;
   const asset = assets[name as keyof typeof assets];
   // Figma's star/cat/fish layers have a mirrored parent; preserve the original SVG dimensions.

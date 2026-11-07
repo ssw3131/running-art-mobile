@@ -11,12 +11,14 @@ import type { Fix } from '@/modules/running/model';
 import { defaultAccountPreferences } from '@/modules/account/model';
 import { planApproach } from '@/modules/running/navigation';
 import type { ApproachPlan } from '@/modules/running/approach';
+import { Image } from 'expo-image';
+import { useThemeColors } from '@/theme/ThemeProvider';
 import { RunButton, useRunStyles } from './ui';
 import { AppText as Text, AppModal, Button } from '@/components/ui';
 import { ModeSwitch, RunningControls } from './RunningControls';
 
 export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(): void }) {
-  const styles = useRunStyles();
+  const styles = useRunStyles(),c=useThemeColors();
   const [notice,setNotice]=useState(true),[focus,setFocus]=useState(false);
   const [course, setCourse] = useState<RunCourse | null>(null), [fix, setFix] = useState<Fix | null>(null);
   const [error, setError] = useState(''), [now, setNow] = useState(0);
@@ -70,12 +72,12 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
   if (preview && fix) preview.position = [fix.longitude, fix.latitude];
   if(preview){preview.phase='approach';preview.lapStart=null;if(plan){preview.returnPath=plan.path;preview.returnM=plan.distanceM;}}
   const finish=()=>Alert.alert('러닝 준비를 마칠까요?','기록을 시작하지 않고 코스 선택 화면으로 돌아갑니다.',[{text:'취소',style:'cancel'},{text:'확인',onPress:()=>router.setParams({courseId:undefined})}]);
-  return <View style={{flex:1,backgroundColor:focus?'#059C54':'#FFFFFF'}}>
+  return <View style={{flex:1,backgroundColor:focus?'#059C54':c.background}}>
     {course&&preview&&!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={course.snapshot.route} state={preview} positionLabel="현재 위치로 지도 이동" showPosition={!!fix} recenterAtBottom/></View>}
     <View pointerEvents="box-none" style={{flex:1,padding:32,paddingTop:40,gap:12,justifyContent:focus?'center':'flex-end'}}>
       {focus&&<Text weight="bold" style={{color:'#FFFFFF',fontSize:28,textAlign:'center'}}>러닝을 준비하고 있어요</Text>}
       {!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}
-      <View style={{padding:16,borderRadius:20,backgroundColor:'#FFFFFF',gap:8}}>
+      <View style={{padding:16,borderRadius:20,backgroundColor:c.surface,gap:8}}>
         <Text weight="bold">{course?.name??'코스 확인 중…'}</Text><Text testID="run-readiness" variant="caption">{readiness?.message}</Text>
         <Text variant="caption">준비 중에는 기록하지 않아요. {background?'시작 후 화면을 꺼도 기록해요.':'화면을 끄면 일시정지해요.'}</Text>
         {readiness?.distanceM!==null&&(readiness?.distanceM??0)>12&&<RunButton id="run-prepare-path" title={planning?'합류 경로 준비 중 · 취소':'보행 도로 합류 경로 준비'} disabled={busy} onPress={()=>planning?planController.current?.abort():void preparePath()}/>}
@@ -84,6 +86,6 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
     </View>
     <ModeSwitch focus={focus} onChange={()=>setFocus(!focus)}/>
     <RunningControls busy={busy||planning} paused preparation canStart={!!readiness?.ready} onSettings={()=>router.push('/run-settings')} onStartPause={onStart} onFinish={finish}/>
-    <AppModal visible={notice} title="코스 근처로 이동해 주세요" onClose={()=>setNotice(false)} footer={<Button testID="run-preparation-confirm" compact variant="outline" label="확인" onPress={()=>setNotice(false)}/>}><Text style={{textAlign:'center'}}>현재 위치가 코스 경로 근처에 있어야 러닝을 시작할 수 있어요. 코스 위로 이동하거나 보행 도로 합류 경로를 준비해 주세요.</Text></AppModal>
+    <AppModal icon={<Image source={require('../../../assets/generation/run.svg')} tintColor="#FC5602" style={{width:22,height:22}}/>} visible={notice} title="코스 근처로 이동해 주세요" onClose={()=>setNotice(false)} footer={<Button testID="run-preparation-confirm" compact variant="outline" label="확인" onPress={()=>setNotice(false)}/>}><Text style={{textAlign:'center'}}>현재 위치가 코스 경로 근처에 있어야 러닝을 시작할 수 있어요. 코스 위로 이동하거나 보행 도로 합류 경로를 준비해 주세요.</Text></AppModal>
   </View>;
 }

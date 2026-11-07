@@ -16,7 +16,7 @@ import { fonts } from '@/theme/tokens';
 
 const navy='#0D213C';
 const cardBase={borderRadius:20,padding:20,gap:12,boxShadow:'0px 0px 10px rgba(0,0,0,0.2)'} as const;
-export default function LiveGuidancePanel({ run, guide, points, now, busy, onOptions, onPauseResume, onFinish, onSettings, error }: {
+export default function LiveGuidancePanel({ run, guide, points, now, busy, onOptions, onPauseResume, onFinish, onSettings, onPermission, error }: {
   run: Run; guide: RunGuidance; points: RunPoint[]; now: number; busy: boolean; onOptions(value: GuidanceOptions): void;
   onSettings?():void; onPauseResume():void; onFinish():void; onPermission():void; error:string;
 }) {
@@ -47,7 +47,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   const pace=currentPaceLabel(points,now,!paused);
   const instruction=<View style={focus?{gap:10,alignItems:'center'}:{...card,flexDirection:'row',alignItems:'center',padding:16,gap:14}}>
     <View style={{width:focus?(compact?160:200):48,height:focus?(compact?160:200):48,borderRadius:100,backgroundColor:focus?(weak||paused?'#183653':off?'#A03600':'#026234'):'transparent',alignItems:'center',justifyContent:'center'}} accessible={false}>
-      {state.direction==='straight'?<Image source={require('../../../assets/running/straight.svg')} tintColor={focus?'#FFFFFF':'#14AE5C'} style={{width:focus?125:48,height:focus?125:48}}/>:['left','right','uturn'].includes(state.direction)?<Image source={!focus&&state.direction!=='uturn'?require('../../../assets/running/turn-map.svg'):state.direction==='uturn'?require('../../../assets/running/uturn.svg'):require('../../../assets/running/turn-left.svg')} contentFit="contain" style={{width:focus?125:48,height:focus?125:48,transform:state.direction==='right'?[{scaleX:-1}]:[]}}/>:<AppText style={{fontSize:focus?(compact?60:100):38,lineHeight:focus?(compact?76:125):50,color:'#FFFFFF'}}>{state.direction==='arrival'?'완주':'GPS'}</AppText>}
+      {state.direction==='straight'?<Image source={require('../../../assets/running/straight.svg')} tintColor={focus?'#FFFFFF':'#14AE5C'} style={{width:focus?125:48,height:focus?125:48}}/>:['left','right','uturn'].includes(state.direction)?<Image source={!focus&&state.direction!=='uturn'?require('../../../assets/running/turn-map.svg'):state.direction==='uturn'?require('../../../assets/running/uturn.svg'):require('../../../assets/running/turn-left.svg')} contentFit="contain" style={{width:focus?125:48,height:focus?125:48,transform:state.direction==='right'?[{scaleX:-1}]:[]}}/>:<AppText style={{fontSize:focus?48:14,lineHeight:focus?64:22,color:focus?'#FFFFFF':c.muted}}>{state.direction==='arrival'?'완주':'GPS'}</AppText>}
     </View>
     <View style={{flex:focus?undefined:1,gap:8}}><AppText testID="run-instruction" weight="bold" style={{color,fontSize:focus?(compact?24:36):20,lineHeight:focus?(compact?32:48):29,textAlign:focus?'center':'left'}}>{state.instruction}</AppText>
     {state.status==='normal'&&['left','right','uturn'].includes(state.direction)&&<AppText testID="run-turn-distance" weight="bold" style={{color,textAlign:'center'}}>약 {Math.max(5,Math.round(state.instructionM/5)*5)}m 앞에서</AppText>}
@@ -70,9 +70,11 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
       <View style={{flexDirection:'row',gap:12,width:'100%'}}>{[{label:'러닝 시간',value:durationLabel(elapsed),id:'run-duration'},{label:'이동 거리',value:`${distance} km`,id:'run-distance'}].map(item=><View key={item.label} style={{flex:1,padding:compact?10:16,gap:compact?4:8,backgroundColor:'#FFFFFF33',borderRadius:16}}><AppText style={{color:'#FFFFFF',textAlign:'center'}}>{item.label}</AppText>{metric(item.value,compact?24:28,item.id)}</View>)}</View>
       <AppText weight="bold" style={{fontSize:compact?24:32,color:'#FFFFFF'}}>남은 거리 {remaining} km</AppText>
       {instruction}
+      {weak&&<Button compact variant="outline" testID="run-settings" label="위치 권한 설정" onPress={onPermission}/>}
       {!!error&&<AppText accessibilityRole="alert" style={{color:'#FFFFFF'}}>{error}</AppText>}
     </ScrollView>:<View pointerEvents="box-none" style={{flex:1,paddingHorizontal:32,paddingTop:24,gap:12}}>
       {mapStats}
+      {weak&&<Button compact variant="outline" testID="run-settings" label="위치 권한 설정" onPress={onPermission}/>}
       <AppText testID="run-status" style={{color:navy,backgroundColor:'#FFFFFF',borderRadius:8,padding:6}}>{title}</AppText>
       {!!error&&<AppText accessibilityRole="alert" style={{color:c.danger,backgroundColor:'#FFFFFF',padding:12}}>{error}</AppText>}
       {!!run.reason&&<AppText accessibilityRole="alert" style={{color:c.danger,backgroundColor:'#FFFFFF',padding:12}}>{run.reason}</AppText>}

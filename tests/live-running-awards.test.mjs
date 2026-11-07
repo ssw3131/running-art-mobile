@@ -37,3 +37,22 @@ test('current pace uses recent accepted segment, ignores long gaps, stale fixes,
  assert.notEqual(currentPaceLabel(path,12000),'—');assert.equal(currentPaceLabel(path,30000),'—');assert.equal(currentPaceLabel(path,12000,false),'—');
  assert.equal(currentPaceLabel([path[0],point(11000,37.0002,1)],12000),'—');assert.equal(currentPaceLabel([path[0],point(25000,37.0002)],26000),'—');
 });
+
+test('administrative cache preserves records, follows deletion, and fences an account switch during lookup',async t=>{
+ const {openSqlite}=await import('./helpers/sqlite.mjs');
+ const {migrateDatabase}=await import('../src/modules/storage/migrations.ts');
+ const {createAchievementsRepository}=await import('../src/modules/achievements/repository.ts');
+ const db=openSqlite();t.after(()=>db.closeAsync());await migrateDatabase(db);
+ const A='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',B='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';let owner=A;
+ const insert=async(id,who)=>db.runAsync(`INSERT INTO running_sessions(id,owner_id,status,started_at,checkpoint_at,resumed_at,course_id,course_outcome,course_snapshot_json,distance_m,active_ms) VALUES(?,?,'completed',1,1,1,'course','finished',?,3000,900000)`,id,who,JSON.stringify({shape:'heart',targetKm:3,origin:{lat:37,lng:127}}));
+ await insert('1'.repeat(32),A);await insert('2'.repeat(32),B);
+ const before=await db.getAllAsync('SELECT * FROM running_sessions ORDER BY id'),repo=createAchievementsRepository(db,()=>owner);
+ await repo.resolveRegions(async()=>{owner=B;return 'municipality.1|locality.1';},new AbortController().signal);
+ assert.equal((await db.getAllAsync('SELECT * FROM achievement_regions')).length,0);
+ owner=A;await repo.resolveRegions(async()=> 'municipality.1|locality.1',new AbortController().signal);
+ assert.equal((await db.getFirstAsync('SELECT count(*) AS n FROM achievement_regions WHERE owner_id=?',A)).n,1);
+ assert.equal((await db.getFirstAsync('SELECT count(*) AS n FROM achievement_regions WHERE owner_id=?',B)).n,0);
+ assert.deepEqual(await db.getAllAsync('SELECT * FROM running_sessions ORDER BY id'),before);
+ await db.runAsync('DELETE FROM running_sessions WHERE id=?','1'.repeat(32));
+ assert.equal((await db.getFirstAsync('SELECT count(*) AS n FROM achievement_regions')).n,0);
+});

@@ -63,7 +63,7 @@ export function ServiceStack() {
     <Stack.Protected guard={access === 'service'}>
       {privateScreens.map(([name, title]) => <Stack.Screen key={name} name={name} options={{ title,
         headerShown: name !== '(tabs)' && name !== 'guidance' && name !== 'course-location-picker' && name !== 'course-map',
-        ...(name === 'service-info' || name === 'course-candidate' ? { header: () => <ServiceHeader title={title} back menu={false} /> } : {}),
+        ...(name === 'service-info' || name === 'course-candidate' || name === 'run-settings' ? { header: () => <ServiceHeader title={title} back menu={false} /> } : {}),
       }} />)}
     </Stack.Protected>
     <Stack.Protected guard={access === 'signup'}>
