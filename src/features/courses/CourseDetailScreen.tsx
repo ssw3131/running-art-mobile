@@ -35,14 +35,21 @@ export default function CourseDetailScreen() {
   const [editing,setEditing]=useState(false),[name,setName]=useState('');
   const [showTarget,setShowTarget]=useState(true);
   const revision=useRef(0),working=useRef(false),exporting=useRef<AbortController|null>(null);
+  const scrollY=useRef(0);
   const scrollRef=useRef<ScrollView>(null),saveInput=useRef<TextInput>(null),renameInput=useRef<TextInput>(null);
   const revealName=useCallback(()=>{
     const input=[saveInput.current,renameInput.current].find(value=>value?.isFocused());
     if(!input)return;
-    // Include the shared header's screen offset, as in the existing course editor.
-    // Android otherwise only keeps the caret visible and can clip the input border.
-    scrollRef.current?.getNativeScrollRef()?.measureInWindow((_x,y)=>{
-      if(input.isFocused())scrollRef.current?.scrollResponderScrollNativeHandleToKeyboard(input,y+16,true);
+    // Measure after Android's resized window settles; both bounds use screen dp.
+    // The native responder's content coordinates can leave the border under the IME.
+    requestAnimationFrame(()=>{
+      if(!input.isFocused())return;
+      input.measureInWindow((_x,y,_width,height)=>{
+        const keyboardTop=Keyboard.metrics()?.screenY;
+        if(!input.isFocused()||keyboardTop===undefined)return;
+        const overlap=y+height+16-keyboardTop;
+        if(overlap>0)scrollRef.current?.scrollTo({y:scrollY.current+overlap,animated:true});
+      });
     });
   },[]);
   useEffect(()=>{
@@ -124,7 +131,7 @@ export default function CourseDetailScreen() {
   });
   const continuation=courseContinuation(current?.last??null,current?.activeId??null);
   return <KeyboardAvoidingView style={{flex:1,backgroundColor:c.background}} behavior={Platform.OS==='ios'?'padding':undefined}>
-    <ScrollView ref={scrollRef} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30,gap:24}}>
+    <ScrollView ref={scrollRef} onScroll={event=>{scrollY.current=event.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} onLayout={()=>{if(Keyboard.isVisible())revealName();}} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30,gap:24}}>
       {!current&&!error&&<ActivityIndicator accessibilityLabel="코스 불러오는 중" color={c.action}/>}
       {!current&&!!error&&<View style={{padding:24,gap:12}}><AppText accessibilityRole="alert" testID="course-detail-error">{error}</AppText><Button variant="outline" label="다시 확인" onPress={()=>void refresh()}/></View>}
       {current&&<>
