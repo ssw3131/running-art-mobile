@@ -83,3 +83,19 @@ test('reset warning cancels safely and confirms clearing only transient unsaved 
  await buttons?.find(x=>x.text==='확인')?.onPress?.();
  expect(candidateDrafts.get(unsaved,'owner')).toBeNull();expect(candidateDrafts.get(saved,'owner')).not.toBeNull();expect(mockSave).not.toHaveBeenCalled();alert.mockRestore();
 });
+
+test('difficulty criteria expand locally and terrain opens the same private snapshot without saving',async()=>{
+ const {router}=require('expo-router');router.push.mockClear();
+ await render(<CourseDetailScreen/>);await waitFor(()=>screen.getByTestId('course-terrain-open'));
+ expect(screen.queryByTestId('course-difficulty-content')).toBeNull();
+ await fireEvent.press(screen.getByTestId('course-difficulty-criteria'));
+ expect(screen.getByText('경사 기준 난이도')).toBeTruthy();
+ await fireEvent.press(screen.getByTestId('course-difficulty-criteria'));
+ expect(screen.queryByTestId('course-difficulty-content')).toBeNull();
+ await fireEvent.press(screen.getByTestId('course-terrain-open'));
+ const destination=router.push.mock.lastCall[0];expect(destination.pathname).toBe('/course-terrain');
+ expect(candidateDrafts.get(destination.params.draft,'owner')?.snapshot).toEqual(snapshot);
+ expect(candidateDrafts.get(destination.params.draft,'other')).toBeNull();
+ expect(mockSave).not.toHaveBeenCalled();
+ expect(screen.getByTestId('course-export-gpx')).toHaveTextContent('GPX파일 다운');
+});

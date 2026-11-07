@@ -11,6 +11,7 @@ import { savedCourseOverlay } from '@/modules/courses/model';
 import { locateForeground, type Position } from '@/modules/location/locate';
 import { expoLocationProvider } from '@/modules/location/expo-provider';
 import { useThemeColors } from '@/theme/ThemeProvider';
+import { TargetVisibilityButton } from './TargetVisibilityButton';
 import { candidateDrafts } from './model';
 
 export default function CourseMapScreen() {
@@ -18,6 +19,7 @@ export default function CourseMapScreen() {
   const owner = auth.account?.id ?? 'guest';
   const draft = useMemo(() => candidateDrafts.get(params.draft, owner), [params.draft, owner]);
   const overlay = useMemo(() => draft ? savedCourseOverlay(draft.snapshot) : null, [draft]);
+  const [showTarget, setShowTarget] = useState(params.target !== '0');
   const [position, setPosition] = useState<Position | null>(null), [locating, setLocating] = useState(false);
   const [message, setMessage] = useState(''), [settings, setSettings] = useState<'permission' | 'services' | null>(null);
   const request = useRef<AbortController | null>(null);
@@ -45,14 +47,15 @@ export default function CourseMapScreen() {
     </View>
     {draft && overlay ? <View style={{ flex: 1 }}>
       <MapSurface styleUrl={mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY) ?? ''} origin={draft.snapshot.origin} routeOverlay={overlay}
-        position={position} showTarget={params.target !== '0'} interactive onUserMoveStart={cancel}
+        position={position} showTarget={showTarget} interactive onUserMoveStart={cancel}
         syntheticRoads={draft.snapshot.source === 'synthetic' ? { type: 'FeatureCollection', features: [] } : undefined} routeColors={{ route: '#FF5264', target: '#5197FE' }} />
       <Pressable testID="course-map-locate" accessibilityRole="button" accessibilityLabel="현재 위치" disabled={locating} accessibilityState={{ disabled: locating, busy: locating }}
-        onPress={() => void locate()} style={{ position: 'absolute', right: 25, top: 39, width: 48, height: 48, alignItems: 'center', justifyContent: 'center' }}>
+        onPress={() => void locate()} style={{ position: 'absolute', left: 23, bottom: 116, width: 48, height: 48, alignItems: 'center', justifyContent: 'center' }}>
         <View style={{ width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: c.outline, backgroundColor: c.surface, justifyContent: 'center', alignItems: 'center' }}>
           {locating ? <ActivityIndicator color={c.text} /> : <Image source={require('../../../assets/generation/recommendations/locate.svg')} style={{ width: 16, height: 16 }} accessible={false} contentFit="contain" />}
         </View>
       </Pressable>
+      <TargetVisibilityButton testID="course-map-target-toggle" checked={showTarget} onChange={setShowTarget} style={{ position: 'absolute', left: 23, bottom: 54 }} />
       {!!message && <View style={{ position: 'absolute', top: 100, left: 24, right: 24, backgroundColor: c.surface, borderRadius: 16, padding: 12, gap: 8 }}>
         <AppText accessibilityLiveRegion="polite" variant="caption">{message}</AppText>
         {!!settings && <Button compact label="설정 열기" onPress={() => {

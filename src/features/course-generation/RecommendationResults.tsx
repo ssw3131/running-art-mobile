@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { AppText, Button, Toggle } from '@/components/ui';
+import { AppText, Button } from '@/components/ui';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
@@ -9,6 +9,7 @@ import type { useCourseGeneration } from './use-course-generation';
 import type { useRecommendationTerrain } from './use-recommendation-terrain';
 import { estimatedRunningMinutes, similarityPercent } from './recommendation-metrics';
 import { DifficultyTag } from './DifficultyTag';
+import { TargetVisibilityButton } from './TargetVisibilityButton';
 import { GenerationIcon } from './GenerationIcon';
 
 export function RecommendationResults({ g, terrain, location, showTarget, onTarget, onEdit, onDetail, onMap, onRun, status }: {
@@ -28,8 +29,8 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
           style={[styles.mapOpen, { backgroundColor: c.surface, borderColor: c.outline }]}>
           <Image source={require('../../../assets/generation/recommendations/search.svg')} style={{ width: 20, height: 20 }} contentFit="contain" accessible={false} />
         </Pressable>}
+        <TargetVisibilityButton testID="generation-target-toggle" checked={showTarget} onChange={onTarget} style={{ position: 'absolute', left: 20, bottom: 18 }} />
       </View>
-      <View style={{ alignItems: 'flex-end', marginTop: 8 }}><Toggle label="도형 점선 보기" testID="generation-target-toggle" checked={showTarget} onChange={onTarget} /></View>
     </View>
     <ScrollView testID="recommendation-list-scroll" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 12 }}>
       {(busy || g.state.kind === 'error' || g.state.kind === 'cancelled') && status}

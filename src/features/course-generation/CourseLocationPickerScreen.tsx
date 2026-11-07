@@ -115,11 +115,11 @@ export default function CourseLocationPickerScreen() {
       </View>}
 
     </View>
-    <View testID="location-picker-footer" style={{ paddingHorizontal: 26, paddingTop: 20, paddingBottom: 24, gap: 8, backgroundColor: c.surface }}>
+    <View testID="location-picker-footer" style={{ paddingHorizontal: 26, paddingTop: 14, paddingBottom: 18, gap: 5, backgroundColor: c.surface }}>
       <AppText family="roboto" weight="semibold" variant="caption" style={{ color: c.subtle }}>출발 위치</AppText>
-      <AppText family="roboto" weight="semibold" testID="picked-location-address" style={{ fontSize: 16, lineHeight: 22 }}>{mapMoving ? '위치 선택 중…' : pointAddress.label}</AppText>
+      <AppText family="roboto" weight="semibold" testID="picked-location-address" style={{ fontSize: 14, lineHeight: 18 }}>{mapMoving ? '위치 선택 중…' : pointAddress.label}</AppText>
       <View style={{ height: 1, backgroundColor: c.divider }} />
-      <AppText variant="caption" style={{ color: c.subtle, textAlign: 'center', marginBottom: 20 }}>지도를 움직여 중심 핀 위치를 맞춰주세요.</AppText>
+      <AppText variant="caption" style={{ color: c.subtle, textAlign: 'center', marginBottom: 7 }}>지도를 움직여 중심 핀 위치를 맞춰주세요.</AppText>
       <Button testID="confirm-course-location" label="이 위치 사용" disabled={mapMoving} onPress={confirm}
         leading={<Image source={require('../../../assets/generation/figma-20261107/confirm-location.svg')} style={{ width: 22, height: 22 }} accessible={false} contentFit="contain" />} />
     </View>
@@ -130,7 +130,7 @@ const styles = {
   header: { height: 64, flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'space-between' as const, borderBottomWidth: 1 },
   back: { width: 56, height: 56, alignItems: 'center' as const, justifyContent: 'center' as const },
   headerTitle: { flex: 1, textAlign: 'center' as const },
-  locateTarget: { position: 'absolute' as const, right: 23, top: 34, width: 48, height: 48, alignItems: 'center' as const, justifyContent: 'center' as const },
+  locateTarget: { position: 'absolute' as const, left: 23, bottom: 66, width: 48, height: 48, alignItems: 'center' as const, justifyContent: 'center' as const },
   locateButton: { width: 46, height: 46, borderRadius: 23, borderWidth: 1, alignItems: 'center' as const, justifyContent: 'center' as const },
   centerMarker: { position: 'absolute' as const, left: '50%' as const, top: '50%' as const, marginLeft: -14, marginTop: -27, alignItems: 'center' as const },
   markerRing: { width: 28, height: 28, borderRadius: 14, borderWidth: 3, alignItems: 'center' as const, justifyContent: 'center' as const, zIndex: 1 },

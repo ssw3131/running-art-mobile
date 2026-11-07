@@ -43,3 +43,13 @@ test('a different account cannot view the private draft', async () => {
   expect(screen.getByText('추천 코스가 만료됐어요. 추천 화면에서 다시 열어 주세요.')).toBeVisible();
   expect(mockMap).toBeNull();
 });
+
+test('eye toggles only target geometry and preserves the selected course and GPS camera', async () => {
+  await render(<CourseMapScreen />);
+  const route = mockMap.routeOverlay;
+  expect(screen.getByTestId('course-map-target-toggle').props.accessibilityState.checked).toBe(false);
+  await fireEvent.press(screen.getByTestId('course-map-target-toggle'));
+  expect(mockMap.showTarget).toBe(true); expect(mockMap.routeOverlay).toBe(route);
+  await fireEvent.press(screen.getByTestId('course-map-target-toggle'));
+  expect(mockMap.showTarget).toBe(false); expect(mockMap.routeOverlay).toBe(route);
+});
