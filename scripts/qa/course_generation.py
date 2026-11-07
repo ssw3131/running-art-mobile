@@ -59,8 +59,15 @@ def generation_flow(q):
         if q.find(tree, 'calculation-done') is not None: break
         time.sleep(1)
     else: raise RuntimeError('Generation did not finish')
-    q.capture('s2a-result-map')
-    q.seek('generation-target-toggle'); q.tap('generation-target-toggle')
+    tree = q.capture('s2a-result-map')
+    # The eye belongs to the fixed map, outside the list's scroll viewport.
+    fixed = q.find(tree, 'recommendation-fixed-map')
+    eye = q.find(tree, 'generation-target-toggle')
+    assert fixed is not None and eye is not None
+    fx1, fy1, fx2, fy2 = map(int, re.findall(r'\d+', fixed.get('bounds')))
+    x1, y1, x2, y2 = map(int, re.findall(r'\d+', eye.get('bounds')))
+    assert fx1 <= x1 < x2 <= fx2 and fy1 <= y1 < y2 <= fy2, 'Eye must be visible inside the fixed map'
+    q.tap('generation-target-toggle')
     assert q.find(q.capture('s2a-target-off'), 'generation-target-toggle').get('checked') == 'false'
     q.tap('generation-target-toggle')
     q.seek('candidate-1'); q.tap('candidate-1')
