@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, AppState, Keyboard, Linking, Platform, Pressable, View } from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, AppState, Keyboard, Linking, Platform, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button, Icon } from '@/components/ui';
 import MapSurface from '@/modules/map/MapSurface';
@@ -8,9 +8,10 @@ import { mapStyleUrl } from '@/modules/map/config';
 import type { Origin } from '@/modules/route-engine/types';
 import { datasets } from '@/features/route-lab/fixtures';
 import { useThemeColors } from '@/theme/ThemeProvider';
-import { centerLabel } from './model';
 import { PlaceSearch } from './PlaceSearch';
 import { publishCourseLocation } from './location-picker-handoff';
+import { Image } from 'expo-image';
+import { usePointAddress } from './use-point-address';
 import { GenerationIcon } from './GenerationIcon';
 import { locateForeground } from '@/modules/location/locate';
 import { expoLocationProvider } from '@/modules/location/expo-provider';
@@ -30,28 +31,22 @@ export default function CourseLocationPickerScreen() {
   const [origin, setOrigin] = useState<Origin>(initialOrigin);
   const [cameraTarget, setCameraTarget] = useState({ center: initialOrigin, revision: 0 });
   const [address, setAddress] = useState(params.address ?? '');
-  const [sheetVisible, setSheetVisible] = useState(false);
+  const [mapMoving, setMapMoving] = useState(false);
   const [mapMessage, setMapMessage] = useState('');
   const [locating, setLocating] = useState(false);
   const [locationSettings, setLocationSettings] = useState<'permission' | 'services' | null>(null);
   const locationRequest = useRef<AbortController | null>(null);
-  const [sheetOffset] = useState(() => new Animated.Value(280));
+  const pointAddress = usePointAddress(origin, address);
   const cancelLocation = useCallback(() => { locationRequest.current?.abort(); locationRequest.current = null; setLocating(false); }, []);
   useFocusEffect(useCallback(() => {
     const subscription = AppState.addEventListener('change', state => { if (state !== 'active') cancelLocation(); });
     return () => { subscription.remove(); cancelLocation(); };
   }, [cancelLocation]));
 
-  useEffect(() => {
-    const animation = Animated.timing(sheetOffset, { toValue: sheetVisible ? 0 : 280, duration: sheetVisible ? 220 : 150, useNativeDriver: true });
-    animation.start();
-    return () => animation.stop();
-  }, [sheetOffset, sheetVisible]);
-
-  const onMoveStart = useCallback(() => { cancelLocation(); setSheetVisible(false); setMapMessage(''); setLocationSettings(null); }, [cancelLocation]);
+  const onMoveStart = useCallback(() => { cancelLocation(); setMapMoving(true); setMapMessage(''); setLocationSettings(null); }, [cancelLocation]);
   const onMoveEnd = useCallback((center: Origin | null) => {
     if (!center) { setMapMessage('지원 범위 안에서 위치를 선택해 주세요.'); return; }
-    setOrigin(center); setAddress(''); setSheetVisible(true); setMapMessage('');
+    setOrigin(center); setAddress(''); setMapMoving(false); setMapMessage('');
   }, []);
   const centerSelection = useMemo(() => ({ target: cameraTarget, onMoveStart, onMoveEnd, onReady: () => undefined }), [cameraTarget, onMoveEnd, onMoveStart]);
   const selectPlace = (place: { address: string; center: Origin }) => {
@@ -59,7 +54,7 @@ export default function CourseLocationPickerScreen() {
     setOrigin(place.center);
     setCameraTarget(current => ({ center: place.center, revision: current.revision + 1 }));
     setAddress(place.address);
-    setSheetVisible(true);
+    setMapMoving(false);
     setMapMessage('');
   };
   const locateCurrent = async () => {
@@ -86,11 +81,11 @@ export default function CourseLocationPickerScreen() {
     void action.catch(() => setMapMessage('기기 설정을 직접 열어 위치 권한과 위치 기능을 확인해 주세요.'));
   };
   const confirm = () => {
-    publishCourseLocation({ origin, ...(address ? { address } : {}) });
+    publishCourseLocation({ origin, ...(pointAddress.address ? { address: pointAddress.address } : {}) });
     router.back();
   };
 
-  return <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={{ flex: 1, backgroundColor: c.background }}>
+  return <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1, backgroundColor: c.background }}>
     <View style={[styles.header, { backgroundColor: c.surface, borderBottomColor: c.divider }]}>
       <Pressable testID="location-picker-back" accessibilityRole="button" accessibilityLabel="뒤로" onPress={() => router.back()} style={styles.back}>
         <Icon name="chevronLeft" color={c.text} />
@@ -118,14 +113,15 @@ export default function CourseLocationPickerScreen() {
       {!!mapMessage && <View style={[styles.mapMessage, { backgroundColor: c.surface }]}><AppText accessibilityLiveRegion="polite" variant="caption">{mapMessage}</AppText>
         {!!locationSettings && <Button compact variant="outline" label="설정 열기" testID="location-picker-settings" onPress={openLocationSettings} />}
       </View>}
-      <Animated.View pointerEvents={sheetVisible ? 'auto' : 'none'} accessibilityElementsHidden={!sheetVisible} importantForAccessibility={sheetVisible ? 'auto' : 'no-hide-descendants'}
-        style={[styles.sheet, { backgroundColor: c.surface, transform: [{ translateY: sheetOffset }] }]}>
-        <View style={[styles.handle, { backgroundColor: c.divider }]} />
-        <AppText variant="caption" weight="bold" style={{ color: c.muted }}>출발 위치</AppText>
-        <AppText variant="heading" weight="bold" testID="picked-location-address">{address || '지도에서 선택한 위치'}</AppText>
-        <AppText variant="caption" style={{ color: c.subtle }}>{centerLabel(origin)} · 지도를 움직여 중심 핀 위치를 맞춰주세요.</AppText>
-        <Button testID="confirm-course-location" label="이 위치 사용" onPress={confirm} />
-      </Animated.View>
+
+    </View>
+    <View testID="location-picker-footer" style={{ paddingHorizontal: 26, paddingTop: 20, paddingBottom: 24, gap: 8, backgroundColor: c.surface }}>
+      <AppText family="roboto" weight="semibold" variant="caption" style={{ color: c.subtle }}>출발 위치</AppText>
+      <AppText family="roboto" weight="semibold" testID="picked-location-address" style={{ fontSize: 16, lineHeight: 22 }}>{mapMoving ? '위치 선택 중…' : pointAddress.label}</AppText>
+      <View style={{ height: 1, backgroundColor: c.divider }} />
+      <AppText variant="caption" style={{ color: c.subtle, textAlign: 'center', marginBottom: 20 }}>지도를 움직여 중심 핀 위치를 맞춰주세요.</AppText>
+      <Button testID="confirm-course-location" label="이 위치 사용" disabled={mapMoving} onPress={confirm}
+        leading={<Image source={require('../../../assets/generation/figma-20261107/confirm-location.svg')} style={{ width: 22, height: 22 }} accessible={false} contentFit="contain" />} />
     </View>
   </SafeAreaView>;
 }
@@ -141,6 +137,4 @@ const styles = {
   markerCore: { width: 8, height: 8, borderRadius: 4 },
   markerTip: { width: 0, height: 0, marginTop: -3, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 12, borderLeftColor: 'transparent' as const, borderRightColor: 'transparent' as const },
   mapMessage: { position: 'absolute' as const, top: 94, left: 24, right: 24, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 18, gap: 8 },
-  sheet: { position: 'absolute' as const, left: 0, right: 0, bottom: 0, paddingHorizontal: 24, paddingTop: 12, paddingBottom: 24, gap: 12, borderTopLeftRadius: 22, borderTopRightRadius: 22, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 12, elevation: 12 },
-  handle: { width: 52, height: 5, borderRadius: 3, alignSelf: 'center' as const, marginBottom: 4 },
 };

@@ -32,6 +32,7 @@ export function createCandidateDrafts() {
       const current = drafts.get(id);
       if (current?.scope === scope) Object.assign(current, value);
     },
+    discardUnsaved(scope: string) { for (const [id, draft] of drafts) if (draft.scope === scope && !draft.savedId) drafts.delete(id); },
     clear() { drafts.clear(); },
   };
 }

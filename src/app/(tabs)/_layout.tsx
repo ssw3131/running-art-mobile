@@ -19,6 +19,6 @@ export default function ServiceTabsLayout() {
         }
       }} />}>
     {serviceTabs.map(tab => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title,
-      header: ({route}) => <ServiceHeader title={tab.title} brand={tab.value === 'home'} back={tab.name==='courses'&&(route.params as {fromHome?:string}|undefined)?.fromHome==='1'} /> }} />)}
+      header: ({route}) => <ServiceHeader title={tab.title} brand={tab.value === 'home' || tab.value === 'courses'} back={tab.name==='courses'&&(route.params as {fromHome?:string}|undefined)?.fromHome==='1'} /> }} />)}
   </Tabs>;
 }

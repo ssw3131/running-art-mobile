@@ -1,5 +1,6 @@
 jest.mock('../../src/modules/image-contour/picker',()=>({pickContourImage:jest.fn()}));
 import React from 'react';
+import { Alert } from 'react-native';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import CourseGenerationScreen from '../../src/features/course-generation/CourseGenerationScreen';
 
@@ -36,7 +37,7 @@ beforeEach(() => {
     centerState: { center: grid.origin, location: { kind: 'idle' }, position: null }, center: { beginMove: jest.fn(), move: jest.fn() },
     roads: {}, overlay: null, mapMoving: false, validCenter: true, cannotCalculate: false,
   };
-  for (const key of ['setTab', 'setShape', 'setTargetKm', 'setDrawingOpen', 'setCustomTemplate', 'setDiagnostics', 'setRoadMode', 'setDeviceOnly', 'changeSearch', 'start', 'cancel', 'locate', 'setSelected', 'setFixedCenter', 'setMapMoving', 'setMapReady', 'setValidCenter']) mockG[key] = jest.fn();
+  for (const key of ['reset', 'setTab', 'setShape', 'setTargetKm', 'setDrawingOpen', 'setCustomTemplate', 'setDiagnostics', 'setRoadMode', 'setDeviceOnly', 'changeSearch', 'start', 'cancel', 'locate', 'setSelected', 'setFixedCenter', 'setMapMoving', 'setMapReady', 'setValidCenter']) mockG[key] = jest.fn();
   mockG.setTab.mockImplementation((tab: string) => { mockG.tab = tab; });
 });
 
@@ -101,7 +102,9 @@ test('UI-GEN-05: zero candidates and failure remain explicit and allow editing',
   await render(<CourseGenerationScreen />);
   expect(screen.getByTestId('generation-empty')).toBeVisible();
   expect(screen.queryByTestId('candidate-detail-0')).toBeNull();
+  const alert = jest.spyOn(Alert, 'alert');
   await fireEvent.press(screen.getByTestId('generation-edit'));
+  alert.mock.lastCall?.[2]?.find(x => x.text === '확인')?.onPress?.(); alert.mockRestore();
   expect(mockG.setTab).toHaveBeenCalledWith('conditions');
   mockG.tab = 'results'; mockG.completed = null; mockG.state = { kind: 'error', message: '도로 자료를 받을 수 없어요.' };
   await screen.rerender(<CourseGenerationScreen />);
@@ -123,7 +126,9 @@ test('UI-GEN-07: reset returns to conditions without generating or discarding th
   mockG.tab = 'results'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
   const result = mockG.completed;
   await render(<CourseGenerationScreen />);
+  const alert = jest.spyOn(Alert, 'alert');
   await fireEvent.press(screen.getByTestId('generation-edit'));
+  alert.mock.lastCall?.[2]?.find(x => x.text === '확인')?.onPress?.(); alert.mockRestore();
   expect(mockG.setTab).toHaveBeenCalledWith('conditions');
   expect(mockG.start).not.toHaveBeenCalled();
   expect(mockG.completed).toBe(result);

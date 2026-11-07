@@ -12,6 +12,9 @@ import type { ShapeId } from '@/modules/route-engine/types';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { radius } from '@/theme/tokens';
 import { candidateDrafts, centerLabel, sameConditions, type GenerationConditions } from './model';
+import { confirmResetGeneration } from './reset-generation';
+import { Image } from 'expo-image';
+import { usePointAddress } from './use-point-address';
 import { RecommendationResults } from './RecommendationResults';
 import { GenerationConfirmationSheet } from './GenerationConfirmationSheet';
 import { GenerationIcon } from './GenerationIcon';
@@ -28,9 +31,10 @@ const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const routeColors = { route: '#FF5264', target: '#5197FE' };
 
 export default function CourseGenerationScreen() {
-  const homeParams = useLocalSearchParams<{ homeSection?: string; homeRequest?: string }>();
+  const homeParams = useLocalSearchParams<{ homeSection?: string; homeRequest?: string; resetRequest?: string }>();
   const [shapeY, setShapeY] = useState(0);
   const scrolledRequest = useRef('');
+  const resetRequest = useRef('');
   const g = useCourseGeneration(), c = useThemeColors(), auth = useAuth();
   const { width, fontScale } = useWindowDimensions();
   const shapeColumns = fontScale >= 1.4 ? 2 : width < 390 ? 3 : 4;
@@ -54,7 +58,9 @@ export default function CourseGenerationScreen() {
   const result = g.completed;
   const routes = useMemo(() => result?.liveRoads ? result.result.candidates.map(candidate => candidateOverlay(candidate, result.origin).route.geometry.coordinates.map(([lng, lat]): [number, number] => [lng, lat])) : [], [result]);
   const terrain = useRecommendationTerrain(routes, !choosing && !busy);
-  const locationLabel = (origin: {lat: number; lng: number}) => place && Math.abs(place.lat-origin.lat)<0.00001 && Math.abs(place.lng-origin.lng)<0.00001 ? place.address : centerLabel(origin);
+  const addressOrigin = choosing ? current.origin : result?.origin ?? current.origin;
+  const pointAddress = usePointAddress(addressOrigin, place && Math.abs(place.lat-addressOrigin.lat)<0.00001 && Math.abs(place.lng-addressOrigin.lng)<0.00001 ? place.address : '');
+  const locationLabel = (origin: {lat: number; lng: number}) => place && Math.abs(place.lat-origin.lat)<0.00001 && Math.abs(place.lng-origin.lng)<0.00001 ? place.address : pointAddress.label;
   useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, []));
   useFocusEffect(useCallback(() => {
     const picked = consumeCourseLocation();
@@ -64,6 +70,11 @@ export default function CourseGenerationScreen() {
     state.setValidCenter(true); state.setMapMoving(false);
     placeRef.current(picked.address ? { ...picked.origin, address: picked.address } : null);
   }, []));
+  useFocusEffect(useCallback(() => {
+    if (!homeParams.resetRequest || resetRequest.current === homeParams.resetRequest) return;
+    resetRequest.current = homeParams.resetRequest;
+    generationRef.current.reset(); generationRef.current.setTab('conditions');
+  }, [homeParams.resetRequest]));
   const [draftOwner,setDraftOwner]=useState(auth.account?.id);
   if(draftOwner!==auth.account?.id){
     setDraftOwner(auth.account?.id);setConfirmation(null);setImageOpen(false);setPlace(null);
@@ -151,6 +162,10 @@ export default function CourseGenerationScreen() {
           setPlace({ address: selected.address, ...selected.center });
         }} />}
         {!g.validCenter && <AppText accessibilityRole="alert" variant="label">지원 범위 밖이에요.</AppText>}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <Image source={require('../../../assets/generation/figma-20261107/address-pin.svg')} style={{ width: 14, height: 14 }} accessible={false} contentFit="contain" />
+          <AppText testID="generation-origin-address" family="roboto" weight="medium" variant="caption" style={{ flex: 1 }}>{pointAddress.label}</AppText>
+        </View>
         {map}
         {['denied', 'services-disabled', 'timeout', 'unavailable'].includes(g.centerState.location.kind) && <AppText variant="caption" accessibilityLiveRegion="polite" style={{ color: c.subtle }}>{locationMessage(g.centerState)}</AppText>}
         {!g.dataset.synthetic && <Button variant="outline" testID="course-map-preview-select" label="지도에서 위치 선택" leading={<GenerationIcon name="mapPin" />} onPress={openLocationPicker}
@@ -183,7 +198,7 @@ export default function CourseGenerationScreen() {
         </View>
       </>}
     </ScrollView> : <RecommendationResults g={g} terrain={terrain} location={locationLabel(result?.origin ?? current.origin)}
-      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => chooseTab('conditions')} onDetail={index => detail(false, index)}
+      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => confirmResetGeneration(() => { candidateDrafts.discardUnsaved(auth.account?.id ?? 'guest'); g.reset(); chooseTab('conditions'); })} onDetail={index => detail(false, index)}
       onMap={() => detail(false, g.selected, true)} onRun={() => detail(true)} status={status} />}
     <GenerationConfirmationSheet conditions={confirmation} location={confirmation ? locationLabel(confirmation.origin) : ''}
       regenerating={regenerating} onClose={() => setConfirmation(null)} onConfirm={confirm} returnFocusRef={generateButton} />

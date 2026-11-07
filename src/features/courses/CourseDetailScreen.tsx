@@ -10,13 +10,14 @@ import { getStorage } from '@/modules/storage/database';
 import { authentication } from '@/modules/auth/runtime';
 import { CourseError, COURSE_NAME_MAX, courseErrorMessage, courseShapes, encodeSnapshot, savedCourseOverlay, type CourseAttempt, type CourseSnapshot } from '@/modules/courses/model';
 import { courseContinuation } from '@/modules/courses/continuation';
-import { shareCourseGpx } from '@/modules/courses/share-gpx';
+import { shareCourseGpx, shareCourseSnapshotGpx } from '@/modules/courses/share-gpx';
 import { exportErrorMessage } from '@/modules/courses/export';
-import { candidateDrafts, centerLabel } from '@/features/course-generation/model';
+import { candidateDrafts } from '@/features/course-generation/model';
 import { estimatedRunningMinutes, paceExplanation } from '@/features/course-generation/recommendation-metrics';
 import { DifficultyTag } from '@/features/course-generation/DifficultyTag';
 import { GenerationIcon } from '@/features/course-generation/GenerationIcon';
-import { MapCredits } from '@/features/course-generation/MapCredits';
+import { usePointAddress } from '@/features/course-generation/use-point-address';
+import { confirmResetGeneration } from '@/features/course-generation/reset-generation';
 import TerrainPanel from '@/features/terrain/TerrainPanel';
 import { useTerrain } from '@/features/terrain/use-terrain';
 import MapSurface from '@/modules/map/MapSurface';
@@ -53,6 +54,7 @@ export default function CourseDetailScreen() {
   const routeKey=JSON.stringify([params.id,params.runId,params.draft]);
   const current=data?.owner===owner&&data.routeKey===routeKey?data:null;
   const terrain=useTerrain(current?.snapshot.source==='osm'?current.snapshot.route:undefined,true);
+  const pointAddress=usePointAddress(current?.snapshot.origin);
   const overlay=useMemo(()=>current?savedCourseOverlay(current.snapshot):null,[current]);
   const refresh=useCallback(async()=>{
     const ticket=++revision.current;setError('');
@@ -79,18 +81,21 @@ export default function CourseDetailScreen() {
     try{check();await task(check);}catch(cause){if(ticket===revision.current)setError(courseErrorMessage(cause));}
     finally{working.current=false;if(ticket===revision.current)setBusy(false);}
   }
-  const save=()=>void mutate(async check=>{
+  const ensureSaved=async(check:()=>void)=>{
+    if(current!.savedId)return current!.savedId;
     const db=await getStorage();check();const result=await db.courses.save(current!.snapshot,name);check();
     if(draft)candidateDrafts.edit(draft.id,owner,{name,savedId:result.id});
     setData({...current!,name,savedId:result.id});setEditing(false);setNotice(result.created?'코스를 저장했어요.':'이미 저장한 코스를 열었어요.');
-  });
+    return result.id;
+  };
+  const save=()=>void mutate(async check=>{await ensureSaved(check);});
   const rename=()=>void mutate(async check=>{
     if(current!.savedId){const db=await getStorage();check();await db.courses.rename(current!.savedId,name);check();}
     if(draft)candidateDrafts.edit(draft.id,owner,{name});setData({...current!,name});setEditing(false);
   });
   const exportGpx=()=>void mutate(async check=>{
-    if(!current!.savedId)return;const controller=new AbortController();exporting.current=controller;
-    try{await shareCourseGpx(current!.savedId,controller.signal);check();}catch(cause){throw new CourseError('validation',exportErrorMessage(cause));}
+    const controller=new AbortController();exporting.current=controller;
+    try{if(current!.savedId)await shareCourseGpx(current!.savedId,controller.signal);else await shareCourseSnapshotGpx(current!.snapshot,name,controller.signal);check();}catch(cause){throw new CourseError('validation',exportErrorMessage(cause));}
   });
   const remove=()=>Alert.alert('코스를 삭제할까요?','사용한 저장 횟수는 돌아오지 않아요. 이전 러닝 기록과 코스 사본은 유지됩니다.',[
     {text:'취소',style:'cancel'},{text:'삭제',style:'destructive',onPress:()=>void mutate(async check=>{
@@ -102,8 +107,19 @@ export default function CourseDetailScreen() {
     const next=courseContinuation(last,active?.id??null);
     if(next.action==='other-active'){Alert.alert('진행 중인 러닝이 있어요','먼저 현재 러닝을 재개하거나 종료해 주세요.',[{text:'취소',style:'cancel'},{text:'현재 러닝 보기',onPress:()=>openServiceTab('/run')}]);return;}
     if(next.action==='resume'){openServiceTab('/run');return;}
-    const prepare=()=>openServiceTab({pathname:'/run',params:{courseId:current!.savedId!}});
+    const savedId=await ensureSaved(check);check();
+    const prepare=()=>openServiceTab({pathname:'/run',params:{courseId:savedId}});
     if(next.action==='new-after-stop')Alert.alert('새 도전을 시작할까요?','이전 러닝은 종료되어 새 도전으로 시작합니다.',[{text:'취소',style:'cancel'},{text:'러닝 준비',onPress:prepare}]);else prepare();
+  });
+  const openMap=()=>{
+    if(!current)return;
+    const id=candidateDrafts.put(current.snapshot,draft?.rank??0,owner);
+    if(current.savedId)candidateDrafts.edit(id,owner,{savedId:current.savedId,name:current.name});
+    router.push({pathname:'/course-map',params:{draft:id,target:showTarget?'1':'0'}});
+  };
+  const resetGeneration=()=>confirmResetGeneration(()=>{
+    candidateDrafts.discardUnsaved(owner);
+    openServiceTab({pathname:'/route-lab',params:{resetRequest:String(Date.now())}});
   });
   const continuation=courseContinuation(current?.last??null,current?.activeId??null);
   return <KeyboardAvoidingView style={{flex:1,backgroundColor:c.background}} behavior={Platform.OS==='ios'?'padding':undefined}>
@@ -111,8 +127,18 @@ export default function CourseDetailScreen() {
       {!current&&!error&&<ActivityIndicator accessibilityLabel="코스 불러오는 중" color={c.action}/>}
       {!current&&!!error&&<View style={{padding:24,gap:12}}><AppText accessibilityRole="alert" testID="course-detail-error">{error}</AppText><Button variant="outline" label="다시 확인" onPress={()=>void refresh()}/></View>}
       {current&&<>
-        <View style={{height:Math.min(width,440)}}><MapSurface styleUrl={background?styleUrl??'':''} position={null} origin={current.snapshot.origin} routeOverlay={overlay} showTarget={showTarget}
-          syntheticRoads={!background||!styleUrl||current.snapshot.source==='synthetic'?emptyRoads:undefined} terrainOverlay={expanded?terrain.overlay:undefined} routeColors={{route:'#FF5264',target:'#5197FE'}}/></View>
+        <View style={{paddingHorizontal:24,paddingTop:20,gap:12}}>
+          <AppText testID="course-origin-address" variant="label">출발지 : {pointAddress.label}</AppText>
+          <View style={{height:Math.min(width-48,288),borderRadius:16,overflow:'hidden'}}>
+            <MapSurface styleUrl={background?styleUrl??'':''} position={null} origin={current.snapshot.origin} routeOverlay={overlay} showTarget={showTarget} interactive={false}
+              syntheticRoads={!background||!styleUrl||current.snapshot.source==='synthetic'?emptyRoads:undefined} terrainOverlay={expanded?terrain.overlay:undefined} routeColors={{route:'#FF5264',target:'#5197FE'}}/>
+            <Pressable testID="course-map-open" accessibilityRole="button" accessibilityLabel="지도에서 코스 보기" onPress={openMap}
+              style={{position:'absolute',right:24,bottom:18,width:46,height:46,borderRadius:23,borderWidth:1,borderColor:c.outline,backgroundColor:c.surface,alignItems:'center',justifyContent:'center'}}>
+              <Image source={require('../../../assets/generation/recommendations/search.svg')} style={{width:20,height:20}} contentFit="contain" accessible={false}/>
+            </Pressable>
+          </View>
+          <View style={{alignItems:'flex-end'}}><Toggle label="도형 점선 보기" testID="course-target-toggle" checked={showTarget} onChange={setShowTarget}/></View>
+        </View>
         <View style={{paddingHorizontal:24,gap:24}}>
           <View style={{padding:20,borderRadius:20,backgroundColor:c.surface,boxShadow:'0px 0px 5px rgba(0,0,0,0.15)',gap:14}}>
             <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:8,flexWrap:'wrap'}}><AppText testID="course-title" weight="black" variant="heading">{current.name}</AppText>
@@ -124,29 +150,26 @@ export default function CourseDetailScreen() {
           <View style={{gap:16}}>
             <View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="caption" style={{color:c.muted,width:70}}>코스명</AppText><AppText weight="bold" style={{flex:1}}>{current.name}</AppText><Pressable accessibilityRole="button" accessibilityLabel="코스 이름 수정" testID="course-edit-name" onPress={()=>setEditing(value=>!value)} style={{minWidth:48,minHeight:48,justifyContent:'center'}}><Image source={require('../../../assets/archive/edit.svg')} style={{width:16,height:16}} contentFit="contain" accessible={false}/></Pressable></View>
             {editing&&<View style={{gap:10}}><TextInput ref={renameInput} onFocus={focusName} accessibilityLabel="코스 이름" testID="course-rename-input" value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/><Button label="이름 적용" disabled={busy||!name.trim()} onPress={rename}/></View>}
-            <AppText variant="label">코스 기준 위치   {centerLabel(current.snapshot.origin)}</AppText>
+            <AppText variant="label">출발지   {pointAddress.label}</AppText>
             <AppText variant="label">전체 거리   {current.snapshot.lengthKm.toFixed(2)} km</AppText>
             <AppText variant="label">예상 러닝 시간   약 {estimatedRunningMinutes(current.snapshot.lengthKm)}분</AppText>
             <DifficultyTag state={{kind:terrain.state.profile?'ready':terrain.state.status==='loading'?'loading':'error',profile:terrain.state.profile??undefined}}/>
             <View style={{backgroundColor:c.navigation,borderRadius:6,padding:16,gap:8}}><AppText weight="bold" variant="caption">참고 사항</AppText><AppText variant="caption">지도에 표시된 길과 실제 보행 가능 여부를 확인하고 교차로 신호와 현장 안내를 따라 주세요. 코스 기준 위치는 탐색 중심이며 실제 출발지는 러닝 준비에서 정해요.</AppText><AppText variant="caption">{paceExplanation}</AppText></View>
             <Button variant="outline" compact label={expanded?'경사·추가 정보 닫기':'경사·추가 정보'} onPress={()=>setExpanded(value=>!value)}/>
-            {expanded&&<View style={{gap:14}}><AppText variant="caption">{courseShapes[current.snapshot.shape]} · 목표 {current.snapshot.targetKm} km</AppText><Toggle label="도형 점선" checked={showTarget} onChange={setShowTarget}/><Toggle label="배경 지도" checked={background} onChange={setBackground}/><TerrainPanel controller={terrain.controller} state={terrain.state}/></View>}
-            {background&&styleUrl&&current.snapshot.source==='osm'&&<MapCredits/>}
+            {expanded&&<View style={{gap:14}}><AppText variant="caption">{courseShapes[current.snapshot.shape]} · 목표 {current.snapshot.targetKm} km</AppText><Toggle label="배경 지도" checked={background} onChange={setBackground}/><TerrainPanel controller={terrain.controller} state={terrain.state}/></View>}
           </View>
           {!!notice&&<AppText testID="course-save-notice" accessibilityLiveRegion="polite">{notice}</AppText>}
           {!!error&&<AppText testID="course-detail-error" accessibilityRole="alert" accessibilityLiveRegion="assertive" style={{color:c.danger}}>{error}</AppText>}
-          {!current.savedId?<View style={{gap:12}}>
-            <TextInput ref={saveInput} onFocus={focusName} accessibilityLabel="저장할 코스 이름" testID="course-save-name" value={name} onChangeText={value=>{setName(value);if(draft)candidateDrafts.edit(draft.id,owner,{name:value});}} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/>
-            <Button testID="course-save" label="코스 저장하기" disabled={busy||!name.trim()} onPress={save}/>
-            <Button variant="secondary" label="GPX 파일 내보내기" disabled onPress={()=>{}}/>
-            {draft&&<Button variant="secondary" label="재설정 및 재생성하기" onPress={()=>{if(router.canGoBack())router.back();else openServiceTab('/route-lab');}}/>}
-            <Button label="이 코스 러닝 시작하기" disabled onPress={()=>{}}/>
-            <AppText variant="caption" style={{color:c.muted}}>코스를 저장하면 러닝 준비와 GPX 내보내기를 이용할 수 있어요.</AppText>
-          </View>:<View style={{gap:12}}>
-            {current.snapshot.source==='osm'&&<Button testID="course-run" label={continuation.label} leading={<GenerationIcon name="run"/>} disabled={busy} onPress={startRun}/>}
-            <Button testID="course-export-gpx" variant="secondary" label="GPX 파일 내보내기" disabled={busy} onPress={exportGpx}/>
-            <Pressable testID="course-delete" accessibilityRole="button" disabled={busy} onPress={remove} style={{minHeight:48,justifyContent:'center',alignItems:'center'}}><AppText variant="caption" style={{color:c.muted}}>코스 삭제하기</AppText></Pressable>
-          </View>}
+          <View style={{gap:10}}>
+            {!current.savedId&&<TextInput ref={saveInput} onFocus={focusName} accessibilityLabel="저장할 코스 이름" testID="course-save-name" value={name} onChangeText={value=>{setName(value);if(draft)candidateDrafts.edit(draft.id,owner,{name:value});}} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/>}
+            <View style={{flexDirection:'row',gap:6}}>
+              <Button testID="course-save" variant="secondary" label={current.savedId?'저장된 코스':'코스 저장하기'} disabled={busy} onPress={save} style={{flex:1}} labelStyle={{fontSize:16}}/>
+              <Button testID="course-export-gpx" variant="secondary" label="GPX파일 내보내기" disabled={busy} onPress={exportGpx} style={{flex:1}} labelStyle={{fontSize:16}}/>
+            </View>
+            <Button testID="course-reset" variant="secondary" label="재설정 및 재생성하기" disabled={busy} onPress={resetGeneration} labelStyle={{fontSize:16}}/>
+            <Button testID="course-run" label={continuation.unfinished?continuation.label:'실시간 러닝 시작하기'} leading={<GenerationIcon name="run"/>} disabled={busy} onPress={startRun}/>
+            {!!current.savedId&&<Pressable testID="course-delete" accessibilityRole="button" disabled={busy} onPress={remove} style={{minHeight:48,justifyContent:'center',alignItems:'center'}}><AppText variant="caption" style={{color:c.muted}}>코스 삭제하기</AppText></Pressable>}
+          </View>
         </View>
       </>}
     </ScrollView>
