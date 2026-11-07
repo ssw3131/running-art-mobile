@@ -4,6 +4,8 @@ import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button } from '@/components/ui';
 import GuidanceMap from '@/features/guidance/GuidanceMap';
+import type { ReactNode } from 'react';
+import type { GuidanceState } from '@/modules/guidance/engine';
 import { createRunGuidance } from '@/modules/running/guidance';
 import { running } from '@/modules/running/runtime';
 import type { Coordinate } from '@/modules/guidance/geometry';
@@ -16,9 +18,9 @@ import { fonts } from '@/theme/tokens';
 
 const navy='#0D213C';
 const cardBase={borderRadius:20,padding:20,gap:12,boxShadow:'0px 0px 10px rgba(0,0,0,0.2)'} as const;
-export default function LiveGuidancePanel({ run, guide, points, now, busy, onOptions, onPauseResume, onFinish, onSettings, onPermission, error }: {
+export default function LiveGuidancePanel({ run, guide, points, now, busy, onOptions, onPauseResume, onFinish, onSettings, onPermission, error, simulationState, simulationPace, headerAccessory, onRetryNavigation }: {
   run: Run; guide: RunGuidance; points: RunPoint[]; now: number; busy: boolean; onOptions(value: GuidanceOptions): void;
-  onSettings?():void; onPauseResume():void; onFinish():void; onPermission():void; error:string;
+  headerAccessory?:ReactNode; onRetryNavigation?():void; simulationState?:GuidanceState; simulationPace?:string; onSettings?():void; onPauseResume():void; onFinish():void; onPermission():void; error:string;
 }) {
   const c=useThemeColors();
   const card={...cardBase,backgroundColor:c.surface};
@@ -29,12 +31,13 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   const [lockPreference,setLockPreference]=useState(guide.options.touchLock??false);
   if(lockPreference!==(guide.options.touchLock??false)){setLockPreference(guide.options.touchLock??false);setLocked(guide.options.touchLock??false);}
   const state=useMemo(()=>{
+    if(simulationState)return simulationState;
     const engine=createRunGuidance(guide.course.snapshot.route,guide.checkpoint);
     const value=run.status==='running'?engine.tick(now-run.startedAt):engine.snapshot();
     const trace:Coordinate[][]=[];let segment=-1;
     for(const point of points){if(point.segment!==segment){trace.push([]);segment=point.segment;}trace.at(-1)!.push([point.longitude,point.latitude]);}
     return {...value,trace};
-  },[guide,now,points,run.startedAt,run.status]);
+  },[guide,now,points,run.startedAt,run.status,simulationState]);
   const focus=guide.options.mode==='focus', off=state.status==='off-route'||state.phase==='return';
   const weak=state.status==='weak', paused=run.status!=='running';
   const background=weak||paused?navy:off?'#FC5602':'#059C54';
@@ -44,7 +47,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   const color=focus?'#FFFFFF':c.text;
   const metric=(text:string,size:number,testID?:string)=><AppText testID={testID} style={{color,fontFamily:fonts.roboto.black,fontSize:size,lineHeight:size*1.2,textAlign:'center'}}>{text}</AppText>;
   const controls=<RunningControls busy={busy} paused={paused} onSettings={onSettings??(()=>router.push({pathname:'/run-settings',params:{runId:run.id}}))} onStartPause={onPauseResume} onFinish={onFinish}/>;
-  const pace=currentPaceLabel(points,now,!paused);
+  const pace=simulationPace??currentPaceLabel(points,now,!paused);
   const instruction=<View style={focus?{gap:10,alignItems:'center'}:{...card,flexDirection:'row',alignItems:'center',padding:16,gap:14}}>
     <View style={{width:focus?(compact?160:200):48,height:focus?(compact?160:200):48,borderRadius:100,backgroundColor:focus?(weak||paused?'#183653':off?'#A03600':'#026234'):'transparent',alignItems:'center',justifyContent:'center'}} accessible={false}>
       {state.direction==='straight'?<Image source={require('../../../assets/running/straight.svg')} tintColor={focus?'#FFFFFF':'#14AE5C'} style={{width:focus?125:48,height:focus?125:48}}/>:['left','right','uturn'].includes(state.direction)?<Image source={!focus&&state.direction!=='uturn'?require('../../../assets/running/turn-map.svg'):state.direction==='uturn'?require('../../../assets/running/uturn.svg'):require('../../../assets/running/turn-left.svg')} contentFit="contain" style={{width:focus?125:48,height:focus?125:48,transform:state.direction==='right'?[{scaleX:-1}]:[]}}/>:<AppText style={{fontSize:focus?48:14,lineHeight:focus?64:22,color:focus?'#FFFFFF':c.muted}}>{state.direction==='arrival'?'완주':'GPS'}</AppText>}
@@ -52,7 +55,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
     <View style={{flex:focus?undefined:1,gap:8}}><AppText testID="run-instruction" weight="bold" style={{color,fontSize:focus?(compact?24:36):20,lineHeight:focus?(compact?32:48):29,textAlign:focus?'center':'left'}}>{state.instruction}</AppText>
     {state.status==='normal'&&['left','right','uturn'].includes(state.direction)&&<AppText testID="run-turn-distance" weight="bold" style={{color,textAlign:'center'}}>약 {Math.max(5,Math.round(state.instructionM/5)*5)}m 앞에서</AppText>}
     {(state.phase==='approach'||state.phase==='return'||off)&&state.returnPath.length>0&&<AppText testID="run-return-distance" style={{color}}>{state.phase==='approach'?'코스 합류까지':'복귀 지점까지'} 약 {Math.round(state.returnM)}m</AppText>}
-    {state.navigationError&&<Button compact variant="secondary" testID="run-navigation-retry" label="보행 경로 다시 확인" disabled={busy} onPress={()=>void running.retryNavigation()}/>}
+    {state.navigationError&&<Button compact variant="secondary" testID="run-navigation-retry" label="보행 경로 다시 확인" disabled={busy} onPress={()=>onRetryNavigation?onRetryNavigation():void running.retryNavigation()}/>}
 </View>
   </View>;
   const mapStats=<View style={{...card,padding:16,gap:8}}>
@@ -62,6 +65,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   </View>;
   return <SafeAreaView style={{flex:1,backgroundColor:focus?background:c.navigation}} edges={['top','bottom','left','right']}>
     {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={guide.course.snapshot.route} state={state} positionLabel="현재 GPS 위치로 지도 이동" recenterAtBottom/></View>}
+    {headerAccessory}
     {focus?<ScrollView contentContainerStyle={{flexGrow:1,paddingHorizontal:32,paddingTop:compact?16:30,gap:compact?8:20,paddingBottom:20,alignItems:'center'}}>
       <AppText testID="run-status" weight="bold" style={{color:'#FFFFFF',fontSize:compact?20:24,textAlign:'center'}}>{title}</AppText>
       <AppText style={{color:'#FFFFFF',textAlign:'center'}}>{guide.course.name}</AppText>

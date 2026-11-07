@@ -1,7 +1,7 @@
 import { Link, Tabs, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, AppState, Linking, Platform, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, Alert, AppState, Linking, Platform, ScrollView, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { getStorage } from '@/modules/storage/database';
@@ -16,7 +16,7 @@ import type { GuidanceOptions, RunGuidance } from '@/modules/running/guidance';
 import { guidanceNative } from '@/modules/guidance/native';
 
 export default function RunScreen() {
-  const styles = useRunStyles();
+  const styles = useRunStyles(),insets=useSafeAreaInsets();
   const auth=useAuth(),owner=auth.ready?auth.account?.id??'':null;
   const [loadedOwner,setLoadedOwner]=useState<string|null>(null);
   const params = useLocalSearchParams<{ courseId?: string }>();
@@ -90,8 +90,8 @@ export default function RunScreen() {
   const immersive=!!courseId||!!(run&&guide&&loadedOwner===owner);
   const screenOptions=<Tabs.Screen options={{headerShown:!immersive,tabBarStyle:immersive?{display:'none'}:undefined}}/>;
   if(run && guide && loadedOwner===owner) return <>{screenOptions}<LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPermission={permission} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/></>;
-  if(supported&&ready&&!run&&courseId)return <>{screenOptions}<SafeAreaView style={{flex:1}} edges={['top','bottom','left','right']}><CourseRunPreparation key={courseId} id={courseId} busy={busy} onStart={startOrResume}/>{!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}</SafeAreaView></>;
-  if(supported&&ready&&loadedOwner===owner&&!run&&!courseId)return <>{screenOptions}<SavedCourseChooser key={owner} onFreeStart={startOrResume} busy={busy}/></>;
+  if(supported&&ready&&!run&&courseId)return <>{screenOptions}<View style={{flex:1,marginTop:-insets.top}}><CourseRunPreparation key={courseId} id={courseId} busy={busy} onStart={startOrResume}/>{!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}</View></>;
+  if(supported&&ready&&loadedOwner===owner&&!run&&!courseId)return <>{screenOptions}<SavedCourseChooser key={owner} busy={busy}/></>;
   const last = points[points.length - 1];
   return <>{screenOptions}<SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>{guide || courseId ? '코스 러닝' : '러닝 기록'}</Text>
