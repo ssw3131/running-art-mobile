@@ -29,7 +29,7 @@ export default function RunSimulationScreen(){
       const value=validateRunCourse({id:saved.id,name:saved.name,snapshot:saved.snapshot});
       guidanceActivity.set(true);ownsActivity.current=true;setCourse(value);session.current=createRunningSimulation(value.snapshot.route);setActive(session.current);setState(session.current.play(clock()));
     }catch(cause){if(!closed)setError(cause instanceof Error?cause.message:'시뮬레이션을 열지 못했어요.');}})();
-    const timer=setInterval(()=>{if(!closed&&AppState.currentState==='active'&&session.current)setState(session.current.update(clock()));},100);
+    const timer=setInterval(()=>{if(!closed&&AppState.currentState==='active'&&session.current?.snapshot().playing)setState(session.current.update(clock()));},100);
     const lifecycle=AppState.addEventListener('change',value=>{if(value!=='active'&&session.current)setState(session.current.pause(clock()));});
     return()=>{closed=true;ticket.current=current+1;clearInterval(timer);lifecycle.remove();session.current?.pause(clock());session.current=null;if(ownsActivity.current){guidanceActivity.set(false);ownsActivity.current=false;}};
   },[courseId,owner]));

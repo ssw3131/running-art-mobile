@@ -43,10 +43,10 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   const background=weak||paused?navy:off?'#FC5602':'#059C54';
   const elapsed=elapsedMs(run,now),distance=(run.distanceM/1000).toFixed(2),remaining=(state.remainingM/1000).toFixed(2);
 
-  const title=run.courseOutcome==='arrival-pending'?'한 바퀴를 완주했어요':paused?statusLabel[run.status]:weak?'GPS 신호를 기다리고 있어요':off?'코스를 벗어났어요':state.phase==='approach'?'코스로 합류하고 있어요':state.phase==='direction'?'달릴 방향을 확인하고 있어요':'코스를 따라 달리고 있어요';
+  const title=simulationState?.status==='arrived'?'시뮬레이션을 완주했어요':run.courseOutcome==='arrival-pending'?'한 바퀴를 완주했어요':paused?statusLabel[run.status]:weak?'GPS 신호를 기다리고 있어요':off?'코스를 벗어났어요':state.phase==='approach'?'코스로 합류하고 있어요':state.phase==='direction'?'달릴 방향을 확인하고 있어요':'코스를 따라 달리고 있어요';
   const color=focus?'#FFFFFF':c.text;
   const metric=(text:string,size:number,testID?:string)=><AppText testID={testID} style={{color,fontFamily:fonts.roboto.black,fontSize:size,lineHeight:size*1.2,textAlign:'center'}}>{text}</AppText>;
-  const controls=<RunningControls busy={busy} paused={paused} onSettings={onSettings??(()=>router.push({pathname:'/run-settings',params:{runId:run.id}}))} onStartPause={onPauseResume} onFinish={onFinish}/>;
+  const controls=<RunningControls busy={busy} paused={paused} canStart={simulationState?.status!=='arrived'} onSettings={onSettings??(()=>router.push({pathname:'/run-settings',params:{runId:run.id}}))} onStartPause={onPauseResume} onFinish={onFinish}/>;
   const pace=simulationPace??currentPaceLabel(points,now,!paused);
   const instruction=<View style={focus?{gap:10,alignItems:'center'}:{...card,flexDirection:'row',alignItems:'center',padding:16,gap:14}}>
     <View style={{width:focus?(compact?160:200):48,height:focus?(compact?160:200):48,borderRadius:100,backgroundColor:focus?(weak||paused?'#183653':off?'#A03600':'#026234'):'transparent',alignItems:'center',justifyContent:'center'}} accessible={false}>
@@ -64,7 +64,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
     <View style={{flexDirection:'row',gap:10}}>{[{label:'남은 거리',value:`${remaining} km`},{label:'러닝 시간',value:durationLabel(elapsed)},{label:'현재 페이스',value:pace}].map(item=><View key={item.label} style={{flex:1,alignItems:'center',gap:4}}><AppText variant="caption" style={{color:c.muted}}>{item.label}</AppText><AppText family="roboto" weight="black" numberOfLines={1} adjustsFontSizeToFit style={{fontSize:24,color:c.text}}>{item.value}</AppText></View>)}</View>
   </View>;
   return <SafeAreaView style={{flex:1,backgroundColor:focus?background:c.navigation}} edges={['top','bottom','left','right']}>
-    {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={guide.course.snapshot.route} state={state} positionLabel="현재 GPS 위치로 지도 이동" recenterAtBottom/></View>}
+    {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap route={guide.course.snapshot.route} state={state} positionLabel={simulationState?"시뮬레이션 위치로 지도 이동":"현재 GPS 위치로 지도 이동"} recenterAtBottom/></View>}
     {headerAccessory}
     {focus?<ScrollView contentContainerStyle={{flexGrow:1,paddingHorizontal:32,paddingTop:compact?16:30,gap:compact?8:20,paddingBottom:20,alignItems:'center'}}>
       <AppText testID="run-status" weight="bold" style={{color:'#FFFFFF',fontSize:compact?20:24,textAlign:'center'}}>{title}</AppText>
