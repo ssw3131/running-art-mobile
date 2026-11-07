@@ -201,7 +201,7 @@ jobs:
           avd-name: RunPen_CI
           # API 29 otherwise inherits a 16 MB heap from the newer Pixel profile.
           heap-size: 256M
-          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
+          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader -feature -Vulkan -prop persist.sys.locale=en-US
           disable-animations: true
           script: python scripts/qa/run-membership-android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
       - name: Compare reviewed API 36 screens
