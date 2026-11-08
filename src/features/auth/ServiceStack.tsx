@@ -13,6 +13,7 @@ import { membershipAccess } from '@/modules/membership/access';
 export const privateScreens = [
   ['(tabs)', ''], ['service-info', '서비스 안내 및 지원'], ['development', '개발 도구'],
   ['account-profile', '프로필 편집'],
+  ['badges', '뱃지 보관함'], ['badge-detail', '뱃지 상세'],
   ['account-settings', '설정'], ['account-sync', '개인 기록 동기화'], ['account-withdraw', '회원 탈퇴'],
   ['map', '내 주변 지도'], ['storage', '저장소 테스트'], ['courses/[id]', '코스 상세'],
   ['course-location-picker', '출발 위치 선택'], ['course-map', '지도에서 코스 보기'],

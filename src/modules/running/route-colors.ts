@@ -1,0 +1,2 @@
+export const COURSE_GUIDE_COLOR='#FF674C';
+export const RECORDED_TRAIL_COLOR='#1F6BFF';

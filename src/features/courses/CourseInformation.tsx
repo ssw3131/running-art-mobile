@@ -17,13 +17,13 @@ const assets = {
   clip: require('../../../assets/generation/figma-20261107-detail/clip.svg'),
   down: require('../../../assets/generation/figma-20261107-detail/down.svg'),
 };
-function DetailIcon({ name }: { name: keyof typeof assets }) {
+export function DetailIcon({ name }: { name: keyof typeof assets }) {
   return <Image source={assets[name]} style={{ width: 16, height: 16 }} accessible={false} contentFit="contain" />;
 }
 export function courseDuration(minutes: number) {
   return `${Math.floor(minutes / 60).toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}:00`;
 }
-function InformationRow({ icon, label, children }: { icon: keyof typeof assets; label: string; children: ReactNode }) {
+export function InformationRow({ icon, label, children }: { icon: keyof typeof assets; label: string; children: ReactNode }) {
   const c = useThemeColors();
   return <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15, minHeight: 26 }}>
     <View style={{ width: 90, flexDirection: 'row', alignItems: 'center', gap: 10 }}><DetailIcon name={icon} /><AppText weight="bold" style={{ color: c.subtle, fontSize: 16 }}>{label}</AppText></View>

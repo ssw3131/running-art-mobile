@@ -4,6 +4,7 @@ import { StorageError } from '../storage/types.ts';
 import { serialDatabase } from '../storage/serial-database.ts';
 import { ownerId, type OwnerScope } from '../sync/ownership.ts';
 import { summarizeAchievements, type AchievementRun } from './model.ts';
+import { badgeProgress, type BadgeRecord } from './catalog.ts';
 
 export async function readAchievements(tx: SqlExecutor, owner: string, now: number) {
   // Read only small summary columns, not GPS arrays or full course snapshots.
@@ -19,6 +20,22 @@ export async function readAchievements(tx: SqlExecutor, owner: string, now: numb
 export function createAchievementsRepository(database: StorageDatabase, scope: OwnerScope) {
   const db = serialDatabase(database);
   return {
+    async gallery(){
+      const owner=ownerId(scope());let records:BadgeRecord[]=[];
+      await db.withExclusiveTransactionAsync(async tx=>{
+        if(ownerId(scope())!==owner)throw new StorageError('validation','계정이 변경되었어요.');
+        records=await tx.getAllAsync<BadgeRecord>(`SELECT id,status,started_at AS startedAt,distance_m AS distanceM,active_ms AS activeMs,course_id AS courseId,course_outcome AS courseOutcome,course_name AS courseName,reason,
+          CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.shape') ELSE NULL END AS shape,
+          CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.targetKm') ELSE NULL END AS targetKm,
+          CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.origin.lat') ELSE NULL END AS originLat,
+          CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.origin.lng') ELSE NULL END AS originLng,
+          course_snapshot_hash AS courseHash,(SELECT region FROM achievement_regions WHERE run_id=running_sessions.id AND owner_id=running_sessions.owner_id) AS region
+          FROM running_sessions WHERE owner_id=? AND status='completed' ORDER BY started_at,id`,owner);
+        if(ownerId(scope())!==owner)throw new StorageError('validation','계정이 변경되었어요.');
+      });
+      if(ownerId(scope())!==owner)throw new StorageError('validation','계정이 변경되었어요.');
+      return {records,badges:badgeProgress(records),summary:summarizeAchievements(records)};
+    },
     async resolveRegions(resolve:(origin:Origin,signal:AbortSignal)=>Promise<string|null>,signal:AbortSignal){
       const owner=ownerId(scope());
       const rows=await db.getAllAsync<{id:string;lat:number;lng:number}>(`SELECT id,json_extract(course_snapshot_json,'$.origin.lat') AS lat,json_extract(course_snapshot_json,'$.origin.lng') AS lng
