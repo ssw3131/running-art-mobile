@@ -295,8 +295,9 @@ def course_preparation():
         time.sleep(1)
         # A /run deep link intentionally opens the chooser without a courseId.
         # Foreground the existing task like the launcher, preserving preparation.
+        # am accepts these flags through -f: NEW_TASK | RESET_TASK_IF_NEEDED.
         shell('am','start','-W','-a','android.intent.action.MAIN','-c','android.intent.category.LAUNCHER',
-              '-n',launcher,'--activity-new-task','--activity-reset-task-if-needed')
+              '-n',launcher,'-f','0x10200000')
         time.sleep(1)
     for _ in range(12):
         tree = capture('course-preparation-return')

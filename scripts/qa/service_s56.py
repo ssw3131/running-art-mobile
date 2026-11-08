@@ -69,7 +69,7 @@ def service_s56(q, launch):
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==1
         record_card=q.adb('exec-out','cat',folder+names[0]);assert struct.unpack('>II',record_card[16:24])==(1080,903)
         (q.OUT/'s5-card-record.png').write_bytes(record_card)
-        q.seek('card-format');q.tap('card-format');q.tap('스토리 9:16 · 1080×1920')
+        q.seek('card-format');q.tap('card-format');q.tap('스토리 9:16')
         q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-story-preview')
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==2
         story=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',story[16:24])==(1080,1920)
@@ -97,8 +97,9 @@ def service_s56(q, launch):
         assert len(created)==1 and next(iter(created)).startswith('RunPen-')
         exported=q.adb('exec-out','cat',export_folder+'/'+next(iter(created)))
         assert exported==story,'Saved file differs from the preview'
-        q.seek('card-format');q.tap('card-format');q.tap('피드 4:5 · 1080×1350')
-        q.seek('card-nickname');q.tap('card-nickname');q.tap('card-date')
+        q.seek('card-format');q.tap('card-format');q.tap('피드 4:5')
+        for key in ['card-nickname','card-date']:
+            q.seek(key);q.tap(key)
         q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-feed-preview')
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==3
         feed=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',feed[16:24])==(1080,1350)

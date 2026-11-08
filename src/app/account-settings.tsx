@@ -38,7 +38,7 @@ export default function AccountSettingsScreen() {
     } catch (error) { setMessage(storageErrorMessage(error)); }
     finally { saving.current = false; setBusy(false); }
   };
-  const toggle = (id: string, title: string, detail: string, key: 'voice' | 'background') => <View style={{ gap: 8 }}>
+  const toggle = (id: string, title: string, detail: string, key: 'voice') => <View style={{ gap: 8 }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={[s.rowTitle, { flex: 1, color: colors.text }]}>{title}</Text>
       <Switch testID={id} accessibilityLabel={title} disabled={busy || !data.ready} value={data.preferences.guidance[key]} trackColor={{ false: colors.border, true: colors.accent }} thumbColor="#FFFFFF" onValueChange={value => { void save({ ...data.preferences, guidance: { ...data.preferences.guidance, [key]: value } }); }} /></View>
     <Text style={[s.caption, { color: colors.muted }]}>{detail}</Text>
@@ -55,7 +55,6 @@ export default function AccountSettingsScreen() {
       <Text style={[s.heading, { color: colors.text }]}>러닝 안내 기본 설정</Text>
       <Text style={[s.body, { color: colors.muted }]}>새 코스 러닝을 시작할 때 적용됩니다. 진행 중인 러닝은 러닝 화면에서 변경해 주세요.</Text>
       {toggle('setting-voice', '음성 안내', '방향·이탈·복귀 안내를 한국어 음성으로 알려줍니다. 기기의 미디어 음량도 확인해 주세요.', 'voice')}
-      {toggle('setting-background', '화면 꺼짐 안내', '끄면 앱을 벗어나거나 화면을 끌 때 코스 러닝이 일시정지됩니다.', 'background')}
       <Text style={[s.rowTitle, { color: colors.text }]}>시작 화면</Text>
       {(['map', 'focus'] as const).map(mode => <AccountButton key={mode} id={`guidance-mode-${mode}`} title={`${mode === 'map' ? '지도 모드' : '집중 모드'}${data.preferences.guidance.mode === mode ? ' · 선택됨' : ''}`}
         colors={colors} secondary={data.preferences.guidance.mode !== mode} disabled={busy || !data.ready} onPress={() => { void save({ ...data.preferences, guidance: { ...data.preferences.guidance, mode } }); }} />)}
