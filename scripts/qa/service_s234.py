@@ -25,7 +25,11 @@ def service_s234(q, launch):
     lng,lat=entry['snapshot']['route'][0]
     def fix(n=3):
         for _ in range(n):q.adb('emu','geo','fix',str(lng),str(lat),'0','10');time.sleep(1)
-    q.seek('run-saved-course-'+entry['id']);q.tap('run-saved-course-'+entry['id']);q.seek('run-selected-start');q.tap('run-selected-start');q.tap('run-preparation-confirm')
+    q.seek('run-saved-course-'+entry['id']);q.tap('run-saved-course-'+entry['id'])
+    assert q.find(q.capture('s4-selected-course'),'run-saved-course-'+entry['id']).get('selected')=='true'
+    # The start button is fixed outside the scrollable course list. tap checks
+    # its enabled state and nonempty bounds; searching the list cannot reach it.
+    q.tap('run-selected-start');q.tap('run-preparation-confirm')
     fix();q.seek('run-course-start');q.tap('run-course-start');q.tap('계속');fix(5)
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
     run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
