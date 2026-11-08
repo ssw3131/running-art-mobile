@@ -7,11 +7,9 @@ import zlib
 
 def service_s234(q, launch):
     assert q.SERIAL.startswith('emulator-')
-    q.tap('tab-courses');q.seek('generation-edit');q.tap('generation-edit')
-    assert q.find(q.capture('s2b-regeneration-sheet'),'regeneration-confirm') is not None
-    q.tap('취소')
-    # Regeneration now keeps the original conditions; use the real home entry
-    # to edit the next search without spending another generation allowance.
+    # Earlier scenarios cold-start the app, clearing in-memory recommendations.
+    # verify_home_result checks regeneration cancellation before those restarts;
+    # this scenario enters the next input through the approved home CTA.
     q.tap('tab-home');q.seek('open-route-lab');q.tap('open-route-lab')
     q.seek('shape-heart')
     for shape in ['dog','crown']:

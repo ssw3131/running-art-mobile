@@ -23,6 +23,13 @@ def verify_home_result(q):
     q.seek('candidate-0')
     candidate = q.find(q.capture('home-existing-result-preserved'), 'candidate-0')
     assert candidate.get('content-desc') == previous
+    # Check regeneration while this process still owns a completed result.
+    # Later cold-start/GPS scenarios intentionally clear in-memory recommendations.
+    q.seek('generation-edit'); q.tap('generation-edit')
+    assert q.find(q.capture('home-regeneration-sheet'), 'regeneration-confirm') is not None
+    q.tap('취소'); q.seek('candidate-0')
+    candidate = q.find(q.capture('home-regeneration-cancel-preserved'), 'candidate-0')
+    assert candidate.get('content-desc') == previous
 
 
 def seek_above(q, key):

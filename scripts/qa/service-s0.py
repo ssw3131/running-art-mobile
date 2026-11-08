@@ -287,19 +287,27 @@ def course_preparation():
     seek('course-run'); tap('course-run')
     tap('run-preparation-confirm')
     assert find(capture('course-preparation-map'), 'tab-run') is None
+    launcher = shell('cmd', 'package', 'resolve-activity', '--brief',
+                     '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER', APP).decode().strip().splitlines()[-1]
+    assert launcher.startswith(APP + '/'), 'Resolve only the isolated QA app launcher'
     for _ in range(2):
         shell('input','keyevent','3')
-        shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///run',APP)
+        time.sleep(1)
+        # A /run deep link intentionally opens the chooser without a courseId.
+        # Foreground the existing task like the launcher, preserving preparation.
+        shell('am','start','-W','-a','android.intent.action.MAIN','-c','android.intent.category.LAUNCHER',
+              '-n',launcher,'--activity-new-task','--activity-reset-task-if-needed')
         time.sleep(1)
     for _ in range(12):
-        seek('run-course-start')
         tree = capture('course-preparation-return')
-        if find(tree, 'run-course-start').get('enabled') == 'true':
+        start = find(tree, 'run-course-start')
+        assert start is not None and find(tree, 'tab-run') is None, 'Foreground return must retain full-map preparation'
+        if start.get('enabled') == 'true':
             break
         adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
         time.sleep(1)
     else:
-        raise RuntimeError('Course preparation did not recover after tab refocus')
+        raise RuntimeError('Course preparation did not recover after foreground return')
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
     tap('run-finish');tap('확인');tap('tab-home')
     print('PASS: course detail enters full map preparation; foreground recovery preserves readiness without recording')

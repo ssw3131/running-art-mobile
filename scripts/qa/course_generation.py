@@ -168,8 +168,10 @@ def scaled_generation(q, launch):
                 for before, after in zip(origin, confirmed_origin)), (
                     f'Confirmation must preserve the chosen map center: before={origin}, after={confirmed_origin}')
             q.tap('generation-confirm-cancel')
-        # The fixed sheet footer is outside its body ScrollView.
         q.seek('shape-custom'); q.tap('shape-custom'); q.seek('drawing-cancel'); q.tap('drawing-cancel')
+        # The form keeps its scroll position; its generate button is below the
+        # drawing/image actions, not a fixed footer in the redesigned screen.
+        q.seek('calculate-route', allow_disabled=True)
         assert q.find(q.capture('s2a-large-return'), 'calculate-route') is not None
         print('PASS: S2a 360dp/1.6 font shapes, confirmation and drawing cancel', flush=True)
     finally:
