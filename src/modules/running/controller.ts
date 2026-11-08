@@ -1,7 +1,7 @@
 import { RunError, type Fix } from './model.ts';
 import type { RunRepository } from './repository.ts';
 import type { GuidanceEvent } from '../guidance/engine.ts';
-import { createRunGuidance, startReadiness } from './guidance.ts';
+import { createRunGuidance, isStartFix, startReadiness, type RunPreparation } from './guidance.ts';
 import type { ApproachPlan, ApproachPlanner } from './approach.ts';
 
 export interface TrackingDriver {
@@ -9,7 +9,7 @@ export interface TrackingDriver {
   start(): Promise<void>;
   stop(): Promise<void>;
   healthy(): Promise<boolean>;
-  locate?(): Promise<Fix>;
+  locate?(signal?: AbortSignal): Promise<Fix>;
   feedback?(events: readonly GuidanceEvent[], voice: boolean): void;
   silence?(): void;
   foreground?(): boolean;
@@ -56,28 +56,50 @@ export function createRunController(repository: () => Promise<RunRepository>, dr
     cancelPreparation: () => { preparing?.abort(); },
     retryNavigation: () => queue(async()=>{navigating?.abort();navigating=null;nextNavigation=0;await scheduleNavigation(await repository(),true);}),
     recover: () => queue(async () => { const repo = await repository(); await recover(repo); }),
-    start: (courseId?: string) => queue(async () => {
+    start: (courseId?: string, prepared?: RunPreparation, progress?: (message: string) => void) => queue(async () => {
       const cancel=new AbortController();preparing=cancel;
       const check=()=>{if(cancel.signal.aborted)throw new RunError('러닝 준비를 취소했어요.');};
       try {
       const repo = await repository(); await recover(repo);
       if (await repo.active()) throw new RunError('진행 중인 러닝을 먼저 재개하거나 종료해 주세요.');
+      progress?.('위치 권한을 확인하고 있어요.');
       await driver.prepare();
       check();
-      let fix = courseId ? await driver.locate?.() : undefined;
+      const readPrepared = () => prepared && prepared.courseId === courseId ? prepared.read() : undefined;
+      const locate = async (previous?: Fix) => {
+        check();
+        const current = readPrepared()?.fix;
+        if (isStartFix(current, Date.now())) return current;
+        if (isStartFix(previous, Date.now())) return previous;
+        progress?.('정확한 현재 위치를 확인하고 있어요.');
+        const value = await driver.locate?.(cancel.signal);
+        check();
+        if (!isStartFix(value, Date.now())) throw new RunError('정확도 30m 이내의 최신 위치를 기다리고 있어요. 하늘이 열린 곳에서 다시 시작해 주세요.');
+        return value;
+      };
+      let fix = courseId ? await locate() : undefined;
       let approach: ApproachPlan | undefined;
       if(courseId&&fix){
-        const course=await repo.course(courseId),ready=startReadiness(course,fix,Date.now());
+        const course=await repo.course(courseId);
+        approach = readPrepared()?.plan ?? undefined;
+        const ready=startReadiness(course,fix,Date.now(),approach);
+        // An on-course start needs no approach; never pass an obsolete plan to storage.
+        if (ready.ready && ready.distanceM !== null && ready.distanceM <= 12) approach = undefined;
         if(!ready.ready && ready.distanceM!==null && planner){
           try {
+            progress?.('코스까지의 보행 경로를 준비하고 있어요.');
             approach=await planner({course:course.snapshot,position:[fix.longitude,fix.latitude],accuracy:fix.accuracy??30},cancel.signal);
             if(cancel.signal.aborted)throw new RunError('합류 경로 준비를 취소했어요.');
-            fix=await driver.locate?.();
+            fix=await locate(fix);
             if(cancel.signal.aborted)throw new RunError('합류 경로 준비를 취소했어요.');
           }catch(error){throw new RunError(error instanceof Error?error.message:'합류 경로를 확인하지 못했어요.');}
         }
+        const finalReady = startReadiness(course, fix, Date.now(), approach);
+        if (!finalReady.ready) throw new RunError(finalReady.message);
+        if (finalReady.distanceM !== null && finalReady.distanceM <= 12) approach = undefined;
       }
       check();
+      progress?.('GPS 기록을 시작하고 있어요.');
       const run = await repo.start(courseId, fix, approach);
       try { await driver.start(); failure = null; }
       catch { await fail(repo, 'GPS 추적을 시작하지 못했어요. 위치 권한을 확인하고 재개해 주세요.'); throw new RunError(failure!); }

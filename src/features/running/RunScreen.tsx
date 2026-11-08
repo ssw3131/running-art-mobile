@@ -11,7 +11,7 @@ import RunPath from '@/features/running/RunPath';
 import { RunButton, RunStats, useRunStyles } from '@/features/running/ui';
 import CourseRunPreparation from '@/features/running/CourseRunPreparation';
 import LiveGuidancePanel from '@/features/running/LiveGuidancePanel';
-import type { GuidanceOptions, RunGuidance } from '@/modules/running/guidance';
+import type { GuidanceOptions, RunGuidance, RunPreparation } from '@/modules/running/guidance';
 import { guidanceNative } from '@/modules/guidance/native';
 
 export default function RunScreen() {
@@ -23,6 +23,7 @@ export default function RunScreen() {
   const [guide, setGuide] = useState<RunGuidance | null>(null);
   const [run, setRun] = useState<Run | null>(null), [points, setPoints] = useState<RunPoint[]>([]);
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [ready, setReady] = useState(false), [now, setNow] = useState(0);
+  const [preparationMessage, setPreparationMessage] = useState('');
   const working = useRef(false), generation = useRef(0), revision = useRef('');
   const supported = Platform.OS === 'android';
   const refresh = useCallback(async () => {
@@ -66,12 +67,13 @@ export default function RunScreen() {
       if (request === generation.current) { await refresh().catch(cause => setError(runErrorMessage(cause))); }
       // Tabs stay mounted after blur. Do not leave a cancelled operation busy.
       setBusy(false);
+      setPreparationMessage('');
       working.current = false;
     }
   }
-  function startOrResume() {
+  function startOrResume(prepared?: RunPreparation) {
     Alert.alert('화면이 잠겨도 러닝 기록', 'GPS 경로를 이 기기에 저장합니다. 다음 위치 설정에서 정확한 위치와 항상 허용을 선택해 주세요. 러닝 중에는 지속 알림이 표시되며 일시정지·종료하면 위치 수집을 멈춥니다.', [
-      { text: '취소', style: 'cancel' }, { text: '계속', onPress: () => void act(() => run ? running.resume(run.id) : running.start(courseId)) },
+      { text: '취소', style: 'cancel' }, { text: '계속', onPress: () => void act(() => run ? running.resume(run.id) : running.start(courseId, prepared, setPreparationMessage)) },
     ]);
   }
   function finish() {
@@ -93,7 +95,7 @@ export default function RunScreen() {
     <Text style={styles.body}>GPS로 달린 경로를 이 기기에 저장해요. 인터넷 없이도 기록할 수 있어요.</Text>
     {!supported ? <Text>러닝 추적은 Android 앱에서 사용해 주세요.</Text> : <>
       {busy && <ActivityIndicator />}
-      {busy && !run && courseId && <RunButton title="합류 경로 준비 취소" id="run-preparation-cancel" onPress={() => running.cancelPreparation()} />}
+      {busy && !run && courseId && <><Text testID="run-preparation-status" accessibilityLiveRegion="polite" style={styles.body}>{preparationMessage || '러닝 시작을 준비하고 있어요.'}</Text><RunButton title="러닝 시작 준비 취소" id="run-preparation-cancel" onPress={() => running.cancelPreparation()} /></>}
       {!!error && <Text testID="run-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}
       {!ready && <RunButton title="다시 불러오기" id="run-retry" disabled={busy} onPress={() => void act(async () => { await running.recover(); await refresh(); })} />}
       {run && loadedOwner===owner && <>

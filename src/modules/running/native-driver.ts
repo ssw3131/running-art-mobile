@@ -8,6 +8,7 @@ import { guidanceNative } from '../guidance/native';
 import { locateForeground } from '../location/locate';
 import { expoLocationProvider } from '../location/expo-provider';
 import { stopTracking } from './stop-tracking';
+import { isStartFix } from './guidance';
 
 export const RUNNING_TASK = 'running-art-gps-v1';
 export const trackingDriver: TrackingDriver = {
@@ -54,8 +55,9 @@ export const trackingDriver: TrackingDriver = {
       },
     });
   },
-  async locate() {
-    const result = await locateForeground(expoLocationProvider, new AbortController().signal, { askPermission: false });
+  async locate(signal = new AbortController().signal) {
+    const result = await locateForeground(expoLocationProvider, signal, { askPermission: false, accept: fix => isStartFix(fix, Date.now()) });
+    if (result.kind === 'cancelled') throw new RunError('러닝 준비를 취소했어요.');
     if (result.kind !== 'located') throw new RunError('출발 위치를 확인하지 못했어요. GPS 상태를 확인하고 다시 시작해 주세요.');
     return result.position;
   },

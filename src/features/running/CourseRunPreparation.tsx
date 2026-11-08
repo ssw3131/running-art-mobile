@@ -6,25 +6,26 @@ import { getStorage } from '@/modules/storage/database';
 import { courseErrorMessage } from '@/modules/courses/model';
 import { createGuidance } from '@/modules/guidance/engine';
 import GuidanceMap from '@/features/guidance/GuidanceMap';
-import { startReadiness, validateRunCourse, type RunCourse } from '@/modules/running/guidance';
+import { startReadiness, validateRunCourse, type RunCourse, type RunPreparation } from '@/modules/running/guidance';
 import type { Fix } from '@/modules/running/model';
 import { defaultAccountPreferences } from '@/modules/account/model';
 import { planApproach } from '@/modules/running/navigation';
 import type { ApproachPlan } from '@/modules/running/approach';
 import { RunButton, useRunStyles } from './ui';
 
-export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(): void }) {
+export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(prepared: RunPreparation): void }) {
   const styles = useRunStyles();
   const [course, setCourse] = useState<RunCourse | null>(null), [fix, setFix] = useState<Fix | null>(null);
   const [error, setError] = useState(''), [now, setNow] = useState(0);
   const [plan,setPlan]=useState<ApproachPlan|null>(null),[planning,setPlanning]=useState(false);
   const planController=useRef<AbortController|null>(null);
+  const prepared = useRef<{ fix: Fix | null; plan: ApproachPlan | null }>({ fix: null, plan: null });
   const [background, setBackground] = useState(defaultAccountPreferences.guidance.background);
   const generation = useRef(0), subscription = useRef<Location.LocationSubscription | null>(null), locating = useRef<number | null>(null);
   const locate = useCallback(async () => {
     if (locating.current !== null) return;
     const ticket = ++generation.current; locating.current = ticket;
-    subscription.current?.remove(); subscription.current = null; planController.current?.abort(); setPlan(null); setError(''); setFix(null);
+    subscription.current?.remove(); subscription.current = null; planController.current?.abort(); setPlan(null); setError(''); setFix(null); prepared.current = { fix: null, plan: null };
     try {
       const saved = await (await getStorage()).courses.get(id);
       const preferences = await (await getStorage()).account.preferences();
@@ -39,7 +40,8 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
       if (ticket !== generation.current || AppState.currentState !== 'active') return;
       const watch = await Location.watchPositionAsync({ accuracy: Location.Accuracy.BestForNavigation, timeInterval: 1000, distanceInterval: 0, mayShowUserSettingsDialog: false }, value => {
         if (ticket !== generation.current) return;
-        setFix({ timestamp: value.timestamp, latitude: value.coords.latitude, longitude: value.coords.longitude, accuracy: value.coords.accuracy }); setNow(Date.now());
+        const next = { timestamp: value.timestamp, latitude: value.coords.latitude, longitude: value.coords.longitude, accuracy: value.coords.accuracy };
+        prepared.current.fix = next; setFix(next); setNow(Date.now());
       });
       if (ticket === generation.current) subscription.current = watch; else watch.remove();
     } catch (cause) {
@@ -50,15 +52,15 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
     void locate();
     const timer = setInterval(() => setNow(Date.now()), 1000);
     const state = AppState.addEventListener('change', value => {
-      if (value === 'background' && locating.current === null) { generation.current++; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; setFix(null); }
+      if (value === 'background' && locating.current === null) { generation.current++; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; setFix(null); prepared.current = { fix: null, plan: null }; }
       if (value === 'active' && !subscription.current) void locate();
     });
-    return () => { generation.current++; locating.current = null; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; clearInterval(timer); state.remove(); };
+    return () => { generation.current++; locating.current = null; planController.current?.abort(); subscription.current?.remove(); subscription.current = null; prepared.current = { fix: null, plan: null }; clearInterval(timer); state.remove(); };
   }, [locate]));
   async function preparePath(){
     if(!course||!fix||planning)return;
-    const ticket=generation.current,cancel=new AbortController();planController.current=cancel;setPlanning(true);setError('');setPlan(null);
-    try{const value=await planApproach({course:course.snapshot,position:[fix.longitude,fix.latitude],accuracy:fix.accuracy??30},cancel.signal);if(ticket===generation.current&&!cancel.signal.aborted)setPlan(value);}
+    const ticket=generation.current,cancel=new AbortController();planController.current=cancel;setPlanning(true);setError('');setPlan(null);prepared.current.plan=null;
+    try{const value=await planApproach({course:course.snapshot,position:[fix.longitude,fix.latitude],accuracy:fix.accuracy??30},cancel.signal);if(ticket===generation.current&&!cancel.signal.aborted){prepared.current.plan=value;setPlan(value);}}
     catch(cause){if(ticket===generation.current&&!cancel.signal.aborted)setError(cause instanceof Error?cause.message:'합류 경로를 준비하지 못했어요.');}
     finally{if(planController.current===cancel){planController.current=null;setPlanning(false);}}
   }
@@ -76,9 +78,9 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
       <Text testID="run-readiness" style={styles.body}>{readiness?.message}</Text>
       {fix && <Text style={styles.body}>현재 위치 정확도 ±{Math.round(fix.accuracy ?? 0)}m</Text>}
       <Text style={styles.body}>준비 중에는 기록하지 않아요. 시작 버튼 이후 접근 거리·시간도 기록하며, 코스 진행률은 합류 후부터 계산해요. {background ? '화면을 꺼도 안내와 GPS 기록이 이어집니다.' : '앱을 벗어나거나 화면을 끄면 일시정지됩니다.'}</Text>
-      {readiness?.distanceM!==null && (readiness?.distanceM??0)>12 && <RunButton id="run-prepare-path" title={planning?'합류 경로 준비 중 · 취소':'보행 도로 합류 경로 준비'} disabled={busy} onPress={()=>planning?planController.current?.abort():void preparePath()} />}
-      <RunButton id="run-course-start" title="이 코스로 러닝 시작" disabled={busy || planning || !readiness?.ready} onPress={onStart} />
     </>}
+    <RunButton id="run-prepare-path" title={planning?'합류 경로 준비 중 · 취소':'보행 도로 합류 경로 준비'} disabled={busy || (!planning && (readiness?.distanceM == null || readiness.distanceM <= 12))} onPress={()=>planning?planController.current?.abort():void preparePath()} />
+    <RunButton id="run-course-start" title={busy ? '러닝 시작 준비 중' : '이 코스로 러닝 시작'} disabled={busy || planning || !course} onPress={() => onStart({ courseId: id, read: () => prepared.current })} />
     <RunButton id="run-locate" title="현재 위치 다시 확인" disabled={busy} onPress={() => void locate()} />
   </View>;
 }

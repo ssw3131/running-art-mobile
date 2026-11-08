@@ -79,6 +79,8 @@ GitHub Actions의 **Handset APK → Run workflow**에서 워크플로 브랜치�
 
 두 종류는 `com.runningart.mobile.dev` 및 동일 고정 테스트 서명으로 교체 설치합니다. 동시에 설치되는 별도 앱이 아닙니다. ARM64와 ARMv7을 포함해 기존 32비트 A10e도 대상으로 합니다. 기존 Verify의 x86_64·localhost APK는 CI 전용입니다.
 
+휴대폰 빌드는 `APK_KIND=development/preview`에서 `app.config.js`가 MapLibre OpenGL을 선택합니다. 기존 에뮬레이터 빌드는 Vulkan을 유지합니다. `metadata.json`의 `mapRenderer`로 구성을 확인합니다. 렌더러 변경은 APK 교체가 필요하며 Metro만으로 바뀌지 않습니다. 네이티브 지문은 소스 입력 지문이므로 환경에 따른 렌더러 구분은 별도 메타데이터도 함께 봅니다.
+
 versionCode는 2020-01-01 이후 빌드 시점의 초 값입니다. 오래된 APK로 돌아갈 때 버전 제한이 생길 수 있으며 자동 삭제로 해결하지 않습니다.
 
 현재 설치본보다 낮은 versionCode의 다른 종류 APK로 전환하려면 원하는 종류를 새로 빌드해 교체합니다. 특히 preview 설치 뒤 Metro를 켜는 것만으로 개발 모드가 되지 않습니다. development APK로 교체하고 USB Connect/Start를 실행합니다. 자료를 보존하려면 버전 제한을 앱 삭제로 해결하지 않습니다.

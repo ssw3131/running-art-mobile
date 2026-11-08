@@ -143,6 +143,7 @@ test('v4 to v5 adds nullable guidance fields without touching existing GPS or co
 });
 
 test('screen-off opt-out pauses the course, preserves progress, and a new process requires explicit resume', async t => {
+  t.mock.method(Date, 'now', () => BASE);
   const f = await fixture(t);
   let foreground = true, tracking = false;
   const driver = { prepare: async () => {}, locate: async () => gps(0), start: async () => { tracking = true; },
