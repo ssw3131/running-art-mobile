@@ -12,7 +12,8 @@ from release_download import download_release
 
 VERSION='2.120.0'
 SHA='7074584113aa00495beeac661c41fb09f1ddd0a483cd7333894b0d080086dc6e'
-URL=f'https://github.com/supabase/cli/releases/download/v{VERSION}/supabase_linux_amd64.tar.gz'
+# Official v2.120.0 supabase_linux_amd64.tar.gz, verified against the same SHA.
+URL='https://api.github.com/repos/supabase/cli/releases/assets/616067308'
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 
 
