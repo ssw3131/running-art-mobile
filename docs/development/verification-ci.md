@@ -20,7 +20,7 @@ git switch -c feat/signup-home
 
 ```sh
 npm run qa:plan -- main
-npm run qa:fast
+npm run qa:local
 git add <검토한-파일>
 git commit -m "feat: 가입 동의와 홈 상태 연결"
 git push -u origin feat/signup-home
@@ -51,6 +51,20 @@ PR의 전체 검사 마지막 게이트가 실제 checkout의 Git 트리를 확�
 증거 조회는 읽기 전용 권한을 가진 scope에서만 수행한다. 최신 실행이 실패/진행 중이거나 증거가 만료/누락됐거나 GitHub API 조회가 실패하면 전체 검사를 실행한다. 이전 성공으로 이후 실패를 가리지 않는다. main 요약과 `verification-reuse-*` 아티팩트는 실제 재실행인지 어느 PR 실행을 재사용했는지 명시한다. PC 결과나 수동 부분 실행은 이 증거로 인정하지 않는다.
 
 API29는 이제 ready PR에서 API36과 함께 실행하므로 기존 PR+main에서 검사하던 최종 범위를 유지하면서 main의 같은 Android 검사를 반복하지 않는다. GitHub의 [PR merge ref 의미](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request), [워크플로 실행 조회](https://docs.github.com/en/rest/actions/workflow-runs), [아티팩트 메타데이터](https://docs.github.com/en/rest/actions/artifacts)를 사용한다.
+
+### 확인한 실행 시간
+
+2026-11-09에 아래 흐름을 실제 확인했다. 시간은 각 실행의 측정값이며 러너 상태와 변경 범위에 따라 달라진다.
+
+| 단계 | 실제 시간 | 확인한 범위 |
+| --- | --- | --- |
+| 이전 main213 | 35분13초 | 이미 PR에서 통과한 상태를 main에서 전체 재실행 |
+| draft216 | 2분57초 | Python 도구·전체 fast, development-feedback; API/Android 제외 |
+| 단독 생성219 | 24분40초 | API36 generation-only3단계·보존/정리; APK 빌드/기동 비용 포함 |
+| 최종 ready220 | 37분32초 | fast/API/API29/API36/4화면·전체 게이트 |
+| 동일 트리 main221 | 30초 | PR52의 성공한 전체220 증거 확인·재사용 게이트 |
+
+[원본 실행과 아티팩트 근거](../history/executed-plans/2026-11-09-0436-faster-integration.md). 개발 중 전체 회귀 반복과 병합 후 동일 내용의 중복 실행을 줄이는 방식이다. ready의 최종 Android 검사를 PC 결과로 대체하거나, 수동 진단의 빌드 시간을 없앤 것은 아니다.
 
 ## 개발 중 기획이 바뀌었을 때
 
