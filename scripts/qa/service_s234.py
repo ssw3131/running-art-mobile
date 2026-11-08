@@ -88,6 +88,20 @@ def service_s234(q, launch):
     newer=q.query("SELECT * FROM running_sessions WHERE status <> 'completed'")[0]
     assert newer['id']!=run_id and newer['course_outcome']=='active'
     assert q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]==before
+    # A retry is a new run and uses the saved defaults, including touch lock.
+    # Unlocking the earlier run does not overwrite these account defaults.
+    retry_options=json.loads(newer['guidance_options_json'])
+    defaults=json.loads(q.query(f"SELECT preferences_json FROM account_preferences WHERE owner_id='{q.OWNER}'")[0]['preferences_json'])['guidance']
+    assert retry_options==defaults, 'The new run must inherit the saved guidance defaults'
+    lock=q.find(q.capture('s3-retry-default-lock'),'run-touch-unlock')
+    assert (lock is not None)==bool(retry_options.get('touchLock',False))
+    if lock is not None:
+        x1,y1,x2,y2=map(int,re.findall(r'\d+',lock.get('bounds')));x,y=str((x1+x2)//2),str((y1+y2)//2)
+        q.shell('input','swipe',x,y,x,y,'1200')
+        wait_fixed_control('run-pause','s3-retry-unlocked')
+        assert q.find(q.capture('s3-retry-unlocked'),'run-touch-unlock') is None
+        retry_unlocked=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{newer['id']}'")[0]['guidance_options_json'])
+        assert retry_unlocked['touchLock'] is False, f'Retry unlock setting was not saved: {retry_unlocked}'
     q.tap('run-finish');q.tap('종료·저장');wait_status('completed',newer['id'])
     wait_fixed_control('저장 코스','s3-retry-stopped-destination',selected=True)
     launch('runs/'+newer['id']);q.seek('run-rechallenge')
@@ -95,7 +109,7 @@ def service_s234(q, launch):
     launch('courses?view=runs');q.capture('s3-monthly-records')
     assert q.find(q.capture('s3-stopped-excluded'),'run-row-'+run_id) is None
     assert q.query(f"SELECT count(*) n FROM running_sessions WHERE id='{run_id}' AND course_outcome='stopped'")[0]['n']==1
-    (q.OUT/'s234-result.json').write_text(json.dumps({'runId':run_id,'retryId':newer['id'],'oldRunUnchanged':True,'pickerCancel':True,'restoredOptions':restored}),encoding='utf8')
+    (q.OUT/'s234-result.json').write_text(json.dumps({'runId':run_id,'retryId':newer['id'],'oldRunUnchanged':True,'pickerCancel':True,'restoredOptions':restored,'retryOptions':retry_options}),encoding='utf8')
     q.tap('tab-home')
     print('PASS: S2b/c selectors/picker cancel, S4 map/focus/settings/touch lock/pause restoration and S3 separate retry/monthly records',flush=True)
 
