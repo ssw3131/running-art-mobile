@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Alert, AppState, BackHandler, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppModal, AppText, Button } from '@/components/ui';
 import { simulationSettings } from '@/features/running/simulation-settings';
 import LiveGuidancePanel from '@/features/running/LiveGuidancePanel';
@@ -18,7 +17,7 @@ import { runFinishDestination } from '@/modules/running/finish-destination';
 import { openServiceTab } from '@/features/service/open-service-tab';
 
 export default function RunSimulationScreen(){
-  const {courseId}=useLocalSearchParams<{courseId?:string}>(),auth=useAuth(),owner=auth.account?.id,insets=useSafeAreaInsets();
+  const {courseId}=useLocalSearchParams<{courseId?:string}>(),auth=useAuth(),owner=auth.account?.id;
   const session=useRef<ReturnType<typeof createRunningSimulation>|null>(null),ticket=useRef(0),ownsActivity=useRef(false),focused=useRef(false),settingsToken=useRef('');
   const [settingsId,setSettingsId]=useState(''),[loadedKey,setLoadedKey]=useState('');
   const recordId=useRef(''),savingRef=useRef(false),finishedRef=useRef(false),finishRef=useRef<()=>void>(()=>{});
@@ -89,8 +88,8 @@ export default function RunSimulationScreen(){
   if(loadedKey!==sessionKey||!course||!state||!active)return <View style={{flex:1,padding:26,gap:20}}><AppText>{error||'저장한 코스로 시뮬레이션을 준비하고 있어요.'}</AppText><Button label="돌아가기" onPress={()=>router.back()}/></View>;
   const run:Run={id:'simulation',status:state.playing||planning?'running':'paused',startedAt:0,endedAt:null,activeMs:state.elapsedMs,checkpointAt:state.elapsedMs,distanceM:state.distanceM,pointCount:0,rejectedCount:0,lastTimestamp:state.elapsedMs,segment:0,breakPending:0,resumedAt:0,reason:null};
   const command=(value:'depart'|'return'|'normal')=>{active.command(value);setState(active.play(clock()));};
-  return <View style={{flex:1,marginTop:-insets.top}}>
-    <LiveGuidancePanel headerAccessory={<View style={{marginHorizontal:8,backgroundColor:'#FFF0E8',borderRadius:10,paddingHorizontal:8,paddingVertical:4,gap:2}}><AppText style={{fontSize:11,color:'#9C4308',textAlign:'center'}}>{saving?'시뮬레이션 기록 저장 중…':`시뮬레이션 ${state.speed}배속 · 모의 기록 저장`}</AppText><View style={{flexDirection:'row',gap:8,justifyContent:'center'}}>{planning&&<Button compact variant="outline" label="종료" onPress={confirmFinish}/>}<Button compact label="이탈" testID="running-simulation-depart" disabled={planning||saving} onPress={()=>command('depart')}/><Button compact label="복귀" testID="running-simulation-return" disabled={planning||saving} onPress={()=>command('return')}/><Button compact variant="outline" label="배속·다시 시작" disabled={planning||saving} onPress={()=>{setState(active.pause(clock()));setSettings(true);}}/></View></View>} onRetryNavigation={()=>setRetry(n=>n+1)} run={run} guide={{course,checkpoint:active.checkpoint(),options,state}} points={[]} now={state.elapsedMs} busy={planning||saving} error={error} simulationState={state} simulationPace={state.playing&&state.status!=='weak'?'6:00 /km':'—'} onOptions={setOptions} onSettings={()=>{setState(active.pause(clock()));simulationSettings.set(settingsId,owner??'',options);router.push({pathname:'/run-settings',params:{simulation:settingsId}});}} onPauseResume={()=>setState(state.playing?active.pause(clock()):active.play(clock()))} onFinish={confirmFinish} onPermission={()=>{}}/>
+  return <View style={{flex:1}}>
+    <LiveGuidancePanel headerAccessory={<View style={{marginHorizontal:8,backgroundColor:'#FFF0E8',borderRadius:10,paddingHorizontal:8,paddingVertical:4,gap:2}}><AppText style={{fontSize:11,color:'#9C4308',textAlign:'center'}}>{saving?'시뮬레이션 기록 저장 중…':`시뮬레이션 ${state.speed}배속 · 모의 기록 저장`}</AppText><View style={{flexDirection:'row',gap:8,justifyContent:'center'}}>{planning&&<Button compact variant="outline" label="종료" onPress={confirmFinish}/>}<Button compact label="이탈" testID="running-simulation-depart" disabled={planning||saving} onPress={()=>command('depart')}/><Button compact label="복귀" testID="running-simulation-return" disabled={planning||saving} onPress={()=>command('return')}/><Button compact variant="outline" label="배속·다시 시작" disabled={planning||saving} onPress={()=>{setState(active.pause(clock()));setSettings(true);}}/></View></View>} onRetryNavigation={()=>setRetry(n=>n+1)} run={run} guide={{course,checkpoint:active.checkpoint(),options,state}} points={[]} now={state.elapsedMs} busy={planning||saving} error={error} simulationState={state} simulationPace={state.playing&&state.status!=='weak'?'6:00 /km':'—'} onOptions={setOptions} onSettings={()=>{setState(active.pause(clock()));simulationSettings.set(settingsId,owner??'',options);router.push({pathname:'/run-settings',params:{simulation:settingsId}});}} onPauseResume={()=>setState(state.playing?active.pause(clock()):active.play(clock()))} onFinish={confirmFinish}/>
 
     <AppModal visible={settings} title="러닝 시뮬레이션" onClose={()=>setSettings(false)} footer={<Button compact label="계속 보기" onPress={()=>{setSettings(false);setState(active.play(clock()));}}/>}>
       <AppText>기준 페이스 6분/km의 가상 위치를 실제 러닝 안내 로직에 전달해요. 지도·집중 모드와 이탈·복귀를 시험할 수 있어요.</AppText>

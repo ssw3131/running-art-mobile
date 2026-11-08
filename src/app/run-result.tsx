@@ -8,7 +8,7 @@ import { homePathSvg } from '@/modules/home/model';
 import { courseShapes } from '@/modules/courses/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { openServiceTab } from '@/features/service/open-service-tab';
-import { badgeImages } from '@/features/achievements/badge-images';
+import { CompletionBadge } from '@/features/achievements/CompletionBadge';
 
 export default function RunResultScreen() {
   const params = useLocalSearchParams<{ id: string }>(), id = typeof params.id === 'string' ? params.id : '';
@@ -28,9 +28,9 @@ export default function RunResultScreen() {
           <View style={{ width: 56, height: 56, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF3EC', borderRadius: 28, borderWidth: 1.5, borderColor: '#FFD1BA' }}><Image testID="completion-trophy" source={require('../../assets/achievements/trophy.svg')} style={{ width: 26, height: 26 }} /></View></>}
         <AppText testID="run-result-title" weight="black" style={{ fontSize: 30, lineHeight: 42, textAlign: 'center' }}>{finished ? '완주를 축하합니다!' : '오늘의 러닝을 기록했어요'}</AppText>
       </View>
-      {finished && uri && <View style={{ minHeight: 255, alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+      {finished && <View style={{ minHeight: 255, alignItems: 'center', justifyContent: 'center', gap: 8 }}>
         <Image source={require('../../assets/achievements/confetti.png')} style={{ position: 'absolute', width: '100%', height: '100%' }} contentFit="contain" accessible={false} />
-        {badgeImages[data.course!.snapshot.shape]?<Image testID={badge?.firstRunId===id?"completion-first-badge":undefined} source={badgeImages[data.course!.snapshot.shape]} style={{width:170,height:170}} accessibilityLabel={`${courseShapes[data.course!.snapshot.shape]} 완주 뱃지`}/>:<Image source={{uri}} style={{width:170,height:170}} accessibilityLabel="완주한 코스 도형"/>}
+        <CompletionBadge key={data.course!.snapshot.shape} shape={data.course!.snapshot.shape} label={courseShapes[data.course!.snapshot.shape]} uri={uri} first={badge?.firstRunId === id} />
         <AppText testID="run-result-badge" weight="bold">{courseShapes[data.course!.snapshot.shape]} · {badge?.count ?? 0}회 완주</AppText>
       </View>}
       <RunMetrics run={data.run} />

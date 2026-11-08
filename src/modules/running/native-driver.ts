@@ -1,7 +1,7 @@
 import { AppState, PermissionsAndroid, Platform } from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { RunError } from './model';
+import { RunError, RunPermissionError } from './model';
 import type { TrackingDriver } from './controller';
 import { guidanceActivity } from '../guidance/activity';
 import { guidanceNative } from '../guidance/native';
@@ -17,15 +17,15 @@ export const trackingDriver: TrackingDriver = {
     if (Platform.OS !== 'android' || !await TaskManager.isAvailableAsync()) throw new RunError('러닝 추적은 Android 설치 앱에서 사용할 수 있어요.');
     let foreground = await Location.getForegroundPermissionsAsync();
     if (!foreground.granted) foreground = await Location.requestForegroundPermissionsAsync();
-    if (!foreground.granted) throw new RunError('러닝을 기록하려면 위치 권한이 필요해요. 앱 설정에서 허용해 주세요.');
-    if (foreground.android?.accuracy !== 'fine') throw new RunError('정확한 러닝 경로를 위해 앱 위치 설정에서 정확한 위치를 켜 주세요.');
+    if (!foreground.granted) throw new RunPermissionError('러닝을 기록하려면 위치 권한이 필요해요. 앱 설정에서 허용해 주세요.');
+    if (foreground.android?.accuracy !== 'fine') throw new RunPermissionError('정확한 러닝 경로를 위해 앱 위치 설정에서 정확한 위치를 켜 주세요.');
     if (Number(Platform.Version) >= 33 && !await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)) {
       const notification = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-      if (notification !== PermissionsAndroid.RESULTS.GRANTED) throw new RunError('잠금 화면에 러닝 알림을 표시하려면 앱 설정에서 알림을 허용해 주세요.');
+      if (notification !== PermissionsAndroid.RESULTS.GRANTED) throw new RunPermissionError('잠금 화면에 러닝 알림을 표시하려면 앱 설정에서 알림을 허용해 주세요.');
     }
     const background = await Location.getBackgroundPermissionsAsync();
     if (!background.granted && !(await Location.requestBackgroundPermissionsAsync()).granted) {
-      throw new RunError('화면이 잠겨도 기록하려면 위치 권한을 항상 허용으로 설정해 주세요.');
+      throw new RunPermissionError('화면이 잠겨도 기록하려면 위치 권한을 항상 허용으로 설정해 주세요.');
     }
     if (!await Location.hasServicesEnabledAsync()) throw new RunError('기기의 위치 기능을 켠 뒤 다시 시작해 주세요.');
   },

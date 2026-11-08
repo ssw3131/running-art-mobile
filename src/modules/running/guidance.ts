@@ -7,6 +7,7 @@ import { validApproach, type ApproachPlan } from './approach.ts';
 export type CourseOutcome = 'active' | 'arrival-pending' | 'finished' | 'stopped';
 export type RunCourse = { id: string; name: string; snapshot: CourseSnapshot };
 export type RunPreparation = { courseId: string; read(): { fix: Fix | null; plan: ApproachPlan | null } };
+// Keep background for stored-option compatibility; live runs always track in the background.
 export type GuidanceOptions = { voice: boolean; background: boolean; mode: 'map' | 'focus'; touchLock?: boolean };
 export const defaultGuidanceOptions: GuidanceOptions = { voice: true, background: true, mode: 'map' };
 export type RunGuidanceCheckpoint = GuidanceCheckpoint | LoopCheckpoint;

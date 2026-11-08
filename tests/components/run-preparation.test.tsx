@@ -1,11 +1,12 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
-import { AppState } from 'react-native';
+import { AppState, BackHandler, Text } from 'react-native';
 import CourseRunPreparation from '../../src/features/running/CourseRunPreparation';
 
 let mockPosition: (value: any) => void;
 const mockRemove = jest.fn();
-jest.mock('expo-router', () => ({ router: { push: jest.fn(), setParams: jest.fn() }, useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]) }));
+const mockSetParams=jest.fn();
+jest.mock('expo-router', () => ({ router: { push: jest.fn(), setParams: (value:any)=>mockSetParams(value) }, useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]) }));
 jest.mock('expo-location', () => ({
   Accuracy: { BestForNavigation: 6 },
   getForegroundPermissionsAsync: async () => ({ granted: true, android: { accuracy: 'fine' } }),
@@ -25,7 +26,7 @@ jest.mock('../../src/modules/guidance/engine', () => ({ createGuidance: () => ({
 jest.mock('../../src/features/guidance/GuidanceMap', () => ({ __esModule: true, default: () => null }));
 jest.mock('../../src/features/running/use-preparation-approach', () => ({ usePreparationApproach: () => ({plan:null,readPlan:()=>null,error:'',retry:jest.fn()}) }));
 
-beforeEach(() => { jest.useFakeTimers(); AppState.currentState='active'; });
+beforeEach(() => { jest.useFakeTimers(); AppState.currentState='active'; mockSetParams.mockReset(); });
 afterEach(() => jest.useRealTimers());
 
 test('start stays visible and actionable as GPS expires; confirmation reads the latest preview', async () => {
@@ -56,4 +57,25 @@ test('busy preparation keeps the same start control disabled and releases previe
   await view.unmount();
   expect(mockRemove).toHaveBeenCalled();
   expect(preparation.read().fix).toBeNull();
+});
+
+test.each([false,true])('back cancels preparation and releases GPS without starting (notice=%s)',async notice=>{
+  const start=jest.fn();
+  const back=jest.spyOn(BackHandler,'addEventListener');
+  function Harness(){
+    const [selected,setSelected]=React.useState(true);
+    mockSetParams.mockImplementation((value:any)=>{if(value.courseId===undefined)setSelected(false);});
+    return selected?<CourseRunPreparation id="course" busy={false} onStart={start}/>:<Text>코스 목록</Text>;
+  }
+  const view=await render(<Harness/>);
+  if(notice){await fireEvent(screen.getByText('코스 위에서 러닝을 시작해요.'),'requestClose');}
+  else{
+    await fireEvent.press(screen.getByTestId('run-preparation-confirm'));
+    const handler=back.mock.calls.findLast(([event])=>event==='hardwareBackPress')![1];
+    await act(()=>{expect(handler()).toBe(true);});
+  }
+  expect(screen.getByText('코스 목록')).toBeVisible();
+  expect(screen.queryByTestId('run-course-start')).toBeNull();
+  expect(mockRemove).toHaveBeenCalled();expect(start).not.toHaveBeenCalled();
+  await view.unmount();back.mockRestore();
 });

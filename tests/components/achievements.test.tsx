@@ -30,6 +30,8 @@ test('UI-S5-02 stopped and finished outcomes remain distinct, share opens the se
  await fireEvent.press(screen.getByText('공유하기'));expect(mockPush).toHaveBeenCalledWith({pathname:'/run-card',params:{id:'a'.repeat(32)}});
  mockResult={data:{...data,run:{...data.run,courseOutcome:'finished'},achievements:{...data.achievements,badges:[{shape:'heart',count:2,firstRunId:'a'.repeat(32)}]}},error:''};await view.rerender(<RunResultScreen/>);
  expect(screen.getByTestId('run-result-badge')).toHaveTextContent('하트 · 2회 완주');expect(screen.getByTestId('completion-first-badge')).toBeTruthy();expect(screen.getByTestId('completion-trophy')).toBeTruthy();
+ mockResult={...mockResult,data:{...mockResult.data,course:{...mockResult.data.course,snapshot:{...snapshot,target:[]}}}};await view.rerender(<RunResultScreen/>);
+ expect(screen.getByTestId('completion-first-badge')).toBeTruthy();
  mockResult={data:{...data,course:null,run:{...data.run,courseOutcome:null}},error:''};await view.rerender(<RunResultScreen/>);
  expect(screen.queryByTestId('completion-first-badge')).toBeNull();expect(screen.queryByTestId('completion-trophy')).toBeNull();
  expect(screen.queryByText(/칼로리/)).toBeNull();

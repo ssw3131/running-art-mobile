@@ -14,7 +14,7 @@ import { offset } from '../src/modules/guidance/geometry.ts';
 const BASE=1800000000000,owner='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const route=[[0,0],[0,240],[240,240],[240,0],[0,0]].map(([x,y])=>offset([127,37],x,y));
 const snapshot={schemaVersion:1,engineVersion:'0.2',source:'osm',shape:'heart',origin:{lat:37,lng:127},targetKm:3,lengthKm:3,score:80,route,target:route};
-async function fixture(t){const db=openSqlite();t.after(()=>db.closeAsync());await migrateDatabase(db);const scope={owner};const runs=createRunRepository(db,()=>BASE,()=>scope.owner),courses=createCourseRepository(db,()=>BASE,()=>scope.owner);const course=await courses.save(snapshot,'Recorded simulation');return {db,runs,course,scope};}
+async function fixture(t){const db=openSqlite();t.after(()=>db.closeAsync());await migrateDatabase(db);const scope={owner};const runs=createRunRepository(db,()=>BASE,()=>scope.owner),courses=createCourseRepository(db,()=>BASE,()=>scope.owner);const course=await courses.save(snapshot,'Recorded simulation');return {db,runs,courses,course,scope};}
 function simulation(complete=true){const s=createRunningSimulation(route);s.play(0);for(let clock=100;clock<60000;clock+=100){const state=s.update(clock);if(!complete||state.status==='arrived')break;}return s;}
 test('production completion saves archive/first badge and syncs provenance exactly once',async t=>{
  const f=await fixture(t),s=simulation(),id=await f.runs.newSimulationId();assert.equal(s.snapshot().status,'arrived');
@@ -41,4 +41,32 @@ test('invalid virtual fixes roll back rather than manufacturing completion',asyn
  assert.throws(()=>buildSimulationRecord(id,course,[{timestamp:0,position:[NaN,37],accuracy:5}],1000,BASE));
  await assert.rejects(f.runs.saveSimulation({id,courseId:f.course.id,fixes:[{timestamp:2000,position:route[0],accuracy:5}],elapsedMs:1000},owner));
  assert.equal(await f.db.getFirstAsync('SELECT id FROM running_sessions'),null);
+});
+
+test('a newly finished simulation supersedes an older stop despite its earlier virtual start',async t=>{
+ const f=await fixture(t),oldRuns=createRunRepository(f.db,()=>BASE-1000,()=>owner);
+ const stopped=await oldRuns.saveSimulation({id:await oldRuns.newSimulationId(),courseId:f.course.id,...simulation(false).recording()},owner);
+ assert.equal((await f.courses.list())[0].unfinished,true);
+ const completed=await f.runs.saveSimulation({id:await f.runs.newSimulationId(),courseId:f.course.id,...simulation().recording()},owner);
+ assert.ok(completed.startedAt<stopped.startedAt);assert.ok(completed.endedAt>stopped.endedAt);
+ const hash=(await f.db.getFirstAsync('SELECT snapshot_hash FROM saved_courses WHERE id=?',f.course.id)).snapshot_hash;
+ assert.equal((await f.courses.latestAttempt(f.course.id,hash)).id,completed.id);
+ assert.equal((await f.courses.latestAttempt(null,hash)).id,completed.id);
+ assert.equal((await f.courses.list())[0].unfinished,false);
+ assert.equal((await f.courses.list())[0].inProgress,false);
+ const laterRuns=createRunRepository(f.db,()=>BASE+1000,()=>owner);
+ const later=await laterRuns.saveSimulation({id:await laterRuns.newSimulationId(),courseId:f.course.id,...simulation(false).recording()},owner);
+ assert.equal((await f.courses.latestAttempt(f.course.id,hash)).id,later.id);
+ assert.equal((await f.courses.list())[0].unfinished,true);
+ assert.equal((await f.courses.list())[0].inProgress,false);
+});
+
+test('an active attempt takes precedence over ended records even with an earlier clock',async t=>{
+ const f=await fixture(t);
+ await f.runs.saveSimulation({id:await f.runs.newSimulationId(),courseId:f.course.id,...simulation().recording()},owner);
+ const activeRuns=createRunRepository(f.db,()=>BASE-2000,()=>owner);
+ const active=await activeRuns.start(f.course.id,{timestamp:BASE-2000,latitude:route[0][1],longitude:route[0][0],accuracy:5});
+ const hash=(await f.db.getFirstAsync('SELECT snapshot_hash FROM saved_courses WHERE id=?',f.course.id)).snapshot_hash;
+ assert.equal((await f.courses.latestAttempt(f.course.id,hash)).id,active.id);
+ assert.equal((await f.courses.list())[0].inProgress,true);
 });

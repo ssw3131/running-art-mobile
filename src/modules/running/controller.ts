@@ -134,10 +134,9 @@ export function createRunController(repository: () => Promise<RunRepository>, dr
       const active = await repo.active();
       if (active?.status === 'running') {
         try {
-          const guide = active.courseId ? await repo.guidance(active.id) : null;
-          if (guide && !guide.options.background && driver.foreground?.() === false) {
-            await repo.transition(active.id, 'paused', '화면 꺼짐 안내를 꺼서 일시정지했어요. 앱에서 재개해 주세요.'); await stop();
-          } else if (failure || !await driver.healthy()) await fail(repo, failure ?? '위치 권한 또는 위치 서비스가 꺼져 기록을 중단했어요.');
+          // Screen visibility and legacy background=false preferences must not
+          // pause an actual run. Permission/service failures still stop tracking.
+          if (failure || !await driver.healthy()) await fail(repo, failure ?? '위치 권한 또는 위치 서비스가 꺼져 기록을 중단했어요.');
           else { await repo.checkpoint(active.id); await scheduleNavigation(repo); }
         } catch (error) { await fail(repo, '러닝 상태를 확인하거나 저장하지 못해 추적을 중단했어요. 다시 시도해 주세요.'); throw error; }
       } else await stop();

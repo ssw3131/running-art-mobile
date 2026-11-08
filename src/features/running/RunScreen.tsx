@@ -6,7 +6,7 @@ import { AppText as Text } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { getStorage } from '@/modules/storage/database';
 import { running } from '@/modules/running/runtime';
-import { MAX_GAP_MS, runErrorMessage, statusLabel, type Run, type RunPoint } from '@/modules/running/model';
+import { MAX_GAP_MS, RunPermissionError, runErrorMessage, statusLabel, type Run, type RunPoint } from '@/modules/running/model';
 import RunPath from '@/features/running/RunPath';
 import { RunButton, RunStats, useRunStyles } from '@/features/running/ui';
 import SavedCourseChooser from '@/features/running/SavedCourseChooser';
@@ -65,7 +65,10 @@ export default function RunScreen() {
     working.current = true; setBusy(true); setError('');
     const request = generation.current;
     try { await action(); }
-    catch (cause) { if (request === generation.current) setError(runErrorMessage(cause)); }
+    catch (cause) { if (request === generation.current) {
+      setError(runErrorMessage(cause));
+      if(cause instanceof RunPermissionError)Alert.alert('러닝 시작에 필요한 권한',cause.message,[{text:'취소',style:'cancel'},{text:'설정 열기',onPress:()=>void Linking.openSettings().catch(()=>setError('기기 설정에서 위치·알림 권한을 확인해 주세요.'))}]);
+    } }
     finally {
       if (request === generation.current) { await refresh().catch(cause => setError(runErrorMessage(cause))); }
       // Tabs stay mounted after blur. Do not leave a cancelled operation busy.
@@ -90,10 +93,9 @@ export default function RunScreen() {
     if (!run) return;
     void act(async () => { await (await getStorage()).runs.setGuidanceOptions(run.id, value); if (!value.voice) guidanceNative?.silenceLive(); });
   }
-  const permission=()=>void Linking.openSettings().catch(()=>setError('앱 설정을 열지 못했어요. 기기 설정에서 위치 권한을 확인해 주세요.'));
   const immersive=!!courseId||!!(run&&guide&&loadedOwner===owner);
   const screenOptions=<Tabs.Screen options={{headerShown:!immersive,tabBarStyle:immersive?{display:'none'}:undefined}}/>;
-  if(run && guide && loadedOwner===owner) return <>{screenOptions}<LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPermission={permission} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/></>;
+  if(run && guide && loadedOwner===owner) return <>{screenOptions}<LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/></>;
   if(supported&&ready&&!run&&courseId)return <>{screenOptions}<View style={{flex:1,marginTop:-insets.top}}><CourseRunPreparation key={courseId} id={courseId} busy={busy} onStart={startOrResume}/>{((busy&&!!preparationMessage)||!!error)&&<View style={{position:'absolute',top:insets.top+12,left:26,right:26,padding:12,borderRadius:12,backgroundColor:'#FFFFFF',gap:8}}>{busy&&!!preparationMessage&&<><Text testID="run-preparation-status" accessibilityLiveRegion="polite" style={styles.body}>{preparationMessage}</Text><RunButton title="러닝 시작 준비 취소" id="run-preparation-cancel" onPress={()=>running.cancelPreparation()}/></>}{!!error&&<Text testID="run-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}</View>}</View></>;
   if(supported&&ready&&loadedOwner===owner&&!run&&!courseId)return <>{screenOptions}<SavedCourseChooser key={owner} busy={busy}/></>;
   const last = points[points.length - 1];
@@ -117,7 +119,6 @@ export default function RunScreen() {
       {ready && ((!run && !courseId) || (run && run.status !== 'running')) && <RunButton title={run?.courseOutcome === 'arrival-pending' ? '계속 달리기' : run ? '러닝 재개' : '러닝 시작'} id="run-start" disabled={busy} onPress={startOrResume} />}
       {run?.status === 'running' && <RunButton title="일시정지" id="run-pause" disabled={busy} onPress={() => void act(() => running.pause(run.id))} />}
       {run && <RunButton title={run.courseOutcome === 'arrival-pending' ? '완주 확인·저장' : '러닝 종료·저장'} id="run-finish" disabled={busy} onPress={finish} />}
-      <RunButton title="위치 권한 설정" id="run-settings" disabled={busy} onPress={() => void Linking.openSettings().catch(() => setError('앱 설정을 열지 못했어요. 기기 설정에서 위치 권한을 확인해 주세요.'))} />
     </>}
     <Link href="/runs" style={styles.link}>러닝 기록 목록</Link>
   </ScrollView></SafeAreaView></>;

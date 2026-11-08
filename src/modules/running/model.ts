@@ -10,6 +10,7 @@ export type Run = {
 export type Fix = { timestamp: number; latitude: number; longitude: number; accuracy: number | null };
 export type RunPoint = Fix & { sequence: number; segment: number };
 export class RunError extends Error {}
+export class RunPermissionError extends RunError {}
 export function runErrorMessage(error: unknown) {
   return error instanceof RunError ? error.message : '러닝 기록을 처리하지 못했어요. 저장 공간·위치 설정을 확인한 뒤 다시 시도해 주세요.';
 }
