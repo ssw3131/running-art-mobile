@@ -7,7 +7,12 @@ import zlib
 
 def service_s234(q, launch):
     assert q.SERIAL.startswith('emulator-')
-    q.tap('tab-courses');q.seek('generation-edit');q.tap('generation-edit');q.tap('확인')
+    q.tap('tab-courses');q.seek('generation-edit');q.tap('generation-edit')
+    assert q.find(q.capture('s2b-regeneration-sheet'),'regeneration-confirm') is not None
+    q.tap('취소')
+    # Regeneration now keeps the original conditions; use the real home entry
+    # to edit the next search without spending another generation allowance.
+    q.tap('tab-home');q.seek('open-route-lab');q.tap('open-route-lab')
     q.seek('shape-heart')
     for shape in ['dog','crown']:
         q.seek('shape-'+shape);q.tap('shape-'+shape)
