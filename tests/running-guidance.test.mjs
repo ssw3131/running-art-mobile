@@ -142,7 +142,8 @@ test('v4 to v5 adds nullable guidance fields without touching existing GPS or co
   assert.equal(await createRunRepository(db, () => BASE, () => owner).guidance(id), null);
 });
 
-test('screen-off opt-out pauses the course, preserves progress, and a new process requires explicit resume', async t => {
+test('legacy screen-off opt-out keeps recording; manual pause and process recovery still require resume', async t => {
+  t.mock.method(Date, 'now', () => BASE);
   const f = await fixture(t);
   let foreground = true, tracking = false;
   const driver = { prepare: async () => {}, locate: async () => gps(0), start: async () => { tracking = true; },
@@ -153,6 +154,11 @@ test('screen-off opt-out pauses the course, preserves progress, and a new proces
   const before = await f.runs.guidance(run.id);
   await f.runs.setGuidanceOptions(run.id, { voice: false, background: false, mode: 'focus' });
   foreground = false; f.time(2000); await controller.monitor();
+  assert.equal(tracking, true); assert.equal((await f.runs.get(run.id)).status, 'running');
+  await controller.ingest([gps(2000)]);
+  assert.equal((await f.runs.get(run.id)).lastTimestamp, BASE + 2000);
+  assert.equal((await f.runs.get(run.id)).status, 'running');
+  await controller.pause(run.id);
   assert.equal(tracking, false); assert.equal((await f.runs.get(run.id)).status, 'paused');
   foreground = true; await controller.monitor();
   assert.equal((await f.runs.get(run.id)).status, 'paused', 'returning to the app cannot silently resume');
@@ -180,4 +186,9 @@ test('a GPS gap cannot satisfy off-route or stationary arrival dwell time', () =
   for (let i = 0; i <= 11; i++) arrival.ingest({ position: offset(origin, Math.min(100, i * 10), 0), timestamp: i * 1000, accuracy: 5 });
   for (let i = 20; i < 23; i++) assert.notEqual(arrival.ingest({ position: end, timestamp: i * 1000, accuracy: 5 }).status, 'arrived');
   assert.equal(arrival.ingest({ position: end, timestamp: 23000, accuracy: 5 }).status, 'arrived');
+});
+
+test('a stopped course remains in saved courses with an unfinished badge',async t=>{
+ const f=await fixture(t);const run=await f.runs.start(f.course.id,gps(0));f.time(1000);await f.runs.append([gps(1000)]);await f.runs.transition(run.id,'completed');
+ assert.equal((await f.runs.get(run.id)).courseOutcome,'stopped');assert.equal((await f.courses.list())[0].unfinished,true);
 });

@@ -9,7 +9,7 @@ jest.mock('../../src/modules/membership/runtime', () => ({ membership: {
   reload: () => mockMembershipReload(), getSnapshot: () => ({ owner: mockAccount?.id, status: mockRequired ? 'required' : 'complete',
     policyStatus: 'ready', policy: { id: 'v1' }, membership: { owner: mockAccount?.id, policyId: 'v1', completedAt: '2026-10-24' }, busy: false }),
 } }));
-jest.mock('expo-router', () => ({ router: { replace: (...args: any[]) => mockReplace(...args), navigate: (...args: any[]) => mockNavigate(...args), dismissAll: () => mockDismiss() } }));
+jest.mock('expo-router', () => ({ router: { replace: (...args: any[]) => mockReplace(...args), navigate: (...args: any[]) => mockNavigate(...args), canDismiss: () => true, dismissAll: () => mockDismiss() } }));
 jest.mock('expo-linking', () => ({ useLinkingURL: () => mockURL }));
 jest.mock('../../src/modules/auth/runtime', () => ({ authentication: {
   start: () => mockStart(), handleUrl: (url: string) => mockHandle(url), getSnapshot: () => ({ account: mockAccount }),

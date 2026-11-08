@@ -27,10 +27,22 @@ test('UI-S5-02 stopped and finished outcomes remain distinct, share opens the se
  mockResult={data:{...data,run:{...data.run,courseOutcome:'finished'}},error:''};await view.rerender(<RunResultScreen/>);
  expect(screen.getByTestId('completion-trophy')).toBeTruthy();
  expect(screen.queryByTestId('completion-first-badge')).toBeNull();
- await fireEvent.press(screen.getByText('공유 이미지 만들기'));expect(mockPush).toHaveBeenCalledWith({pathname:'/run-card',params:{id:'a'.repeat(32)}});
+ await fireEvent.press(screen.getByTestId('run-result-share'));expect(mockPush).toHaveBeenCalledWith({pathname:'/run-card',params:{id:'a'.repeat(32)}});
  mockResult={data:{...data,run:{...data.run,courseOutcome:'finished'},achievements:{...data.achievements,badges:[{shape:'heart',count:2,firstRunId:'a'.repeat(32)}]}},error:''};await view.rerender(<RunResultScreen/>);
- expect(screen.getByTestId('completion-first-badge')).toBeTruthy();expect(screen.queryByTestId('completion-trophy')).toBeNull();
+ expect(screen.getByTestId('run-result-badge')).toHaveTextContent('하트 코스');expect(screen.getByTestId('completion-first-badge')).toBeTruthy();expect(screen.getByTestId('completion-trophy')).toBeTruthy();
+ mockResult={...mockResult,data:{...mockResult.data,course:{...mockResult.data.course,snapshot:{...snapshot,target:[]}}}};await view.rerender(<RunResultScreen/>);
+ expect(screen.getByTestId('completion-first-badge')).toBeTruthy();
  mockResult={data:{...data,course:null,run:{...data.run,courseOutcome:null}},error:''};await view.rerender(<RunResultScreen/>);
  expect(screen.queryByTestId('completion-first-badge')).toBeNull();expect(screen.queryByTestId('completion-trophy')).toBeNull();
  expect(screen.queryByText(/칼로리/)).toBeNull();
+});
+test('calories remain unset until weight exists and simulated estimates are explicitly labelled',async()=>{
+ const snapshot={shape:'heart',origin:{lat:37,lng:127},lengthKm:10,target:[[127,37],[127.01,37.01],[127,37]]};
+ const data={run:{status:'completed',startedAt:Date.UTC(2026,10,8),courseOutcome:'finished',distanceM:5200,activeMs:1800000,reason:null},course:{snapshot,name:'하트 코스'},points:[],achievements:{finishedCourses:1,currentStreak:1,badges:[]}};
+ mockResult={data,error:''};const view=await render(<RunResultScreen/>);
+ expect(screen.getByTestId('calorie-estimate-note')).toHaveTextContent(/체중을 설정하면/);
+ mockResult={data:{...data,weightKg:70},error:''};await view.rerender(<RunResultScreen/>);
+ expect(screen.getByLabelText('칼로리 소모 추정 364 kcal')).toBeVisible();expect(screen.getByTestId('calorie-estimate-note')).toHaveTextContent(/현재 설정 체중 70kg/);
+ mockResult={data:{...data,weightKg:70,run:{...data.run,reason:'[시뮬레이션]'}},error:''};await view.rerender(<RunResultScreen/>);
+ expect(screen.getByTestId('calorie-estimate-note')).toHaveTextContent(/시뮬레이션상 예상치/);
 });

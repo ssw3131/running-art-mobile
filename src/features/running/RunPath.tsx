@@ -5,10 +5,12 @@ import type { FeatureCollection, LineString } from 'geojson';
 import type { RunPoint } from '@/modules/running/model';
 import { mapStyleUrl } from '@/modules/map/config';
 import { MapCredits } from '@/features/course-generation/MapCredits';
+import type { CourseSnapshot } from '@/modules/courses/model';
+import { COURSE_GUIDE_COLOR,RECORDED_TRAIL_COLOR } from '@/modules/running/route-colors';
 
 const offlineStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#E8EDE7' } }] };
 const padding = { top: 30, bottom: 30, left: 30, right: 30 };
-export default function RunPath({ points, background = false }: { points: RunPoint[]; background?: boolean }) {
+export default function RunPath({ points, background = false,course }: { points: RunPoint[]; background?: boolean;course?:CourseSnapshot }) {
   const styleUrl = background ? mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY) : null;
   const [failed,setFailed]=useState(false),[loaded,setLoaded]=useState(false);
   useEffect(()=>{
@@ -29,22 +31,24 @@ export default function RunPath({ points, background = false }: { points: RunPoi
     }) };
     let west = 180, east = -180, south = 90, north = -90;
     for (const p of points) { west = Math.min(west, p.longitude); east = Math.max(east, p.longitude); south = Math.min(south, p.latitude); north = Math.max(north, p.latitude); }
+    for(const [lng,lat] of course?.route??[]){west=Math.min(west,lng);east=Math.max(east,lng);south=Math.min(south,lat);north=Math.max(north,lat);}
     return { data, bounds: [west - 0.0002, south - 0.0002, east + 0.0002, north + 0.0002] as [number, number, number, number] };
-  }, [points]);
-  useEffect(() => { if (points.length) camera.current?.fitBounds(drawing.bounds, { padding, duration: 0 }); }, [drawing, points.length]);
+  }, [points,course]);
+  useEffect(() => { if (points.length||course) camera.current?.fitBounds(drawing.bounds, { padding, duration: 0 }); }, [drawing, points.length,course]);
   const last = points[points.length - 1];
-  if (!last) return <View style={{ height: 180, backgroundColor: '#E8EDE7', padding: 24, justifyContent: 'center' }}><Text>GPS 위치를 받으면 이곳에 궤적을 표시해요.</Text></View>;
-  return <View style={{ height: background ? 360 : 260, borderRadius: background ? 0 : 16, overflow: 'hidden' }}>
+  if (!last&&!course) return <View style={{ height: 180, backgroundColor: '#E8EDE7', padding: 24, justifyContent: 'center' }}><Text>GPS 위치를 받으면 이곳에 궤적을 표시해요.</Text></View>;
+  return <View style={{ height: background ? course?416:360 : 260, borderRadius: background ? 0 : 16, overflow: 'hidden' }}>
     <Map key={failed?'offline':'background'} style={{ flex: 1 }} mapStyle={!failed&&styleUrl || offlineStyle} attribution={false} logo={false}
       onDidFailLoadingMap={()=>setFailed(true)}
       onDidFinishLoadingMap={() => {setLoaded(true);camera.current?.fitBounds(drawing.bounds, { padding, duration: 0 });}}>
-      <Camera ref={camera} initialViewState={{ center: [last.longitude, last.latitude], zoom: 16 }} />
+      <Camera ref={camera} initialViewState={{ center: last?[last.longitude,last.latitude]:course!.route[0], zoom: 16 }} />
+      {course&&<GeoJSONSource id="record-course" data={{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:course.route}}}><Layer id="record-course-line" type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{'line-color':COURSE_GUIDE_COLOR,'line-width':10,'line-opacity':.7}}/></GeoJSONSource>}
       <GeoJSONSource id="running-track" data={drawing.data}>
-        <Layer id="running-line" type="line" paint={{ 'line-color': background ? '#FF5264' : '#23694C', 'line-width': 4 }} />
+        <Layer id="running-line" afterId={course?'record-course-line':undefined} type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{ 'line-color': RECORDED_TRAIL_COLOR, 'line-width': course?6:4 }} />
       </GeoJSONSource>
-      <GeoJSONSource id="running-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [last.longitude, last.latitude] } }}>
+      {last&&<GeoJSONSource id="running-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [last.longitude, last.latitude] } }}>
         <Layer id="running-dot" type="circle" paint={{ 'circle-color': '#2563EB', 'circle-radius': 7, 'circle-stroke-width': 2, 'circle-stroke-color': '#FFFFFF' }} />
-      </GeoJSONSource>
+      </GeoJSONSource>}
     </Map>
     {!!styleUrl && !failed && <MapCredits/>}
     {failed && <Text style={{padding:6,fontSize:12}}>배경 지도 연결 없이 기록된 경로를 표시합니다.</Text>}

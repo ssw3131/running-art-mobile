@@ -1,6 +1,7 @@
 """S5/S6 acceptance on the existing dedicated emulator; synthetic records only."""
 import hashlib
 import json
+import re
 import struct
 import time
 
@@ -19,12 +20,24 @@ def wait_notice_detail(q, timeout=30):
         time.sleep(.25)
 
 
+def seek_above(q, key):
+    """Card action buttons are above the options/preview after the Figma redesign."""
+    for attempt in range(16):
+        tree=q.capture(f's5-seek-above-{key}-{attempt:02d}')
+        node=q.find(tree,key)
+        if node is not None:
+            _,top,_,bottom=map(int,re.findall(r'\d+',node.get('bounds')))
+            if 150<top<bottom<=2305 and bottom-top>=40:return
+        q.shell('input','swipe','1000','1040','1000','1930','350')
+    raise RuntimeError('Card action not reached above options: '+key)
+
+
 def service_s56(q, launch):
     assert q.SERIAL.startswith('emulator-')
     run_id='5'*32
     assert not q.query(f"SELECT id FROM running_sessions WHERE id='{run_id}'")
     assert not q.query(f"SELECT id FROM sync_deletions WHERE owner_id='{q.OWNER}' AND kind='run' AND id='{run_id}'")
-    entry=json.loads((q.ROOT/'.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
+    entry=json.loads((q.ROOT/'.cache/free-loop-qa/achievement-fixture.json').read_text(encoding='utf8'))
     before=q.snapshot('s56-before')
     preferences=q.query(f"SELECT * FROM account_preferences WHERE owner_id='{q.OWNER}'")
     api=int(q.shell('getprop','ro.build.version.sdk').decode().strip())
@@ -43,15 +56,23 @@ def service_s56(q, launch):
     try:
         launch('run-result?id='+run_id)
         assert q.find(q.capture('s5-result'),'completion-first-badge') is not None
-        q.seek('공유 이미지 만들기');q.tap('공유 이미지 만들기')
+        q.seek('run-result-share');q.tap('run-result-share')
         q.capture('s5-card-options')
         for key in ['card-nickname','card-date']:
-            assert q.find(q.capture('current'),key).get('checked')=='true'
-        q.seek('card-preview');q.tap('card-preview');q.seek('card-share');q.capture('s5-story-preview')
+            # The redesigned card and share panels put these options below
+            # the initial viewport; Android omits offscreen controls from XML.
+            q.seek(key)
+            option=q.find(q.capture('s5-default-'+key),key)
+            assert option is not None and option.get('checked')=='true', key
         folder=f'/data/user/0/{q.APP}/cache/runpen-cards/'
-        names=q.shell('ls',folder).decode().splitlines()
-        assert len(names)==1
-        story=q.adb('exec-out','cat',folder+names[0]);assert struct.unpack('>II',story[16:24])==(1080,1920)
+        q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-default-card-preview')
+        names=q.shell('ls',folder).decode().splitlines();assert len(names)==1
+        record_card=q.adb('exec-out','cat',folder+names[0]);assert struct.unpack('>II',record_card[16:24])==(1080,903)
+        (q.OUT/'s5-card-record.png').write_bytes(record_card)
+        q.seek('card-format');q.tap('card-format');q.tap('스토리 9:16')
+        q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-story-preview')
+        names=q.shell('ls',folder).decode().splitlines();assert len(names)==2
+        story=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',story[16:24])==(1080,1920)
         (q.OUT/'s5-card-story.png').write_bytes(story)
         q.tap('card-share');q.capture('s5-system-share');q.shell('input','keyevent','4')
         q.seek('card-save');q.tap('card-save');q.capture('s5-system-save')
@@ -76,14 +97,16 @@ def service_s56(q, launch):
         assert len(created)==1 and next(iter(created)).startswith('RunPen-')
         exported=q.adb('exec-out','cat',export_folder+'/'+next(iter(created)))
         assert exported==story,'Saved file differs from the preview'
-        q.seek('card-format');q.tap('card-format');q.tap('피드 4:5 · 1080×1350')
-        q.seek('card-nickname');q.tap('card-nickname');q.tap('card-date')
-        q.seek('card-preview');q.tap('card-preview');q.seek('card-share');q.capture('s5-feed-preview')
-        names=q.shell('ls',folder).decode().splitlines();assert len(names)==2
+        q.seek('card-format');q.tap('card-format');q.tap('피드 4:5')
+        for key in ['card-nickname','card-date']:
+            q.seek(key);q.tap(key)
+        q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-feed-preview')
+        names=q.shell('ls',folder).decode().splitlines();assert len(names)==3
         feed=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',feed[16:24])==(1080,1350)
         (q.OUT/'s5-card-feed-private.png').write_bytes(feed)
-        launch('account');q.seek('badge-'+entry['snapshot']['shape']);q.capture('s5-account-badge')
-        q.tap('badge-'+entry['snapshot']['shape']);assert q.find(q.capture('s5-badge-record'),'completion-first-badge') is not None
+        launch('account');q.seek('account-badge-'+entry['snapshot']['shape']);q.capture('s5-account-badge')
+        q.tap('account-badge-'+entry['snapshot']['shape']);q.seek('badge-record-'+run_id);q.capture('s5-badge-detail')
+        q.tap('badge-record-'+run_id);assert q.find(q.capture('s5-badge-record'),'completion-first-badge') is not None
         launch('service-info');q.capture('s6-menu')
         q.seek('support-about');q.tap('support-about');q.capture('s6-about');q.tap('service-back')
         q.seek('support-guide');q.tap('support-guide');q.capture('s6-guide');q.tap('service-back')
@@ -119,9 +142,16 @@ def service_s56(q, launch):
         # Density/font changes recreate the activity; cold-launch the target only
         # after applying them so an old activity cannot consume the deep link.
         q.shell('am','force-stop',q.APP)
-        launch('run-result?id='+run_id);q.seek('공유 이미지 만들기');q.capture('s5-result-large-font')
+        launch('run-result?id='+run_id)
+        deadline=time.monotonic()+30
+        while True:
+            result=q.capture('s5-result-large-font-ready')
+            if q.find(result,'completion-first-badge') is not None: break
+            assert time.monotonic()<deadline,'Run result screen did not load after display change'
+            time.sleep(.5)
+        q.seek('run-result-share');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
-        (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':False,'saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
+        (q.OUT/'s56-result.json').write_text(json.dumps({'recordCardSha256':hashlib.sha256(record_card).hexdigest(),'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':'unset-without-weight','saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
     except Exception:
         try: q.capture('s56-action-failure')
         except Exception: pass

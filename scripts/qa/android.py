@@ -22,6 +22,7 @@ from course_generation_figma import inputs as figma_inputs, real_course as figma
 from service_s234 import service_s234
 from service_s56 import service_s56
 from storage_readiness import wait_for_storage
+from emulator_readiness import wait_package_service
 from visual_readiness import capture_settled
 import emulator_auth
 from signup_membership import signup_membership, wait_home
@@ -136,6 +137,7 @@ build_helper()
 for script in ['course-gps-fixture.mjs', 'free-loop-fixture.mjs']:
     run(['node', 'scripts/qa/' + script])
 q.adb('root'); q.adb('wait-for-device')
+(args.output / 'package-readiness.json').write_text(json.dumps(wait_package_service(q.shell)), encoding='utf8')
 q.adb('install', '-r', '--no-streaming', str(args.apk), timeout=180)
 q.adb('install', '-r', '--no-streaming', str(emulator_auth.build(ROOT, sdk)))
 q.adb('push', str(ROOT / '.cache/running-qa/ui-dump.jar'), '/data/local/tmp/running-ui-dump.jar')
@@ -364,8 +366,8 @@ try:
         steps = [('S0-01-maestro', maestro_navigation), ('S1-02-home-states', lambda: verify_home_states(q, launch)),
                  ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
         if not args.smoke:
-            # Free GPS must start without a selected course. Preparation remains
-            # selected intentionally, so verify it after the independent GPS run.
+            # Existing free GPS records remain resumable after removing new free entry.
+            # Preparation stays selected, so verify it after that isolated legacy record.
             steps += [('S0-04-save', save_and_home), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
                       ('S0-05-preparation', q.course_preparation), ('S234-01-integrated', lambda: service_s234(q, launch)), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled),
                       ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]

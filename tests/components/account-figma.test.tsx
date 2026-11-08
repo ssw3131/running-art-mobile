@@ -1,0 +1,41 @@
+import React from 'react';
+import { fireEvent,render,screen,waitFor } from '@testing-library/react-native';
+import AccountScreen from '../../src/features/account/AccountScreen';
+import { defaultAccountPreferences } from '../../src/modules/account/model';
+const mockSave=jest.fn(),mockSet=jest.fn(),mockPush=jest.fn(),mockReadPermission=jest.fn(),mockRequestPermission=jest.fn(),mockSignOut=jest.fn();
+const mockWithdrawal={ready:true,pending:false},mockSync={};
+jest.mock('expo-router',()=>({router:{push:(...a:any[])=>mockPush(...a)},useFocusEffect:(fn:any)=>require('react').useEffect(fn,[fn])}));
+jest.mock('expo-location',()=>({getForegroundPermissionsAsync:(...a:any[])=>mockReadPermission(...a),requestForegroundPermissionsAsync:(...a:any[])=>mockRequestPermission(...a)}));
+jest.mock('../../src/features/auth/use-auth',()=>({useAuth:()=>({ready:true,busy:false,configured:true,account:{id:'owner',name:'러너',providers:['google']},providers:['google']})}));
+jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>({account:{id:'owner'}}),signOut:()=>mockSignOut()}}));
+jest.mock('../../src/modules/sync/runtime',()=>({personalSync:{subscribe:()=>()=>{},getSnapshot:()=>mockSync}}));
+jest.mock('../../src/modules/account/withdrawal-runtime',()=>({accountWithdrawal:{subscribe:()=>()=>{},getSnapshot:()=>mockWithdrawal}}));
+jest.mock('../../src/features/account/use-account',()=>({useAccountData:()=>({ready:true,preferences:require('../../src/modules/account/model').defaultAccountPreferences,setPreferences:mockSet,statistics:{distanceM:12345,activeMs:7200000,finishedCourses:3}})}));
+jest.mock('../../src/features/account/ui',()=>({...jest.requireActual('../../src/features/account/ui'),ProfileAvatar:()=>null}));
+jest.mock('../../src/features/membership/use-membership',()=>({useMembership:()=>({owner:'owner',status:'complete'})}));
+jest.mock('../../src/features/achievements/use-achievements',()=>({useAchievements:()=>({data:{badges:[],awards:[]}})}));
+jest.mock('../../src/features/usage/use-usage',()=>({useUsage:()=>({data:{generation:{total:105,used:10},save:{total:15,used:6}}})}));
+jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({account:{savePreferences:(...a:any[])=>mockSave(...a)}})}));
+beforeEach(()=>{jest.clearAllMocks();mockReadPermission.mockResolvedValue({granted:false,canAskAgain:true});mockRequestPermission.mockResolvedValue({granted:false});mockSave.mockImplementation(async value=>value);});
+test('account shows actual remaining counts and checks permission without requesting it on entry',async()=>{
+ await render(<AccountScreen/>);await waitFor(()=>expect(mockReadPermission).toHaveBeenCalled());
+ expect(screen.getByText('Google 계정과 연결됨')).toBeVisible();expect(screen.getByText(/95회/)).toBeVisible();expect(screen.getByText(/9개/)).toBeVisible();
+ expect(mockRequestPermission).not.toHaveBeenCalled();expect(screen.getByRole('switch',{name:'위치 권한'}).props.accessibilityState.checked).toBe(false);
+ await fireEvent.press(screen.getByTestId('setting-location'));await waitFor(()=>expect(mockRequestPermission).toHaveBeenCalledTimes(1));
+});
+test('voice and theme controls save owned preferences, billing does not invent a purchase history',async()=>{
+ await render(<AccountScreen/>);await fireEvent.press(screen.getByTestId('setting-voice'));await waitFor(()=>expect(mockSave).toHaveBeenCalledWith({...defaultAccountPreferences,guidance:{...defaultAccountPreferences.guidance,voice:!defaultAccountPreferences.guidance.voice}}));
+ await waitFor(()=>expect(screen.getByTestId('theme-dark')).toBeEnabled());await fireEvent.press(screen.getByTestId('theme-dark'));await waitFor(()=>expect(mockSave).toHaveBeenCalledWith({...defaultAccountPreferences,theme:'dark'}));
+ await fireEvent.press(screen.getByTestId('account-purchases'));expect(screen.getByText(/현재 앱에는 결제 기능이 연결되어 있지 않아/)).toBeVisible();expect(mockSignOut).not.toHaveBeenCalled();
+});
+test('body weight is opt-in, validates input before a write, and can be cleared explicitly',async()=>{
+ await render(<AccountScreen/>);await fireEvent.press(screen.getByTestId('account-weight'));
+ expect(screen.getByTestId('body-weight-input').props.value).toBe('');expect(mockSave).not.toHaveBeenCalled();
+ await fireEvent.changeText(screen.getByTestId('body-weight-input'),'70.55');await fireEvent.press(screen.getByTestId('save-weight'));
+ expect(screen.getByRole('alert')).toHaveTextContent(/소수점 한 자리/);expect(mockSave).not.toHaveBeenCalled();
+ await fireEvent.changeText(screen.getByTestId('body-weight-input'),'65.5');await fireEvent.press(screen.getByTestId('save-weight'));
+ await waitFor(()=>expect(mockSave).toHaveBeenCalledWith({...defaultAccountPreferences,weightKg:65.5}));
+ await waitFor(()=>expect(screen.queryByTestId('body-weight-input')).toBeNull());
+ await fireEvent.press(screen.getByTestId('account-weight'));await fireEvent.press(screen.getByTestId('save-weight'));
+ await waitFor(()=>expect(mockSave).toHaveBeenLastCalledWith(defaultAccountPreferences));
+});

@@ -14,8 +14,10 @@ export function BottomTabBar({ value, onChange, tabs = runPenTabs, bottomInset =
   const c = useThemeColors();
   // Keep the whole bar at Figma's 90dp when the system inset allows it.
   const bottomPadding = Math.max(16, bottomInset);
-  const rowHeight = Math.max(50, 90 - 11 - bottomPadding);
-  return <View style={{ backgroundColor: c.navigation, paddingTop: 11, paddingBottom: bottomPadding, paddingHorizontal: 30 }}>
+  const topPadding = 8;
+  // Transfer 3dp from the top padding to the row, preserving total height at large insets too.
+  const rowHeight = Math.max(53, 90 - topPadding - bottomPadding);
+  return <View style={{ backgroundColor: c.navigation, paddingTop: topPadding, paddingBottom: bottomPadding, paddingHorizontal: 16 }}>
     <View style={{ flexDirection: 'row', alignItems: 'stretch', justifyContent: 'space-between', height: rowHeight }}>
       {tabs.map(tab => {
         const color = value === tab.value ? c.selected : c.muted;

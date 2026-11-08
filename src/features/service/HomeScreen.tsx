@@ -6,9 +6,9 @@ import { AppText, Button, Icon } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { homeKind, homeRunOutcome, type HomeCourse, type HomeData, type HomeRun } from '@/modules/home/model';
 import { durationLabel, elapsedMs } from '@/modules/running/model';
+import { isSimulationRun } from '@/modules/running/simulation-record';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
-import { MapCredits } from '@/features/course-generation/MapCredits';
 import { HomePreview } from './HomePreview';
 import { useHome } from './use-home';
 
@@ -21,7 +21,10 @@ type Shape = keyof typeof shapeAssets;
 type Row = { key: string; kind: 'initial' | 'stats' | 'run-heading' | 'course-heading' | 'runs' | 'courses' | 'action' | 'credits'; runs?: HomeRun[]; courses?: HomeCourse[] };
 const viewability = { itemVisiblePercentThreshold: 1 };
 const km = (distance: number) => (distance / 1000).toFixed(1);
-const date = (at: number) => { const d = new Date(at); return `${d.getMonth() + 1}월 ${d.getDate()}일`; };
+const date = (at: number, withWeekday = false) => {
+  const d = new Date(at);
+  return `${d.getMonth() + 1}월 ${d.getDate()}일${withWeekday ? ` ${'일월화수목금토'[d.getDay()]}` : ''}`;
+};
 const openCourses = () => router.navigate({ pathname: '/courses', params: { view: 'courses',fromHome:'1' } });
 
 function TextLink({ label, onPress, testID }: { label: string; onPress(): void; testID: string }) {
@@ -58,8 +61,8 @@ function InitialHome({ shape, setShape }: { shape: Shape; setShape(value: Shape)
 function Stats({ data }: { data: HomeData }) {
   const c = useThemeColors(), { fontScale } = useWindowDimensions(), latest = data.latestCompleted;
   const stats = [
-    { id: 'latest', label: '최근 러닝', value: latest ? km(latest.distanceM) : '—', unit: latest ? 'km' : '', detail: latest ? date(latest.startedAt) : '아직 기록이 없어요', icon: require('../../../assets/home/sneaker.svg'), width: 20, height: 20 },
-    { id: 'streak', label: '연속 러닝', value: String(data.currentStreak), unit: '일', detail: data.currentStreak ? '지금도 이어지는 중!' : '첫 러닝을 시작해 보세요', icon: require('../../../assets/home/flame.svg'), width: 16, height: 16 },
+    { id: 'latest', label: '최근 러닝', value: latest ? km(latest.distanceM) : '—', unit: latest ? 'km' : '', detail: latest ? date(latest.startedAt, true) : '기록이 없어요', icon: require('../../../assets/home/sneaker.svg'), width: 20, height: 20 },
+    { id: 'streak', label: '연속 러닝', value: String(data.currentStreak), unit: '일', detail: data.currentStreak ? '이어지는 중!' : '시작해 보세요', icon: require('../../../assets/home/flame.svg'), width: 16, height: 16 },
     { id: 'monthly', label: '달린 거리', value: data.monthlyDistanceM ? km(data.monthlyDistanceM) : '0', unit: 'km', detail: '이번 달 누적', icon: require('../../../assets/home/trophy.svg'), width: 16, height: 16 },
   ];
   return <View testID="home-history" style={{ gap: 10 }}>
@@ -88,7 +91,7 @@ export default function HomeScreen() {
     for (let i = 0; i < Math.max(data.recent.length, 1); i += columns) result.push({ key: `runs-${i}`, kind: 'runs', runs: data.recent.slice(i, i + columns) });
     result.push({ key: 'course-heading', kind: 'course-heading' });
     for (let i = 0; i < Math.max(data.courses.length, 1); i += columns) result.push({ key: `courses-${i}`, kind: 'courses', courses: data.courses.slice(i, i + columns) });
-    result.push({ key: 'credits', kind: 'credits' }, { key: 'action', kind: 'action' }); return result;
+    result.push({ key: 'action', kind: 'action' }); return result;
   }, [data, kind, columns]);
   return <View style={{ flex: 1, backgroundColor: c.background }}>
     <FlatList ref={list} testID="service-home" data={rows} keyExtractor={row => row.key} extraData={{ visible, focused, shape }}
@@ -113,6 +116,7 @@ export default function HomeScreen() {
             <HomePreview paths={paths} active={active} label="실제 러닝 경로" />
             <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{ flexShrink: 1 }}>{run.courseName || '자유 러닝'}</AppText>
               {outcome && <View style={{ backgroundColor: complete ? c.muted : c.action, paddingHorizontal: 5, borderRadius: 10 }}><AppText testID={`home-outcome-${run.id}`} style={{ color: complete ? c.surface : c.onAction, fontSize: 10, lineHeight: 16 }}>{outcome}</AppText></View>}</View>
+            {isSimulationRun(run)&&<AppText variant="caption" style={{color:c.selected}}>시뮬레이션</AppText>}
             <AppText variant="caption" style={{ color: c.subtle }}>{km(run.distanceM)} km / {durationLabel(elapsedMs(run, Date.now()))}</AppText>
             <AppText variant="caption" style={{ color: c.subtle }}>{date(run.startedAt)}</AppText>
           </Pressable>;
@@ -124,9 +128,9 @@ export default function HomeScreen() {
           <AppText variant="caption" weight="bold">{course.name}</AppText><AppText variant="caption" style={{ color: c.subtle }}>{course.lengthKm.toFixed(1)} km</AppText>
           <AppText variant="caption" style={{ color: c.subtle }}>{date(course.createdAt)}</AppText>
         </Pressable>)}</View> : <AppText testID="home-empty-courses" style={{ color: c.muted }}>아직 저장한 코스가 없어요.</AppText>;
-        if (item.kind === 'credits') return data!.recent.some(r => r.paths.length) || data!.courses.some(r => r.paths.length) ? <MapCredits /> : null;
-        return <View style={styles.action}><Button label="코스 생성하러 가기" testID="open-route-lab" trailing={<Icon name="chevronRight" />}
-          onPress={() => router.navigate(kind === 'initial' ? { pathname: '/route-lab', params: { homeSection: 'conditions', homeShape: shape, homeRequest: String(Date.now()) } } : '/route-lab')} /></View>;
+        if (item.kind === 'credits') return null;
+        return <View style={styles.action}><Button label="코스 생성하러 가기" testID="open-route-lab" labelStyle={styles.actionLabel} trailing={<Icon name="chevronRight" />}
+          onPress={() => router.navigate({ pathname: '/route-lab', params: { homeSection: 'conditions', homeShape: kind === 'initial' ? shape : undefined, homeRequest: String(Date.now()) } })} /></View>;
       }} />
   </View>;
 }
@@ -143,4 +147,6 @@ const styles = StyleSheet.create({
   cards: { flexDirection: 'row', marginHorizontal: -4 }, card: { paddingHorizontal: 4, gap: 3, minHeight: 48 },
   cardHeading: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 3, justifyContent: 'space-between', marginTop: 5 },
   action: { paddingTop: 24, paddingBottom: 8 },
+  // Align the visible Noto glyphs with the centered chevron, not just the text line box.
+  actionLabel: { transform: [{ translateY: -1 }] },
 });

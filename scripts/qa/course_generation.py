@@ -45,42 +45,51 @@ def generation_flow(q):
     drawing(q)
     # Public fixture roads come from the isolated compute backend, never from
     # a hidden development switch in the production service UI.
-    q.seek('distance-7'); q.tap('distance-7'); q.tap('calculate-route')
+    q.seek('distance-7'); q.tap('distance-7'); q.seek('calculate-route'); q.tap('calculate-route')
     q.capture('s2a-confirm-cancel-before')
     q.tap('generation-confirm-cancel')
     assert q.find(q.capture('s2a-confirm-cancelled'), 'calculation-running') is None
-    q.tap('calculate-route'); q.tap('generation-confirm')
+    q.seek('calculate-route'); q.tap('calculate-route'); q.tap('generation-confirm')
     q.tap('tab-home'); q.tap('tab-courses')
     assert q.find(q.capture('s2a-calculation-after-blur'), 'calculation-cancelled') is not None
-    q.tap('generation-edit-footer'); q.seek('distance-3'); q.tap('distance-3')
-    q.tap('calculate-route'); q.capture('s2a-confirm'); q.tap('generation-confirm')
+    q.seek('generation-edit'); q.tap('generation-edit'); q.seek('distance-3'); q.tap('distance-3')
+    q.seek('calculate-route'); q.tap('calculate-route'); q.capture('s2a-confirm'); q.tap('generation-confirm')
     for _ in range(30):
         tree = q.capture('s2a-progress')
         if q.find(tree, 'calculation-done') is not None: break
         time.sleep(1)
     else: raise RuntimeError('Generation did not finish')
-    q.capture('s2a-result-map')
-    q.seek('generation-target-toggle'); q.tap('generation-target-toggle')
+    tree = q.capture('s2a-result-map')
+    # The eye belongs to the fixed map, outside the list's scroll viewport.
+    fixed = q.find(tree, 'recommendation-fixed-map')
+    eye = q.find(tree, 'generation-target-toggle')
+    assert fixed is not None and eye is not None
+    fx1, fy1, fx2, fy2 = map(int, re.findall(r'\d+', fixed.get('bounds')))
+    x1, y1, x2, y2 = map(int, re.findall(r'\d+', eye.get('bounds')))
+    assert fx1 <= x1 < x2 <= fx2 and fy1 <= y1 < y2 <= fy2, 'Eye must be visible inside the fixed map'
+    q.tap('generation-target-toggle')
     assert q.find(q.capture('s2a-target-off'), 'generation-target-toggle').get('checked') == 'false'
     q.tap('generation-target-toggle')
     q.seek('candidate-1'); q.tap('candidate-1')
     selected = q.find(q.capture('s2a-selected'), 'candidate-1').get('content-desc')
     assert selected.startswith('유사도 ') and '예상 러닝 시간 약' in selected
-    q.tap('generation-detail')
+    q.seek('candidate-detail-1'); q.tap('candidate-detail-1')
     detail = q.capture('s2a-detail-top')
     assert q.find(detail, 'course-detail') is not None
-    q.seek('course-save-name'); q.tap('course-save-name')
+    q.seek('course-edit-name'); q.tap('course-edit-name')
+    q.seek('course-rename-input'); q.tap('course-rename-input')
     q.shell('input', 'keycombination', '113', '29'); q.shell('input', 'text', 'S0_DRAFT')
     tree = q.capture('s2a-name-keyboard')
-    assert q.find(tree, 'course-save-name').get('text') == 'S0_DRAFT'
-    input_bottom = int(re.findall(r'\d+', q.find(tree, 'course-save-name').get('bounds'))[3])
+    assert q.find(tree, 'course-rename-input').get('text') == 'S0_DRAFT'
+    input_bottom = int(re.findall(r'\d+', q.find(tree, 'course-rename-input').get('bounds'))[3])
     display = q.shell('dumpsys', 'window', 'displays').decode()
     keyboard_tops = [int(y) for y in re.findall(r'type=ime frame=\[\d+,(\d+)\]\[\d+,\d+\][^\r\n]*visible=true', display)]
     assert keyboard_tops and input_bottom < min(keyboard_tops), 'Candidate name is obscured by keyboard'
-    q.shell('input', 'keyevent', '4')
-    q.tap('tab-account'); q.tap('tab-courses'); q.tap('generation-detail')
-    q.seek('course-save-name')
-    assert q.find(q.capture('s2a-name-restored'), 'course-save-name').get('text') == 'S0_DRAFT'
+    q.shell('input', 'keyevent', '4'); q.tap('이름 적용')
+    q.tap('tab-account'); q.tap('tab-courses'); q.seek('candidate-detail-1'); q.tap('candidate-detail-1')
+    q.seek('course-edit-name'); q.tap('course-edit-name'); q.seek('course-rename-input')
+    assert q.find(q.capture('s2a-name-restored'), 'course-rename-input').get('text') == 'S0_DRAFT'
+    q.tap('이름 적용')
     q.seek('course-save'); q.tap('course-save')
     deadline = time.monotonic() + 20
     while True:
@@ -91,7 +100,9 @@ def generation_flow(q):
     assert len(rows) == 1
     saved = rows[0]
     assert format(saved['length_km'], '.2f') + ' km' in selected
-    assert q.find(q.capture('s2a-save-state-transition'), 'course-save') is None
+    q.seek('course-save')
+    assert '저장된 코스' in q.find(q.capture('s2a-save-state-transition'), 'course-save').get('content-desc', '')
+    q.tap('course-save')
     assert q.query("SELECT count(*) AS n FROM saved_courses WHERE name='S0_DRAFT'")[0]['n'] == 1
     q.capture('s2a-saved')
     q.seek('course-export-gpx'); q.tap('course-export-gpx')
@@ -109,7 +120,9 @@ def generation_flow(q):
     q.tap('저장 코스')
     assert q.find(q.capture('s2a-archive-destination'), '저장 코스').get('selected') == 'true'
     q.seek('course-row-'+saved['id']);q.tap('course-row-'+saved['id'])
-    assert q.find(q.capture('s2a-saved-reopened'),'course-save') is None
+    # Reopening starts at the map; the save state is below the information card.
+    q.seek('course-save')
+    assert '저장된 코스' in q.find(q.capture('s2a-saved-reopened'),'course-save').get('content-desc', '')
     q.tap('service-back')
     assert q.query("SELECT snapshot_hash FROM saved_courses WHERE id='" + saved['id'] + "'")[0]['snapshot_hash'] == saved['snapshot_hash']
     (q.OUT / 's2a-result.json').write_text(json.dumps({
@@ -124,27 +137,61 @@ def scaled_generation(q, launch):
     try:
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.tap('tab-courses')
-        # Resizing the activity and opening this tab can recreate the native map.
-        # Keep the location/map visible until the real form is ready; scrolling
-        # immediately to shapes must not race native map/location initialization.
-        deadline = time.monotonic() + 30
-        while True:
+        # A cold entry starts a one-shot GPS lookup. Capture the settled center,
+        # not the initial fallback that the pending lookup may still replace.
+        # Wait for that lookup to finish (including its error/timeout states),
+        # without requiring external map tiles or an enabled generation button.
+        for _ in range(20):
             tree = q.capture('s2a-large-location-ready')
-            button = q.find(tree, 'calculate-route')
-            if button is not None and button.get('enabled') == 'true':
-                break
-            assert time.monotonic() < deadline, 'Generation form did not become ready after display change'
-            time.sleep(.5)
-        selected = q.find(tree, 'selected-center')
+            locate = q.find(tree, 'route-locate')
+            if locate is not None and locate.get('enabled') == 'true': break
+            time.sleep(1)
+        else:
+            raise AssertionError('Initial location lookup did not settle before the scroll check')
+        selected = q.find(tree, 'course-map-preview-open')
         assert selected is not None, 'Capture the chosen center before scrolling'
-        origin = re.findall(r'-?\d+\.\d+', selected.get('text'))
+        origin = re.findall(r'-?\d+\.\d+', selected.get('content-desc', ''))
         assert len(origin) == 2, 'The isolated QA origin must use explicit coordinates'
         q.seek('shape-star'); q.capture('s2a-large-shapes')
-        q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
-        assert q.find(confirmation, '탐색 중심: ' + ', '.join(origin)) is not None, 'Page scrolling must preserve the chosen map center'
-        # The fixed sheet footer is outside its body ScrollView.
-        q.tap('generation-confirm-cancel')
+        q.seek('calculate-route', allow_disabled=True)
+        tree = q.capture('s2a-large-scrolled')
+        button = q.find(tree, 'calculate-route')
+        assert button is not None, 'The generation button remains in the scrollable form'
+        seek_above(q, 'course-map-preview-open')
+        tree = q.capture('s2a-large-center-restored')
+        current = q.find(tree, 'course-map-preview-open')
+        # ElementTree leaf nodes are false-y even when the control is present.
+        confirmed_origin = re.findall(r'-?\d+\.\d+', current.get('content-desc', '') if current is not None else '')
+        assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
+            for before, after in zip(origin, confirmed_origin)), (
+                f'Page scrolling must preserve the chosen map center: before={origin}, after={confirmed_origin}')
+        # The redesigned sheet shows an address (or explicit lookup failure),
+        # not numeric coordinates. Match the settled form label, then verify
+        # cancelling the sheet preserves the numeric center on the map control.
+        if button.get('enabled') == 'true':
+            seek_above(q, 'generation-origin-address')
+            for _ in range(15):
+                address = q.find(q.capture('s2a-large-address-ready'), 'generation-origin-address')
+                location_label = address.get('text', '').strip() if address is not None else ''
+                if location_label and location_label != '주소 확인 중…': break
+                time.sleep(.5)
+            else:
+                raise AssertionError('The form address lookup did not settle before confirmation')
+            q.seek('calculate-route'); q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
+            pin = q.find(confirmation, 'generation-summary-pin')
+            assert pin is not None and pin.get('text', '').strip() == location_label, (
+                'Confirmation must show the same address or lookup failure as the selected location')
+            q.tap('generation-confirm-cancel')
+            seek_above(q, 'course-map-preview-open')
+            current = q.find(q.capture('s2a-large-confirm-cancelled'), 'course-map-preview-open')
+            confirmed_origin = re.findall(r'-?\d+\.\d+', current.get('content-desc', '') if current is not None else '')
+            assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
+                for before, after in zip(origin, confirmed_origin)), (
+                    f'Confirmation cancellation must preserve the chosen map center: before={origin}, after={confirmed_origin}')
         q.seek('shape-custom'); q.tap('shape-custom'); q.seek('drawing-cancel'); q.tap('drawing-cancel')
+        # The form keeps its scroll position; its generate button is below the
+        # drawing/image actions, not a fixed footer in the redesigned screen.
+        q.seek('calculate-route', allow_disabled=True)
         assert q.find(q.capture('s2a-large-return'), 'calculate-route') is not None
         print('PASS: S2a 360dp/1.6 font shapes, confirmation and drawing cancel', flush=True)
     finally:

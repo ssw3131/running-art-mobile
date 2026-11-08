@@ -1,16 +1,16 @@
 """Pinned, repository-local CLI install. No global PATH or Java changes."""
-import hashlib
 import io
+import os
 import pathlib
-import urllib.request
+from release_download import download_release
 import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DEST = ROOT / '.tools/maestro-2.11.0'
 SHA = '5384593cb4e7a106489e75a821d157dd43f4e438df6bc308b72e82c685e1283a'
-URL = 'https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/maestro.zip'
-data = urllib.request.urlopen(URL, timeout=120).read()
-assert hashlib.sha256(data).hexdigest() == SHA, 'Maestro release checksum mismatch'
+# Same official cli-2.11.0 maestro.zip; immutable asset ID avoids the failing browser redirect.
+URL = 'https://api.github.com/repos/mobile-dev-inc/Maestro/releases/assets/598310672'
+data = download_release(URL, SHA, token=os.environ.get('RUNPEN_RELEASE_DOWNLOAD_TOKEN'))
 DEST.mkdir(parents=True, exist_ok=True)
 with zipfile.ZipFile(io.BytesIO(data)) as archive:
     for item in archive.infolist():

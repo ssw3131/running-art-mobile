@@ -1,6 +1,6 @@
 import { Link, router, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, RefreshControl, ScrollView, View } from 'react-native';
 import { AppText, Button, Icon } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { GenerationIcon, LegacyShapeIcon } from '@/features/course-generation/GenerationIcon';
@@ -17,6 +17,7 @@ export default function CoursesScreen({embedded=false}:{embedded?:boolean}) {
   const c=useThemeColors(),auth=useAuth(),owner=auth.ready ? auth.account?.id??'' : null;
   const [state,setState]=useState<{owner:string|null;rows:CourseSummary[];active:string|null;total:number;more:boolean;ready:boolean;error:string}>({owner:null,rows:[],active:null,total:0,more:false,ready:false,error:''});
   const [busy,setBusy]=useState(false), generation=useRef(0),loading=useRef(false),loaded=useRef(PAGE);
+  const [refreshing,setRefreshing]=useState(false);
   const current=owner!==null && state.owner===owner;
   const fetchPage=useCallback(async(offset:number)=>{
     if(loading.current || owner===null)return;
@@ -40,10 +41,10 @@ export default function CoursesScreen({embedded=false}:{embedded?:boolean}) {
     }
     return()=>{focused=false;generation.current++;loading.current=false;};
   },[fetchPage]));
-  return <View style={{flex:1,backgroundColor:c.background}}><ScrollView contentContainerStyle={{padding:24,gap:16,paddingBottom:embedded?24:40}}>
+  return <View style={{flex:1,backgroundColor:c.background}}><ScrollView testID="saved-courses-scroll" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true);void fetchPage(0).finally(()=>setRefreshing(false));}}/>} scrollEventThrottle={200} onScroll={({nativeEvent:e})=>{if(current&&state.more&&!busy&&e.contentOffset.y+e.layoutMeasurement.height>=e.contentSize.height-240)void fetchPage(state.rows.length);}} contentContainerStyle={{padding:24,gap:16,paddingBottom:embedded?24:40}}>
     <UsagePanel/>
     {busy&&<ActivityIndicator color={c.action}/>}
-    {current&&!!state.error&&<AppText accessibilityRole="alert" testID="courses-error">{state.error}</AppText>}
+    {current&&!!state.error&&<><AppText accessibilityRole="alert" testID="courses-error">{state.error}</AppText><Button compact variant="outline" label="다시 불러오기" disabled={busy} onPress={()=>void fetchPage(0)}/></>}
     {Platform.OS==='web'&&<AppText>저장한 코스는 Android 앱에서 확인해 주세요.</AppText>}
     {current&&state.ready&&!state.rows.length&&<AppText testID="courses-empty">아직 저장한 코스가 없어요. 계산 결과에서 원하는 후보를 저장해 보세요.</AppText>}
     {current&&state.rows.map(course=>{
@@ -61,8 +62,6 @@ export default function CoursesScreen({embedded=false}:{embedded?:boolean}) {
           <Icon name="chevronRight" color={c.outline}/>
         </Pressable></Link>;
     })}
-    {current&&state.more&&<Button compact variant="outline" label="더 보기" disabled={busy} onPress={()=>void fetchPage(state.rows.length)}/>}
     {current&&state.ready&&!state.rows.length&&<Button label="새 코스 만들기" onPress={()=>router.navigate("/route-lab")}/>}
-    <Button compact variant="outline" testID="courses-refresh" label="새로고침" disabled={busy} onPress={()=>void fetchPage(0)}/>
   </ScrollView></View>;
 }

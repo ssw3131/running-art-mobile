@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "reviewed": true,
-  "reviewedAt": "2026-11-05T16:00:00+09:00",
-  "review": "S0 common header/footer and typography reviewed against the existing Figma-backed S0 verification; existing body screens are regression references. Account deliberately has no CI auth configuration. S1: reviewed the new guest signup CTA on home and account, including the resulting account content shift. Only those two PNGs were replaced; run/archive and all masks remain unchanged. Per-screen provenance records mixed source versions. S1 home states: only home was replaced after direct original/current/diff review. Initial home uses original Figma illustration and shapes, personalized greeting, scrollable body and fixed course CTA; lower controls are reached by scrolling. Other screens and comparison masks/tolerances are unchanged. S234: Directly reviewed baseline/current/diff for home, run and archive after all 13 Linux API 36 functional steps, fixture preservation and cleanup passed. Home removes the dog unavailable caption after enabling the dog selector, reducing the common selector-row height; differences are confined to the three original shape icons. Run adopts shared white/black/gray/orange typography and rounded buttons. Archive adds the saved count and shape thumbnail, removes the raw score, and presents actual distance/date in a white card. Account has zero differing pixels and is unchanged. No masks, thresholds, environment or assertions changed. S56: Directly reviewed account baseline/current/diff after all 14 Linux API 36 functional steps, preservation and cleanup passed. Account now uses shared Noto typography, white/black/gray/orange palette, rounded action buttons and adjusted content spacing. The existing guest explanation, unavailable-auth state and real zero statistics remain. Home, run and archive have zero differing pixels and retain their existing PNGs. No masks, thresholds, geometry or assertions changed. Home/auth 2026-10-24: Directly reviewed baseline/current/diff for home and account after all 14 Linux API 36 functional steps, original fixture preservation and cleanup passed. The existing saved-course fixture now correctly selects returning home, with empty run statistics/list and a real saved-path fallback; initial home is separately verified in native scenarios. Account now uses a restored isolated synthetic signed-in session, since guests cannot access this page. Its actual profile, membership link and empty account statistics replace the old guest/unconfigured-auth view. Run and archive have zero changed pixels and retain their PNGs. No masks, thresholds, environment, geometry or assertions changed. Home attribution follow-up: Directly reviewed original/current/diff after API 36 all 14 steps and preservation/cleanup passed. Only the saved route drawing changes size/position inside its preview to reserve a scaled attribution row; no text, navigation or other screen changes. Updated only home.png. Masks, thresholds, geometry and assertions are unchanged. Archive/usage integration: directly reviewed baseline/current/diff for all four screens after all 15 API 36 functional steps, original fixture preservation and cleanup passed. Home adds real 1/5 generation and 1/15 save usage indicators; its body is unchanged. Archive changes the right tab to completed records, adds the cumulative save usage card and actual ratio, updates course shape/time/chevron cards, and places refresh below the list. Account uses the stable isolated synthetic email with a linked Google identity and completed membership, so the pending-signup action is correctly absent and following content moves upward. Run has zero differing pixels and retains its PNG. Only home/archive/account PNGs change. Masks, thresholds, environment, geometry and assertions are unchanged. Account settling 2026-11-01: explicit user approval for the single account PNG after reviewing its transient scrollbar-only 8896-pixel difference. Use the unedited original screenshot from PR38 attempt2, with all 15 functional steps and preservation/cleanup passed. Other PNGs, masks, thresholds and environment remain unchanged; new capture readiness is verified separately. Figma home navigation follow-up 2026-11-05: directly reviewed original/current/diff for all four screens from CI run 41978156272, attempt 1. Each page intentionally colors both selected tab icon and label; archive tab text is 보관함. Home also includes the prior approved title change to 최근 러닝. Changes are confined to bottom navigation on run/archive/account and the home heading plus bottom navigation on home. Replaced all four PNGs with the settled captures. Masks, thresholds, environment, geometry and assertions are unchanged.",
+  "reviewedAt": "2026-11-09T03:14:23+09:00",
+  "review": "S0 common header/footer and typography reviewed against the existing Figma-backed S0 verification; existing body screens are regression references. Account deliberately has no CI auth configuration. S1: reviewed the new guest signup CTA on home and account, including the resulting account content shift. Only those two PNGs were replaced; run/archive and all masks remain unchanged. Per-screen provenance records mixed source versions. S1 home states: only home was replaced after direct original/current/diff review. Initial home uses original Figma illustration and shapes, personalized greeting, scrollable body and fixed course CTA; lower controls are reached by scrolling. Other screens and comparison masks/tolerances are unchanged. S234: Directly reviewed baseline/current/diff for home, run and archive after all 13 Linux API 36 functional steps, fixture preservation and cleanup passed. Home removes the dog unavailable caption after enabling the dog selector, reducing the common selector-row height; differences are confined to the three original shape icons. Run adopts shared white/black/gray/orange typography and rounded buttons. Archive adds the saved count and shape thumbnail, removes the raw score, and presents actual distance/date in a white card. Account has zero differing pixels and is unchanged. No masks, thresholds, environment or assertions changed. S56: Directly reviewed account baseline/current/diff after all 14 Linux API 36 functional steps, preservation and cleanup passed. Account now uses shared Noto typography, white/black/gray/orange palette, rounded action buttons and adjusted content spacing. The existing guest explanation, unavailable-auth state and real zero statistics remain. Home, run and archive have zero differing pixels and retain their existing PNGs. No masks, thresholds, geometry or assertions changed. Home/auth 2026-10-24: Directly reviewed baseline/current/diff for home and account after all 14 Linux API 36 functional steps, original fixture preservation and cleanup passed. The existing saved-course fixture now correctly selects returning home, with empty run statistics/list and a real saved-path fallback; initial home is separately verified in native scenarios. Account now uses a restored isolated synthetic signed-in session, since guests cannot access this page. Its actual profile, membership link and empty account statistics replace the old guest/unconfigured-auth view. Run and archive have zero changed pixels and retain their PNGs. No masks, thresholds, environment, geometry or assertions changed. Home attribution follow-up: Directly reviewed original/current/diff after API 36 all 14 steps and preservation/cleanup passed. Only the saved route drawing changes size/position inside its preview to reserve a scaled attribution row; no text, navigation or other screen changes. Updated only home.png. Masks, thresholds, geometry and assertions are unchanged. Archive/usage integration: directly reviewed baseline/current/diff for all four screens after all 15 API 36 functional steps, original fixture preservation and cleanup passed. Home adds real 1/5 generation and 1/15 save usage indicators; its body is unchanged. Archive changes the right tab to completed records, adds the cumulative save usage card and actual ratio, updates course shape/time/chevron cards, and places refresh below the list. Account uses the stable isolated synthetic email with a linked Google identity and completed membership, so the pending-signup action is correctly absent and following content moves upward. Run has zero differing pixels and retains its PNG. Only home/archive/account PNGs change. Masks, thresholds, environment, geometry and assertions are unchanged. Account settling 2026-11-01: explicit user approval for the single account PNG after reviewing its transient scrollbar-only 8896-pixel difference. Use the unedited original screenshot from PR38 attempt2, with all 15 functional steps and preservation/cleanup passed. Other PNGs, masks, thresholds and environment remain unchanged; new capture readiness is verified separately. Figma home navigation follow-up 2026-11-05: directly reviewed original/current/diff for all four screens from CI run 41978156272, attempt 1. Each page intentionally colors both selected tab icon and label; archive tab text is 보관함. Home also includes the prior approved title change to 최근 러닝. Changes are confined to bottom navigation on run/archive/account and the home heading plus bottom navigation on home. Replaced all four PNGs with the settled captures. Masks, thresholds, environment, geometry and assertions are unchanged. PR49/local integration 2026-11-09: directly reviewed all four original/current/diff sets from run 42505641229 attempt 1 after all 15 API36 functional steps, original fixture preservation and cleanup passed without scenario retries. Compared home/archive/account with Figma 5:73, 35:4724 and 49:8352 and the retained product contracts; reviewed the accepted running-selection implementation and local navigation/badge changes. Replaced only the four reviewed raw settled PNGs and their provenance. Per-screen integration reviews describe the intended differences. Environment, geometry, masks, pixel threshold and zero-difference requirement remain unchanged.",
   "references": [
     "docs/quality/service-s0-verification.md",
     "docs/quality/service-s0-screenshots.html",
@@ -13,12 +13,21 @@
     "docs/quality/achievements-support-20261014.md",
     "docs/quality/home-auth-20261024.md",
     "docs/quality/archive-usage-20261024.md",
-    "docs/quality/archive-release-20261025.md"
+    "docs/quality/archive-release-20261025.md",
+    "docs/history/executed-plans/2026-11-08-2020-pr49-ci.md",
+    "docs/history/executed-plans/2026-11-08-1102-bottom-tab-spacing.md",
+    "docs/development/course-archive-running.md",
+    "assets/home/source.json",
+    "assets/archive/manifest.json",
+    "assets/achievements/figma-20261108/manifest.json",
+    "https://www.figma.com/design/QYRGII8OdvQB1SrtH3BA08?node-id=5-73",
+    "https://www.figma.com/design/QYRGII8OdvQB1SrtH3BA08?node-id=35-4724",
+    "https://www.figma.com/design/QYRGII8OdvQB1SrtH3BA08?node-id=49-8352"
   ],
-  "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
-  "ciHead": "23a5dfab98e3c6b27fe5c35931db007c1121109e",
-  "ciRun": "41978156272",
-  "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
+  "source": "1205d61cad69e797804a04defe9abe3f55dd217e",
+  "ciHead": "2f115c970e9cfb7707787587e6f9c3eb821edfe3",
+  "ciRun": "42505641229",
+  "apkSha256": "558a0450b4a8311d34334834cf480ec7164ab94afe2477bf1de0df1d63db8a81",
   "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
   "environment": {
     "host": "Linux",
@@ -45,14 +54,15 @@
           "height": 33
         }
       ],
-      "sha256": "875249d3d80eb5241161bc6abe5eb93613e23ddf78265ce23ee4c46c8f010963",
+      "sha256": "cad781b569885429a7af3a5def604f6f009d250e2d1cf077babb972d102459cd",
       "provenance": {
-        "ciRun": "41978156272",
+        "ciRun": "42505641229",
         "ciAttempt": 1,
-        "artifact": 13394512088,
-        "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
-        "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
-        "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+        "artifact": 13628004252,
+        "source": "1205d61cad69e797804a04defe9abe3f55dd217e",
+        "apkSha256": "558a0450b4a8311d34334834cf480ec7164ab94afe2477bf1de0df1d63db8a81",
+        "capture": "attempt-01/visual-home.png",
+        "review": "Compact usage labels use medium 14px/20px typography; actual used counts remain 1/5 and 1/15. Shorter empty-stat captions reduce the card height. The saved-route SVG fallback has no raster map attribution row. Existing recent-run/saved-course section names and fixture data remain. Includes the requested bottom-tab spacing and label offset."
       }
     },
     {
@@ -67,14 +77,15 @@
           "height": 33
         }
       ],
-      "sha256": "1d3ef045f3e4673f1e4a6cf660615729b8b4f658ac4a9b005c40dec1db87b79a",
+      "sha256": "b35404723ee34c9ac37abc172fc0175b8bb74a088fcada34bc1c0d6e4e0b0fa8",
       "provenance": {
-        "ciRun": "41978156272",
+        "ciRun": "42505641229",
         "ciAttempt": 1,
-        "artifact": 13394512088,
-        "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
-        "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
-        "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+        "artifact": 13628004252,
+        "source": "1205d61cad69e797804a04defe9abe3f55dd217e",
+        "apkSha256": "558a0450b4a8311d34334834cf480ec7164ab94afe2477bf1de0df1d63db8a81",
+        "capture": "attempt-01/visual-run.png",
+        "review": "The accepted saved-course chooser replaces the old free-run entry. The fixture course, actual distance/duration, explicit address lookup failure, create-course action and disabled start before selection are visible. Native selection, preparation, start, control and retry scenarios passed. Includes the requested bottom-tab spacing."
       }
     },
     {
@@ -89,14 +100,15 @@
           "height": 33
         }
       ],
-      "sha256": "3b6b84f27cf00675bf96eca7b2b4d1a0f4cf0fe61488198e65924395fc65bce9",
+      "sha256": "c6c474936436d3c2a546314b3494962dbed3988d5e6487cc3b5db06d5cc08b97",
       "provenance": {
-        "ciRun": "41978156272",
+        "ciRun": "42505641229",
         "ciAttempt": 1,
-        "artifact": 13394512088,
-        "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
-        "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
-        "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+        "artifact": 13628004252,
+        "source": "1205d61cad69e797804a04defe9abe3f55dd217e",
+        "apkSha256": "558a0450b4a8311d34334834cf480ec7164ab94afe2477bf1de0df1d63db8a81",
+        "capture": "attempt-01/visual-archive.png",
+        "review": "The standalone refresh button is replaced by the implemented pull-to-refresh interaction. The cumulative usage card, real 1/15 value, saved-course card and tab contents are otherwise pixel-identical. Includes the requested bottom-tab spacing."
       }
     },
     {
@@ -111,14 +123,15 @@
           "height": 33
         }
       ],
-      "sha256": "a9a320f032b8e47f2de29e2df200651b54ebcb9a5a59565b7457be9adbafa41e",
+      "sha256": "f1845253c126aec9a822921efeb12ccab1e860581c484b62348bd3e92c05561d",
       "provenance": {
-        "ciRun": "41978156272",
+        "ciRun": "42505641229",
         "ciAttempt": 1,
-        "artifact": 13394512088,
-        "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
-        "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
-        "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+        "artifact": 13628004252,
+        "source": "1205d61cad69e797804a04defe9abe3f55dd217e",
+        "apkSha256": "558a0450b4a8311d34334834cf480ec7164ab94afe2477bf1de0df1d63db8a81",
+        "capture": "attempt-01/visual-account.png",
+        "review": "Reviewed against Figma 49:8352: profile/edit row, actual linked-provider text, basic-pack remaining allowances, three actual zero-stat cards, unearned grayscale high-resolution badges and voice settings. Fixture values remain real 4 generation / 14 save credits; illustrative Figma values and earned badges are not copied. Includes the requested bottom-tab spacing."
       }
     }
   ],
@@ -849,5 +862,95 @@
         "currentSha256": "df23c11bb1523b90c9178eb3cc820b961963b84f6a3924789c32c18d0457b685"
       }
     ]
+  },
+  "integrationReview": {
+    "reviewedAt": "2026-11-09T03:14:23+09:00",
+    "ciRun": "42505641229",
+    "ciAttempt": 1,
+    "artifact": 13628004252,
+    "ciHead": "2f115c970e9cfb7707787587e6f9c3eb821edfe3",
+    "source": "1205d61cad69e797804a04defe9abe3f55dd217e",
+    "apkSha256": "558a0450b4a8311d34334834cf480ec7164ab94afe2477bf1de0df1d63db8a81",
+    "functionalSteps": 15,
+    "scenarioRetries": 0,
+    "preservation": {
+      "status": "passed",
+      "sha256": "13396d33723d39ad7def495c9ea9d413e3855b4ed83a610d5315cc7fa3325306"
+    },
+    "cleanup": {
+      "status": "passed",
+      "errors": []
+    },
+    "uiDumpReadinessWaits": 2,
+    "uiDumpTransportWarnings": 0,
+    "originalComparison": {
+      "home": 58519,
+      "run": 423403,
+      "archive": 16128,
+      "account": 171562
+    },
+    "review": {
+      "home": "Compact usage labels use medium 14px/20px typography; actual used counts remain 1/5 and 1/15. Shorter empty-stat captions reduce the card height. The saved-route SVG fallback has no raster map attribution row. Existing recent-run/saved-course section names and fixture data remain. Includes the requested bottom-tab spacing and label offset.",
+      "run": "The accepted saved-course chooser replaces the old free-run entry. The fixture course, actual distance/duration, explicit address lookup failure, create-course action and disabled start before selection are visible. Native selection, preparation, start, control and retry scenarios passed. Includes the requested bottom-tab spacing.",
+      "archive": "The standalone refresh button is replaced by the implemented pull-to-refresh interaction. The cumulative usage card, real 1/15 value, saved-course card and tab contents are otherwise pixel-identical. Includes the requested bottom-tab spacing.",
+      "account": "Reviewed against Figma 49:8352: profile/edit row, actual linked-provider text, basic-pack remaining allowances, three actual zero-stat cards, unearned grayscale high-resolution badges and voice settings. Fixture values remain real 4 generation / 14 save credits; illustrative Figma values and earned badges are not copied. Includes the requested bottom-tab spacing."
+    },
+    "previousBaseline": {
+      "reviewedAt": "2026-11-05T16:00:00+09:00",
+      "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
+      "ciHead": "23a5dfab98e3c6b27fe5c35931db007c1121109e",
+      "ciRun": "41978156272",
+      "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
+      "screens": [
+        {
+          "id": "home",
+          "sha256": "875249d3d80eb5241161bc6abe5eb93613e23ddf78265ce23ee4c46c8f010963",
+          "provenance": {
+            "ciRun": "41978156272",
+            "ciAttempt": 1,
+            "artifact": 13394512088,
+            "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
+            "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
+            "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+          }
+        },
+        {
+          "id": "run",
+          "sha256": "1d3ef045f3e4673f1e4a6cf660615729b8b4f658ac4a9b005c40dec1db87b79a",
+          "provenance": {
+            "ciRun": "41978156272",
+            "ciAttempt": 1,
+            "artifact": 13394512088,
+            "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
+            "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
+            "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+          }
+        },
+        {
+          "id": "archive",
+          "sha256": "3b6b84f27cf00675bf96eca7b2b4d1a0f4cf0fe61488198e65924395fc65bce9",
+          "provenance": {
+            "ciRun": "41978156272",
+            "ciAttempt": 1,
+            "artifact": 13394512088,
+            "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
+            "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
+            "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+          }
+        },
+        {
+          "id": "account",
+          "sha256": "a9a320f032b8e47f2de29e2df200651b54ebcb9a5a59565b7457be9adbafa41e",
+          "provenance": {
+            "ciRun": "41978156272",
+            "ciAttempt": 1,
+            "artifact": 13394512088,
+            "source": "2b55209cd8506fd4ea743b03470c5a9cf01b7f7c",
+            "apkSha256": "80b29630ea19c0e7946b90e4d32f5f5db1e22e7c0a32de79308889465e969393",
+            "review": "Reviewed the settled current screenshot and original/current/diff. Only intended Figma changes: current tab icon and label share selected color, archive tab reads 보관함; home also contains the preceding Figma title change. No masks or thresholds changed."
+          }
+        }
+      ]
+    }
   }
 }

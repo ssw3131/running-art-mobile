@@ -1,0 +1,214 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "retrieved": "2026-11-08",
+  "assets": [
+    {
+      "name": "animals-large.png",
+      "bytes": 60452,
+      "sha256": "fdaa245e9a488ede3f100a6efb2033e9278ba6fc5ac490baecd8f144f3169d62",
+      "width": 190,
+      "height": 190,
+      "sourceNode": "496:4180"
+    },
+    {
+      "name": "archive.svg",
+      "bytes": 509,
+      "sha256": "5fdca8e3c9f4b1b1ec6541c604f0a2022fac529b166ff210854ec3f30963582c",
+      "width": 16.0,
+      "height": 16.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "badge-banner.png",
+      "bytes": 15664,
+      "sha256": "0c802c2ac7470eab90972150a837f549d3e16306a5df53e665d2ca0822460fed",
+      "width": 152,
+      "height": 82,
+      "sourceNode": "493:2022"
+    },
+    {
+      "name": "badge-chevron.svg",
+      "bytes": 326,
+      "sha256": "e5c6e3b94d71a0a061106fcc1c2edbe09ef12c6517f409abf33a652467f90125",
+      "width": 20.0,
+      "height": 20.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "calories.svg",
+      "bytes": 3371,
+      "sha256": "5a58fd289c3c2a92901b7e55d3db277b4746ed80ba1d64f33203226c252dd6c0",
+      "width": 20.0,
+      "height": 21.0,
+      "sourceNode": "30:4603"
+    },
+    {
+      "name": "chevron.svg",
+      "bytes": 335,
+      "sha256": "dff2cd78426795667fe26ec5f5513dfa383915ff6bed6a958970b2502efbf84d",
+      "width": 30.0,
+      "height": 30.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "collection-3-large.png",
+      "bytes": 63120,
+      "sha256": "ea24ada25db15f378acaba60d98ae2f13fa998f3bb8d62c51bbe7555799cdfbb",
+      "width": 190,
+      "height": 190,
+      "sourceNode": "495:3612"
+    },
+    {
+      "name": "distance-50-large.png",
+      "bytes": 65099,
+      "sha256": "a89976d7c72ec66d2b3f94b858193e5e2876ca640c10be264f29b15d269966d2",
+      "width": 190,
+      "height": 190,
+      "sourceNode": "496:3919"
+    },
+    {
+      "name": "distance-variation-large.png",
+      "bytes": 62565,
+      "sha256": "c07a043176d05ef09e18fa011bd0d7d7dc9e4be68755092b245d681ce6ef8a19",
+      "width": 190,
+      "height": 190,
+      "sourceNode": "496:4846"
+    },
+    {
+      "name": "distance.svg",
+      "bytes": 2676,
+      "sha256": "348179df83684130340e0e11ba102af251eb6f4a62f8fc0613fa4ff15862dc85",
+      "width": 20.0,
+      "height": 20.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "document.svg",
+      "bytes": 848,
+      "sha256": "2c3aaaa8d9e158a82f1a0a4aea0d9aa10fd5739221308b9870de7eaa3480d782",
+      "width": 24.0,
+      "height": 24.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "dot-a.svg",
+      "bytes": 245,
+      "sha256": "95768c3ff1498cd6b5fb261d25d78c3a934f78a1c8a0e7fca1c99cbb9a93bea1",
+      "width": 12.0,
+      "height": 12.0,
+      "sourceNode": "30:4603"
+    },
+    {
+      "name": "dot-b.svg",
+      "bytes": 241,
+      "sha256": "eedaccdfc03a5dc6145ae3591166e0f93b8ca2c19dba1e4165197123f4f7e9d9",
+      "width": 8.0,
+      "height": 8.0,
+      "sourceNode": "30:4603"
+    },
+    {
+      "name": "heart-large.png",
+      "bytes": 69364,
+      "sha256": "eec64c78f40f90f814cbff51a3f15c190e0bbb93b560d804a234235bd1201728",
+      "width": 190,
+      "height": 190,
+      "sourceNode": "494:3508"
+    },
+    {
+      "name": "location.svg",
+      "bytes": 731,
+      "sha256": "0c9c254760426fa9a6da261c9616d74f543c72eb5182ba599de4c79fa5f93197",
+      "width": 24.0,
+      "height": 24.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "payment.svg",
+      "bytes": 561,
+      "sha256": "e5f872175b1f865b6602468dd922babe6c1cd336bfad1751858db135f12e15df",
+      "width": 24.0,
+      "height": 24.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "pin.svg",
+      "bytes": 843,
+      "sha256": "c479bce9c92aeec01f1b499aa4136eb0db6dfadcfca6b607aa1ccdf167bce267",
+      "width": 16.0,
+      "height": 16.0,
+      "sourceNode": "30:4603"
+    },
+    {
+      "name": "profile-chevron.svg",
+      "bytes": 329,
+      "sha256": "e948b773c754f28d769430ae1b8c11436b66213284d8df875d778d912529e570",
+      "width": 22.0,
+      "height": 20.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "region-variation-large.png",
+      "bytes": 61775,
+      "sha256": "0dcb45dfbd0ba54276f0d6242e84c899ef7ce5dd7196d59ea43b3234d5e7bddf",
+      "width": 190,
+      "height": 190,
+      "sourceNode": "495:3727"
+    },
+    {
+      "name": "theme.svg",
+      "bytes": 399,
+      "sha256": "d7122dcdc700ae3d33c9ff12ee00c5ca9e8160ea1e7ce55b7a17b76bd3ec8faa",
+      "width": 24.0,
+      "height": 24.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "time-5-large.png",
+      "bytes": 61854,
+      "sha256": "62f6c70743818f7b196fe01ec62ea4435fb545956d9c3107f3254c899e2bcb9f",
+      "width": 190,
+      "height": 190,
+      "sourceNode": "496:4098"
+    },
+    {
+      "name": "timer.svg",
+      "bytes": 904,
+      "sha256": "a660ccb1d989862a8b5cd4e9672a0fc8136b5c002bb4845b446c020fcac319ad",
+      "width": 16.0,
+      "height": 16.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "trophy.svg",
+      "bytes": 1400,
+      "sha256": "7b081234a2a98e1381206fc49b10191433d786c7dc3383695bfc098c5ad4e238",
+      "width": 16.0,
+      "height": 16.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "voice.svg",
+      "bytes": 954,
+      "sha256": "582019eff71a347453fbfb2ef3578f494d20babe8dc0a9724b73e7cf5eb96920",
+      "width": 24.0,
+      "height": 24.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "wand.svg",
+      "bytes": 1789,
+      "sha256": "1423fb39d3c0fc878ae777a2d843d0dce20dc40d680137e8c57e11b3a9529245",
+      "width": 16.0,
+      "height": 16.0,
+      "sourceNode": "49:8352"
+    },
+    {
+      "name": "withdraw.svg",
+      "bytes": 856,
+      "sha256": "c9fc212a3209bdb47d4524903ee0392c8b6e712667f7abbff711b41af62f1902",
+      "width": 16.0,
+      "height": 16.0,
+      "sourceNode": "49:8352"
+    }
+  ]
+}

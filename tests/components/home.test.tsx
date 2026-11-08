@@ -104,3 +104,12 @@ test('guest never queries or exposes preserved guest records', async () => {
   mockAuth = { ready: true, account: null }; await render(<HomeScreen />);
   expect(mockRead).not.toHaveBeenCalled(); expect(screen.queryByTestId('home-initial')).toBeNull();
 });
+
+test('returning home starts a conditions request without replacing the previously chosen shape', async () => {
+  mockRead.mockResolvedValue({ ...data(), runCount: 1, recent: [{ run, paths: [] }] });
+  await render(<HomeScreen />);
+  await fireEvent.press(screen.getByTestId('open-route-lab'));
+  expect(mockNavigate.mock.lastCall?.[0]).toEqual({ pathname: '/route-lab', params: {
+    homeSection: 'conditions', homeRequest: expect.any(String), homeShape: undefined,
+  } });
+});

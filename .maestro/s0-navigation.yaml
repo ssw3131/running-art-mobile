@@ -9,7 +9,7 @@ name: S0 five tabs and menu return
 - tapOn:
     id: tab-courses
 - assertVisible:
-    id: selected-center
+    id: course-map-preview-open
 - tapOn:
     id: tab-run
 - assertVisible:

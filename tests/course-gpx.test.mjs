@@ -164,3 +164,13 @@ test('write and share errors allow retry without reporting success or removing h
     assert.equal(await exportCourse(course().id), 'closed');
   }
 });
+
+test('unsaved candidate export has a valid document id without a repository save', async () => {
+  const { candidateForExport } = await import('../src/modules/courses/export.ts');
+  const snapshot = course().snapshot;
+  const exported = candidateForExport(snapshot, '저장 전 코스');
+  assert.match(exported.id, /^[a-f0-9]{32}$/);
+  const document = courseGpx(exported);
+  assert.ok(document.xml.includes('저장 전 코스'));
+  assert.deepEqual(exported.snapshot.route, snapshot.route);
+});

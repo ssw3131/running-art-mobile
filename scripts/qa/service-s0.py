@@ -137,17 +137,17 @@ def navigation():
     tap('tab-courses')
     before = capture('center-before-tab')
     for _ in range(15):
-        if find(before, 'route-location-loading') is None:
+        if find(before, 'route-locate').get('enabled') == 'true':
             break
         time.sleep(1)
         before = capture('center-before-tab')
-    assert find(before, 'route-location-loading') is None, 'Initial location has not settled'
-    center = find(before, 'selected-center').get('text')
+    assert find(before, 'route-locate').get('enabled') == 'true', 'Initial location has not settled'
+    center = find(before, 'course-map-preview-open').get('content-desc')
     lat, lng = map(float, re.findall(r'-?\d+\.\d+', center))
     assert 33 <= lat < 39 and 124 <= lng < 132, 'QA origin must be inside Korea before testing server generation'
     adb('emu', 'geo', 'fix', '127', '37', '0', '10')
     tap('tab-home'); tap('tab-courses')
-    assert find(capture('center-after-tab'), 'selected-center').get('text') == center
+    assert find(capture('center-after-tab'), 'course-map-preview-open').get('content-desc') == center
     seek('distance-3'); tap('distance-3'); seek('shape-star'); tap('shape-star')
     def draft(name):
         seek('distance-3')
@@ -176,7 +176,10 @@ def navigation():
     seek('home-more-runs'); tap('home-more-runs')
     tap('완주 기록')
     tap('tab-account'); tap('tab-archive')
-    assert find(capture('archive-view-after-tab'), 'runs-refresh') is not None
+    retained=capture('archive-view-after-tab')
+    assert find(retained,'완주 기록').get('selected')=='true'
+    assert find(retained,'finished-runs-scroll') is not None
+    assert find(retained,'runs-refresh') is None
     tap('tab-courses'); draft('draft-after-system-back')
     print('PASS: chosen center, distance, shape, tab retention, menu/back, detail/back, system back, archive run list')
 
@@ -187,10 +190,10 @@ def calculation():
     if find(tree, 'route-diagnostics').get('content-desc') == '개발 검증 정보':
         tap('route-diagnostics')
     seek('dataset-grid'); tap('dataset-grid')
-    tap('distance-7'); tap('calculate-route'); tap('tab-home'); tap('tab-courses')
+    tap('distance-7'); seek('calculate-route'); tap('calculate-route'); tap('tab-home'); tap('tab-courses')
     tree = capture('calculation-after-blur')
     assert find(tree, 'calculation-cancelled') is not None
-    tap('distance-3'); tap('calculate-route')
+    tap('distance-3'); seek('calculate-route'); tap('calculate-route')
     for _ in range(30):
         tree = capture('calculation-progress')
         if find(tree, 'calculation-done') is not None:
@@ -217,6 +220,15 @@ def calculation():
 
 def gps_navigation():
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
+    # New free-running entry was intentionally removed. Preserve acceptance of
+    # existing free records by resuming a synthetic paused record on this emulator.
+    legacy_id='6'*32
+    assert not query(f"SELECT id FROM running_sessions WHERE id='{legacy_id}'")
+    now=int(time.time()*1000)
+    shell('am','force-stop',APP)
+    shell('sqlite3',DB,f"INSERT INTO running_sessions(id,status,started_at,checkpoint_at,resumed_at,owner_id) VALUES('{legacy_id}','paused',{now},{now},{now},'{OWNER}')")
+    shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///',APP)
+    time.sleep(3)
     tap('tab-run'); seek('run-start'); tap('run-start'); tap('계속')
     def inject(start, count=4):
         for i in range(start, start + count):
@@ -257,9 +269,8 @@ def gps_navigation():
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
     services = shell('dumpsys', 'activity', 'services', APP).decode()
     assert not re.search(r'^  \* ServiceRecord.*com\.runningart\.mobile\.dev/', services, re.M)
-    tap('service-back')
-    assert find(capture('gps-result-back'), 'tab-run').get('selected') == 'true'
-    print('PASS: GPS tab continuity, home return, pause/resume, explicit process recovery, finish/back/service cleanup', json.dumps(final))
+    assert find(capture('gps-finish-archive'), '저장 코스').get('selected') == 'true'
+    print('PASS: legacy GPS tab continuity, home return, pause/resume, explicit process recovery, finish/archive/service cleanup', json.dumps(final))
 
 
 def course_preparation():
@@ -274,21 +285,33 @@ def course_preparation():
     adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
     tap('tab-home'); tap('home-more-courses'); tap('course-row-' + 'f'*32)
     seek('course-run'); tap('course-run')
-    assert find(capture('course-preparation-tab'), 'tab-run').get('selected') == 'true'
+    tap('run-preparation-confirm')
+    assert find(capture('course-preparation-map'), 'tab-run') is None
+    launcher = shell('cmd', 'package', 'resolve-activity', '--brief',
+                     '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER', APP).decode().strip().splitlines()[-1]
+    assert launcher.startswith(APP + '/'), 'Resolve only the isolated QA app launcher'
     for _ in range(2):
-        tap('tab-home'); tap('tab-run')
+        shell('input','keyevent','3')
+        time.sleep(1)
+        # A /run deep link intentionally opens the chooser without a courseId.
+        # Foreground the existing task like the launcher, preserving preparation.
+        # am accepts these flags through -f: NEW_TASK | RESET_TASK_IF_NEEDED.
+        shell('am','start','-W','-a','android.intent.action.MAIN','-c','android.intent.category.LAUNCHER',
+              '-n',launcher,'-f','0x10200000')
+        time.sleep(1)
     for _ in range(12):
-        seek('run-course-start')
         tree = capture('course-preparation-return')
-        if find(tree, 'run-course-start').get('enabled') == 'true':
+        start = find(tree, 'run-course-start')
+        assert start is not None and find(tree, 'tab-run') is None, 'Foreground return must retain full-map preparation'
+        if start.get('enabled') == 'true':
             break
         adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
         time.sleep(1)
     else:
-        raise RuntimeError('Course preparation did not recover after tab refocus')
+        raise RuntimeError('Course preparation did not recover after foreground return')
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
-    tap('tab-home')
-    print('PASS: course detail enters retained run tab; preparation survives tab refocus without starting GPS recording')
+    tap('run-finish');tap('확인');tap('tab-home')
+    print('PASS: course detail enters full map preparation; foreground recovery preserves the start control without recording')
 
 
 def scaled():

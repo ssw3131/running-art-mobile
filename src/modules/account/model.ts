@@ -1,8 +1,9 @@
+import { validateWeightKg } from '../running/calories.ts';
 import { StorageError } from '../storage/types.ts';
 import { validateGuidanceOptions, type GuidanceOptions } from '../running/guidance.ts';
 
 export type ProfileInput = { nickname: string; picture: 'provider' | 'initials' | 'uploaded' };
-export type AccountPreferences = { theme: 'system' | 'light' | 'dark'; guidance: GuidanceOptions };
+export type AccountPreferences = { theme: 'system' | 'light' | 'dark'; guidance: GuidanceOptions; weightKg?:number };
 export const defaultAccountPreferences: AccountPreferences = {
   theme: 'system', guidance: { voice: true, background: true, mode: 'map' },
 };
@@ -16,7 +17,7 @@ export function validateProfile(value: ProfileInput): ProfileInput {
 }
 export function validatePreferences(value: AccountPreferences): AccountPreferences {
   if (!value || !['system', 'light', 'dark'].includes(value.theme)) throw new StorageError('validation', '화면 테마를 선택해 주세요.');
-  return { theme: value.theme, guidance: validateGuidanceOptions(value.guidance) };
+  return { theme: value.theme, guidance: validateGuidanceOptions(value.guidance), ...(value.weightKg===undefined?{}:{weightKg:validateWeightKg(value.weightKg)}) };
 }
 export function profileImageUrl(value: unknown): string | null {
   if (typeof value !== 'string' || value.length > 2048) return null;

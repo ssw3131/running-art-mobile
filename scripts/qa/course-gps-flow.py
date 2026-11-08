@@ -66,7 +66,8 @@ def finish_flow():
     q.qa.capture('flow-start-outside')
     for _ in range(3): adb('shell', 'input', 'swipe', '1060', '2100', '1060', '850', '180')
     control = next(n for n in q.qa.ui().iter('node') if n.get('resource-id') == 'run-course-start')
-    assert control.get('enabled') == 'false'
+    # Start now initiates validated preparation instead of toggling with GPS readiness.
+    assert control.get('enabled') == 'true'
     b.fix(start, 5); b.tap('run-course-start'); q.tap('confirm'); b.fix(start, 5)
     db = q.database('flow-started')
     run = dict(db.execute("SELECT * FROM running_sessions WHERE status='running'").fetchone()); db.close()

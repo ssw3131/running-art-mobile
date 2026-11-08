@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { nativeFingerprint } from '../native-fingerprint.mjs';
+import configureApp from '../../app.config.js';
 const kind = process.env.APK_KIND;
 if (!['development', 'preview'].includes(kind)) throw Error('Invalid APK_KIND');
 const variant = kind === 'development' ? 'debug' : 'release';
@@ -22,8 +23,12 @@ const name = 'runpen-' + kind + '-' + sha.slice(0, 12) + '-' + process.env.RUNPE
 mkdirSync('build/handset', { recursive: true });
 copyFileSync(apk, 'build/handset/' + name);
 const hash = createHash('sha256').update(readFileSync(apk)).digest('hex');
+const appConfig = configureApp({ config: JSON.parse(readFileSync('app.json', 'utf8')).expo });
+const mapRenderer = appConfig.plugins.find(plugin => Array.isArray(plugin) && plugin[0] === '@maplibre/maplibre-react-native')[1].android.nativeVariant;
+if (mapRenderer !== 'opengl') throw Error('Handset APK requires the OpenGL map renderer');
+if (!/^org\.maplibre\.reactnative\.nativeVariant=opengl\s*$/m.test(readFileSync('android/gradle.properties', 'utf8'))) throw Error('Generated Android project did not select OpenGL');
 writeFileSync('build/handset/' + name + '.sha256', hash + '  ' + name + '\n');
-writeFileSync('build/handset/metadata.json', JSON.stringify({ commit: sha, kind, versionCode: Number(process.env.RUNPEN_VERSION_CODE), applicationId: 'com.runningart.mobile.dev', certificateSHA256: fingerprint, sha256: hash, abis: ['arm64-v8a', 'armeabi-v7a'], native: nativeFingerprint(), buildRun: process.env.GITHUB_RUN_ID }, null, 2) + '\n');
+writeFileSync('build/handset/metadata.json', JSON.stringify({ commit: sha, kind, mapRenderer, versionCode: Number(process.env.RUNPEN_VERSION_CODE), applicationId: 'com.runningart.mobile.dev', certificateSHA256: fingerprint, sha256: hash, abis: ['arm64-v8a', 'armeabi-v7a'], native: nativeFingerprint(), buildRun: process.env.GITHUB_RUN_ID }, null, 2) + '\n');
 writeFileSync('build/handset/INSTALL-ko.txt', [
   'RunPen ' + kind + ' / commit ' + sha,
   '압축을 풀고 APK를 Android 휴대폰으로 내려받아 설치합니다. Windows에서 직접 실행하는 파일이 아닙니다.',

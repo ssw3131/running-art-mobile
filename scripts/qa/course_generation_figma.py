@@ -60,7 +60,7 @@ def real_course(q):
     distance(q,11)
     assert '11' in q.find(q.capture('figma-distance-11'),'distance-value').get('text')
     distance(q,20); q.seek('shape-whale'); q.tap('shape-whale')
-    q.tap('calculate-route'); q.capture('figma-real-confirm'); q.tap('generation-confirm')
+    q.seek('calculate-route'); q.tap('calculate-route'); q.capture('figma-real-confirm'); q.tap('generation-confirm')
     started=time.monotonic()
     while time.monotonic()-started<240:
         tree=q.capture('figma-real-progress')
@@ -78,11 +78,12 @@ def real_course(q):
         cards.append(card)
     percentages=[int(re.search(r'유사도 (\d+)%',card).group(1)) for card in cards]
     assert percentages==sorted(percentages,reverse=True)
-    q.tap('generation-regenerate'); q.capture('figma-regenerate-confirm'); q.tap('generation-confirm-cancel')
+    q.seek('generation-edit'); q.tap('generation-edit'); q.capture('figma-reset-warning'); q.tap('취소')
     q.tap('generation-run'); q.capture('figma-unsaved-run-detail')
-    q.seek('saved-course-run', allow_disabled=True)
-    assert q.find(q.capture('figma-save-required'),'saved-course-run').get('enabled')=='false'
-    text(q,'course-save-name','FIGMA_WHALE_20'); q.shell('input','keyevent','4')
+    q.seek('course-run', allow_disabled=True)
+    assert q.find(q.capture('figma-save-before-run'),'course-run').get('enabled')=='true'
+    q.seek('course-edit-name'); q.tap('course-edit-name')
+    text(q,'course-rename-input','FIGMA_WHALE_20'); q.shell('input','keyevent','4'); q.tap('이름 적용')
     q.seek('course-save'); q.tap('course-save')
     saved=q.query("SELECT id,snapshot_json,length_km FROM saved_courses WHERE name='FIGMA_WHALE_20'")
     assert len(saved)==1
@@ -90,7 +91,7 @@ def real_course(q):
     assert snapshot['schemaVersion']==4 and snapshot['shape']=='whale' and snapshot['targetKm']==20
     assert 15<=snapshot['lengthKm']<=20
     assert snapshot['route'][0]==snapshot['route'][-1]
-    q.seek('saved-course-run'); q.tap('saved-course-run')
+    q.seek('course-run'); q.tap('course-run')
     # API29 can expose an empty hierarchy while the tab transition is mounting.
     # Wait for both the selected tab and the saved course, preserving each frame.
     for attempt in range(8):

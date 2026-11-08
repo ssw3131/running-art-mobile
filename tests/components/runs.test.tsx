@@ -15,10 +15,10 @@ test('UI-RUNS-01: pending list does not claim empty; completion shows empty stat
   jest.mocked(getStorage).mockResolvedValue({ runs: { finished: list } } as any);
   await render(<RunsScreen embedded />);
   expect(screen.queryByTestId('runs-empty')).toBeNull();
-  expect(screen.getByTestId('runs-refresh')).toBeDisabled();
+  expect(screen.queryByTestId('runs-refresh')).toBeNull();
   await act(async () => finish([]));
   expect(screen.getByTestId('runs-empty')).toBeVisible();
-  expect(screen.getByTestId('runs-refresh')).toBeEnabled();
+  expect(screen.queryByTestId('runs-refresh')).toBeNull();
 });
 
 test('UI-RUNS-02: storage failure is announced and refresh recovers', async () => {
@@ -27,7 +27,7 @@ test('UI-RUNS-02: storage failure is announced and refresh recovers', async () =
   await render(<RunsScreen embedded />);
   expect(screen.getByRole('alert')).toBeVisible();
   expect(screen.queryByTestId('runs-empty')).toBeNull();
-  await fireEvent.press(screen.getByTestId('runs-refresh'));
+  await fireEvent.press(screen.getByText('다시 불러오기'));
   expect(screen.queryByRole('alert')).toBeNull();
   expect(screen.getByTestId('runs-empty')).toBeVisible();
 });

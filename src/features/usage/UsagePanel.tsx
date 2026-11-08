@@ -12,7 +12,7 @@ export function UsagePanel({compact=false}:{compact?:boolean}) {
     {compact?<View style={{flexDirection:'row',alignItems:'center',gap:14,flexWrap:'wrap'}}>
       {(['generation','save'] as const).map(kind=><Pressable key={kind} testID={`usage-${kind}`} accessibilityRole="button" accessibilityLabel={`${kind==='generation'?'생성':'저장'} 사용 횟수 ${count(kind)}, 이용 안내`} onPress={()=>setOpen(true)} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:6}}>
         <Image source={kind==='generation'?require('../../../assets/archive/wand.svg'):require('../../../assets/archive/archive.svg')} style={{width:20,height:20}} contentFit="contain" accessible={false}/>
-        <AppText weight="bold" family="roboto">{count(kind)}</AppText>
+        <AppText weight="medium" family="roboto" style={{fontSize:14,lineHeight:20}}>{count(kind)}</AppText>
       </Pressable>)}
     </View>:<View testID="archive-usage" style={{backgroundColor:c.background==='#121212'?'#39241E':'#FFEEE9',borderRadius:20,padding:20,gap:6}}>
       <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:10}}><AppText variant="caption" weight="bold" style={{color:c.selected}}>저장 횟수</AppText><Pressable accessibilityRole="button" onPress={()=>setOpen(true)} style={{paddingHorizontal:12,minHeight:36,borderRadius:20,backgroundColor:c.action,justifyContent:'center'}}><AppText variant="caption" weight="bold" style={{color:c.onAction}}>이용 안내</AppText></Pressable></View>

@@ -1,12 +1,12 @@
 import { Tabs } from 'expo-router';
-import { Keyboard } from 'react-native';
+import { Keyboard, StyleSheet, type ViewStyle } from 'react-native';
 import { BottomTabBar } from '@/components/navigation/BottomTabBar';
 import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { serviceTabs } from '@/features/service/navigation';
 
 export default function ServiceTabsLayout() {
   return <Tabs initialRouteName="index" backBehavior="history" screenOptions={{ lazy: true, freezeOnBlur: false }}
-    tabBar={({ state, navigation, insets }) => <BottomTabBar bottomInset={insets.bottom}
+    tabBar={({ state, navigation, insets, descriptors }) => (StyleSheet.flatten(descriptors[state.routes[state.index].key].options.tabBarStyle) as ViewStyle|undefined)?.display === 'none' ? null : <BottomTabBar bottomInset={insets.bottom}
       value={serviceTabs.find(tab => tab.name === state.routes[state.index].name)?.value ?? 'home'}
       onChange={value => {
         const tab = serviceTabs.find(item => item.value === value);
@@ -19,6 +19,6 @@ export default function ServiceTabsLayout() {
         }
       }} />}>
     {serviceTabs.map(tab => <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title,
-      header: ({route}) => <ServiceHeader title={tab.title} brand={tab.value === 'home'} back={tab.name==='courses'&&(route.params as {fromHome?:string}|undefined)?.fromHome==='1'} /> }} />)}
+      header: ({route}) => <ServiceHeader title={tab.title} brand={tab.value === 'home' || tab.value === 'courses'} back={tab.name==='courses'&&(route.params as {fromHome?:string}|undefined)?.fromHome==='1'} /> }} />)}
   </Tabs>;
 }
