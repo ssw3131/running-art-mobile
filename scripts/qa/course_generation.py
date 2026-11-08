@@ -28,8 +28,11 @@ def drawing(q):
 def generation_flow(q):
     q.tap('tab-courses')
     # Exercise native gesture arbitration inside the real vertical ScrollView.
-    seek_above(q, 'distance-value')
+    # A standalone diagnostic starts at the top; seeing the value does not
+    # imply the tick buttons below it are visible. Do not inherit S0's scroll.
+    q.seek('distance-3')
     q.tap('distance-3')
+    q.seek('distance-slider')
     slider = q.find(q.capture('s2a-slider-before'), 'distance-slider')
     x1, y1, x2, y2 = map(int, re.findall(r'\d+', slider.get('bounds')))
     assert y2-y1 >= 100, 'The full 48dp slider must be visible for gesture checks'
@@ -40,7 +43,7 @@ def generation_flow(q):
     q.shell('input', 'swipe', str((x1+x2)//2), str(y), str((x1+x2)//2), str(y-250), '600')
     moved = q.find(q.capture('s2a-slider-vertical'), 'distance-slider')
     assert moved is None or int(re.findall(r'\d+', moved.get('bounds'))[1]) < y1-40, 'Vertical gesture must scroll the page'
-    seek_above(q, 'distance-value')
+    q.seek('distance-3')
     assert q.find(q.capture('s2a-slider-distance-preserved'), 'distance-3').get('selected') == 'true'
     drawing(q)
     # Public fixture roads come from the isolated compute backend, never from

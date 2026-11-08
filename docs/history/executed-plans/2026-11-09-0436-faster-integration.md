@@ -30,3 +30,11 @@
 - 새 정책/검토 경로 회귀7개, 타입·린트, 전체 UI39묶음191개 통과. actionlint1.7.12 공식 Windows 배포본을 SHA256 6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9로 검증해 워크플로 구문/표현식 검사 통과. 수동 generation 선택의 실제 scope 출력은 matrix=[36], --generation-only였다.
 - 최초 PC qa:fast는 로컬 HTTP·임시 Git 저장소의 샌드박스 권한과 실행 가능한 Python 부재로 Node 일부 실패, 사용자 임시 폴더의 Jest 변환 캐시 rename EPERM으로 UI 실행 전 실패했다. source/server-source/OpenAPI/정책 검사는 통과했다. 기존 증거를 .cache/faster-integration/local-fast-first에 보존한다. Jest 캐시를 프로젝트 .cache/jest로 지정한 뒤 UI191개를 재실행해 통과했으며, 이 결과를 전체 qa:fast 성공으로 기록하지 않는다.
 - 다음은 draft CI의 비용 축소, ready 전체 검증, 실제 main 재사용 결과를 확인하는 단계다. 아직 원격 동작 검증 완료가 아니다.
+
+### 2026-11-09T05:16:21+09:00 draft 통과와 단독 생성 진단 보완
+
+- 0173bea의 draft 실행216(42516804170)은 총177초, fast 작업146초에 성공했다. Python 도구20개·Node543통과/1기존skip·UI39묶음191개가 통과했고 API/Android는 skipped, 집계는 development-feedback이다. fast 아티팩트13631263247만 발행했으며 전체 검증 증거는 없다. 원본을 .cache/faster-integration/draft216에 보존했다.
+- 같은 커밋을 ready로 전환한 실행217(42517091590)은 fast/API 통과 후 API29/36을 검사 중이다. 기존 전체 성공 main7b2f01b를 실제 API로 조회해도 새 트리 증거가 없으므로 reused=false로 판정함을 확인했다(.cache/faster-integration/pre-receipt-fallback.json).
+- 수동 suite=android/android_scenario=generation 실행218(42517588289)은 API36만 실행했고 fast/API는 skipped였다. 게스트 차단 뒤 S2a-01-generation의 distance-3 탐색에서 실패했다. manual-verification도 실패했으며 전체 검증 증거는 발행하지 않았다. 아티팩트13632432503을 .cache/faster-integration/manual218에 ZIP/원본 보고서·화면으로 보존했다. 시나리오 재시도0·실패 후 정리는 통과했고 원본 보존 검증 완료로 기록하지 않는다.
+- 소스와 실패 PNG를 대조하면 거리3 버튼은 삭제되지 않았다. 첫 화면에서 distance-value만 보일 때 그 아래 눈금 버튼이 화면 밖이었다. 기존 전체 흐름이 앞서 남긴 스크롤 상태에 의존한 단독 진단 문제다. 실제 distance-3와 전체 slider를 찾아 이동하고, 세로 스크롤 뒤에도 실제 버튼을 찾아 선택 보존을 검사한다. 제스처·선택값·계산·저장 assertion은 유지한다.
+- 진행 중인 전체217을 취소하지 않도록 동일 기본 폴더의 임시 진단 브랜치에서 이 수정만 먼저 수동 검증한다. 통과 후 PR52에 반영해 최종 전체 검사와 main 재사용을 확인한다. 두 원본 피처 브랜치는 유지한다.
