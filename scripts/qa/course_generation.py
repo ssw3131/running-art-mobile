@@ -137,11 +137,17 @@ def scaled_generation(q, launch):
     try:
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         launch(); q.tap('tab-courses')
-        # The test build has no external map/location service credentials, so
-        # GPS or native map readiness may remain pending. The user can still
-        # inspect the explicit center and scroll the form; test that invariant
-        # directly instead of waiting for an unrelated device-service result.
-        tree = q.capture('s2a-large-location-ready')
+        # A cold entry starts a one-shot GPS lookup. Capture the settled center,
+        # not the initial fallback that the pending lookup may still replace.
+        # Wait for that lookup to finish (including its error/timeout states),
+        # without requiring external map tiles or an enabled generation button.
+        for _ in range(20):
+            tree = q.capture('s2a-large-location-ready')
+            locate = q.find(tree, 'route-locate')
+            if locate is not None and locate.get('enabled') == 'true': break
+            time.sleep(1)
+        else:
+            raise AssertionError('Initial location lookup did not settle before the scroll check')
         selected = q.find(tree, 'course-map-preview-open')
         assert selected is not None, 'Capture the chosen center before scrolling'
         origin = re.findall(r'-?\d+\.\d+', selected.get('content-desc', ''))
