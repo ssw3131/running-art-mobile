@@ -310,7 +310,7 @@ def course_preparation():
         raise RuntimeError('Course preparation did not recover after foreground return')
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
     tap('run-finish');tap('확인');tap('tab-home')
-    print('PASS: course detail enters full map preparation; foreground recovery preserves readiness without recording')
+    print('PASS: course detail enters full map preparation; foreground recovery preserves the start control without recording')
 
 
 def scaled():

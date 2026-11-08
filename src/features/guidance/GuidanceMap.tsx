@@ -12,7 +12,7 @@ import { COURSE_GUIDE_COLOR,RECORDED_TRAIL_COLOR } from '@/modules/running/route
 const basicStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#EDEFEA' } }] };
 const baseStyleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const line = (coordinates: Coordinate[]) => ({ type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates } });
-export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true, recenterAtBottom = false, recenterBottom = 240, onRecenter, heading, followLock=false }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean; recenterAtBottom?: boolean; recenterBottom?:number; onRecenter?():void; heading?:number; followLock?:boolean }) {
+export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true, recenterAtBottom = false, recenterBottom = 240, onRecenter, heading, followLock=false, compassTop }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean; recenterAtBottom?: boolean; recenterBottom?:number; onRecenter?():void; heading?:number; followLock?:boolean; compassTop?:number }) {
   const c = useThemeColors(), styleUrl = baseStyleUrl ? themedMapStyle(baseStyleUrl, c.background === '#121212') : null;
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
@@ -31,6 +31,7 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
   const paths = { type: 'FeatureCollection' as const, features: state.trace.filter(p => p.length >= 2).map(line) };
   return <View style={styles.fill}>
     <Map ref={map} key={online ? 'online' : 'offline'} testID="guidance-map" style={styles.fill} mapStyle={online && styleUrl ? styleUrl : basicStyle} attribution logo={false} dragPan={!followLock} touchZoom={!followLock} touchRotate={!followLock} touchPitch={false}
+      compass={compassTop!==undefined} compassHiddenFacingNorth={false} compassPosition={compassTop===undefined?undefined:{top:compassTop,right:32}}
       onDidFinishLoadingStyle={() => {
         buildingUpdate.current = (online && styleUrl ? hideMapBuildings(map.current) : Promise.resolve())
           .then(() => true, () => { setReady(false); setOnline(false); return false; });

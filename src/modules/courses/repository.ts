@@ -15,9 +15,10 @@ export function createCourseRepository(db: StorageDatabase, now = Date.now, scop
   }
   return {
     latestAttempt(id: string | null, hash: string): Promise<CourseAttempt|null> {
+      // Completed simulations have virtual start times; recency follows their real end time.
       const owner=scope();
       return queue(()=>db.getFirstAsync<CourseAttempt>(`SELECT id,status,course_outcome AS courseOutcome,started_at AS startedAt FROM running_sessions
-        WHERE owner_id=? AND (course_id=? OR course_snapshot_hash=?) ORDER BY started_at DESC,id DESC LIMIT 1`,owner,id,hash));
+        WHERE owner_id=? AND (course_id=? OR course_snapshot_hash=?) ORDER BY (status!='completed') DESC,coalesce(ended_at,started_at) DESC,started_at DESC,id DESC LIMIT 1`,owner,id,hash));
     },
     async recover(): Promise<boolean> { return false; },
     findHash(hash: string) { const owner = scope(); return queue(async () => (await db.getFirstAsync<{id:string}>('SELECT id FROM saved_courses WHERE snapshot_hash=? AND owner_id=?', hash, owner))?.id ?? null); },
@@ -54,8 +55,8 @@ export function createCourseRepository(db: StorageDatabase, now = Date.now, scop
         return Promise.all(rows.map(async course=>{
           const last=await db.getFirstAsync<{status:string;outcome:string}>(`SELECT r.status,r.course_outcome AS outcome FROM running_sessions r
             JOIN saved_courses c ON c.id=? AND c.owner_id=r.owner_id
-            WHERE r.owner_id=? AND (r.course_id=c.id OR r.course_snapshot_hash=c.snapshot_hash) ORDER BY r.started_at DESC,r.id DESC LIMIT 1`,course.id,owner);
-          return {...course,unfinished:!!last && !(last.status==='completed' && last.outcome==='finished')};
+            WHERE r.owner_id=? AND (r.course_id=c.id OR r.course_snapshot_hash=c.snapshot_hash) ORDER BY (r.status!='completed') DESC,coalesce(r.ended_at,r.started_at) DESC,r.started_at DESC,r.id DESC LIMIT 1`,course.id,owner);
+          return {...course,unfinished:!!last && !(last.status==='completed' && last.outcome==='finished'),inProgress:!!last && last.status!=='completed'};
         }));
       });
     },

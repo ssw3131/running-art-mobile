@@ -4,8 +4,7 @@ import { Stack,router,useLocalSearchParams } from 'expo-router';
 import { AppText,Button,Icon } from '@/components/ui';
 import { useRunResult } from '@/features/achievements/use-run-result';
 import { RunMetrics } from '@/features/achievements/RunMetrics';
-import { badgeImages } from '@/features/achievements/badge-images';
-import { BadgeImage } from '@/features/achievements/BadgeImage';
+import { CompletionBadge } from '@/features/achievements/CompletionBadge';
 import { homePathSvg } from '@/modules/home/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { openServiceTab } from '@/features/service/open-service-tab';
@@ -32,7 +31,7 @@ export default function RunResultScreen(){
    </View>
    {finished&&<View style={{height:235,alignItems:'center',justifyContent:'center',gap:14}}>
     <Image source={require('../../assets/achievements/confetti.png')} style={{position:'absolute',width:'100%',height:235}} contentFit="cover"/>
-    {shape&&badgeImages[shape]?<View testID={first?'completion-first-badge':undefined}><BadgeImage id={shape} size={170}/></View>:uri?<View style={{width:160,height:160,backgroundColor:'#F8F9FA',borderWidth:2,borderColor:'#FC560226',borderRadius:80,padding:16,boxShadow:'0px 12px 32px rgba(252,86,2,.1)'}}><Image source={{uri}} style={{flex:1}} contentFit="contain"/></View>:null}
+    <CompletionBadge shape={shape??''} label={data.course?.name??'코스'} uri={uri} first={first}/>
     <View style={{flexDirection:'row',alignItems:'center',gap:6}}><Image source={require('../../assets/achievements/figma-20261108/pin.svg')} style={{width:16,height:16}}/><AppText testID="run-result-badge" weight="bold" style={{fontSize:16,lineHeight:22}}>{data.course?.name}</AppText></View>
    </View>}
    {isSimulationRun(data.run)&&<AppText variant="caption" style={{textAlign:'center',color:c.selected}}>시뮬레이션 완주 기록</AppText>}

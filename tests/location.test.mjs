@@ -103,6 +103,18 @@ test('GPS timeout removes the native subscription', async () => {
   assert.equal(f.calls.removed, 1);
 });
 
+test('a run can wait past an old or imprecise first callback for a start-quality fix', async () => {
+  const f = fixture();
+  const { isStartFix } = await import('../src/modules/running/guidance.ts');
+  const pending = locateForeground(f.provider, new AbortController().signal, { accept: fix => isStartFix(fix, Date.now()) });
+  await setImmediate();
+  for (const fix of [{ ...position(), timestamp: Date.now() - 6000 }, { ...position(), accuracy: 80 }, { ...position(), accuracy: null }, { ...position(), timestamp: Date.now() + 60000 }]) f.update(fix);
+  assert.equal(f.calls.removed, 0, 'GPS stays subscribed instead of failing the run with the first unsuitable fix');
+  const fresh = position(); f.update(fresh);
+  assert.deepEqual(await pending, { kind: 'located', position: fresh });
+  assert.equal(f.calls.removed, 1);
+});
+
 test('leaving the screen cancels the request and ignores later fixes', async () => {
   const f = fixture();
   const controller = new AbortController();

@@ -39,21 +39,28 @@ def service_s234(q, launch):
     q.tap('run-pause');wait_status('paused');q.capture('s4-map-paused')
     q.tap('run-start');q.tap('계속');fix(4);wait_status('running')
     q.tap('run-guidance-mode');fix();q.capture('s4-focus')
-    q.tap('run-guidance-settings');q.seek('run-voice');q.tap('run-voice');q.seek('run-background');q.tap('run-background')
+    q.tap('run-guidance-settings');q.seek('run-voice');q.tap('run-voice')
+    assert q.find(q.capture('s4-settings-without-background-toggle'),'run-background') is None
     options=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
-    assert options=={'voice':False,'background':False,'mode':'focus'}
-    q.tap('run-background');q.seek('run-touch-lock-setting');q.tap('run-touch-lock-setting');q.tap('러닝으로 돌아가기')
+    assert options=={'voice':False,'background':True,'mode':'focus'}
+    q.seek('run-touch-lock-setting');q.tap('run-touch-lock-setting');q.tap('러닝으로 돌아가기')
     n=q.find(q.capture('s4-touch-locked'),'run-touch-unlock');assert n is not None
     x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')));x,y=str((x1+x2)//2),str((y1+y2)//2)
     q.shell('input','swipe',x,y,x,y,'1200');fix();assert q.find(q.capture('s4-touch-unlocked'),'run-pause') is not None
+    unlocked=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
+    assert unlocked['touchLock'] is False, 'Unlocking must also clear the stored lock setting'
     q.tap('run-pause');wait_status('paused')
+    # Explicitly enable the lock again on the paused run before cold recovery.
+    q.tap('run-guidance-settings');q.seek('run-touch-lock-setting');q.tap('run-touch-lock-setting');q.tap('러닝으로 돌아가기')
+    assert q.find(q.capture('s4-paused-lock-before-restart'),'run-touch-unlock') is not None
     q.shell('am','force-stop',q.APP);launch();q.tap('tab-run');q.capture('s4-restored-paused')
     restored=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
     assert restored=={'voice':False,'background':True,'mode':'focus','touchLock':True}
     n=q.find(q.capture('s4-restored-lock'),'run-touch-unlock')
     x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')));x,y=str((x1+x2)//2),str((y1+y2)//2)
     q.shell('input','swipe',x,y,x,y,'1200')
-    q.tap('run-guidance-settings');q.seek('run-touch-lock-setting');q.tap('run-touch-lock-setting');q.tap('러닝으로 돌아가기')
+    unlocked=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
+    assert unlocked['touchLock'] is False
     q.tap('run-finish');q.tap('종료·저장');q.seek('저장 코스');assert q.find(q.capture('s3-stopped-destination'),'저장 코스').get('selected')=='true'
     launch('runs/'+run_id);q.seek('run-rechallenge');q.capture('s3-run-detail')
     before=q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]

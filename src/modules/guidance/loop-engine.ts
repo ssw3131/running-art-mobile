@@ -138,6 +138,12 @@ export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:Loop
       const choices=survivors.filter(h=>h.meters>=20&&h.samples>=3&&distance(positionAt(original,h.origin),s.current)>=15).sort((a,b)=>a.score/a.samples-b.score/b.samples);
       const best=choices[0];
       const equivalent=(h:Hypothesis,b:Hypothesis)=>{
+        // Nearby projections can describe the same directed lap with different
+        // starting offsets. Compare their current course positions before
+        // comparing whole paths from those different origins.
+        const circularGap=(a:number,b:number)=>{const gap=mod(a-b,original.totalMeters);return Math.min(gap,original.totalMeters-gap);};
+        if(h.direction===b.direction&&circularGap(h.origin,b.origin)<=L.returnMeters&&
+          circularGap(h.origin+h.direction*h.meters,b.origin+b.direction*b.meters)<1)return true;
         const a=hypothesisRoutes.get(`${h.origin}:${h.direction}`)!,r=hypothesisRoutes.get(`${b.origin}:${b.direction}`)!;
         return [...a.cumulative,...r.cumulative].every(m=>distance(positionAt(a,m),positionAt(r,m))<1);
       };

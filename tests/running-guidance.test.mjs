@@ -142,7 +142,8 @@ test('v4 to v5 adds nullable guidance fields without touching existing GPS or co
   assert.equal(await createRunRepository(db, () => BASE, () => owner).guidance(id), null);
 });
 
-test('screen-off opt-out pauses the course, preserves progress, and a new process requires explicit resume', async t => {
+test('legacy screen-off opt-out keeps recording; manual pause and process recovery still require resume', async t => {
+  t.mock.method(Date, 'now', () => BASE);
   const f = await fixture(t);
   let foreground = true, tracking = false;
   const driver = { prepare: async () => {}, locate: async () => gps(0), start: async () => { tracking = true; },
@@ -153,6 +154,11 @@ test('screen-off opt-out pauses the course, preserves progress, and a new proces
   const before = await f.runs.guidance(run.id);
   await f.runs.setGuidanceOptions(run.id, { voice: false, background: false, mode: 'focus' });
   foreground = false; f.time(2000); await controller.monitor();
+  assert.equal(tracking, true); assert.equal((await f.runs.get(run.id)).status, 'running');
+  await controller.ingest([gps(2000)]);
+  assert.equal((await f.runs.get(run.id)).lastTimestamp, BASE + 2000);
+  assert.equal((await f.runs.get(run.id)).status, 'running');
+  await controller.pause(run.id);
   assert.equal(tracking, false); assert.equal((await f.runs.get(run.id)).status, 'paused');
   foreground = true; await controller.monitor();
   assert.equal((await f.runs.get(run.id)).status, 'paused', 'returning to the app cannot silently resume');

@@ -23,7 +23,7 @@ export type CourseSnapshot = {
 };
 export type CourseSummary = {
   id: string; name: string; source: CourseSnapshot['source']; shape: ShapeId;
-  targetKm: number; lengthKm: number; score: number; createdAt: number; updatedAt: number; unfinished?: boolean;
+  targetKm: number; lengthKm: number; score: number; createdAt: number; updatedAt: number; unfinished?: boolean; inProgress?: boolean;
 };
 export type CourseAttempt = { id: string; status: 'running'|'paused'|'interrupted'|'completed'; courseOutcome: string|null; startedAt: number };
 export type SavedCourse = CourseSummary & { snapshot: CourseSnapshot };

@@ -27,7 +27,7 @@ export type LocationResult =
 export async function locateForeground(
   provider: LocationProvider,
   signal: AbortSignal,
-  { askPermission = true, timeoutMs = 15000 } = {},
+  { askPermission = true, timeoutMs = 15000, accept }: { askPermission?: boolean; timeoutMs?: number; accept?: (position: Position) => boolean } = {},
 ): Promise<LocationResult> {
   try {
     if (signal.aborted) return { kind: 'cancelled' };
@@ -74,6 +74,7 @@ export async function locateForeground(
                 !Number.isFinite(position.timestamp) || Date.now() - position.timestamp > 30000) {
               return;
             }
+            if (accept && !accept(position)) return;
             finish({ kind: 'located', position });
           },
           () => finish({ kind: 'unavailable' }),
