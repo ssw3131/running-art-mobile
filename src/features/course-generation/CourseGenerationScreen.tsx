@@ -204,7 +204,7 @@ export default function CourseGenerationScreen() {
         </View>
       </>}
     </ScrollView> : <RecommendationResults g={g} terrain={terrain} location={locationLabel(result?.origin ?? current.origin)}
-      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => setResetOpen(true)} onDetail={index => detail(false, index)}
+      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => { if (resultConditions) setResetOpen(true); else { g.reset(); g.setTab('conditions'); } }} onDetail={index => detail(false, index)}
       onMap={() => detail(false, g.selected, true)} onRun={() => detail(true)} status={status} />}
     <RegenerationSheet visible={resetOpen} count={result?.result.candidates.length??0} onClose={()=>setResetOpen(false)} onConfirm={()=>{setResetOpen(false);if(resultConditions&&!busy){candidateDrafts.discardUnsaved(auth.account?.id??'guest');g.start(resultConditions);}}}/>
     <GenerationConfirmationSheet conditions={confirmation} location={confirmation ? locationLabel(confirmation.origin) : ''}

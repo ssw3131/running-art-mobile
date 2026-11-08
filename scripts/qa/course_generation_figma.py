@@ -82,7 +82,8 @@ def real_course(q):
     q.tap('generation-run'); q.capture('figma-unsaved-run-detail')
     q.seek('course-run', allow_disabled=True)
     assert q.find(q.capture('figma-save-before-run'),'course-run').get('enabled')=='true'
-    text(q,'course-save-name','FIGMA_WHALE_20'); q.shell('input','keyevent','4')
+    q.seek('course-edit-name'); q.tap('course-edit-name')
+    text(q,'course-rename-input','FIGMA_WHALE_20'); q.shell('input','keyevent','4'); q.tap('이름 적용')
     q.seek('course-save'); q.tap('course-save')
     saved=q.query("SELECT id,snapshot_json,length_km FROM saved_courses WHERE name='FIGMA_WHALE_20'")
     assert len(saved)==1

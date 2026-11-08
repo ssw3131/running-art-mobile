@@ -207,3 +207,16 @@ test('map expansion opens an account-scoped selected draft without generating', 
   expect(draft.snapshot.shape).toBe('heart');
   expect(mockG.start).not.toHaveBeenCalled();
 });
+
+
+test.each(['cancelled', 'error'])('generation without a completed result returns to editable conditions after %s', async kind => {
+  mockG.tab = 'results'; mockG.state = { kind, message: '다시 시도해 주세요.' };
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('generation-edit'));
+  expect(mockG.reset).toHaveBeenCalledTimes(1);
+  expect(mockG.setTab).toHaveBeenCalledWith('conditions');
+  expect(screen.queryByTestId('regeneration-confirm')).toBeNull();
+  expect(mockG.start).not.toHaveBeenCalled();
+  expect(mockG.shape).toBe('heart');
+  expect(mockG.targetKm).toBe(3);
+});

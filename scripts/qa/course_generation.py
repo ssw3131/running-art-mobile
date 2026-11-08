@@ -52,7 +52,7 @@ def generation_flow(q):
     q.seek('calculate-route'); q.tap('calculate-route'); q.tap('generation-confirm')
     q.tap('tab-home'); q.tap('tab-courses')
     assert q.find(q.capture('s2a-calculation-after-blur'), 'calculation-cancelled') is not None
-    q.seek('generation-edit'); q.tap('generation-edit'); q.tap('확인'); q.seek('distance-3'); q.tap('distance-3')
+    q.seek('generation-edit'); q.tap('generation-edit'); q.seek('distance-3'); q.tap('distance-3')
     q.seek('calculate-route'); q.tap('calculate-route'); q.capture('s2a-confirm'); q.tap('generation-confirm')
     for _ in range(30):
         tree = q.capture('s2a-progress')
@@ -76,18 +76,20 @@ def generation_flow(q):
     q.seek('candidate-detail-1'); q.tap('candidate-detail-1')
     detail = q.capture('s2a-detail-top')
     assert q.find(detail, 'course-detail') is not None
-    q.seek('course-save-name'); q.tap('course-save-name')
+    q.seek('course-edit-name'); q.tap('course-edit-name')
+    q.seek('course-rename-input'); q.tap('course-rename-input')
     q.shell('input', 'keycombination', '113', '29'); q.shell('input', 'text', 'S0_DRAFT')
     tree = q.capture('s2a-name-keyboard')
-    assert q.find(tree, 'course-save-name').get('text') == 'S0_DRAFT'
-    input_bottom = int(re.findall(r'\d+', q.find(tree, 'course-save-name').get('bounds'))[3])
+    assert q.find(tree, 'course-rename-input').get('text') == 'S0_DRAFT'
+    input_bottom = int(re.findall(r'\d+', q.find(tree, 'course-rename-input').get('bounds'))[3])
     display = q.shell('dumpsys', 'window', 'displays').decode()
     keyboard_tops = [int(y) for y in re.findall(r'type=ime frame=\[\d+,(\d+)\]\[\d+,\d+\][^\r\n]*visible=true', display)]
     assert keyboard_tops and input_bottom < min(keyboard_tops), 'Candidate name is obscured by keyboard'
-    q.shell('input', 'keyevent', '4')
+    q.shell('input', 'keyevent', '4'); q.tap('이름 적용')
     q.tap('tab-account'); q.tap('tab-courses'); q.seek('candidate-detail-1'); q.tap('candidate-detail-1')
-    q.seek('course-save-name')
-    assert q.find(q.capture('s2a-name-restored'), 'course-save-name').get('text') == 'S0_DRAFT'
+    q.seek('course-edit-name'); q.tap('course-edit-name'); q.seek('course-rename-input')
+    assert q.find(q.capture('s2a-name-restored'), 'course-rename-input').get('text') == 'S0_DRAFT'
+    q.tap('이름 적용')
     q.seek('course-save'); q.tap('course-save')
     deadline = time.monotonic() + 20
     while True:
@@ -157,7 +159,7 @@ def scaled_generation(q, launch):
         # uses that same center. The main generation flow covers the CTA itself.
         if button.get('enabled') == 'true':
             q.seek('calculate-route'); q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
-            center_text = next((n.get('text', '') for n in confirmation.iter('node') if n.get('text', '').startswith('탐색 중심: ')), '')
+            center_text = next((n.get('text', '') for n in confirmation.iter('node') if n.get('resource-id') == 'generation-summary-pin'), '')
             confirmed_origin = re.findall(r'-?\d+\.\d+', center_text)
             assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
                 for before, after in zip(origin, confirmed_origin)), (
