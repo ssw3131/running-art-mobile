@@ -13,6 +13,8 @@ test('changed product areas route to existing contracts and tests without hiding
   assert.equal(plan.areas.length, 4);
   assert.deepEqual(plan.unclassified, ['src/new-area.ts']);
   assert.ok(plan.tests.includes('tests/components/point-address.test.tsx'));
+  assert.ok(plan.areas.every(a => a.contract === 'docs/development/current-regressions.md'));
+  assert.equal(reviewPlan(['scripts/qa/course_generation.py']).areas[0].native, 'generation');
   for (const file of [...plan.tests, ...plan.areas.map(a => a.contract)]) assert.ok(existsSync(file), file);
 });
 test('required gate rejects missing, cancelled and skipped required work', () => {

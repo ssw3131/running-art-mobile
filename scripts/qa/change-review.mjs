@@ -4,13 +4,13 @@ import { pathToFileURL } from 'node:url';
 // Advisory routing, never a test-skip allowlist. Shared/unknown changes keep full CI.
 export const areas = [
   { name: '홈·진입', match: /Home|home|open-service-tab|service\/navigation|\(tabs\)\/(index|_layout)/i,
-    contract: 'docs/development/course-generation.md', tests: ['home', 'generation-home-entry', 'open-service-tab'], native: 'home', visual: ['home'] },
-  { name: '코스 생성·위치·추천', match: /course-generation|course-(map|location|candidate)|route-lab|point-address/i,
-    contract: 'docs/development/course-generation.md', tests: ['course-generation', 'course-location-picker', 'point-address', 'generation-home-entry'], native: 'generation', visual: [] },
-  { name: '러닝·잠금·준비·보관함', match: /running|run-|runs\/|archive|courses\/|\(tabs\)\/(run|courses)/i,
-    contract: 'docs/development/course-archive-running.md', tests: ['running-chooser', 'running-preparation', 'live-running', 'run-settings', 'archive'], native: 'service', visual: ['run', 'archive'] },
-  { name: '배지·공유·마이페이지·지원', match: /achievement|badge|run-card|run-result|account|support|service-(faq|guide|notice|about|info)/i,
-    contract: 'docs/development/verification-ci.md', tests: ['achievements', 'share-card-readiness', 'run-card-export', 'account-figma', 'support'], native: 'achievements', visual: ['account'] },
+    contract: 'docs/development/current-regressions.md', tests: ['home', 'generation-home-entry', 'open-service-tab'], native: 'home', visual: ['home'] },
+  { name: '코스 생성·위치·추천', match: /course[-_]generation|course-(map|location|candidate)|route-lab|point-address/i,
+    contract: 'docs/development/current-regressions.md', tests: ['course-generation', 'generation-distance', 'course-location-picker', 'point-address', 'generation-home-entry'], native: 'generation', visual: [] },
+  { name: '러닝·잠금·준비·보관함', match: /running|run-|runs\/|archive|courses\/|service_s234|\(tabs\)\/(run|courses)/i,
+    contract: 'docs/development/current-regressions.md', tests: ['running-chooser', 'running-preparation', 'live-running', 'run-settings', 'archive'], native: 'service', visual: ['run', 'archive'] },
+  { name: '배지·공유·마이페이지·지원', match: /achievement|badge|run-card|run-result|account|support|service_s56|service-(faq|guide|notice|about|info)/i,
+    contract: 'docs/development/current-regressions.md', tests: ['achievements', 'share-card-readiness', 'run-card-export', 'achievement-image', 'account-figma', 'support'], native: 'achievements', visual: ['account'] },
 ];
 export function reviewPlan(changed) {
   const selected = areas.filter(area => changed.some(file => area.match.test(file)));
