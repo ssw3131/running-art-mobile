@@ -7,6 +7,16 @@ import zlib
 
 def service_s234(q, launch):
     assert q.SERIAL.startswith('emulator-')
+    def wait_fixed_control(key, capture, selected=False):
+        # Fixed controls can be siblings of a scroll view. Observe them without
+        # scrolling that unrelated view or tapping a tab to change the outcome.
+        for _ in range(20):
+            node=q.find(q.capture(capture),key)
+            if node is not None and node.get('enabled')=='true' and (not selected or node.get('selected')=='true'):
+                x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds')))
+                if x2>x1>=0 and y2>y1>=0:return
+            time.sleep(.5)
+        raise AssertionError('Fixed control not ready: '+key)
     # Earlier scenarios cold-start the app, clearing in-memory recommendations.
     # verify_home_result checks regeneration cancellation before those restarts;
     # this scenario enters the next input through the approved home CTA.
@@ -27,10 +37,9 @@ def service_s234(q, launch):
         for _ in range(n):q.adb('emu','geo','fix',str(lng),str(lat),'0','10');time.sleep(1)
     q.seek('run-saved-course-'+entry['id']);q.tap('run-saved-course-'+entry['id'])
     assert q.find(q.capture('s4-selected-course'),'run-saved-course-'+entry['id']).get('selected')=='true'
-    # The start button is fixed outside the scrollable course list. tap checks
-    # its enabled state and nonempty bounds; searching the list cannot reach it.
+    wait_fixed_control('run-selected-start','s4-selected-start')
     q.tap('run-selected-start');q.tap('run-preparation-confirm')
-    fix();q.seek('run-course-start');q.tap('run-course-start');q.tap('계속');fix(5)
+    fix();wait_fixed_control('run-course-start','s4-start-ready');q.tap('run-course-start');q.tap('계속');fix(5)
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
     run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
     q.seek('guidance-recenter');q.tap('guidance-recenter');q.seek('run-pause');q.capture('s4-map-controls')
@@ -65,18 +74,18 @@ def service_s234(q, launch):
     q.shell('input','swipe',x,y,x,y,'1200')
     unlocked=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
     assert unlocked['touchLock'] is False
-    q.tap('run-finish');q.tap('종료·저장');q.seek('저장 코스');assert q.find(q.capture('s3-stopped-destination'),'저장 코스').get('selected')=='true'
+    q.tap('run-finish');q.tap('종료·저장');wait_fixed_control('저장 코스','s3-stopped-destination',selected=True)
     launch('runs/'+run_id);q.seek('run-rechallenge');q.capture('s3-run-detail')
     before=q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]
     assert before['status']=='completed' and before['course_outcome']=='stopped'
-    q.seek('run-rechallenge');q.tap('run-rechallenge');q.tap('run-preparation-confirm');fix();q.seek('run-course-start')
+    q.seek('run-rechallenge');q.tap('run-rechallenge');q.tap('run-preparation-confirm');fix();wait_fixed_control('run-course-start','s3-retry-start-ready')
     assert not q.query("SELECT id FROM running_sessions WHERE status <> 'completed'")
     q.tap('run-course-start');q.tap('계속');fix(4)
     newer=q.query("SELECT * FROM running_sessions WHERE status <> 'completed'")[0]
     assert newer['id']!=run_id and newer['course_outcome']=='active'
     assert q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]==before
     q.tap('run-finish');q.tap('종료·저장');wait_status('completed',newer['id'])
-    q.seek('저장 코스');assert q.find(q.capture('s3-retry-stopped-destination'),'저장 코스').get('selected')=='true'
+    wait_fixed_control('저장 코스','s3-retry-stopped-destination',selected=True)
     launch('runs/'+newer['id']);q.seek('run-rechallenge')
     assert q.find(q.capture('s3-retry-finished'),'run-rechallenge') is not None
     launch('courses?view=runs');q.capture('s3-monthly-records')
