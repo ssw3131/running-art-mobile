@@ -100,6 +100,7 @@ def generation_flow(q):
     assert len(rows) == 1
     saved = rows[0]
     assert format(saved['length_km'], '.2f') + ' km' in selected
+    q.seek('course-save')
     assert '저장된 코스' in q.find(q.capture('s2a-save-state-transition'), 'course-save').get('content-desc', '')
     q.tap('course-save')
     assert q.query("SELECT count(*) AS n FROM saved_courses WHERE name='S0_DRAFT'")[0]['n'] == 1
@@ -119,6 +120,8 @@ def generation_flow(q):
     q.tap('저장 코스')
     assert q.find(q.capture('s2a-archive-destination'), '저장 코스').get('selected') == 'true'
     q.seek('course-row-'+saved['id']);q.tap('course-row-'+saved['id'])
+    # Reopening starts at the map; the save state is below the information card.
+    q.seek('course-save')
     assert '저장된 코스' in q.find(q.capture('s2a-saved-reopened'),'course-save').get('content-desc', '')
     q.tap('service-back')
     assert q.query("SELECT snapshot_hash FROM saved_courses WHERE id='" + saved['id'] + "'")[0]['snapshot_hash'] == saved['snapshot_hash']
