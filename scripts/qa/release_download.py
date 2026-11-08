@@ -7,7 +7,7 @@ import urllib.parse
 import urllib.request
 
 
-def download_release(url, expected_sha256, opener=urllib.request.urlopen, sleep=time.sleep):
+def download_release(url, expected_sha256, opener=urllib.request.urlopen, sleep=time.sleep, token=None):
     parsed=urllib.parse.urlsplit(url)
     browser_asset=parsed.netloc=='github.com' and re.fullmatch(r'/[\w.-]+/[\w.-]+/releases/download/[^/]+/[^/]+',parsed.path)
     api_asset=parsed.netloc=='api.github.com' and re.fullmatch(r'/repos/[\w.-]+/[\w.-]+/releases/assets/[0-9]+',parsed.path)
@@ -16,6 +16,9 @@ def download_release(url, expected_sha256, opener=urllib.request.urlopen, sleep=
     if not re.fullmatch(r'[a-f0-9]{64}',expected_sha256):
         raise ValueError('Expected a pinned SHA-256')
     request=urllib.request.Request(url,headers={'Accept':'application/octet-stream'}) if api_asset else url
+    if api_asset and token:
+        # Authenticate only this api.github.com request, never its CDN redirect.
+        request.add_unredirected_header('Authorization', 'Bearer ' + token)
     for attempt in range(4):
         try:
             with opener(request,timeout=120) as response:

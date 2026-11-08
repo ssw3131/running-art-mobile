@@ -39,6 +39,17 @@ def api_asset(request,timeout):
  assert not request.has_header('Authorization')
  return io.BytesIO(data)
 assert download_release('https://api.github.com/repos/example/tool/releases/assets/123',sha,opener=api_asset,sleep=waits.append)==data
+def authenticated_asset(request,timeout):
+ assert request.full_url=='https://api.github.com/repos/example/tool/releases/assets/123'
+ assert request.get_header('Authorization')=='Bearer test-download-token'
+ redirected=urllib.request.HTTPRedirectHandler().redirect_request(request,None,302,'Found',{},'https://release-assets.githubusercontent.com/example/tool.zip')
+ assert not redirected.has_header('Authorization'), 'Never forward the API token to the asset CDN'
+ return io.BytesIO(data)
+assert download_release('https://api.github.com/repos/example/tool/releases/assets/123',sha,opener=authenticated_asset,token='test-download-token')==data
+def public_asset(request,timeout):
+ assert request==url, 'Browser asset URLs must remain unauthenticated'
+ return io.BytesIO(data)
+assert download_release(url,sha,opener=public_asset,token='test-download-token')==data
 for source in ['https://api.github.com/repos/example/tool/actions/runs/123','https://api.github.com/repos/example/tool/releases/assets/latest']:
  try:download_release(source,sha,opener=wrong,sleep=waits.append);raise AssertionError('accepted unpinned API source')
  except ValueError:pass

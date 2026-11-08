@@ -3,6 +3,7 @@ https://github.com/supabase/cli/releases/tag/v2.120.0
 No global install and no version fallback. Does not start or connect a database.
 """
 import io
+import os
 import pathlib
 import platform
 import subprocess
@@ -20,7 +21,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[2]
 def main():
     if sys.platform!='linux' or platform.machine()!='x86_64':
         raise RuntimeError('This installer is restricted to the Linux x86_64 CI runner')
-    data=download_release(URL,SHA)
+    data=download_release(URL,SHA,token=os.environ.get('RUNPEN_RELEASE_DOWNLOAD_TOKEN'))
     with tarfile.open(fileobj=io.BytesIO(data),mode='r:gz') as archive:
         member=archive.getmember('supabase')
         if not member.isfile():raise RuntimeError('Expected a regular Supabase executable')

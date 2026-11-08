@@ -91,6 +91,8 @@ jobs:
           cache: pip
           cache-dependency-path: scripts/qa/requirements.txt
       - name: Install verified Supabase CLI
+        env:
+          RUNPEN_RELEASE_DOWNLOAD_TOKEN: ${{ github.token }}
         run: |
           python scripts/qa/install-supabase.py
           echo "$GITHUB_WORKSPACE/.tools/supabase-2.120.0" >> "$GITHUB_PATH"
@@ -146,7 +148,11 @@ jobs:
           cache: gradle
       - run: npm ci
       - run: python scripts/qa/install-maestro.py
+        env:
+          RUNPEN_RELEASE_DOWNLOAD_TOKEN: ${{ github.token }}
       - name: Install verified Supabase CLI
+        env:
+          RUNPEN_RELEASE_DOWNLOAD_TOKEN: ${{ github.token }}
         run: |
           python scripts/qa/install-supabase.py
           echo "$GITHUB_WORKSPACE/.tools/supabase-2.120.0" >> "$GITHUB_PATH"
