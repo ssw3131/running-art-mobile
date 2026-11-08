@@ -62,7 +62,7 @@ export default function BadgeDetailScreen(){
    {!challenge&&milestone&&<BadgeScale kind={d.kind as 'distance'|'time'} progress={d.goal}/>}
    <BadgeCondition text={d.condition}/>
    {challenge&&milestone&&<View style={{borderRadius:20,backgroundColor:c.surface,boxShadow:'0px 0px 5px rgba(0,0,0,.15)'}}><BadgeScale kind={d.kind as 'distance'|'time'} progress={badge.progress}/></View>}
-   {challenge&&!milestone&&<View style={{padding:20,borderRadius:20,backgroundColor:c.surface,gap:10,boxShadow:'0px 0px 5px rgba(0,0,0,.15)'}}>
+   {challenge&&!milestone&&!['distance-variation','region-variation'].includes(d.kind)&&<View style={{padding:20,borderRadius:20,backgroundColor:c.surface,gap:10,boxShadow:'0px 0px 5px rgba(0,0,0,.15)'}}>
     <AppText weight="bold" style={{fontSize:28,textAlign:'center'}}>{Math.min(badge.progress,d.goal)}<AppText style={{fontSize:14,color:c.subtle}}> / {d.goal}{d.kind==='collection'||d.kind==='category'?'종 완성':'회'}</AppText></AppText>
     <View accessible accessibilityRole="progressbar" accessibilityValue={{min:0,max:d.goal,now:Math.min(badge.progress,d.goal)}} style={{height:10,borderRadius:5,backgroundColor:c.outline,overflow:'hidden'}}><View style={{height:10,width:`${Math.min(100,badge.progress/d.goal*100)}%`,borderRadius:5,backgroundColor:c.selected}}/></View>
    </View>}

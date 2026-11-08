@@ -58,3 +58,9 @@ test('opening and cancelling the badge share preview never transmits or captures
  expect(screen.getByText('뱃지 공유')).toBeVisible();expect(screen.getByRole('button',{name:'공유하기'})).toBeDisabled();
  await fireEvent.press(screen.getByRole('button',{name:'취소'}));expect(screen.queryByText('뱃지 공유')).toBeNull();expect(shareCardFile).not.toHaveBeenCalled();expect(mockRemove).not.toHaveBeenCalled();
 });
+
+test('variation challenges list the actual qualifying records without a category progress card',async()=>{
+ mockParams={id:'distance-variation',challenge:'1'};mockData=data([record('1'),record('2',{targetKm:5})]);
+ await render(<BadgeDetailScreen/>);expect(screen.queryByRole('progressbar')).toBeNull();
+ expect(screen.getByTestId('badge-record-1')).toBeVisible();expect(screen.getByTestId('badge-record-2')).toBeVisible();expect(screen.queryByTestId('badge-share')).toBeNull();
+});
