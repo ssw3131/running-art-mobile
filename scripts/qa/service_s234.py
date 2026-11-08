@@ -72,8 +72,12 @@ def service_s234(q, launch):
     n=q.find(q.capture('s4-restored-lock'),'run-touch-unlock')
     x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')));x,y=str((x1+x2)//2),str((y1+y2)//2)
     q.shell('input','swipe',x,y,x,y,'1200')
+    # Input injection finishes before the JS release handler and SQLite write.
+    # The resume control is enabled again only after the settings action settles.
+    wait_fixed_control('run-start','s4-restored-unlocked')
+    assert q.find(q.capture('s4-restored-unlocked'),'run-touch-unlock') is None
     unlocked=json.loads(q.query(f"SELECT guidance_options_json FROM running_sessions WHERE id='{run_id}'")[0]['guidance_options_json'])
-    assert unlocked['touchLock'] is False
+    assert unlocked['touchLock'] is False, f'Unlock setting was not saved: {unlocked}'
     q.tap('run-finish');q.tap('종료·저장');wait_fixed_control('저장 코스','s3-stopped-destination',selected=True)
     launch('runs/'+run_id);q.seek('run-rechallenge');q.capture('s3-run-detail')
     before=q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]
