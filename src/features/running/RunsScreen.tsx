@@ -5,6 +5,7 @@ import { AppText, Button, Icon } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { getStorage } from '@/modules/storage/database';
 import { durationLabel, runErrorMessage, type Run } from '@/modules/running/model';
+import { isSimulationRun } from '@/modules/running/simulation-record';
 import { groupRunsByMonth } from '@/modules/running/archive';
 import { GenerationIcon, LegacyShapeIcon } from '@/features/course-generation/GenerationIcon';
 import { SERVICE_SHAPES } from '@/modules/route-engine/service-shapes';
@@ -39,6 +40,7 @@ export default function RunsScreen({embedded=false}:{embedded?:boolean}) {
         <Link href={{pathname:'/runs/[id]',params:{id:run.id}}} asChild><Pressable accessibilityRole="button" testID={`run-row-${run.id}`} style={{flex:1,minHeight:100,padding:10,borderRadius:20,backgroundColor:c.surface,boxShadow:'0px 0px 5px rgba(0,0,0,0.15)',flexDirection:'row',alignItems:'center',gap:10}}>
           <View style={{width:72,height:72,borderRadius:36,borderWidth:1,borderColor:c.divider,alignItems:'center',justifyContent:'center'}}>{shape?<GenerationIcon name={shape.id}/>:shapeId==='custom'?<GenerationIcon name="draw"/>:shapeId?<LegacyShapeIcon shape={shapeId}/>:<Icon name="run"/>}</View>
           <View style={{flex:1,gap:4}}><AppText weight="bold" numberOfLines={2}>{run.courseName??'코스'}</AppText>
+            {isSimulationRun(run)&&<AppText variant="caption" style={{color:c.selected}}>시뮬레이션</AppText>}
             <AppText variant="label" weight="bold">{(run.distanceM/1000).toFixed(2)} km</AppText><AppText variant="label">{durationLabel(run.activeMs)}</AppText></View><Icon name="chevronRight" color={c.outline}/>
         </Pressable></Link>
       </View>;})}

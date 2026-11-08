@@ -1,9 +1,10 @@
+import { achievementAwards, type Award } from './awards.ts';
 import type { Run } from '../running/model.ts';
 import { courseShapes } from '../courses/model.ts';
 
-export type AchievementRun = Pick<Run, 'id' | 'status' | 'startedAt' | 'distanceM' | 'activeMs' | 'courseId' | 'courseOutcome'> & { shape: string | null };
+export type AchievementRun = Pick<Run, 'id' | 'status' | 'startedAt' | 'distanceM' | 'activeMs' | 'courseId' | 'courseOutcome'> & { shape: string | null; targetKm?:number|null; region?:string|null; courseHash?:string|null };
 export type ShapeBadge = { id: string; shape: string; count: number; firstRunId: string; firstAt: number; latestAt: number };
-export type Achievements = { runs: number; finishedCourses: number; distanceM: number; activeMs: number; currentStreak: number; longestStreak: number; activeDays: number; badges: ShapeBadge[] };
+export type Achievements = { runs: number; finishedCourses: number; distanceM: number; activeMs: number; currentStreak: number; longestStreak: number; activeDays: number; badges: ShapeBadge[]; awards?:Award[] };
 
 /** Local date mapped to an ordinal, so DST's 23/25-hour days remain adjacent. */
 export function calendarDay(timestamp: number) {
@@ -38,5 +39,6 @@ export function summarizeAchievements(records: readonly AchievementRun[], now = 
   result.currentStreak = previous === today || previous === today - 1 ? streak : 0;
   result.activeDays = days.size;
   result.badges = [...badges.values()].sort((a, b) => b.latestAt - a.latestAt || a.id.localeCompare(b.id));
+  result.awards=achievementAwards(records);
   return result;
 }

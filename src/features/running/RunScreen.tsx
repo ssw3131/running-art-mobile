@@ -1,7 +1,7 @@
-import { Link, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { Link, Tabs, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, AppState, Linking, Platform, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, Alert, AppState, Linking, Platform, ScrollView, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { getStorage } from '@/modules/storage/database';
@@ -9,13 +9,16 @@ import { running } from '@/modules/running/runtime';
 import { MAX_GAP_MS, runErrorMessage, statusLabel, type Run, type RunPoint } from '@/modules/running/model';
 import RunPath from '@/features/running/RunPath';
 import { RunButton, RunStats, useRunStyles } from '@/features/running/ui';
+import SavedCourseChooser from '@/features/running/SavedCourseChooser';
 import CourseRunPreparation from '@/features/running/CourseRunPreparation';
 import LiveGuidancePanel from '@/features/running/LiveGuidancePanel';
 import type { GuidanceOptions, RunGuidance, RunPreparation } from '@/modules/running/guidance';
+import { runFinishDestination } from '@/modules/running/finish-destination';
+import { openServiceTab } from '@/features/service/open-service-tab';
 import { guidanceNative } from '@/modules/guidance/native';
 
 export default function RunScreen() {
-  const styles = useRunStyles();
+  const styles = useRunStyles(),insets=useSafeAreaInsets();
   const auth=useAuth(),owner=auth.ready?auth.account?.id??'':null;
   const [loadedOwner,setLoadedOwner]=useState<string|null>(null);
   const params = useLocalSearchParams<{ courseId?: string }>();
@@ -38,7 +41,7 @@ export default function RunScreen() {
   }, [owner]);
   useFocusEffect(useCallback(() => {
     if (!supported || owner===null) return;
-    setReady(false);setRun(null);setGuide(null);setError(''); revision.current='';
+    setError(''); revision.current='';
     setBusy(working.current);
     const request = ++generation.current;
     let polling = false, ticks = 0;
@@ -80,7 +83,7 @@ export default function RunScreen() {
     if (!run) return;
     const id = run.id;
     Alert.alert(run.courseOutcome === 'arrival-pending' ? '완주 기록을 저장할까요?' : '러닝을 종료할까요?', '현재까지 기록을 저장합니다. 종료 후에는 새 도전으로 시작하며, 여러 날의 기록을 합쳐 완주로 인정하지 않아요. 동기화를 켜둔 계정은 연결되면 서버에도 저장됩니다.', [
-      { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.setParams({ courseId: undefined }); router.push({ pathname: '/run-result', params: { id } }); }) },
+      { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.setParams({ courseId: undefined }); const destination=runFinishDestination(await(await getStorage()).runs.get(id));if(destination.pathname==='/run-result')router.push(destination);else openServiceTab(destination); }) },
     ]);
   }
   function options(value: GuidanceOptions) {
@@ -88,9 +91,13 @@ export default function RunScreen() {
     void act(async () => { await (await getStorage()).runs.setGuidanceOptions(run.id, value); if (!value.voice) guidanceNative?.silenceLive(); });
   }
   const permission=()=>void Linking.openSettings().catch(()=>setError('앱 설정을 열지 못했어요. 기기 설정에서 위치 권한을 확인해 주세요.'));
-  if(run && guide && loadedOwner===owner) return <LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPermission={permission} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/>;
+  const immersive=!!courseId||!!(run&&guide&&loadedOwner===owner);
+  const screenOptions=<Tabs.Screen options={{headerShown:!immersive,tabBarStyle:immersive?{display:'none'}:undefined}}/>;
+  if(run && guide && loadedOwner===owner) return <>{screenOptions}<LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPermission={permission} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/></>;
+  if(supported&&ready&&!run&&courseId)return <>{screenOptions}<View style={{flex:1,marginTop:-insets.top}}><CourseRunPreparation key={courseId} id={courseId} busy={busy} onStart={startOrResume}/>{((busy&&!!preparationMessage)||!!error)&&<View style={{position:'absolute',top:insets.top+12,left:26,right:26,padding:12,borderRadius:12,backgroundColor:'#FFFFFF',gap:8}}>{busy&&!!preparationMessage&&<><Text testID="run-preparation-status" accessibilityLiveRegion="polite" style={styles.body}>{preparationMessage}</Text><RunButton title="러닝 시작 준비 취소" id="run-preparation-cancel" onPress={()=>running.cancelPreparation()}/></>}{!!error&&<Text testID="run-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}</View>}</View></>;
+  if(supported&&ready&&loadedOwner===owner&&!run&&!courseId)return <>{screenOptions}<SavedCourseChooser key={owner} busy={busy}/></>;
   const last = points[points.length - 1];
-  return <SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>
+  return <>{screenOptions}<SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>
     <Text style={styles.title}>{guide || courseId ? '코스 러닝' : '러닝 기록'}</Text>
     <Text style={styles.body}>GPS로 달린 경로를 이 기기에 저장해요. 인터넷 없이도 기록할 수 있어요.</Text>
     {!supported ? <Text>러닝 추적은 Android 앱에서 사용해 주세요.</Text> : <>
@@ -113,5 +120,5 @@ export default function RunScreen() {
       <RunButton title="위치 권한 설정" id="run-settings" disabled={busy} onPress={() => void Linking.openSettings().catch(() => setError('앱 설정을 열지 못했어요. 기기 설정에서 위치 권한을 확인해 주세요.'))} />
     </>}
     <Link href="/runs" style={styles.link}>러닝 기록 목록</Link>
-  </ScrollView></SafeAreaView>;
+  </ScrollView></SafeAreaView></>;
 }

@@ -3,9 +3,10 @@ import { serialDatabase } from '../storage/serial-database.ts';
 import { guestScope, type OwnerScope } from '../sync/ownership.ts';
 import { classifyFix, elapsedMs, RunError, validateId, type Fix, type Run, type RunPoint, type RunStatus } from './model.ts';
 import { decodeSnapshot, encodeSnapshot } from '../courses/model.ts';
-import { type GuidanceEvent } from '../guidance/engine.ts';
-import { createRunGuidance, guidanceColumns, readRunGuidance, startReadiness, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
+import { type GuidanceEvent, type GuidanceFix } from '../guidance/engine.ts';
+import { createRunGuidance, guidanceColumns, readRunGuidance, startReadiness, validateRunCourse, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
 import { validApproach, type ApproachPlan } from './approach.ts';
+import { buildSimulationRecord, isSimulationRun } from './simulation-record.ts';
 import { defaultAccountPreferences, validatePreferences } from '../account/model.ts';
 
 export const columns = `id,status,started_at AS startedAt,ended_at AS endedAt,active_ms AS activeMs,
@@ -28,6 +29,21 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
     return queue(async () => { let result!: T; await db.withExclusiveTransactionAsync(async tx => { result = await task(tx); }); return result; });
   }
   return {
+    newSimulationId:()=>queue(async()=>{const row=await db.getFirstAsync<{id:string}>('SELECT lower(hex(randomblob(16))) AS id');if(!row)throw new RunError('기록 번호를 만들지 못했어요.');return row.id;}),
+    saveSimulation:(input:{id:string;courseId:string;fixes:readonly GuidanceFix[];elapsedMs:number},expectedOwner:string)=>transaction(async tx=>{
+      const check=()=>{if(scope()!==expectedOwner)throw new RunError('계정이 바뀌어 시뮬레이션 기록을 저장하지 않았어요.');};check();validateId(input.id);
+      const existing=await tx.getFirstAsync<Run&{owner_id:string}>(`SELECT ${columns},owner_id FROM running_sessions WHERE id=?`,input.id);
+      if(existing){if(existing.owner_id!==expectedOwner||!isSimulationRun(existing)||existing.courseId!==input.courseId)throw new RunError('다른 기록을 바꿀 수 없어요.');return existing;}
+      if(await tx.getFirstAsync("SELECT id FROM running_sessions WHERE status!='completed'"))throw new RunError('실제 러닝을 종료한 뒤 시뮬레이션을 저장해 주세요.');
+      const saved=await tx.getFirstAsync<{name:string;snapshot_json:string;snapshot_hash:string}>('SELECT name,snapshot_json,snapshot_hash FROM saved_courses WHERE id=? AND owner_id=?',validateId(input.courseId),expectedOwner);
+      if(!saved)throw new RunError('내 계정의 코스를 찾을 수 없어요.');
+      const course=validateRunCourse({id:input.courseId,name:saved.name,snapshot:decodeSnapshot(saved.snapshot_json,saved.snapshot_hash)});
+      const {run,points,checkpoint}=buildSimulationRecord(input.id,course,input.fixes,input.elapsedMs,now());
+      await tx.runAsync(`INSERT INTO running_sessions(id,status,started_at,ended_at,active_ms,checkpoint_at,resumed_at,distance_m,point_count,rejected_count,last_timestamp,segment,break_pending,reason,owner_id,course_id,course_name,course_outcome,course_snapshot_json,course_snapshot_hash,guidance_json,guidance_options_json)
+        VALUES(?,'completed',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,run.id,run.startedAt,run.endedAt,run.activeMs,run.checkpointAt,run.resumedAt,run.distanceM,run.pointCount,run.rejectedCount,run.lastTimestamp,run.segment,run.breakPending,run.reason,expectedOwner,course.id,course.name,run.courseOutcome!,saved.snapshot_json,saved.snapshot_hash,JSON.stringify(checkpoint),JSON.stringify(defaultAccountPreferences.guidance));
+      for(const point of points)await tx.runAsync('INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy) VALUES(?,?,?,?,?,?,?)',run.id,point.sequence,point.segment,point.timestamp,point.latitude,point.longitude,point.accuracy);
+      check();return read(tx,run.id,expectedOwner);
+    }),
     finished: (limit=30,offset=0) => queue(() => {
       if(!Number.isSafeInteger(limit)||limit<1||limit>100||!Number.isSafeInteger(offset)||offset<0)throw new RunError('목록 범위가 올바르지 않아요.');
       return db.getAllAsync<Run & {shape:string|null}>(`SELECT ${columns},json_extract(course_snapshot_json,'$.shape') AS shape FROM running_sessions

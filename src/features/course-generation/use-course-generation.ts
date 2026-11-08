@@ -19,6 +19,7 @@ import { FIGMA_SHAPE_VERSION } from '@/modules/route-engine/figma-contours';
 
 import { compareReference } from '@/modules/route-engine/verification';
 import type { GenerationConditions } from './model';
+import { getRememberedCourseCenter, markCourseEntryLocationAttempted, rememberCourseCenter, shouldLocateCourseOnEntry } from './course-location-memory';
 import { getStorage } from '@/modules/storage/database';
 import { authentication } from '@/modules/auth/runtime';
 import { parseComputeRequest, type ComputeRequest } from '@/modules/route-compute/contract';
@@ -75,15 +76,18 @@ export function useCourseGeneration() {
   const [deviceOnly, setDeviceOnly] = useState(false);
   const [fixedCenter, setFixedCenter] = useState(false);
   const [validCenter, setValidCenter] = useState(true);
-  const [centerState, setCenterState] = useState<CenterState>({ center: datasets.seoul.input.origin, position: null, location: { kind: 'idle' } });
-  const center = useMemo(() => createCenterController(expoLocationProvider, datasets.seoul.input.origin, (value) => {
+  const [centerState, setCenterState] = useState<CenterState>(() => ({ center: getRememberedCourseCenter(datasets.seoul.input.origin), position: null, location: { kind: 'idle' } }));
+  const center = useMemo(() => createCenterController(expoLocationProvider, getRememberedCourseCenter(datasets.seoul.input.origin), (value) => {
     setCenterState(value);
+    // A loading/denied update from a fresh controller still contains its
+    // fallback center. Do not let that overwrite the last successfully chosen
+    // point while the location request is pending.
+    if (value.location.kind === 'located' || value.cameraTarget) rememberCourseCenter(value.center);
     if (value.cameraTarget && value.location.kind === 'located') setValidCenter(true);
   }), []);
   const [mapReady, setMapReady] = useState(false);
   const [mapMoving, setMapMoving] = useState(false);
   const returningFromSettings = useRef(false);
-  const locatedOnEntry = useRef(false);
   const running = useRef(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const dataset = datasets[datasetId];
@@ -110,8 +114,8 @@ export function useCourseGeneration() {
   }, [homeParams.homeRequest, homeParams.homeShape, homeParams.homeSection, cancel, completed]));
   useFocusEffect(useCallback(() => {
     // A tab refocus must not replace the user's chosen center with GPS.
-    if (datasetId === 'seoul' && !locatedOnEntry.current) {
-      locatedOnEntry.current = true;
+    if (datasetId === 'seoul' && shouldLocateCourseOnEntry()) {
+      markCourseEntryLocationAttempted();
       void center.locate();
     }
     const subscription = AppState.addEventListener('change', (next) => {

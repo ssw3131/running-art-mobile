@@ -1,8 +1,11 @@
 jest.mock('../../src/modules/image-contour/picker',()=>({pickContourImage:jest.fn()}));
 import React from 'react';
+import { Alert } from 'react-native';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import CourseGenerationScreen from '../../src/features/course-generation/CourseGenerationScreen';
 
+let mockUsage: any;
+jest.mock('../../src/features/usage/use-usage', () => ({ useUsage: () => mockUsage }));
 let mockG: any;
 let mockMapProps: any;
 let mockAccount: { id: string } | null = null;
@@ -24,6 +27,7 @@ const baseline = require('../fixtures/route-engine/grid-heart-v02.json').result;
 const completed = (count = 2) => ({ result: { ...baseline, candidates: baseline.candidates.slice(0, count) },
   origin: grid.origin, options: { ...grid.options, shape: 'heart', targetKm: 3 }, liveRoads: false });
 beforeEach(() => {
+  mockUsage = { data: { generation: { used: 2, total: 5 } }, error: '', refresh: jest.fn() };
   mockPush.mockReset();
   mockAccount = null;
   mockG = {
@@ -33,7 +37,7 @@ beforeEach(() => {
     centerState: { center: grid.origin, location: { kind: 'idle' }, position: null }, center: { beginMove: jest.fn(), move: jest.fn() },
     roads: {}, overlay: null, mapMoving: false, validCenter: true, cannotCalculate: false,
   };
-  for (const key of ['setTab', 'setShape', 'setTargetKm', 'setDrawingOpen', 'setCustomTemplate', 'setDiagnostics', 'setRoadMode', 'setDeviceOnly', 'changeSearch', 'start', 'cancel', 'locate', 'setSelected', 'setFixedCenter', 'setMapMoving', 'setMapReady', 'setValidCenter']) mockG[key] = jest.fn();
+  for (const key of ['reset', 'setTab', 'setShape', 'setTargetKm', 'setDrawingOpen', 'setCustomTemplate', 'setDiagnostics', 'setRoadMode', 'setDeviceOnly', 'changeSearch', 'start', 'cancel', 'locate', 'setSelected', 'setFixedCenter', 'setMapMoving', 'setMapReady', 'setValidCenter']) mockG[key] = jest.fn();
   mockG.setTab.mockImplementation((tab: string) => { mockG.tab = tab; });
 });
 
@@ -42,7 +46,11 @@ test('UI-GEN-01: generation requires confirmation, cancel does not compute or lo
   await fireEvent.press(screen.getByTestId('calculate-route'));
   expect(screen.getByText('현재 설정으로 코스 생성할까요?')).toBeVisible();
   expect(mockG.start).not.toHaveBeenCalled();
-  expect(screen.queryByText('코스 생성 1회 차감')).toBeNull();
+  expect(screen.getByText('코스 생성 1회 차감')).toBeVisible();
+  expect(screen.getByTestId('generation-remaining')).toHaveTextContent('3회');
+  expect(screen.getByTestId('generation-after')).toHaveTextContent('2회');
+  expect(screen.getByTestId('generation-summary-map')).toHaveTextContent('3Km');
+  expect(screen.getByTestId('generation-summary-flag')).toHaveTextContent('하트 코스');
   await fireEvent.press(screen.getByTestId('generation-confirm-cancel'));
   expect(mockG.start).not.toHaveBeenCalled();
   await fireEvent.press(screen.getByTestId('calculate-route'));
@@ -66,14 +74,15 @@ test('UI-GEN-03: old result keeps its conditions and real candidate count after 
   mockG.tab = 'results'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
   mockG.state = { kind: 'done', message: '2개 코스를 찾았어요.' };
   await render(<CourseGenerationScreen />);
-  expect(screen.getByText('추천 코스 2개')).toBeVisible();
-  expect(screen.getByTestId('generation-result-conditions')).toHaveTextContent(/하트 · 목표 3 km/);
+  expect(screen.getByText('유사도가 높은 추천 코스 2개')).toBeVisible();
+  expect(mockMapProps.origin).toEqual(grid.origin);
+  expect(mockMapProps.interactive).toBe(false);
   expect(screen.queryByTestId('candidate-2')).toBeNull();
-  expect(screen.getAllByText(/유사도 :/).length).toBeGreaterThan(0);
+  expect(screen.getByTestId('candidate-0').props.accessibilityState.selected).toBe(true);
   expect(screen.getAllByText(/예상 러닝 시간 :/).length).toBe(2);
   await fireEvent.press(screen.getByTestId('candidate-1'));
   expect(mockG.setSelected).toHaveBeenCalledWith(1);
-  await fireEvent.press(screen.getByTestId('generation-detail'));
+  await fireEvent.press(screen.getByTestId('candidate-detail-1'));
   expect(mockPush.mock.lastCall?.[0]).toMatchObject({ pathname: '/course-candidate' });
 });
 
@@ -92,9 +101,11 @@ test('UI-GEN-05: zero candidates and failure remain explicit and allow editing',
   mockG.tab = 'results'; mockG.completed = completed(0); mockG.state = { kind: 'done', message: '없어요' };
   await render(<CourseGenerationScreen />);
   expect(screen.getByTestId('generation-empty')).toBeVisible();
-  expect(screen.queryByTestId('generation-detail')).toBeNull();
-  await fireEvent.press(screen.getByTestId('generation-edit-footer'));
-  expect(mockG.setTab).toHaveBeenCalledWith('conditions');
+  expect(screen.queryByTestId('candidate-detail-0')).toBeNull();
+  await fireEvent.press(screen.getByTestId('generation-edit'));
+  expect(mockG.start).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByText('취소'));
+  expect(mockG.start).not.toHaveBeenCalled();
   mockG.tab = 'results'; mockG.completed = null; mockG.state = { kind: 'error', message: '도로 자료를 받을 수 없어요.' };
   await screen.rerender(<CourseGenerationScreen />);
   expect(screen.getByTestId('calculation-error')).toHaveTextContent('도로 자료를 받을 수 없어요.');
@@ -111,18 +122,20 @@ test('UI-GEN-06: a condition changed while confirmation was open must be confirm
   expect(screen.getByText('조건이 바뀌었어요. 현재 조건을 다시 확인해 주세요.')).toBeVisible();
 });
 
-test('UI-GEN-07: regeneration confirms the completed result even after the next input changed', async () => {
+test('UI-GEN-07: regeneration confirmation preserves results on cancel and uses the original conditions once confirmed', async () => {
   mockG.tab = 'results'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
+  const result = mockG.completed;
   await render(<CourseGenerationScreen />);
-  await fireEvent.press(screen.getByTestId('generation-regenerate'));
-  expect(screen.getByText('같은 조건으로 다시 생성할까요?')).toBeVisible();
-  await fireEvent.press(screen.getByTestId('generation-confirm-cancel'));
+  await fireEvent.press(screen.getByTestId('generation-edit'));
   expect(mockG.start).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByTestId('generation-regenerate'));
-  await fireEvent.press(screen.getByTestId('generation-confirm'));
-  expect(mockG.setTargetKm).toHaveBeenCalledWith(3);
-  expect(mockG.setShape).toHaveBeenCalledWith('heart');
-  expect(mockG.start).toHaveBeenCalledWith({origin:grid.origin,shape:'heart',targetKm:3,customTemplate:undefined});
+  await fireEvent.press(screen.getByText('취소'));
+  expect(mockG.start).not.toHaveBeenCalled();
+  expect(mockG.start).not.toHaveBeenCalled();
+  expect(mockG.completed).toBe(result);
+  await fireEvent.press(screen.getByTestId('generation-edit'));
+  await fireEvent.press(screen.getByTestId('regeneration-confirm'));
+  expect(mockG.start).toHaveBeenCalledTimes(1);
+  expect(mockG.start).toHaveBeenCalledWith({origin:result.origin,...result.options});
 });
 
 test('UI-GEN-08: real-map updates preserve place input and an open distance draft', async () => {
@@ -139,4 +152,58 @@ test('UI-GEN-08: real-map updates preserve place input and an open distance draf
   await screen.rerender(<CourseGenerationScreen />);
   expect(screen.getByTestId('place-search-input')).toHaveDisplayValue('');
   expect(screen.queryByTestId('distance-input')).toBeNull();
+});
+
+test('UI-GEN-09: current location queries GPS without opening the picker and blocks duplicate requests', async () => {
+  mockG.dataset.synthetic = false;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('route-locate'));
+  expect(mockG.locate).toHaveBeenCalledTimes(1);
+  expect(mockPush).not.toHaveBeenCalled();
+  mockG.centerState.location = { kind: 'loading' };
+  await screen.rerender(<CourseGenerationScreen />);
+  expect(screen.getByTestId('route-locate')).toBeDisabled();
+});
+
+test('UI-GEN-10: removing the tabs still allows returning to a previous result without generating again', async () => {
+  mockG.completed = completed(); mockG.shape = 'fish';
+  const previous = mockG.completed;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('generation-view-results'));
+  expect(mockG.setTab).toHaveBeenCalledWith('results');
+  expect(mockG.completed).toBe(previous);
+  expect(mockG.start).not.toHaveBeenCalled();
+});
+
+
+test('confirmation uses real exhausted allowance and never computes on cancel', async () => {
+  mockUsage.data.generation = { used: 5, total: 5 };
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('calculate-route'));
+  expect(screen.getByTestId('generation-remaining')).toHaveTextContent('0회');
+  expect(screen.getByTestId('generation-after')).toHaveTextContent('0회');
+  expect(screen.getByTestId('generation-confirm')).toBeDisabled();
+  await fireEvent.press(screen.getByTestId('generation-confirm-cancel'));
+  expect(mockG.start).not.toHaveBeenCalled();
+});
+
+test('confirmation does not invent allowance while usage is unavailable', async () => {
+  mockUsage.data = null;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('calculate-route'));
+  expect(screen.getByTestId('generation-remaining')).toHaveTextContent('—회');
+  expect(screen.getByTestId('generation-after')).toHaveTextContent('—회');
+  expect(mockG.start).not.toHaveBeenCalled();
+});
+
+test('map expansion opens an account-scoped selected draft without generating', async () => {
+  mockG.tab = 'results'; mockG.completed = completed(); mockG.selected = 1;
+  await render(<CourseGenerationScreen />);
+  await fireEvent.press(screen.getByTestId('recommendation-map-open'));
+  expect(mockPush.mock.lastCall?.[0]).toMatchObject({ pathname: '/course-map', params: { target: '1' } });
+  const { candidateDrafts } = require('../../src/features/course-generation/model');
+  const draft = candidateDrafts.get(mockPush.mock.lastCall[0].params.draft, 'guest');
+  expect(draft.rank).toBe(2);
+  expect(draft.snapshot.shape).toBe('heart');
+  expect(mockG.start).not.toHaveBeenCalled();
 });

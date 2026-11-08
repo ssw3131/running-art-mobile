@@ -16,10 +16,10 @@ def verify_home_result(q):
     previous = candidate.get('content-desc')
     assert previous and '유사도 ' in previous and '예상 러닝 시간' in previous
     q.tap('tab-home'); q.seek('open-route-lab'); q.tap('open-route-lab')
-    q.tap('조건 설정'); q.seek('shape-fish'); q.tap('shape-fish')
+    q.seek('shape-fish'); q.tap('shape-fish')
     seek_above(q, 'generation-changed')
     assert q.find(q.capture('home-existing-result-notice'), 'generation-changed') is not None
-    q.tap('추천 코스')
+    q.tap('generation-view-results')
     q.seek('candidate-0')
     candidate = q.find(q.capture('home-existing-result-preserved'), 'candidate-0')
     assert candidate.get('content-desc') == previous

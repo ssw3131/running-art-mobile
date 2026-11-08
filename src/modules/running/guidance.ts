@@ -7,7 +7,7 @@ import { validApproach, type ApproachPlan } from './approach.ts';
 export type CourseOutcome = 'active' | 'arrival-pending' | 'finished' | 'stopped';
 export type RunCourse = { id: string; name: string; snapshot: CourseSnapshot };
 export type RunPreparation = { courseId: string; read(): { fix: Fix | null; plan: ApproachPlan | null } };
-export type GuidanceOptions = { voice: boolean; background: boolean; mode: 'map' | 'focus' };
+export type GuidanceOptions = { voice: boolean; background: boolean; mode: 'map' | 'focus'; touchLock?: boolean };
 export const defaultGuidanceOptions: GuidanceOptions = { voice: true, background: true, mode: 'map' };
 export type RunGuidanceCheckpoint = GuidanceCheckpoint | LoopCheckpoint;
 export type RunGuidance = { course: RunCourse; checkpoint: RunGuidanceCheckpoint; options: GuidanceOptions; state: GuidanceState };
@@ -34,8 +34,8 @@ export function readRunGuidance(row: GuidanceRow): RunGuidance | null {
   return { course, checkpoint: engine.checkpoint(), options, state: engine.snapshot() };
 }
 export function validateGuidanceOptions(value: GuidanceOptions): GuidanceOptions {
-  if (!value || typeof value.voice !== 'boolean' || typeof value.background !== 'boolean' || !['map', 'focus'].includes(value.mode)) throw new RunError('러닝 안내 설정이 올바르지 않아요.');
-  return { voice: value.voice, background: value.background, mode: value.mode };
+  if (!value || typeof value.voice !== 'boolean' || typeof value.background !== 'boolean' || !['map', 'focus'].includes(value.mode) || (value.touchLock !== undefined && typeof value.touchLock !== 'boolean')) throw new RunError('러닝 안내 설정이 올바르지 않아요.');
+  return { voice: value.voice, background: value.background, mode: value.mode, ...(value.touchLock === undefined ? {} : { touchLock: value.touchLock }) };
 }
 export function isStartFix(fix: Fix | null | undefined, now: number): fix is Fix {
   return !!fix && Number.isFinite(fix.timestamp) && now - fix.timestamp <= 5000 && fix.timestamp <= now &&

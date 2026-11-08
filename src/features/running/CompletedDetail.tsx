@@ -13,6 +13,7 @@ import { authentication } from '@/modules/auth/runtime';
 import { getStorage } from '@/modules/storage/database';
 import { courseShapes } from '@/modules/courses/model';
 import { durationLabel } from '@/modules/running/model';
+import { isSimulationRun } from '@/modules/running/simulation-record';
 import { prepareRunRetry } from '@/modules/running/retry';
 import { homePathSvg } from '@/modules/home/model';
 import { centerLabel } from '@/features/course-generation/model';
@@ -49,6 +50,7 @@ export default function CompletedDetail({ id }: { id: string }) {
     {!!(error || failure) && <View style={{ padding: 24, gap: 12 }}><AppText accessibilityRole="alert">{error || failure}</AppText>{!!error && <Button label="다시 불러오기" onPress={retry}/>}</View>}
     {data?.course && data.run.courseOutcome === 'finished' && <>
       <View style={{ alignItems: 'center', paddingHorizontal: 24, paddingTop: 24, gap: 10 }}>
+        {isSimulationRun(data.run)&&<AppText variant="caption" style={{color:c.selected}}>시뮬레이션 완주 기록</AppText>}
         <View style={{ height: 180, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
           <Image source={require('../../../assets/archive/confetti.png')} style={{ position: 'absolute', width: '100%', height: 180 }} contentFit="contain" accessible={false}/>
           {first ? data.course.snapshot.shape === 'heart' ? <Image testID="completion-first-badge" source={require('../../../assets/archive/heart-badge-cropped.png')} style={{ width: 160, height: 160 }} contentFit="contain" accessibilityLabel="하트 첫 완주 배지"/> :
@@ -61,8 +63,8 @@ export default function CompletedDetail({ id }: { id: string }) {
           <AppText weight="black" variant="heading" style={{ textAlign: 'center' }}>{data.course.name}</AppText>
           <View style={{ height: 1, backgroundColor: c.divider }}/>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 }}>
-            <View><AppText variant="caption">실제 거리</AppText><AppText weight="black" style={{ fontSize: 24, color: c.action }}>{(data.run.distanceM / 1000).toFixed(2)} km</AppText></View>
-            <View><AppText variant="caption">실제 러닝 시간</AppText><AppText weight="black" style={{ fontSize: 24, color: c.action }}>{durationLabel(data.run.activeMs)}</AppText></View>
+            <View><AppText variant="caption">{isSimulationRun(data.run)?'모의 거리':'실제 거리'}</AppText><AppText weight="black" style={{ fontSize: 24, color: c.action }}>{(data.run.distanceM / 1000).toFixed(2)} km</AppText></View>
+            <View><AppText variant="caption">{isSimulationRun(data.run)?'모의 러닝 시간':'실제 러닝 시간'}</AppText><AppText weight="black" style={{ fontSize: 24, color: c.action }}>{durationLabel(data.run.activeMs)}</AppText></View>
           </View>
           <AppText variant="caption">{new Date(data.run.startedAt).toLocaleDateString('ko-KR')}</AppText>
         </View>

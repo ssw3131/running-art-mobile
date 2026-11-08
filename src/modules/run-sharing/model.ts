@@ -76,6 +76,6 @@ export function makeSharedRun(run: Run, points: RunPoint[], course: RunCourse | 
     last = point;
   }
   if (run.courseId && (!course || run.courseId !== course.id)) throw new RunShareError('출발 당시의 코스 정보를 확인하지 못했어요.');
-  return validateSharedRun({ schemaVersion: 1, title: run.courseName?.trim() || '나의 러닝 경로', distanceM: run.distanceM, activeMs: run.activeMs, segments,
+  return validateSharedRun({ schemaVersion: 1, title: `${run.reason?.startsWith('[시뮬레이션]')?'시뮬레이션 · ':''}${run.courseName?.trim() || '나의 러닝 경로'}`.slice(0,80), distanceM: run.distanceM, activeMs: run.activeMs, segments,
     planned: course ? { route: course.snapshot.route, target: course.snapshot.target } : null });
 }

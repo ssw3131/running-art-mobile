@@ -11,6 +11,7 @@ import { useAccountData } from '@/features/account/use-account';
 import { AccountButton, AccountCard, AccountPage, AccountRow, ProfileAvatar, accountStyles as s, useAccountColors } from '@/features/account/ui';
 import { useMembership } from '@/features/membership/use-membership';
 import { useAchievements } from '@/features/achievements/use-achievements';
+import { AwardBadges } from '@/features/achievements/AwardBadges';
 import { Badges } from '@/features/achievements/Badges';
 
 export default function AccountScreen() {
@@ -67,7 +68,7 @@ export default function AccountScreen() {
           {stat('현재 연속 러닝', `${achievements.data.currentStreak}일`)}
           {stat('최장 연속 러닝', `${achievements.data.longestStreak}일`)}
         </View>
-        <Badges badges={achievements.data.badges} />
+        <Badges badges={achievements.data.badges} /><AwardBadges awards={achievements.data.awards??[]} />
         <Text style={[s.caption, { color: colors.muted }]}>실제 이동 거리가 있는 종료 러닝의 시작일을 기기 달력으로 셉니다. 어제 달렸다면 오늘까지 연속일을 이어갈 수 있어요.</Text>
       </> : achievements.error ? <><Text accessibilityRole="alert" style={[s.body, { color: colors.danger }]}>{achievements.error}</Text><AccountButton id="achievements-retry" title="배지 다시 확인" colors={colors} onPress={achievements.retry} /></> : <ActivityIndicator accessibilityLabel="배지 집계 중" color={colors.accent} />}
     </AccountCard>

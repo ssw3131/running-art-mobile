@@ -56,6 +56,8 @@ export const migrations: readonly string[] = [
     snapshot_json TEXT NOT NULL,snapshot_hash TEXT NOT NULL,name TEXT NOT NULL,course_id TEXT NOT NULL);
    CREATE INDEX usage_pending_owner ON usage_pending(owner_id,kind);
    CREATE TABLE usage_generation_pending(owner_id TEXT PRIMARY KEY NOT NULL,id TEXT NOT NULL,request_json TEXT NOT NULL,result_json TEXT);`,
+  `CREATE TABLE achievement_regions(run_id TEXT PRIMARY KEY NOT NULL REFERENCES running_sessions(id) ON DELETE CASCADE,
+    owner_id TEXT NOT NULL,region TEXT NOT NULL CHECK(length(region) BETWEEN 1 AND 300));`,
 ];
 
 export const SCHEMA_VERSION = migrations.length;
