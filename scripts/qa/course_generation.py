@@ -154,7 +154,8 @@ def scaled_generation(q, launch):
         seek_above(q, 'course-map-preview-open')
         tree = q.capture('s2a-large-center-restored')
         current = q.find(tree, 'course-map-preview-open')
-        confirmed_origin = re.findall(r'-?\d+\.\d+', current.get('content-desc', '') if current else '')
+        # ElementTree leaf nodes are false-y even when the control is present.
+        confirmed_origin = re.findall(r'-?\d+\.\d+', current.get('content-desc', '') if current is not None else '')
         assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
             for before, after in zip(origin, confirmed_origin)), (
                 f'Page scrolling must preserve the chosen map center: before={origin}, after={confirmed_origin}')
