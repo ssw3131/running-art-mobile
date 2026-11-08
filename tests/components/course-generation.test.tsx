@@ -71,9 +71,18 @@ test('UI-GEN-02: unavailable location or a running job cannot open another gener
 });
 
 test('UI-GEN-03: old result keeps its conditions and real candidate count after editing the next input', async () => {
-  mockG.tab = 'results'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
+  mockG.tab = 'conditions'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
+  const previous = mockG.completed;
   mockG.state = { kind: 'done', message: '2개 코스를 찾았어요.' };
   await render(<CourseGenerationScreen />);
+  expect(screen.getByTestId('generation-changed')).toBeVisible();
+  await fireEvent.press(screen.getByTestId('calculate-route'));
+  await fireEvent.press(screen.getByTestId('generation-confirm-cancel'));
+  expect(mockG.completed).toBe(previous);
+  expect(mockG.start).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByTestId('generation-view-results'));
+  expect(mockG.setTab).toHaveBeenCalledWith('results');
+  await screen.rerender(<CourseGenerationScreen />);
   expect(screen.getByText('유사도가 높은 추천 코스 2개')).toBeVisible();
   expect(mockMapProps.origin).toEqual(grid.origin);
   expect(mockMapProps.interactive).toBe(false);
