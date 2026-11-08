@@ -17,3 +17,11 @@ const fixture={id:'f'.repeat(32),name:'QA 자유 출발 순환 코스',...encode
   join:positionAt(prepared,prepared.totalMeters*.27),metrics:result.metrics};
 fs.writeFileSync(`${folder}/fixture.json`,JSON.stringify(fixture));
 console.log(JSON.stringify({meters:prepared.totalMeters,segments:snapshot.roadSegments.length,scores:result.result.candidates.map(c=>c.score.raw),ms:result.metrics.elapsedMs}));
+
+// Badge acceptance uses a current supported shape, independent of the legacy
+// diamond loop retained for reverse-direction/GPS compatibility coverage.
+const badgeInput={...input,options:{...input.options,shape:'heart'}};
+const badgeResult=await calculateRoute(badgeInput);
+if(!badgeResult.result.candidates.length)throw new Error('No public heart achievement fixture');
+const badgeSnapshot=courseFromCalculation({...badgeResult,origin:badgeInput.origin,options:badgeInput.options,liveRoads:true},0);
+fs.writeFileSync(`${folder}/achievement-fixture.json`,JSON.stringify({id:'e'.repeat(32),name:'QA 하트 완주 코스',...encodeSnapshot(badgeSnapshot)}));

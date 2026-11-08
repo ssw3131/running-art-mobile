@@ -37,7 +37,7 @@ def service_s56(q, launch):
     run_id='5'*32
     assert not q.query(f"SELECT id FROM running_sessions WHERE id='{run_id}'")
     assert not q.query(f"SELECT id FROM sync_deletions WHERE owner_id='{q.OWNER}' AND kind='run' AND id='{run_id}'")
-    entry=json.loads((q.ROOT/'.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
+    entry=json.loads((q.ROOT/'.cache/free-loop-qa/achievement-fixture.json').read_text(encoding='utf8'))
     before=q.snapshot('s56-before')
     preferences=q.query(f"SELECT * FROM account_preferences WHERE owner_id='{q.OWNER}'")
     api=int(q.shell('getprop','ro.build.version.sdk').decode().strip())

@@ -19,7 +19,7 @@ export function useRecommendationApproach(result:LabCalculation|null,enabled:boo
     void(async()=>{
       try{
         const permission=await Location.getForegroundPermissionsAsync();if(!permission.granted)throw new Error('Location permission required');
-        const fix=await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High});
+        const fix=await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High,mayShowUserSettingsDialog:false});
         if(closed)return;
         if(fix.coords.accuracy===null||fix.coords.accuracy>30||Date.now()-fix.timestamp>15000)throw new Error('Accurate current location required');
         const position:[number,number]=[fix.coords.longitude,fix.coords.latitude];
