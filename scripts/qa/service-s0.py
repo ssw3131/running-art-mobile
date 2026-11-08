@@ -176,7 +176,10 @@ def navigation():
     seek('home-more-runs'); tap('home-more-runs')
     tap('완주 기록')
     tap('tab-account'); tap('tab-archive')
-    assert find(capture('archive-view-after-tab'), 'runs-refresh') is not None
+    retained=capture('archive-view-after-tab')
+    assert find(retained,'완주 기록').get('selected')=='true'
+    assert find(retained,'finished-runs-scroll') is not None
+    assert find(retained,'runs-refresh') is None
     tap('tab-courses'); draft('draft-after-system-back')
     print('PASS: chosen center, distance, shape, tab retention, menu/back, detail/back, system back, archive run list')
 
@@ -217,6 +220,15 @@ def calculation():
 
 def gps_navigation():
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
+    # New free-running entry was intentionally removed. Preserve acceptance of
+    # existing free records by resuming a synthetic paused record on this emulator.
+    legacy_id='6'*32
+    assert not query(f"SELECT id FROM running_sessions WHERE id='{legacy_id}'")
+    now=int(time.time()*1000)
+    shell('am','force-stop',APP)
+    shell('sqlite3',DB,f"INSERT INTO running_sessions(id,status,started_at,checkpoint_at,resumed_at,owner_id) VALUES('{legacy_id}','paused',{now},{now},{now},'{OWNER}')")
+    shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///',APP)
+    time.sleep(3)
     tap('tab-run'); seek('run-start'); tap('run-start'); tap('계속')
     def inject(start, count=4):
         for i in range(start, start + count):
@@ -257,9 +269,8 @@ def gps_navigation():
     assert not query("SELECT id FROM running_sessions WHERE status <> 'completed'")
     services = shell('dumpsys', 'activity', 'services', APP).decode()
     assert not re.search(r'^  \* ServiceRecord.*com\.runningart\.mobile\.dev/', services, re.M)
-    tap('service-back')
-    assert find(capture('gps-result-back'), 'tab-run').get('selected') == 'true'
-    print('PASS: GPS tab continuity, home return, pause/resume, explicit process recovery, finish/back/service cleanup', json.dumps(final))
+    assert find(capture('gps-finish-archive'), '저장 코스').get('selected') == 'true'
+    print('PASS: legacy GPS tab continuity, home return, pause/resume, explicit process recovery, finish/archive/service cleanup', json.dumps(final))
 
 
 def course_preparation():

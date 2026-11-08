@@ -102,7 +102,7 @@ export default function AccountScreen(){
    </View>)}
   </View>
   <View style={{gap:15}}><View style={{flexDirection:'row',alignItems:'center'}}><AppText weight="bold" style={{fontSize:18,lineHeight:26,color:c.text,flex:1}}>내 완주 배지</AppText><Pressable testID="account-badges" accessibilityRole="button" onPress={()=>router.push('/badges')} style={{minHeight:48,flexDirection:'row',gap:4,alignItems:'center'}}><AppText weight="medium" style={{fontSize:16,color:c.muted}}>뱃지 보관함</AppText><Image source={require('../../../assets/achievements/figma-20261108/badge-chevron.svg')} style={{width:20,height:20}}/></Pressable></View>
-   <View style={{flexDirection:'row',gap:10,justifyContent:'space-between',flexWrap:'wrap'}}>{previews.map(b=><Pressable key={b.id} accessibilityRole="button" accessibilityLabel={`${b.title} ${b.accent}`} disabled={!earnedIds.has(b.id)} onPress={()=>router.push({pathname:'/badge-detail',params:{id:b.id}})}><BadgeImage id={b.id} size={68} earned={earnedIds.has(b.id)}/></Pressable>)}</View>
+   <View style={{flexDirection:'row',gap:10,justifyContent:'space-between',flexWrap:'wrap'}}>{previews.map(b=><Pressable key={b.id} testID={`account-badge-${b.id}`} accessibilityRole="button" accessibilityLabel={`${b.title} ${b.accent}`} disabled={!earnedIds.has(b.id)} onPress={()=>router.push({pathname:'/badge-detail',params:{id:b.id}})}><BadgeImage id={b.id} size={68} earned={earnedIds.has(b.id)}/></Pressable>)}</View>
    {!!achievements.error&&<Button testID="achievements-retry" compact variant="outline" label="뱃지 다시 확인" onPress={achievements.retry}/>}
   </View>
   <View style={{...card,padding:30,gap:28}}>

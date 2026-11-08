@@ -366,8 +366,8 @@ try:
         steps = [('S0-01-maestro', maestro_navigation), ('S1-02-home-states', lambda: verify_home_states(q, launch)),
                  ('S0-02-draft', q.navigation), ('S0-03-oauth-cancel', callback)]
         if not args.smoke:
-            # Free GPS must start without a selected course. Preparation remains
-            # selected intentionally, so verify it after the independent GPS run.
+            # Existing free GPS records remain resumable after removing new free entry.
+            # Preparation stays selected, so verify it after that isolated legacy record.
             steps += [('S0-04-save', save_and_home), ('S0-04-restart', saved_restart), ('S0-06-gps', q.gps_navigation),
                       ('S0-05-preparation', q.course_preparation), ('S234-01-integrated', lambda: service_s234(q, launch)), ('S0-07-deep-link-gpx', q.compatibility), ('S0-08-accessibility', q.scaled),
                       ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]

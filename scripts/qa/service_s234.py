@@ -22,11 +22,11 @@ def service_s234(q, launch):
     lng,lat=entry['snapshot']['route'][0]
     def fix(n=3):
         for _ in range(n):q.adb('emu','geo','fix',str(lng),str(lat),'0','10');time.sleep(1)
-    q.seek('run-saved-course-'+entry['id']);q.tap('run-saved-course-'+entry['id']);q.tap('run-preparation-confirm')
+    q.seek('run-saved-course-'+entry['id']);q.tap('run-saved-course-'+entry['id']);q.seek('run-selected-start');q.tap('run-selected-start');q.tap('run-preparation-confirm')
     fix();q.seek('run-course-start');q.tap('run-course-start');q.tap('계속');fix(5)
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
     run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
-    q.seek('guidance-recenter');q.tap('guidance-recenter');q.seek('guidance-background');q.capture('s4-map-controls')
+    q.seek('guidance-recenter');q.tap('guidance-recenter');q.seek('run-pause');q.capture('s4-map-controls')
     def wait_status(expected, target=run_id):
         for _ in range(20):
             state=q.query(f"SELECT status FROM running_sessions WHERE id='{target}'")[0]['status']
@@ -51,7 +51,8 @@ def service_s234(q, launch):
     x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')));x,y=str((x1+x2)//2),str((y1+y2)//2)
     q.shell('input','swipe',x,y,x,y,'1200')
     q.tap('run-guidance-settings');q.seek('run-touch-lock-setting');q.tap('run-touch-lock-setting');q.tap('러닝으로 돌아가기')
-    q.tap('run-finish');q.tap('종료·저장');q.seek('result-detail');q.tap('result-detail');q.capture('s3-run-detail')
+    q.tap('run-finish');q.tap('종료·저장');q.seek('저장 코스');assert q.find(q.capture('s3-stopped-destination'),'저장 코스').get('selected')=='true'
+    launch('runs/'+run_id);q.seek('run-rechallenge');q.capture('s3-run-detail')
     before=q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]
     assert before['status']=='completed' and before['course_outcome']=='stopped'
     q.seek('run-rechallenge');q.tap('run-rechallenge');q.tap('run-preparation-confirm');fix();q.seek('run-course-start')
@@ -61,7 +62,8 @@ def service_s234(q, launch):
     assert newer['id']!=run_id and newer['course_outcome']=='active'
     assert q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]==before
     q.tap('run-finish');q.tap('종료·저장');wait_status('completed',newer['id'])
-    q.seek('result-detail');q.tap('result-detail')
+    q.seek('저장 코스');assert q.find(q.capture('s3-retry-stopped-destination'),'저장 코스').get('selected')=='true'
+    launch('runs/'+newer['id']);q.seek('run-rechallenge')
     assert q.find(q.capture('s3-retry-finished'),'run-rechallenge') is not None
     launch('courses?view=runs');q.capture('s3-monthly-records')
     assert q.find(q.capture('s3-stopped-excluded'),'run-row-'+run_id) is None

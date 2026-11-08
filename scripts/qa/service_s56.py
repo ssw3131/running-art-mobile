@@ -43,7 +43,7 @@ def service_s56(q, launch):
     try:
         launch('run-result?id='+run_id)
         assert q.find(q.capture('s5-result'),'completion-first-badge') is not None
-        q.seek('공유하기');q.tap('공유하기')
+        q.seek('run-result-share');q.tap('run-result-share')
         q.capture('s5-card-options')
         for key in ['card-nickname','card-date']:
             assert q.find(q.capture('current'),key).get('checked')=='true'
@@ -82,8 +82,9 @@ def service_s56(q, launch):
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==2
         feed=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',feed[16:24])==(1080,1350)
         (q.OUT/'s5-card-feed-private.png').write_bytes(feed)
-        launch('account');q.seek('badge-'+entry['snapshot']['shape']);q.capture('s5-account-badge')
-        q.tap('badge-'+entry['snapshot']['shape']);assert q.find(q.capture('s5-badge-record'),'completion-first-badge') is not None
+        launch('account');q.seek('account-badge-'+entry['snapshot']['shape']);q.capture('s5-account-badge')
+        q.tap('account-badge-'+entry['snapshot']['shape']);q.seek('badge-record-'+run_id);q.capture('s5-badge-detail')
+        q.tap('badge-record-'+run_id);assert q.find(q.capture('s5-badge-record'),'completion-first-badge') is not None
         launch('service-info');q.capture('s6-menu')
         q.seek('support-about');q.tap('support-about');q.capture('s6-about');q.tap('service-back')
         q.seek('support-guide');q.tap('support-guide');q.capture('s6-guide');q.tap('service-back')
@@ -126,9 +127,9 @@ def service_s56(q, launch):
             if q.find(result,'completion-first-badge') is not None: break
             assert time.monotonic()<deadline,'Run result screen did not load after display change'
             time.sleep(.5)
-        q.seek('공유하기');q.capture('s5-result-large-font')
+        q.seek('run-result-share');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
-        (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':False,'saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
+        (q.OUT/'s56-result.json').write_text(json.dumps({'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':'unset-without-weight','saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
     except Exception:
         try: q.capture('s56-action-failure')
         except Exception: pass
