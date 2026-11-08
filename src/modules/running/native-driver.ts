@@ -58,6 +58,7 @@ export const trackingDriver: TrackingDriver = {
   async locate(signal = new AbortController().signal) {
     const result = await locateForeground(expoLocationProvider, signal, { askPermission: false, accept: fix => isStartFix(fix, Date.now()) });
     if (result.kind === 'cancelled') throw new RunError('러닝 준비를 취소했어요.');
+    if (result.kind === 'timeout') throw new RunError('15초 동안 정확한 출발 위치를 받지 못했어요. 하늘이 열린 곳에서 다시 시작해 주세요.');
     if (result.kind !== 'located') throw new RunError('출발 위치를 확인하지 못했어요. GPS 상태를 확인하고 다시 시작해 주세요.');
     return result.position;
   },
