@@ -28,3 +28,14 @@ test('voice and theme controls save owned preferences, billing does not invent a
  await waitFor(()=>expect(screen.getByTestId('theme-dark')).toBeEnabled());await fireEvent.press(screen.getByTestId('theme-dark'));await waitFor(()=>expect(mockSave).toHaveBeenCalledWith({...defaultAccountPreferences,theme:'dark'}));
  await fireEvent.press(screen.getByTestId('account-purchases'));expect(screen.getByText(/현재 앱에는 결제 기능이 연결되어 있지 않아/)).toBeVisible();expect(mockSignOut).not.toHaveBeenCalled();
 });
+test('body weight is opt-in, validates input before a write, and can be cleared explicitly',async()=>{
+ await render(<AccountScreen/>);await fireEvent.press(screen.getByTestId('account-weight'));
+ expect(screen.getByTestId('body-weight-input').props.value).toBe('');expect(mockSave).not.toHaveBeenCalled();
+ await fireEvent.changeText(screen.getByTestId('body-weight-input'),'70.55');await fireEvent.press(screen.getByTestId('save-weight'));
+ expect(screen.getByRole('alert')).toHaveTextContent(/소수점 한 자리/);expect(mockSave).not.toHaveBeenCalled();
+ await fireEvent.changeText(screen.getByTestId('body-weight-input'),'65.5');await fireEvent.press(screen.getByTestId('save-weight'));
+ await waitFor(()=>expect(mockSave).toHaveBeenCalledWith({...defaultAccountPreferences,weightKg:65.5}));
+ await waitFor(()=>expect(screen.queryByTestId('body-weight-input')).toBeNull());
+ await fireEvent.press(screen.getByTestId('account-weight'));await fireEvent.press(screen.getByTestId('save-weight'));
+ await waitFor(()=>expect(mockSave).toHaveBeenLastCalledWith(defaultAccountPreferences));
+});

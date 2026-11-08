@@ -36,7 +36,7 @@ export default function RunResultScreen(){
     <View style={{flexDirection:'row',alignItems:'center',gap:6}}><Image source={require('../../assets/achievements/figma-20261108/pin.svg')} style={{width:16,height:16}}/><AppText testID="run-result-badge" weight="bold" style={{fontSize:16,lineHeight:22}}>{data.course?.name}</AppText></View>
    </View>}
    {isSimulationRun(data.run)&&<AppText variant="caption" style={{textAlign:'center',color:c.selected}}>시뮬레이션 완주 기록</AppText>}
-   <View style={{paddingHorizontal:29,paddingTop:12,paddingBottom:12}}><RunMetrics run={data.run} showCalories={finished}/></View>
+   <View style={{paddingHorizontal:29,paddingTop:12,paddingBottom:12}}><RunMetrics run={data.run} showCalories={finished} weightKg={data.weightKg} onSetWeight={()=>openServiceTab('/account')}/></View>
    <View style={{paddingHorizontal:26,paddingTop:24,gap:20}}>
     <Button label="공유 하기" testID="run-result-share" leading={<Icon name="share"/>} onPress={()=>router.push({pathname:'/run-card',params:{id}})}/>
     <Button label="완주 기록 보관함으로 이동" testID="result-detail" variant="outline" contentStyle={{minHeight:50}} labelStyle={{fontSize:16,color:c.subtle}} onPress={()=>openServiceTab({pathname:'/courses',params:{view:'runs'}})}/>

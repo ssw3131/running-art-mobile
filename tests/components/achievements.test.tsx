@@ -34,3 +34,13 @@ test('UI-S5-02 stopped and finished outcomes remain distinct, share opens the se
  expect(screen.queryByTestId('completion-first-badge')).toBeNull();expect(screen.queryByTestId('completion-trophy')).toBeNull();
  expect(screen.queryByText(/칼로리/)).toBeNull();
 });
+test('calories remain unset until weight exists and simulated estimates are explicitly labelled',async()=>{
+ const snapshot={shape:'heart',origin:{lat:37,lng:127},lengthKm:10,target:[[127,37],[127.01,37.01],[127,37]]};
+ const data={run:{status:'completed',startedAt:Date.UTC(2026,10,8),courseOutcome:'finished',distanceM:5200,activeMs:1800000,reason:null},course:{snapshot,name:'하트 코스'},points:[],achievements:{finishedCourses:1,currentStreak:1,badges:[]}};
+ mockResult={data,error:''};const view=await render(<RunResultScreen/>);
+ expect(screen.getByTestId('calorie-estimate-note')).toHaveTextContent(/체중을 설정하면/);
+ mockResult={data:{...data,weightKg:70},error:''};await view.rerender(<RunResultScreen/>);
+ expect(screen.getByLabelText('칼로리 소모 추정 364 kcal')).toBeVisible();expect(screen.getByTestId('calorie-estimate-note')).toHaveTextContent(/현재 설정 체중 70kg/);
+ mockResult={data:{...data,weightKg:70,run:{...data.run,reason:'[시뮬레이션]'}},error:''};await view.rerender(<RunResultScreen/>);
+ expect(screen.getByTestId('calorie-estimate-note')).toHaveTextContent(/시뮬레이션상 예상치/);
+});

@@ -7,7 +7,7 @@ import { RunError, runErrorMessage, type Run, type RunPoint } from '@/modules/ru
 import type { RunCourse } from '@/modules/running/guidance';
 import type { Achievements } from '@/modules/achievements/model';
 
-export type RunResult = { run: Run; points: RunPoint[]; course: RunCourse | null; achievements: Achievements;shapeCompletion:number };
+export type RunResult = { run: Run; points: RunPoint[]; course: RunCourse | null; achievements: Achievements;shapeCompletion:number;weightKg?:number };
 export function useRunResult(id: string) {
   const auth = useAuth(), owner = auth.ready ? auth.account?.id ?? '' : null;
   const key = `${owner}/${id}`;
@@ -26,8 +26,9 @@ export function useRunResult(id: string) {
         const points = await store.runs.points(id); check();
         const guide = await store.runs.guidance(id); check();
         const gallery = await store.achievements.gallery(); check();
+        const preferences=await store.account.preferences();check();
         const shapeCompletion=gallery.records.filter(row=>row.courseOutcome==='finished'&&row.shape===guide?.course.snapshot.shape&&(row.startedAt<run.startedAt||(row.startedAt===run.startedAt&&row.id.localeCompare(run.id)<=0))).length;
-        setState({ key, data: { run, points, course: guide?.course ?? null, achievements:gallery.summary,shapeCompletion }, error: '' });
+        setState({ key, data: { run, points, course: guide?.course ?? null, achievements:gallery.summary,shapeCompletion,weightKg:preferences.weightKg }, error: '' });
       } catch (error) { if (current) setState({ key, data: null, error: runErrorMessage(error) }); }
     })();
     return () => { current = false; };

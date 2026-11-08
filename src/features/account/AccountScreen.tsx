@@ -1,5 +1,5 @@
 import { useCallback,useRef,useState,useSyncExternalStore } from 'react';
-import { ActivityIndicator,Alert,AppState,Linking,Platform,Pressable,ScrollView,View } from 'react-native';
+import { ActivityIndicator,Alert,AppState,Linking,Platform,Pressable,ScrollView,TextInput,View } from 'react-native';
 import { Image } from 'expo-image';
 import { router,useFocusEffect } from 'expo-router';
 import * as Location from 'expo-location';
@@ -10,6 +10,7 @@ import { personalSync } from '@/modules/sync/runtime';
 import { providerLabel,type AccountPreferences } from '@/modules/account/model';
 import { signInProviderLabels } from '@/modules/auth/providers';
 import { accountWithdrawal } from '@/modules/account/withdrawal-runtime';
+import { parseWeightKg } from '@/modules/running/calories';
 import { getStorage } from '@/modules/storage/database';
 import { useAccountData } from './use-account';
 import { ProfileAvatar,useAccountColors,type AccountColors } from './ui';
@@ -41,16 +42,22 @@ export default function AccountScreen(){
  const withdrawal=useSyncExternalStore(accountWithdrawal.subscribe,accountWithdrawal.getSnapshot,accountWithdrawal.getSnapshot);
  const sync=useSyncExternalStore(personalSync.subscribe,personalSync.getSnapshot,personalSync.getSnapshot);
  const c=useAccountColors(data.preferences.theme),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[info,setInfo]=useState(''),[permission,setPermission]=useState<boolean|null>(null);
+ const [weightOpen,setWeightOpen]=useState(false),[weightDraft,setWeightDraft]=useState(''),[weightError,setWeightError]=useState('');
  const working=useRef(false),owner=auth.account?.id??'';
  const ready=data.ready&&!busy&&auth.ready&&!auth.busy;
  const effectiveTheme=data.preferences.theme==='system'?(c.background==='#FFFFFF'?'light':'dark'):data.preferences.theme;
  const refreshPermissions=useCallback(async()=>{try{if(Platform.OS!=='web')setPermission((await Location.getForegroundPermissionsAsync()).granted);}catch{setPermission(null);}},[]);
  useFocusEffect(useCallback(()=>{void refreshPermissions();const listener=AppState.addEventListener('change',value=>{if(value==='active')void refreshPermissions();});return()=>listener.remove();},[refreshPermissions]));
  const save=async(next:AccountPreferences)=>{
-  if(working.current||!ready)return;working.current=true;setBusy(true);setMessage('');
-  try{if((authentication.getSnapshot().account?.id??'')!==owner)return;const store=await getStorage();if((authentication.getSnapshot().account?.id??'')!==owner)return;
-   const saved=await store.account.savePreferences(next);if((authentication.getSnapshot().account?.id??'')===owner)data.setPreferences(saved);
-  }catch{setMessage('설정을 저장하지 못했어요. 다시 시도해 주세요.');}finally{working.current=false;setBusy(false);}
+  if(working.current||!ready)return false;working.current=true;setBusy(true);setMessage('');
+  try{if((authentication.getSnapshot().account?.id??'')!==owner)return false;const store=await getStorage();if((authentication.getSnapshot().account?.id??'')!==owner)return false;
+   const saved=await store.account.savePreferences(next);if((authentication.getSnapshot().account?.id??'')!==owner)return false;data.setPreferences(saved);return true;
+  }catch{setMessage('설정을 저장하지 못했어요. 다시 시도해 주세요.');return false;}finally{working.current=false;setBusy(false);}
+ };
+ const applyWeight=async()=>{
+  try{const weightKg=parseWeightKg(weightDraft),next={...data.preferences};if(weightKg===undefined)delete next.weightKg;else next.weightKg=weightKg;
+   if(await save(next))setWeightOpen(false);else setWeightError('체중을 저장하지 못했어요. 다시 시도해 주세요.');
+  }catch(error){setWeightError(error instanceof Error?error.message:'체중을 확인해 주세요.');}
  };
  const changeLocation=async()=>{
   if(busy||Platform.OS==='web')return;setBusy(true);setMessage('');
@@ -105,6 +112,7 @@ export default function AccountScreen(){
     <View style={{flexDirection:'row',justifyContent:'space-around',gap:12}}>{(['light','dark'] as const).map(theme=><Pressable key={theme} testID={`theme-${theme}`} accessibilityRole="radio" accessibilityState={{selected:effectiveTheme===theme,disabled:!ready}} disabled={!ready} onPress={()=>void save({...data.preferences,theme})} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:6}}><View style={{width:20,height:20,borderRadius:10,borderWidth:2,borderColor:effectiveTheme===theme?c.accent:c.border,alignItems:'center',justifyContent:'center'}}>{effectiveTheme===theme&&<View style={{width:10,height:10,borderRadius:5,backgroundColor:c.accent}}/>}</View><AppText weight="medium" style={{fontSize:16,color:c.text}}>{theme==='light'?'화이트 모드':'다크 모드'}</AppText></Pressable>)}</View>
    </View>
   </View>
+  <View style={{...card,padding:24,gap:10}}><View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText weight="bold" style={{fontSize:18,color:c.text,flex:1}}>체중 · 칼로리 계산</AppText><Pressable testID="account-weight" accessibilityRole="button" accessibilityLabel="칼로리 계산용 체중 설정" disabled={!ready} onPress={()=>{setWeightDraft(data.preferences.weightKg===undefined?'':String(data.preferences.weightKg));setWeightError('');setWeightOpen(true);}} style={{minHeight:48,paddingHorizontal:12,justifyContent:'center'}}><AppText weight="bold" style={{fontSize:16,color:c.accent}}>{data.ready&&data.preferences.weightKg!==undefined?`${data.preferences.weightKg} kg`:'설정'}</AppText></Pressable></View><AppText style={{fontSize:12,lineHeight:18,color:c.muted}}>체중과 완주 거리로 예상 칼로리를 계산해요.</AppText></View>
   {!!(message||data.error)&&<AppText accessibilityRole="alert" style={{color:c.danger}}>{message||data.error}</AppText>}
   {!!data.error&&<Button testID="account-retry" label="다시 불러오기" onPress={data.reload}/>}
   <View style={{...card,padding:30,gap:15}}><AppText weight="bold" style={{fontSize:18,color:c.text}}>이용 및 결제</AppText>
@@ -120,6 +128,13 @@ export default function AccountScreen(){
     {(auth.account||withdrawal.pending||!withdrawal.ready)&&<View style={{paddingTop:8,gap:4}}><Pressable testID="account-withdraw" accessibilityRole="button" disabled={auth.busy} onPress={()=>router.push('/account-withdraw')} style={{flexDirection:'row',gap:8,alignItems:'center',minHeight:40}}><AccountIcon name="withdraw"/><AppText weight="bold" style={{fontSize:14,color:c.accent,flex:1}}>{withdrawal.pending?'탈퇴 요청 확인':'회원 탈퇴'}</AppText><Image source={require('../../../assets/achievements/figma-20261108/chevron.svg')} style={{width:30,height:30}}/></Pressable><AppText style={{fontSize:12,lineHeight:18,color:c.muted,marginLeft:24}}>탈퇴 전 안내 사항을 꼭 확인해주세요.</AppText></View>}
    </View>
   </View>
+  <AppModal visible={weightOpen} title="칼로리 계산용 체중" busy={busy} onClose={()=>{if(!busy)setWeightOpen(false);}} footer={<View style={{gap:8}}><Button testID="save-weight" label="저장" disabled={busy||!data.ready} onPress={()=>void applyWeight()}/><Button variant="secondary" label="취소" disabled={busy} onPress={()=>setWeightOpen(false)}/></View>}>
+   <AppText style={{fontSize:14,lineHeight:22}}>체중(kg)</AppText><TextInput testID="body-weight-input" accessibilityLabel="체중 kg" value={weightDraft} onChangeText={value=>{setWeightDraft(value);setWeightError('');}} editable={!busy} keyboardType="decimal-pad" maxLength={6} placeholder="예: 65.5" placeholderTextColor={c.muted} style={{width:'100%',minHeight:52,borderRadius:10,borderWidth:1,borderColor:c.border,padding:12,fontSize:20,color:c.text}}/>
+   <AppText style={{fontSize:12,lineHeight:18,color:c.muted}}>10~500kg · 소수점 한 자리까지 입력해요. 비워서 저장하면 체중을 삭제해요.</AppText>
+   <AppText style={{fontSize:12,lineHeight:18,color:c.muted}}>체중은 이 기기의 계정별 설정에만 저장돼요. 서버나 공유 카드로 전송하지 않아요.</AppText>
+   <AppText style={{fontSize:12,lineHeight:18,color:c.muted}}>칼로리는 체중 × 실제 거리(km)로 계산한 참고용 추정치예요. 과거 기록도 현재 설정 체중으로 다시 계산하며 경사·개인차는 반영하지 않아요.</AppText>
+   {!!weightError&&<AppText accessibilityRole="alert" style={{color:c.danger}}>{weightError}</AppText>}
+  </AppModal>
   <AppModal visible={!!info} title={info} onClose={()=>setInfo('')} footer={<Button label="확인" onPress={()=>setInfo('')}/>}>
    {info==='팩 구매 / 추가 혜택'?<><AppText>코스 생성 {remaining('generation')}회 · 추가 저장 {remaining('save')}회 이용할 수 있어요.</AppText><AppText>추가 이용권 구매는 준비 중입니다.</AppText></>:<AppText>현재 앱에는 결제 기능이 연결되어 있지 않아 구매 내역과 결제·환불 정보를 조회할 수 없어요.</AppText>}
   </AppModal>
