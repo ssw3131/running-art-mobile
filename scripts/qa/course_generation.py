@@ -165,16 +165,29 @@ def scaled_generation(q, launch):
         assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
             for before, after in zip(origin, confirmed_origin)), (
                 f'Page scrolling must preserve the chosen map center: before={origin}, after={confirmed_origin}')
-        # If location and map services are available, also check confirmation
-        # uses that same center. The main generation flow covers the CTA itself.
+        # The redesigned sheet shows an address (or explicit lookup failure),
+        # not numeric coordinates. Match the settled form label, then verify
+        # cancelling the sheet preserves the numeric center on the map control.
         if button.get('enabled') == 'true':
+            seek_above(q, 'generation-origin-address')
+            for _ in range(15):
+                address = q.find(q.capture('s2a-large-address-ready'), 'generation-origin-address')
+                location_label = address.get('text', '').strip() if address is not None else ''
+                if location_label and location_label != '주소 확인 중…': break
+                time.sleep(.5)
+            else:
+                raise AssertionError('The form address lookup did not settle before confirmation')
             q.seek('calculate-route'); q.tap('calculate-route'); confirmation = q.capture('s2a-large-confirm')
-            center_text = next((n.get('text', '') for n in confirmation.iter('node') if n.get('resource-id') == 'generation-summary-pin'), '')
-            confirmed_origin = re.findall(r'-?\d+\.\d+', center_text)
+            pin = q.find(confirmation, 'generation-summary-pin')
+            assert pin is not None and pin.get('text', '').strip() == location_label, (
+                'Confirmation must show the same address or lookup failure as the selected location')
+            q.tap('generation-confirm-cancel')
+            seek_above(q, 'course-map-preview-open')
+            current = q.find(q.capture('s2a-large-confirm-cancelled'), 'course-map-preview-open')
+            confirmed_origin = re.findall(r'-?\d+\.\d+', current.get('content-desc', '') if current is not None else '')
             assert len(confirmed_origin) == 2 and all(abs(float(before)-float(after)) < 0.00001
                 for before, after in zip(origin, confirmed_origin)), (
-                    f'Confirmation must preserve the chosen map center: before={origin}, after={confirmed_origin}')
-            q.tap('generation-confirm-cancel')
+                    f'Confirmation cancellation must preserve the chosen map center: before={origin}, after={confirmed_origin}')
         q.seek('shape-custom'); q.tap('shape-custom'); q.seek('drawing-cancel'); q.tap('drawing-cancel')
         # The form keeps its scroll position; its generate button is below the
         # drawing/image actions, not a fixed footer in the redesigned screen.

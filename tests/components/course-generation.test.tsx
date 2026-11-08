@@ -42,6 +42,9 @@ beforeEach(() => {
 });
 
 test('UI-GEN-01: generation requires confirmation, cancel does not compute or lose conditions', async () => {
+  const chosenOrigin = { lat: 37.58135, lng: 126.96933 };
+  mockG.dataset.synthetic = false;
+  mockG.centerState.center = chosenOrigin;
   await render(<CourseGenerationScreen />);
   await fireEvent.press(screen.getByTestId('calculate-route'));
   expect(screen.getByText('현재 설정으로 코스 생성할까요?')).toBeVisible();
@@ -56,7 +59,7 @@ test('UI-GEN-01: generation requires confirmation, cancel does not compute or lo
   await fireEvent.press(screen.getByTestId('calculate-route'));
   await fireEvent.press(screen.getByTestId('generation-confirm'));
   expect(mockG.start).toHaveBeenCalledTimes(1);
-  expect(mockG.start).toHaveBeenCalledWith({ origin: grid.origin, shape: 'heart', targetKm: 3, customTemplate: undefined });
+  expect(mockG.start).toHaveBeenCalledWith({ origin: chosenOrigin, shape: 'heart', targetKm: 3, customTemplate: undefined });
 });
 
 test('UI-GEN-02: unavailable location or a running job cannot open another generation', async () => {
