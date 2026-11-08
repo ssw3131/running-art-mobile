@@ -33,5 +33,14 @@ def timeout(url,timeout):calls.append(url);raise TimeoutError('offline')
 try:download_release(url,sha,opener=timeout,sleep=waits.append);raise AssertionError('did not bound retries')
 except RuntimeError:pass
 assert len(calls)==4 and waits==[2,4,8]
+def api_asset(request,timeout):
+ assert request.full_url=='https://api.github.com/repos/example/tool/releases/assets/123'
+ assert request.get_header('Accept')=='application/octet-stream'
+ assert not request.has_header('Authorization')
+ return io.BytesIO(data)
+assert download_release('https://api.github.com/repos/example/tool/releases/assets/123',sha,opener=api_asset,sleep=waits.append)==data
+for source in ['https://api.github.com/repos/example/tool/actions/runs/123','https://api.github.com/repos/example/tool/releases/assets/latest']:
+ try:download_release(source,sha,opener=wrong,sleep=waits.append);raise AssertionError('accepted unpinned API source')
+ except ValueError:pass
 `],{cwd:process.cwd(),env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},stdio:'pipe'});
 });
