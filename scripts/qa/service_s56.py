@@ -59,7 +59,11 @@ def service_s56(q, launch):
         q.seek('run-result-share');q.tap('run-result-share')
         q.capture('s5-card-options')
         for key in ['card-nickname','card-date']:
-            assert q.find(q.capture('current'),key).get('checked')=='true'
+            # The redesigned card and share panels put these options below
+            # the initial viewport; Android omits offscreen controls from XML.
+            q.seek(key)
+            option=q.find(q.capture('s5-default-'+key),key)
+            assert option is not None and option.get('checked')=='true', key
         folder=f'/data/user/0/{q.APP}/cache/runpen-cards/'
         q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-default-card-preview')
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==1
