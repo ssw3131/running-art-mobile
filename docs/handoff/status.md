@@ -1,6 +1,12 @@
 # 현재 상태와 인수인계
 
-## 2026-11-08 PR49·로컬 작업 통합 진행
+## 2026-11-09 PR50 통합 병합·main 검증 완료
+
+[PR50](https://github.com/ssw3131/running-art-mobile/pull/50)에 PR49와 로컬2017434를 통합하고 main7b2f01b에 squash 병합했다. [PR 실행212](https://github.com/ssw3131/running-art-mobile/actions/runs/42509280512)와 [main 실행213](https://github.com/ssw3131/running-art-mobile/actions/runs/42512223911)의 fast/API/Android29/Android36/필수 게이트가 모두 통과했다. 두 실행 모두 Android29 7/API36 15단계·자료 보존/정리·시나리오 재시도0·새 독립4화면 차이0을 원본 보고서로 확인했다. 홈의 코스 생성 진입은 항상 조건 설정을 열고 이전 추천 결과를 보존한다.
+
+두 원본 브랜치2017434/fbe3133을 보존했고 기본 PC main을 강제 초기화 없이 동기화했다. 완료된 통합 로컬 브랜치는 정리했으며 임시 worktree는 만들지 않았다. 최초 실패·검사 보완·Figma/화면 기준 검토·최종 main 근거는 [실행 기록](../history/executed-plans/2026-11-08-2020-pr49-ci.md)에 유지하고 문서 전용 후속 PR로 반영한다. 휴대폰 설치·운영 서버/DB/정책 게시·야외 GPS/배터리·실서버 공지 조회·새 Codex Cloud 작업의 기존 후속 범위를 이 통합 CI로 완료 처리하지 않는다.
+
+## 2026-11-08 PR49·로컬 작업 통합 진행 이력
 
 22:02 사용자 요청으로 PR49의 fbe3133과 로컬2017434를 `codex/integrate-pr49-local-20261108`에서 통합한다. 두 원본 브랜치는 보존하고 통합 PR이 기존 PR49를 대체한다. 최신 홈 진입 결정·러닝 준비/설정·배지/이미지 공유·마이페이지 변경과 다운로드 인증 수정을 함께 검증한 뒤 main에 한 번 병합한다. 아래 개별 작업의 원격 보류 문구는 실행 당시 기록이며 현재 통합 검증의 통과를 의미하지 않는다. [통합 계획](../history/executed-plans/2026-11-08-2020-pr49-ci.md).
 
