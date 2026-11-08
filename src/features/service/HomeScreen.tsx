@@ -127,7 +127,7 @@ export default function HomeScreen() {
         </Pressable>)}</View> : <AppText testID="home-empty-courses" style={{ color: c.muted }}>아직 저장한 코스가 없어요.</AppText>;
         if (item.kind === 'credits') return null;
         return <View style={styles.action}><Button label="코스 생성하러 가기" testID="open-route-lab" trailing={<Icon name="chevronRight" />}
-          onPress={() => router.navigate({ pathname: '/route-lab', params: { homeSection: 'conditions', homeShape: kind === 'initial' ? shape : undefined, homeRequest: String(Date.now()) } })} /></View>;
+          onPress={() => router.navigate(kind === 'initial' ? { pathname: '/route-lab', params: { homeSection: 'conditions', homeShape: shape, homeRequest: String(Date.now()) } } : '/route-lab')} /></View>;
       }} />
   </View>;
 }

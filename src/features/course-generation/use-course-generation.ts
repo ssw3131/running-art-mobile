@@ -108,12 +108,8 @@ export function useCourseGeneration() {
     if (!homeParams.homeRequest || homeParams.homeRequest === appliedHomeRequest.current) return;
     appliedHomeRequest.current = homeParams.homeRequest;
     if (homeParams.homeSection === 'shapes') { cancel(); setDrawingOpen(false); setTab('conditions'); return; }
-    const homeShape = homeParams.homeShape;
-    if (homeParams.homeSection !== 'conditions' && homeShape !== 'heart' && homeShape !== 'fish' && homeShape !== 'dog') return;
-    cancel(); setDrawingOpen(false); setTab('conditions');
-    // Returning home has no shape selection. Keep the user's current conditions
-    // and completed result while explicitly opening the next search form.
-    if (homeShape === 'heart' || homeShape === 'fish' || homeShape === 'dog') setShape(homeShape);
+    if (homeParams.homeShape !== 'heart' && homeParams.homeShape !== 'fish' && homeParams.homeShape !== 'dog') return;
+    cancel(); setShape(homeParams.homeShape); setDrawingOpen(false); setTab('conditions');
     if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
   }, [homeParams.homeRequest, homeParams.homeShape, homeParams.homeSection, cancel, completed]));
   useFocusEffect(useCallback(() => {
