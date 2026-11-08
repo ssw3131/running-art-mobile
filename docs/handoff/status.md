@@ -1,5 +1,9 @@
 # 현재 상태와 인수인계
 
+## 2026-11-09 통합 검증 시간 단축 진행
+
+PR50 완료 후 사용자 요청으로 개선 목표를 등록했다. main213의 API36은34분52초였으며, draft 개발 피드백·ready PR 전체 검사·동일 트리 main 증거 재사용·분야별 수동 진단·기획 변경과 테스트 검토 안내를 구현한다. [실행 계획](../history/executed-plans/2026-11-09-0436-faster-integration.md). 아직 실제 새 CI 검증 전이며 아래 PR50 성공과 구분한다.
+
 ## 2026-11-09 PR50 통합 병합·main 검증 완료
 
 [PR50](https://github.com/ssw3131/running-art-mobile/pull/50)에 PR49와 로컬2017434를 통합하고 main7b2f01b에 squash 병합했다. [PR 실행212](https://github.com/ssw3131/running-art-mobile/actions/runs/42509280512)와 [main 실행213](https://github.com/ssw3131/running-art-mobile/actions/runs/42512223911)의 fast/API/Android29/Android36/필수 게이트가 모두 통과했다. 두 실행 모두 Android29 7/API36 15단계·자료 보존/정리·시나리오 재시도0·새 독립4화면 차이0을 원본 보고서로 확인했다. 홈의 코스 생성 진입은 항상 조건 설정을 열고 이전 추천 결과를 보존한다.

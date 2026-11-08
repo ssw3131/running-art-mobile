@@ -1,5 +1,6 @@
 module.exports = {
   preset: 'jest-expo',
+  cacheDirectory: '<rootDir>/.cache/jest',
   testMatch: ['<rootDir>/tests/components/**/*.test.tsx'],
   setupFilesAfterEnv: ['<rootDir>/tests/components/setup.ts'],
   moduleNameMapper: { '^@/assets/(.*)$': '<rootDir>/assets/$1', '^@/(.*)$': '<rootDir>/src/$1' },
