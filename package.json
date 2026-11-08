@@ -100,6 +100,8 @@
     "test:components": "jest --runInBand --no-watchman",
     "test:api-contract": "node --test tests/compute-openapi.test.mjs",
     "test:properties": "node --test tests/state-sequences.test.mjs",
+    "qa:plan": "node scripts/qa/change-review.mjs",
+    "qa:local": "npm run check && npm run test:components",
     "qa:fast": "node scripts/qa/run.mjs fast",
     "qa:integration": "node scripts/qa/run.mjs integration",
     "qa:openapi": "node scripts/qa/openapi.mjs --check"

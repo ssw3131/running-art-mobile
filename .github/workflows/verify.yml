@@ -2,7 +2,7 @@ name: Verify
 on:
   pull_request:
     branches: [main]
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft]
   push:
     branches: [main]
   workflow_dispatch:
@@ -15,6 +15,11 @@ on:
         type: choice
         options: ['1', '10']
         default: '1'
+      android_scenario:
+        description: 'Targeted diagnostics never replace the required full PR check'
+        type: choice
+        options: [full, home, generation, service, achievements, accessibility, visual]
+        default: full
 
 permissions:
   contents: read
@@ -28,9 +33,16 @@ env:
 jobs:
   scope:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
     outputs:
       full: ${{ steps.scope.outputs.full }}
-      compatibility: ${{ steps.scope.outputs.compatibility }}
+      tree: ${{ steps.scope.outputs.tree }}
+      matrix: ${{ steps.scope.outputs.matrix }}
+      android_argument: ${{ steps.scope.outputs.android_argument }}
+      reused: ${{ steps.reuse.outputs.reused || 'false' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -42,17 +54,30 @@ jobs:
       - id: scope
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          ANDROID_SCENARIO: ${{ inputs.android_scenario || 'full' }}
         run: |
           if [ '${{ github.event_name }}' = workflow_dispatch ] || [ -z "$BASE" ] || [ "$BASE" = 0000000000000000000000000000000000000000 ]; then
-            echo 'full=true' >> "$GITHUB_OUTPUT"
+            node scripts/qa/scope.mjs --all
           else
             node scripts/qa/scope.mjs "$BASE"
             node scripts/qa/docs.mjs "$BASE"
           fi
+      - id: reuse
+        name: Verify identical-tree PR evidence before reusing main results
+        if: github.event_name == 'push' && steps.scope.outputs.full == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/qa/reuse-ci.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always() && github.event_name == 'push' && steps.scope.outputs.full == 'true'
+        with:
+          name: verification-reuse-${{ github.run_attempt }}
+          path: test-results/ci/reuse.json
+          retention-days: 7
 
   fast:
     needs: scope
-    if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'fast')
+    if: needs.scope.outputs.full == 'true' && needs.scope.outputs.reused != 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'fast')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -63,6 +88,8 @@ jobs:
         with:
           node-version: '24.21.0'
           cache: npm
+      - name: Validate Android harness before native build feedback
+        run: python -m unittest discover -s scripts/qa -p 'test_*.py'
       - run: bash scripts/cloud.sh setup
       - run: bash scripts/cloud.sh fast
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -74,7 +101,7 @@ jobs:
 
   api:
     needs: scope
-    if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'api')
+    if: needs.scope.outputs.full == 'true' && needs.scope.outputs.reused != 'true' && !github.event.pull_request.draft && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'api')
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -126,13 +153,13 @@ jobs:
 
   android:
     needs: scope
-    if: needs.scope.outputs.full == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'android')
+    if: needs.scope.outputs.full == 'true' && needs.scope.outputs.reused != 'true' && !github.event.pull_request.draft && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'android')
     runs-on: ubuntu-24.04
     timeout-minutes: ${{ inputs.repetitions == '10' && 240 || 60 }}
     strategy:
       fail-fast: false
       matrix:
-        api: ${{ fromJSON((github.event_name == 'push' || needs.scope.outputs.compatibility == 'true') && '[36,29]' || '[36]') }}
+        api: ${{ fromJSON(needs.scope.outputs.matrix) }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -211,9 +238,9 @@ jobs:
           heap-size: 256M
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
           disable-animations: true
-          script: python scripts/qa/run-membership-android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || '' }} --output test-results/android-${{ matrix.api }}
+          script: python scripts/qa/run-membership-android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || needs.scope.outputs.android_argument }} --output test-results/android-${{ matrix.api }}
       - name: Compare reviewed API 36 screens
-        if: matrix.api == 36
+        if: matrix.api == 36 && (github.event_name != 'workflow_dispatch' || inputs.android_scenario == 'full' || inputs.android_scenario == 'visual')
         run: node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json
       - name: Build screenshot report
         if: always()
@@ -239,22 +266,33 @@ jobs:
 
   gate:
     # A partial manual run must never satisfy the required PR check.
-    name: ${{ github.event_name == 'workflow_dispatch' && 'manual-verification' || 'verification-gate' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && 'manual-verification' || github.event.pull_request.draft && 'development-feedback' || 'verification-gate' }}
     needs: [scope, fast, api, android]
     if: always()
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.21.0'
       - env:
           SCOPE: ${{ needs.scope.result }}
           FULL: ${{ needs.scope.outputs.full }}
+          DRAFT: ${{ github.event.pull_request.draft && 'true' || 'false' }}
+          REUSED: ${{ needs.scope.outputs.reused }}
+          VERIFIED_TREE: ${{ needs.scope.outputs.tree }}
           FAST: ${{ needs.fast.result }}
           API: ${{ needs.api.result }}
           ANDROID: ${{ needs.android.result }}
           SUITE: ${{ github.event_name == 'workflow_dispatch' && inputs.suite || 'all' }}
-        run: |
-          test "$SCOPE" = success
-          if [ "$FULL" = true ]; then
-            if [ "$SUITE" = all ] || [ "$SUITE" = fast ]; then test "$FAST" = success; fi
-            if [ "$SUITE" = all ] || [ "$SUITE" = api ]; then test "$API" = success; fi
-            if [ "$SUITE" = all ] || [ "$SUITE" = android ]; then test "$ANDROID" = success; fi
-          fi
+        run: node scripts/qa/gate.mjs
+      - name: Publish exact-tree full verification receipt
+        if: github.event_name == 'pull_request' && !github.event.pull_request.draft && needs.scope.outputs.full == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: verified-${{ needs.scope.outputs.tree }}-${{ github.run_attempt }}
+          path: test-results/ci/verified.json
+          if-no-files-found: error
+          retention-days: 7
