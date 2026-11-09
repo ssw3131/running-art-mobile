@@ -19,6 +19,8 @@ test('docs skips cannot be mistaken for successful same-tree reuse', () => {
   assert.equal(summarizeAttempt({ ...run, event: 'push' }, jobs).kind, 'docs-or-setup');
   jobs.push({ name: 'scope', steps: [{ name: 'Verify identical-tree PR evidence before reusing main results', conclusion: 'success' }] });
   assert.equal(summarizeAttempt({ ...run, event: 'push' }, jobs).kind, 'reused-main');
+  jobs.find(j => j.name === 'android').name = "matrix.scenario == 'full' && format('android ({0})', matrix.api) || format('diagnostic ({0})', matrix.scenario)";
+  assert.equal(summarizeAttempt({ ...run, event: 'push' }, jobs).kind, 'reused-main');
 });
 test('deduplicate snapshots, preserve failures before rerun success, and keep unknown causes unknown', () => {
   const failed = summarizeAttempt(run, [job]);
@@ -46,4 +48,12 @@ test('cancellation and unreviewed post-merge behavior never count as a confirmed
   assert.equal(summary.failureCauses.unclassified, 0);
   assert.equal(summary.firstFailureSeconds.n, 0);
   assert.equal(summary.prs[0].postMergeReview, null);
+});
+
+test('reuse denominator includes only observed target PRs; a review without evidence remains unknown', () => {
+  const main = { ...summarizeAttempt(run, []), event: 'push', branch: 'main', kind: 'reused-main' };
+  const summary = aggregate([{ number: 55 }], [main, { ...main, runId: 11, prNumbers: [99] }],
+    { failures: [], postMergeReviews: [{ pr: 55, regressions: [] }] });
+  assert.deepEqual(summary.mainReuse, { reused: 1, eligibleObserved: 1 });
+  assert.equal(summary.postMergeReviewCount, 0);
 });

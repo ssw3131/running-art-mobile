@@ -17,7 +17,9 @@ export function summarizeAttempt(run, jobs) {
       observedAt: j.steps?.find(s => s.conclusion === 'failure')?.completed_at || j.completed_at }));
   const android = jobs.filter(j => /^(android \((29|36)\)|diagnostic \([a-z]+\))$/.test(j.name) && active(j));
   const reuseStep = jobs.find(j => j.name === 'scope')?.steps?.find(s => s.name === 'Verify identical-tree PR evidence before reusing main results');
-  const nativeJobs = jobs.filter(j => /^(android|diagnostic)( |$)/.test(j.name));
+  // GitHub reports an unexpanded name expression when a matrix job is skipped.
+  const nativeJobs = jobs.filter(j => /^(android|diagnostic)( |$)/.test(j.name)
+    || j.name === "matrix.scenario == 'full' && format('android ({0})', matrix.api) || format('diagnostic ({0})', matrix.scenario)");
   const skippedSuites = ['fast', 'api'].every(name => jobs.some(j => j.name === name && j.conclusion === 'skipped'))
     && nativeJobs.length > 0 && nativeJobs.every(j => j.conclusion === 'skipped');
   const reused = run.event === 'push' && reuseStep?.conclusion === 'success' && skippedSuites
@@ -54,7 +56,7 @@ export function aggregate(prs, attempts, annotations) {
       failedAttempts: runs.filter(a => a.failures.length).length,
       cancelledAttempts: runs.filter(a => a.conclusion === 'cancelled').length,
       firstFailures: distribution(runs.map(a => a.firstFailureSeconds)),
-      postMergeReview: annotations.postMergeReviews.find(r => r.pr === pr.number) ?? null };
+      postMergeReview: annotations.postMergeReviews.find(r => r.pr === pr.number && r.evidence?.trim() && Array.isArray(r.regressions)) ?? null };
   });
   const selected = unique.filter(a => a.event === 'pull_request' && a.prNumbers.some(n => prs.some(p => p.number === n)));
   const failureCauses = Object.fromEntries(categories.map(c => [c, 0]));
@@ -63,7 +65,8 @@ export function aggregate(prs, attempts, annotations) {
     const category = entry && categories.includes(entry.category) && entry.evidence?.trim() ? entry.category : 'unclassified';
     failureCauses[category]++;
   }
-  const main = unique.filter(a => a.event === 'push' && a.branch === 'main' && ['full', 'reused-main'].includes(a.kind));
+  const main = unique.filter(a => a.event === 'push' && a.branch === 'main' && ['full', 'reused-main'].includes(a.kind)
+    && a.prNumbers.some(n => prs.some(p => p.number === n)));
   return { prs: rows, prCount: rows.length, mergedCount: rows.filter(p => p.mergedAt).length,
     checkpoint: rows.filter(p => p.mergedAt).length >= 20 ? '20 PR 검토 시점' : rows.filter(p => p.mergedAt).length >= 10 ? '10 PR 중간 검토 시점' : '관측 중: 효과 확정 전',
     fullSuccessSeconds: distribution(selected.filter(a => a.kind === 'full' && a.conclusion === 'success').map(a => a.durationSeconds)),
@@ -119,9 +122,10 @@ export async function collectRun(client, root, id) {
     const detail = await client.get(`${root}/actions/runs/${id}/attempts/${attempt}`);
     const jobs = await client.pages(`${root}/actions/runs/${id}/attempts/${attempt}/jobs`, 'jobs');
     const summary = summarizeAttempt(detail, jobs);
-    if (detail.event === 'pull_request' && !summary.prNumbers.length) {
+    if (detail.event === 'push' || (detail.event === 'pull_request' && !summary.prNumbers.length)) {
       const prs = await client.pages(`${root}/commits/${detail.head_sha}/pulls`);
-      summary.prNumbers = prs.filter(p => p.base.ref === 'main').map(p => p.number);
+      summary.prNumbers = prs.filter(p => p.base.ref === 'main'
+        && (detail.event !== 'push' || p.merge_commit_sha === detail.head_sha)).map(p => p.number);
     }
     attempts.push(summary);
   }
