@@ -273,7 +273,8 @@ def gps_navigation():
     print('PASS: legacy GPS tab continuity, home return, pause/resume, explicit process recovery, finish/archive/service cleanup', json.dumps(final))
 
 
-def course_preparation():
+def seed_preparation_course():
+    assert SERIAL.startswith('emulator-'), 'Physical devices are forbidden'
     entry = json.loads((ROOT / '.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
     if not query("SELECT id FROM saved_courses WHERE id='" + 'f'*32 + "'"):
         s = entry['snapshot']
@@ -281,6 +282,11 @@ def course_preparation():
         sql = 'INSERT INTO saved_courses(id,name,source,shape,target_km,length_km,score,snapshot_json,snapshot_hash,created_at,updated_at,owner_id) VALUES(' + ','.join("'" + str(v).replace("'", "''") + "'" for v in values) + ');'
         p = subprocess.run([str(ADB), '-s', SERIAL, 'shell', shlex.join(['sqlite3', DB])], input=sql.encode(), capture_output=True)
         assert p.returncode == 0, p.stderr.decode()
+    return entry
+
+
+def course_preparation():
+    entry = seed_preparation_course()
     lng, lat = entry['snapshot']['route'][0]
     adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
     tap('tab-home'); tap('home-more-courses'); tap('course-row-' + 'f'*32)

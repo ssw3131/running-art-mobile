@@ -26,6 +26,7 @@ from emulator_readiness import wait_package_service
 from visual_readiness import capture_settled
 import emulator_auth
 from signup_membership import signup_membership, wait_home
+from diagnostic_setup import DIAGNOSTIC_MODES, prepare_diagnostic
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
@@ -339,6 +340,13 @@ def reset_app():
         q.shell('pm', 'grant', q.APP, 'android.permission.POST_NOTIFICATIONS')
 
 
+def reset_service_fixture():
+    q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
+    reset_app()
+    emulator_auth.seed(q, 'service'); launch(); wait_home(q); wait_for_storage(q); q.seed()
+    return preserved_fixture()
+
+
 try:
     for attempt in range(1, args.repeat + 1):
         q.OUT = args.output / f'attempt-{attempt:02}'
@@ -392,14 +400,19 @@ try:
         if args.achievements_only: steps = [('S56-01-achievements-support', lambda: service_s56(q, launch))]
         if args.visual_only: steps = []
         for scenario, action in steps:
-            step = {'id': scenario, 'status': 'running'}; result['steps'].append(step)
+            if report['mode'] in DIAGNOSTIC_MODES:
+                original_fixture, setup = prepare_diagnostic(q, launch, reset_service_fixture, wait_home, scenario)
+                result.setdefault('setups', []).append(setup)
+                save_report()
+            step = {'id': scenario, 'status': 'running', 'startedAt': datetime.now(timezone.utc).isoformat()}; result['steps'].append(step)
             previous_images = set(q.OUT.glob('*.png'))
             started = time.monotonic()
             try:
                 print(f'{attempt}: {scenario}', flush=True); action(); step['status'] = 'passed'
                 step['screenshots'] = sorted(p.name for p in set(q.OUT.glob('*.png')) - previous_images if p.name != 'current.png')
-                step['durationSeconds'] = round(time.monotonic() - started, 3)
-                save_report()
+                if report['mode'] in DIAGNOSTIC_MODES:
+                    assert preserved_fixture() == original_fixture, 'Diagnostic changed original fixture rows'
+                    step['preservation'] = 'passed'
             except Exception as error:
                 step['status'] = 'failed'; step['error'] = str(error)
                 try:
@@ -410,6 +423,10 @@ try:
                 except Exception as capture_error:
                     step['captureError'] = str(capture_error)
                 raise
+            finally:
+                step['durationSeconds'] = round(time.monotonic() - started, 3)
+                step['finishedAt'] = datetime.now(timezone.utc).isoformat()
+                save_report()
         assert preserved_fixture() == original_fixture, 'Original fixture rows changed'
         result['preservation'] = {'status': 'passed', 'sha256': hashlib.sha256(json.dumps(original_fixture, sort_keys=True).encode()).hexdigest()}
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')

@@ -29,4 +29,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   console.log(JSON.stringify(plan, null, 2));
   if (plan.tests.length) console.log(`\n관련 UI 검사:\nnpm run test:components -- --cacheDirectory .cache/jest-local --runTestsByPath ${plan.tests.join(' ')}`);
   console.log('\nPC 피드백: npm run qa:local + 관련 Node 검사. 전체 빠른 검사: 지원 환경의 npm run qa:fast 또는 draft CI. 기획/기대 동작/회귀/화면 기준 검토 후 PR ready for review.');
+  console.log('\n같은 PR 검토 기록: docs/quality/change-reviews/<작업명>.json. npm run qa:review -- ' + base + ' --working 으로 기획·보존 조건·검사·화면 근거 누락 확인. 형식은 docs/development/ci-feedback.md 참고.');
 }

@@ -182,6 +182,8 @@
 
 ## 검증과 보고
 
+기획·앱·검사 동기화와 CI 반복 감소 작업은 [변경 검토·독립 진단·CI 관측](docs/development/ci-feedback.md)을 따른다. 문서 외 변경은 같은 PR의 `docs/quality/change-reviews/*.json`에 결정/전후 동작/보존 조건/검사/화면 근거를 남기고 `qa:review`로 확인한다. 실패 원인은 원본 실행·회차 근거로 기록하며 미분류를 임의로 환경 장애로 처리하지 않는다. 10/20 PR 관측 완료와 도구 구현 완료를 구분한다.
+
 2026-11-09 사용자 요청에 따라 개발 중 기획·UI 변경은 `npm run qa:plan -- main`으로 관련 계약/검사 경로를 확인하고 draft PR에서 빠른 피드백을 받는다. 기대 동작·앱·회귀·필요한 화면 기준 검토를 함께 정리한 후 ready로 전환해 Android29/36 전체 검사를 한 번 수행한다. 후반 실패 수정은 수동 분야별 진단으로 먼저 확인한다. 동일 트리 main의 성공 증거 재사용은 자동 정책에 맡기고, 로컬 통과·부분 진단을 전체 통과로 보고하지 않는다. [검증 운영](docs/development/verification-ci.md)을 따른다.
 
 Windows에서는 `powershell -ExecutionPolicy Bypass -File .\dev.ps1 check`로 타입·린트를 확인한다. 직접 npm을 쓰려면 먼저 `. .\scripts\env.ps1`을 실행한다. 변경에 따라 doctor·build·기기 확인을 선택한다. 문서만 수정하면 링크·설정·스킬 구조 확인으로 충분하다.

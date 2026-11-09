@@ -101,6 +101,8 @@
     "test:api-contract": "node --test tests/compute-openapi.test.mjs",
     "test:properties": "node --test tests/state-sequences.test.mjs",
     "qa:plan": "node scripts/qa/change-review.mjs",
+    "qa:review": "node scripts/qa/change-contract.mjs",
+    "qa:metrics": "node scripts/qa/ci-metrics.mjs window",
     "qa:local": "npm run check && npm run test:components",
     "qa:fast": "node scripts/qa/run.mjs fast",
     "qa:integration": "node scripts/qa/run.mjs integration",

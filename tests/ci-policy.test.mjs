@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { androidSelection, checkGate, classifyChanges } from '../scripts/qa/ci-policy.mjs';
+import { androidJobs, androidSelection, checkGate, classifyChanges } from '../scripts/qa/ci-policy.mjs';
 import { findEvidence, validateEvidence } from '../scripts/qa/reuse-ci.mjs';
 import { existsSync } from 'node:fs';
 import { reviewPlan } from '../scripts/qa/change-review.mjs';
@@ -44,6 +44,14 @@ test('unknown paths remain full; native diagnostics require explicit manual sele
   assert.deepEqual(androidSelection('workflow_dispatch', 'generation'), { matrix: [36], argument: '--generation-only' });
   assert.throws(() => androidSelection('pull_request', 'visual'));
   assert.throws(() => androidSelection('workflow_dispatch', 'unknown'));
+});
+
+test('diagnostic batch owns six separate jobs and never changes the ready PR matrix', () => {
+  const jobs = androidJobs('workflow_dispatch', 'diagnostics');
+  assert.deepEqual(jobs.map(j => j.scenario), ['home', 'generation', 'service', 'achievements', 'accessibility', 'visual']);
+  assert.ok(jobs.every(j => j.api === 36 && j.argument.endsWith('-only')));
+  assert.deepEqual(androidJobs('pull_request'), [{ api: 36, scenario: 'full', argument: '' }, { api: 29, scenario: 'full', argument: '--smoke' }]);
+  assert.throws(() => androidJobs('pull_request', 'diagnostics'));
 });
 
 function evidence() {

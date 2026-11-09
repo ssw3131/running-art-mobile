@@ -11,9 +11,17 @@ export function classifyChanges(changed) {
 }
 
 export function androidSelection(event, scenario = 'full') {
+  if (event === 'workflow_dispatch' && scenario === 'diagnostics') return { matrix: [36], argument: '' };
   if (!Object.hasOwn(diagnostics, scenario)) throw Error('Unknown Android diagnostic');
   if (event !== 'workflow_dispatch' && scenario !== 'full') throw Error('Diagnostics require a manual run');
   return { matrix: scenario === 'full' ? [36, 29] : [36], argument: diagnostics[scenario] };
+}
+
+export function androidJobs(event, scenario = 'full') {
+  const selection = androidSelection(event, scenario);
+  if (scenario === 'diagnostics') return Object.entries(diagnostics).filter(([key]) => key !== 'full')
+    .map(([key, argument]) => ({ api: 36, scenario: key, argument }));
+  return selection.matrix.map(api => ({ api, scenario, argument: api === 29 ? '--smoke' : selection.argument }));
 }
 
 export function checkGate({ event, draft, full, reused, scope, fast, api, android, suite = 'all' }) {

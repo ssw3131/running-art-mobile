@@ -1,0 +1,44 @@
+name: Observe verification
+on:
+  workflow_run:
+    workflows: [Verify]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      # workflow_run can originate from a PR. Execute only trusted default-branch
+      # code; never check out its head or execute downloaded artifacts/logs.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.21.0'
+      - name: Preserve each completed Verify attempt
+        if: github.event_name == 'workflow_run'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_RUN: ${{ github.event.workflow_run.id }}
+        run: node scripts/qa/ci-metrics.mjs snapshot "$TARGET_RUN"
+      - name: Report the first twenty code PRs
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npm run qa:metrics
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: ci-observation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci-metrics
+          retention-days: 90
+          if-no-files-found: error
