@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "source": "07274abff9a71c8ce4dc06924d5c5c3a81592f05",
+  "dirty": false,
+  "startedAt": "2026-11-09T15:15:55.516182+00:00",
+  "ciRun": "42627593891",
+  "apkSha256": "f596aca4ade9629ae0e7384419232da6149e018ee41e2e6fdc9ad46bfa102bbd",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "full",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-09T15:15:55.698947+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S1-membership-explicit-consent",
+          "status": "passed"
+        },
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:18:54.404194+00:00",
+          "screenshots": [
+            "after-maestro-display.png"
+          ],
+          "durationSeconds": 48.479,
+          "finishedAt": "2026-11-09T15:19:42.884071+00:00"
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:19:42.884291+00:00",
+          "screenshots": [
+            "home-after-scroll.png",
+            "home-all-shapes-target.png",
+            "home-history-dark.png",
+            "home-history-large-font-archive.png",
+            "home-history-large-font.png",
+            "home-history-offline.png",
+            "home-history.png",
+            "home-initial-dark.png",
+            "home-initial-top.png",
+            "home-interrupted-return.png",
+            "home-interrupted.png",
+            "home-paused-return.png",
+            "home-paused.png",
+            "home-record-detail.png",
+            "home-saved-detail.png",
+            "home-saved-only.png",
+            "home-shape-applied.png",
+            "home-tab-keeps-edited-shape.png"
+          ],
+          "durationSeconds": 145.317,
+          "finishedAt": "2026-11-09T15:22:08.201561+00:00"
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:22:08.201951+00:00",
+          "screenshots": [
+            "archive-more-back-home.png",
+            "archive-saved-from-home.png",
+            "archive-view-after-tab.png",
+            "center-after-tab.png",
+            "center-before-tab.png",
+            "course-detail.png",
+            "draft-after-detail-distance.png",
+            "draft-after-detail.png",
+            "draft-after-menu-back-distance.png",
+            "draft-after-menu-back.png",
+            "draft-after-menu-link-distance.png",
+            "draft-after-menu-link.png",
+            "draft-after-system-back-distance.png",
+            "draft-after-system-back.png",
+            "draft-before-distance.png",
+            "draft-before.png",
+            "system-back-previous-archive.png"
+          ],
+          "durationSeconds": 104.907,
+          "finishedAt": "2026-11-09T15:23:53.109102+00:00"
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:23:53.109482+00:00",
+          "screenshots": [
+            "auth-cancel-callback.png",
+            "draft-after-callback-distance.png",
+            "draft-after-callback.png"
+          ],
+          "durationSeconds": 19.407,
+          "finishedAt": "2026-11-09T15:24:12.516698+00:00"
+        },
+        {
+          "id": "S0-04-save",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:24:12.517119+00:00",
+          "screenshots": [
+            "home-existing-result-before.png",
+            "home-existing-result-notice.png",
+            "home-existing-result-preserved.png",
+            "home-regeneration-cancel-preserved.png",
+            "home-regeneration-sheet.png",
+            "s2a-archive-destination.png",
+            "s2a-calculation-after-blur.png",
+            "s2a-confirm-cancel-before.png",
+            "s2a-confirm-cancelled.png",
+            "s2a-confirm.png",
+            "s2a-detail-top.png",
+            "s2a-drawing-applied.png",
+            "s2a-drawing-cancel-restored.png",
+            "s2a-drawing-canvas.png",
+            "s2a-drawing-empty.png",
+            "s2a-gpx-chooser.png",
+            "s2a-name-keyboard.png",
+            "s2a-name-restored.png",
+            "s2a-progress.png",
+            "s2a-result-map.png",
+            "s2a-save-state-transition.png",
+            "s2a-saved-reopened.png",
+            "s2a-saved.png",
+            "s2a-selected.png",
+            "s2a-slider-before.png",
+            "s2a-slider-distance-preserved.png",
+            "s2a-slider-horizontal.png",
+            "s2a-slider-vertical.png",
+            "s2a-target-off.png"
+          ],
+          "durationSeconds": 239.618,
+          "finishedAt": "2026-11-09T15:28:12.135911+00:00"
+        },
+        {
+          "id": "S0-04-restart",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:28:12.136334+00:00",
+          "screenshots": [
+            "saved-course-restart.png"
+          ],
+          "durationSeconds": 15.493,
+          "finishedAt": "2026-11-09T15:28:27.629389+00:00"
+        },
+        {
+          "id": "S0-06-gps",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:28:27.629989+00:00",
+          "screenshots": [
+            "gps-cold-recovery.png",
+            "gps-finish-archive.png",
+            "gps-home-banner.png",
+            "gps-result.png",
+            "gps-resumed.png"
+          ],
+          "durationSeconds": 112.894,
+          "finishedAt": "2026-11-09T15:30:20.526960+00:00"
+        },
+        {
+          "id": "S0-05-preparation",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:30:20.527395+00:00",
+          "screenshots": [
+            "course-preparation-map.png",
+            "course-preparation-return.png"
+          ],
+          "durationSeconds": 35.547,
+          "finishedAt": "2026-11-09T15:30:56.074549+00:00"
+        },
+        {
+          "id": "S234-01-integrated",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:30:56.075016+00:00",
+          "screenshots": [
+            "contour-qa.png",
+            "s2b-selected-crown.png",
+            "s2b-selected-dog.png",
+            "s2b-ten-km-confirm.png",
+            "s2c-applied-outline.png",
+            "s2c-contour-preview.png",
+            "s2c-image-entry.png",
+            "s2c-native-crop.png",
+            "s2c-outline-confirm.png",
+            "s2c-positive-picker.png",
+            "s2c-system-picker.png",
+            "s3-monthly-records.png",
+            "s3-retry-default-lock.png",
+            "s3-retry-finished.png",
+            "s3-retry-start-ready.png",
+            "s3-retry-stopped-destination.png",
+            "s3-retry-unlocked.png",
+            "s3-run-detail.png",
+            "s3-stopped-destination.png",
+            "s3-stopped-excluded.png",
+            "s4-focus.png",
+            "s4-map-controls.png",
+            "s4-map-paused.png",
+            "s4-map.png",
+            "s4-paused-lock-before-restart.png",
+            "s4-restored-lock.png",
+            "s4-restored-paused.png",
+            "s4-restored-unlocked.png",
+            "s4-selected-course.png",
+            "s4-selected-start.png",
+            "s4-settings-without-background-toggle.png",
+            "s4-start-ready.png",
+            "s4-touch-locked.png",
+            "s4-touch-unlocked.png"
+          ],
+          "durationSeconds": 220.842,
+          "finishedAt": "2026-11-09T15:34:36.917431+00:00"
+        },
+        {
+          "id": "S0-07-deep-link-gpx",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:34:36.918127+00:00",
+          "screenshots": [
+            "cold-course-link.png",
+            "cold-link-back.png",
+            "development-back-origin.png",
+            "development-environment.png",
+            "development-ui-preview.png",
+            "gpx-chooser.png",
+            "legacy-detail-back-archive.png",
+            "legacy-free-run-excluded.png",
+            "legacy-run-share.png"
+          ],
+          "durationSeconds": 55.514,
+          "finishedAt": "2026-11-09T15:35:32.433017+00:00"
+        },
+        {
+          "id": "S0-08-accessibility",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:35:32.433587+00:00",
+          "screenshots": [
+            "scaled-account.png",
+            "scaled-home.png",
+            "scaled-keyboard.png",
+            "scaled-menu.png"
+          ],
+          "durationSeconds": 49.432,
+          "finishedAt": "2026-11-09T15:36:21.866975+00:00"
+        },
+        {
+          "id": "S2a-02-accessibility",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:36:21.867521+00:00",
+          "screenshots": [
+            "s2a-large-address-ready.png",
+            "s2a-large-center-restored.png",
+            "s2a-large-confirm-cancelled.png",
+            "s2a-large-confirm.png",
+            "s2a-large-location-ready.png",
+            "s2a-large-return.png",
+            "s2a-large-scrolled.png",
+            "s2a-large-shapes.png"
+          ],
+          "durationSeconds": 71.041,
+          "finishedAt": "2026-11-09T15:37:32.909455+00:00"
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "startedAt": "2026-11-09T15:37:32.910126+00:00",
+          "screenshots": [
+            "s5-account-badge.png",
+            "s5-badge-detail.png",
+            "s5-badge-record.png",
+            "s5-card-options.png",
+            "s5-card-record.png",
+            "s5-card-saved-story.png",
+            "s5-card-story.png",
+            "s5-file-saved.png",
+            "s5-instagram-selected.png",
+            "s5-result-large-font-ready.png",
+            "s5-result-large-font.png",
+            "s5-result.png",
+            "s5-save-cancel-return.png",
+            "s5-square-system-share.png",
+            "s5-system-save.png",
+            "s5-system-share.png",
+            "s6-about.png",
+            "s6-faq.png",
+            "s6-guide.png",
+            "s6-inquiry-member.png",
+            "s6-menu-large-font.png",
+            "s6-menu.png",
+            "s6-notice-back.png",
+            "s6-notice-detail-wait-01.png",
+            "s6-notice-detail.png",
+            "s6-notices.png",
+            "s6-theme-dark.png",
+            "s6-theme-restarted.png"
+          ],
+          "durationSeconds": 185.728,
+          "finishedAt": "2026-11-09T15:40:38.639650+00:00"
+        }
+      ],
+      "status": "passed",
+      "preservation": {
+        "status": "passed",
+        "sha256": "b27c33bb361d66d53b6434bfecce1c916597442a366a514be397f608e37cbc9f"
+      },
+      "finishedAt": "2026-11-09T15:41:18.424294+00:00"
+    }
+  ],
+  "retries": 0,
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-09T15:41:21.299904+00:00",
+  "uiDumpReadinessWaits": 8,
+  "uiDumpTransportWarnings": 0,
+  "status": "passed"
+}

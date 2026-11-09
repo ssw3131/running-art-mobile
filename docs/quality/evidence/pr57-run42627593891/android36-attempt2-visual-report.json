@@ -1,0 +1,91 @@
+{
+  "status": "passed",
+  "baseline": "tests/visual/android-linux-api36/baseline.json",
+  "results": [
+    {
+      "attempt": "attempt-01",
+      "status": "passed",
+      "environment": {
+        "host": "Linux",
+        "api": "36",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "size": "1080x2340",
+        "density": 420,
+        "fontScale": 1,
+        "locale": "en-US",
+        "timezone": "UTC",
+        "systemBar": "demo-1200-full-signal-battery100-v1",
+        "displayProfile": "pixel_5-overlays-v1"
+      },
+      "source": "07274abff9a71c8ce4dc06924d5c5c3a81592f05",
+      "apkSha256": "f596aca4ade9629ae0e7384419232da6149e018ee41e2e6fdc9ad46bfa102bbd",
+      "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+      "results": [
+        {
+          "id": "home",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "cad781b569885429a7af3a5def604f6f009d250e2d1cf077babb972d102459cd",
+          "currentSha256": "cad781b569885429a7af3a5def604f6f009d250e2d1cf077babb972d102459cd"
+        },
+        {
+          "id": "run",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "b35404723ee34c9ac37abc172fc0175b8bb74a088fcada34bc1c0d6e4e0b0fa8",
+          "currentSha256": "b35404723ee34c9ac37abc172fc0175b8bb74a088fcada34bc1c0d6e4e0b0fa8"
+        },
+        {
+          "id": "archive",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "c6c474936436d3c2a546314b3494962dbed3988d5e6487cc3b5db06d5cc08b97",
+          "currentSha256": "c6c474936436d3c2a546314b3494962dbed3988d5e6487cc3b5db06d5cc08b97"
+        },
+        {
+          "id": "account",
+          "status": "passed",
+          "pixels": 0,
+          "masks": [
+            {
+              "reason": "system-wifi-rasterization",
+              "x": 817,
+              "y": 53,
+              "width": 41,
+              "height": 33
+            }
+          ],
+          "baselineSha256": "f1845253c126aec9a822921efeb12ccab1e860581c484b62348bd3e92c05561d",
+          "currentSha256": "f1845253c126aec9a822921efeb12ccab1e860581c484b62348bd3e92c05561d"
+        }
+      ]
+    }
+  ]
+}

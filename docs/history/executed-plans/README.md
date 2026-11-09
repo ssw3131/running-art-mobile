@@ -102,4 +102,4 @@
 
 Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절차를 수행합니다. 사람이 직접 기록할 때도 같은 규칙과 [템플릿](../../../.agents/skills/running-art-plan-record/assets/executed-plan-template.md)을 사용합니다. 예약 실행이나 파일 변경 감시 서비스는 아닙니다.
 
-- [2026-11-09-2110-sharing-platforms](2026-11-09-2110-sharing-platforms.md) — 진행 중.
+- [2026-11-09-2110-sharing-platforms](2026-11-09-2110-sharing-platforms.md) — 부분 완료: PR57/main8c7ab9f·Android36 15/29 7·기존4화면 차이0·자료 보존/정리·필수 게이트 통과, 최초 ADB 단절과 1회 재실행 근거 보존, 최종 폰 설치/화면 검증 후속.
