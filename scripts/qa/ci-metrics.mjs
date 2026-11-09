@@ -7,6 +7,8 @@ const earliest = values => values.filter(Boolean).sort()[0] ?? null;
 const latest = values => values.filter(Boolean).sort().at(-1) ?? null;
 const active = job => job.conclusion !== 'skipped';
 const categories = ['product', 'test-contract', 'environment', 'unclassified'];
+const hasFailure = attempt => attempt.failures.length > 0
+  || ['failure', 'timed_out', 'action_required', 'startup_failure'].includes(attempt.conclusion);
 
 export function summarizeAttempt(run, jobs) {
   const start = run.run_started_at || earliest(jobs.map(j => j.started_at));
@@ -50,17 +52,18 @@ export function aggregate(prs, attempts, annotations) {
   // of one attempt must not inflate counts.
   const unique = [...new Map(attempts.map(a => [`${a.runId}:${a.attempt}`, a])).values()];
   const rows = prs.map(pr => {
-    const runs = unique.filter(a => a.event === 'pull_request' && a.prNumbers.includes(pr.number));
+    const runs = unique.filter(a => ['pull_request', 'workflow_dispatch'].includes(a.event) && a.prNumbers.includes(pr.number));
     return { number: pr.number, state: pr.state, mergedAt: pr.merged_at, url: pr.html_url,
       attempts: runs.length, fullAttempts: runs.filter(a => a.kind === 'full').length,
-      failedAttempts: runs.filter(a => a.failures.length).length,
+      manualAttempts: runs.filter(a => a.event === 'workflow_dispatch').length,
+      failedAttempts: runs.filter(hasFailure).length,
       cancelledAttempts: runs.filter(a => a.conclusion === 'cancelled').length,
       firstFailures: distribution(runs.map(a => a.firstFailureSeconds)),
       postMergeReview: annotations.postMergeReviews.find(r => r.pr === pr.number && r.evidence?.trim() && Array.isArray(r.regressions)) ?? null };
   });
-  const selected = unique.filter(a => a.event === 'pull_request' && a.prNumbers.some(n => prs.some(p => p.number === n)));
+  const selected = unique.filter(a => ['pull_request', 'workflow_dispatch'].includes(a.event) && a.prNumbers.some(n => prs.some(p => p.number === n)));
   const failureCauses = Object.fromEntries(categories.map(c => [c, 0]));
-  for (const run of selected.filter(a => a.failures.length)) {
+  for (const run of selected.filter(hasFailure)) {
     const entry = annotations.failures.find(f => f.runId === run.runId && f.attempt === run.attempt);
     const category = entry && categories.includes(entry.category) && entry.evidence?.trim() ? entry.category : 'unclassified';
     failureCauses[category]++;
@@ -85,8 +88,8 @@ export function markdown(report) {
     + `main 재사용 ${d.mainReuse.reused}/${d.mainReuse.eligibleObserved} (문서 전용 제외).\n\n`
     + `실패 실행 분류: ${JSON.stringify(d.failureCauses)}. 취소는 실패 원인에 포함하지 않습니다.\n\n`
     + `병합 후 회귀: 기록된 ${d.reportedRegressions}건 / 관찰 검토 ${d.postMergeReviewCount} PR. 미검토는 회귀 0건을 뜻하지 않습니다.\n\n`
-    + '| PR | 실행 회차 | 전체 검사 회차 | 실패 | 취소 | 병합 후 관찰 |\n|---|---:|---:|---:|---:|---|\n'
-    + d.prs.map(p => `| [#${p.number}](${p.url}) | ${p.attempts} | ${p.fullAttempts} | ${p.failedAttempts} | ${p.cancelledAttempts} | ${p.postMergeReview ? '기록 있음' : '미검토'} |`).join('\n')
+    + '| PR | 실행 회차 | 필수 전체 회차 | 수동 회차 | 실패 | 취소 | 병합 후 관찰 |\n|---|---:|---:|---:|---:|---:|---|\n'
+    + d.prs.map(p => `| [#${p.number}](${p.url}) | ${p.attempts} | ${p.fullAttempts} | ${p.manualAttempts} | ${p.failedAttempts} | ${p.cancelledAttempts} | ${p.postMergeReview ? '기록 있음' : '미검토'} |`).join('\n')
     + '\n\n원본 JSON에 실행/회차/작업별 시간과 실패 단계가 있습니다. 일부 실행은 조회 시 진행 중일 수 있습니다. 실패 원인은 증거를 검토한 분류만 인정합니다.\n';
 }
 
@@ -122,7 +125,7 @@ export async function collectRun(client, root, id) {
     const detail = await client.get(`${root}/actions/runs/${id}/attempts/${attempt}`);
     const jobs = await client.pages(`${root}/actions/runs/${id}/attempts/${attempt}/jobs`, 'jobs');
     const summary = summarizeAttempt(detail, jobs);
-    if (detail.event === 'push' || (detail.event === 'pull_request' && !summary.prNumbers.length)) {
+    if (detail.event === 'push' || (['pull_request', 'workflow_dispatch'].includes(detail.event) && !summary.prNumbers.length)) {
       const prs = await client.pages(`${root}/commits/${detail.head_sha}/pulls`);
       summary.prNumbers = prs.filter(p => p.base.ref === 'main'
         && (detail.event !== 'push' || p.merge_commit_sha === detail.head_sha)).map(p => p.number);

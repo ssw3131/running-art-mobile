@@ -57,3 +57,21 @@ test('reuse denominator includes only observed target PRs; a review without evid
   assert.deepEqual(summary.mainReuse, { reused: 1, eligibleObserved: 1 });
   assert.equal(summary.postMergeReviewCount, 0);
 });
+
+test('manual diagnostics remain visible without being counted as a required full PR pass', () => {
+  const diagnostic = summarizeAttempt({ ...run, event: 'workflow_dispatch', conclusion: 'success' },
+    [{ ...job, name: 'diagnostic (service)', conclusion: 'success', steps: [] }]);
+  const summary = aggregate([{ number: 55 }], [diagnostic], { failures: [], postMergeReviews: [] });
+  assert.equal(summary.prs[0].attempts, 1);
+  assert.equal(summary.prs[0].manualAttempts, 1);
+  assert.equal(summary.prs[0].fullAttempts, 0);
+  assert.equal(summary.fullSuccessSeconds.n, 0);
+});
+
+test('workflow failures without job details are unknown failures, not zero failures or invented timings', () => {
+  const failed = summarizeAttempt(run, []);
+  const summary = aggregate([{ number: 55 }], [failed], { failures: [], postMergeReviews: [] });
+  assert.equal(summary.prs[0].failedAttempts, 1);
+  assert.equal(summary.failureCauses.unclassified, 1);
+  assert.equal(summary.firstFailureSeconds.n, 0);
+});
