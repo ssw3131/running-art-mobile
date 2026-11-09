@@ -7,6 +7,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isolatedSupabase } from './isolated-supabase.mjs';
 import { createMembershipRemote } from '../../src/modules/membership/remote.ts';
+import { createUsageBackend } from '../../supabase/functions/_shared/usage-backend.ts';
+import { prepareVisualUsage } from './visual-usage.mjs';
 
 export const ANDROID_API = 'https://localhost:54431';
 export const ANDROID_KEY = 'sb_publishable_isolated_ci';
@@ -25,7 +27,7 @@ const must = (result, description) => {
 const persist = state => writeFile(statePath, JSON.stringify(state), { mode: 0o600 });
 
 export async function membershipFixture(command, role = 'service', output = '.cache/emulator-auth/session.json') {
-  const { admin, client, env } = isolatedSupabase();
+  const { admin, client, env, url } = isolatedSupabase();
   let state;
   if (command === 'prepare') {
     await mkdir(folder, { recursive: true });
@@ -111,6 +113,19 @@ export async function membershipFixture(command, role = 'service', output = '.ca
       await writeFile(target, JSON.stringify({ fixture: 'runpen-isolated-membership-v1', projectUrl: ANDROID_API, run: state.run, role, issuer: claims.iss, session }), { mode: 0o600 });
       // Do not revoke the handed-off session. The app needs this real JWT/refresh token.
     } else must(await c.auth.signOut({ scope: 'local' }), 'Sign out verification session');
+  } else if (command === 'visual-usage') {
+    const record = state.accounts.service;
+    const { c, session } = await login(record);
+    try {
+      const usage = createUsageBackend({ url: url.href, serviceKey: env.SERVICE_ROLE_KEY,
+        identityKey: 'isolated-android-usage-key-never-production' });
+      const owner = await usage.authenticate(session.access_token);
+      assert.equal(owner, record.owner);
+      const { response } = await import('../../tests/helpers/compute-contract.mjs');
+      const proof = await prepareVisualUsage((action, args) => usage.command(owner, action, args), response(), state.visualUsage === true);
+      state.visualUsage = true; await persist(state);
+      await writeFile(resolve(folder, 'visual-usage.json'), JSON.stringify(proof, null, 2) + '\n');
+    } finally { must(await c.auth.signOut({ scope: 'local' }), 'Sign out visual preparation session'); }
   } else if (command === 'cleanup') {
     // Find only this run's planned emails, including successful requests with lost responses.
     const planned = new Set(state.users.map(user => user.email));
@@ -125,7 +140,7 @@ export async function membershipFixture(command, role = 'service', output = '.ca
     must(await admin.from('service_policies').delete().in('id', [`${state.policy}-privacy`, `${state.policy}-location`]), 'Delete isolated viewer policies');
     must(await admin.from('membership_policies').delete().eq('id', state.policy), 'Delete isolated membership policy');
     await unlink(statePath);
-  } else throw Error('Use prepare, new-signup, session, assert-complete or cleanup');
+  } else throw Error('Use prepare, new-signup, session, assert-complete, visual-usage or cleanup');
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   membershipFixture(...process.argv.slice(2)).then(() => console.log('Isolated membership fixture operation finished; credentials were not printed.'))

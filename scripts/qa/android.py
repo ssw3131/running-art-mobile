@@ -432,6 +432,22 @@ try:
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
         pin_display(q.OUT)
         # Fixed visual fixtures, independent of the timestamped GPS scenario.
+        if args.visual_only:
+            # Full acceptance must keep its real UI-generated counters. Only the
+            # standalone visual fixture prepares the reviewed 1/5 and 1/15 state.
+            setup = {'id': 'visual-server-usage', 'status': 'running', 'startedAt': datetime.now(timezone.utc).isoformat()}
+            result.setdefault('setups', []).append(setup)
+            started = time.monotonic()
+            try:
+                emulator_auth.backend(q.ROOT, 'visual-usage')
+                setup.update(json.loads((q.ROOT / '.cache/qa-membership/visual-usage.json').read_text(encoding='utf8')))
+            except Exception as error:
+                setup.update({'status': 'failed', 'error': str(error)})
+                raise
+            finally:
+                setup['durationSeconds'] = round(time.monotonic() - started, 3)
+                setup['finishedAt'] = datetime.now(timezone.utc).isoformat()
+                save_report()
         reset_app(); emulator_auth.seed(q, 'service'); launch(); wait_home(q); wait_for_storage(q); q.seed()
         capture_visuals()
         result['status'] = 'passed'
