@@ -32,6 +32,7 @@
     "실패 원인 미분류와 병합 후 미검토를 환경 장애 또는 회귀0건으로 바꾸지 않는다."
   ],
   "tests": [
+    {"path": "tests/visual-usage.test.mjs", "reason": "실제 원장 준비 전이 순서·예상 밖 사용량 거부·같은 실행 반복 검증·예약 실패를 성공으로 기록하지 않는지 검사한다."},
     {"path": "tests/change-contract.test.mjs", "reason": "오래된 기록 재사용·새 분야 누락·누락된 결정/검사/화면 근거를 거부하는지 검사한다."},
     {"path": "tests/ci-metrics.test.mjs", "reason": "병렬 시간 합산·문서 재사용 오인·재실행 최초 실패 누락·중복 표본·미검토의0건 오인을 검사한다."},
     {"path": "scripts/qa/test_diagnostic_setup.py", "reason": "필수 자료/활성 러닝/동기화 확인, 자체 코스 준비, 실제 버튼 탐색, 실패 증거와 물리 기기 거부를 검사한다."},
