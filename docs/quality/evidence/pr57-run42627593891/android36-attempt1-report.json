@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "source": "07274abff9a71c8ce4dc06924d5c5c3a81592f05",
+  "dirty": false,
+  "startedAt": "2026-11-09T13:55:40.906104+00:00",
+  "ciRun": "42627593891",
+  "apkSha256": "d9831b511e53c19193862891bcb6bba8d7c1257eebef76c50ba0c4fa80ab9bc4",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "full",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-09T13:55:41.054942+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S1-membership-explicit-consent",
+          "status": "passed"
+        },
+        {
+          "id": "S0-01-maestro",
+          "status": "failed",
+          "startedAt": "2026-11-09T13:58:46.105628+00:00",
+          "error": "Command '['/home/runner/work/running-art-mobile/running-art-mobile/.tools/maestro-2.11.0/maestro/bin/maestro', '--device', 'emulator-5554', 'test', '--format', 'junit', '--output', 'test-results/android-36/attempt-01/maestro.xml', '--test-output-dir', 'test-results/android-36/attempt-01/maestro', '/home/runner/work/running-art-mobile/running-art-mobile/.maestro/s0-navigation.yaml']' returned non-zero exit status 1.",
+          "screenshots": [
+            "failure.png"
+          ],
+          "durationSeconds": 13.623,
+          "finishedAt": "2026-11-09T13:58:59.729352+00:00"
+        }
+      ],
+      "status": "failed"
+    }
+  ],
+  "retries": 0,
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "error": "Command '['/home/runner/work/running-art-mobile/running-art-mobile/.tools/maestro-2.11.0/maestro/bin/maestro', '--device', 'emulator-5554', 'test', '--format', 'junit', '--output', 'test-results/android-36/attempt-01/maestro.xml', '--test-output-dir', 'test-results/android-36/attempt-01/maestro', '/home/runner/work/running-art-mobile/running-art-mobile/.maestro/s0-navigation.yaml']' returned non-zero exit status 1.",
+  "failureDiagnostics": [
+    {
+      "file": "failure-raw.png",
+      "status": "saved"
+    },
+    {
+      "file": "failure-window.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-activity.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-logcat.txt",
+      "status": "saved"
+    }
+  ],
+  "cleanup": {
+    "status": "failed",
+    "errors": [
+      {
+        "command": [
+          "adb",
+          "reverse"
+        ],
+        "error": "Could not remove local backend forwarding"
+      },
+      {
+        "command": [
+          "adb",
+          "reverse"
+        ],
+        "error": "Could not remove compute forwarding"
+      }
+    ]
+  },
+  "finishedAt": "2026-11-09T13:59:03.988177+00:00",
+  "uiDumpReadinessWaits": 0,
+  "uiDumpTransportWarnings": 0,
+  "status": "failed"
+}
