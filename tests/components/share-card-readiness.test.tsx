@@ -39,3 +39,17 @@ test('an asset that never responds exposes retry instead of leaving sharing lock
   await act(() => jest.advanceTimersByTime(15000));
   expect(error).toHaveBeenCalledTimes(1);
 });
+
+test('square export waits for both transparent brand layers to display', async () => {
+  const ready = jest.fn(), error = jest.fn();
+  const view = await render(<ShareCard content={content} format="square" canvasRef={null} onReady={ready} onError={error}/>);
+  await fireEvent(view.root, 'layout', {});
+  const images = screen.getAllByTestId('card-image');
+  const runner = images.find(image => image.props.source === require('../../assets/achievements/brand-runner.png'))!;
+  expect(runner).toBeDefined();
+  for (const image of images.filter(image => image !== runner)) await fireEvent(image, 'display');
+  expect(ready).not.toHaveBeenCalled();
+  await fireEvent(runner, 'display');
+  expect(ready).toHaveBeenCalledTimes(1);
+  expect(error).not.toHaveBeenCalled();
+});
