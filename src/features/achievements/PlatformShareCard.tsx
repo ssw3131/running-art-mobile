@@ -9,7 +9,7 @@ export function PlatformShareCard({content,portrait,canvasRef,onReady,onError}:{
  const loaded=useRef(new Set<string>()),failed=useRef(false),notified=useRef(false),callbacks=useRef({onReady,onError});
  useLayoutEffect(()=>{callbacks.current={onReady,onError};},[onReady,onError]);
  const avatar=!!content.avatarUri&&!avatarFailed;
- const required=['layout','gradient',...(portrait&&content.compactHeader?[]:['brand']),...(content.mapUri||content.pathUri?['path']:[]),...(avatar?['avatar']:[])];
+ const required=['layout','gradient',...(portrait&&content.compactHeader?[]:['runner','brand']),...(content.mapUri||content.pathUri?['path']:[]),...(avatar?['avatar']:[])];
  const ready=(id:string)=>{loaded.current.add(id);if(!failed.current&&!notified.current&&required.every(k=>loaded.current.has(k))){notified.current=true;callbacks.current.onReady();}};
  const fail=()=>{if(!failed.current){failed.current=true;callbacks.current.onError();}};
  useEffect(()=>{const timer=setTimeout(()=>{if(!notified.current&&!failed.current){failed.current=true;callbacks.current.onError();}},15000);return()=>clearTimeout(timer);},[]);
@@ -29,7 +29,7 @@ export function PlatformShareCard({content,portrait,canvasRef,onReady,onError}:{
     {!!content.date&&<Text allowFontScaling={false} style={text(portrait?compact?11:12.3:11.4)}>{content.date}</Text>}
     {!!content.address&&!compact&&<Text allowFontScaling={false} numberOfLines={1} style={text(portrait?12.3:11.4)}>{content.address}</Text>}
    </View>
-   {compact?<Text allowFontScaling={false} style={{fontFamily:fonts.noto.bold,fontSize:16,color:'#FFFFFF'}}>RunPen</Text>:<Image source={require('../../../assets/achievements/sharing-20261109/brand.png')} onDisplay={()=>ready('brand')} onError={fail} style={{width:brandW,height:brandH}} contentFit="contain"/>}
+   {compact?<Text allowFontScaling={false} style={{fontFamily:fonts.noto.bold,fontSize:16,color:'#FFFFFF'}}>RunPen</Text>:<View style={{width:brandW,height:brandH,alignItems:'center'}}><Image source={require('../../../assets/achievements/brand-runner.png')} onDisplay={()=>ready('runner')} onError={fail} style={{width:(brandH-brandW*18/71)*2,height:brandH-brandW*18/71}} contentFit="cover"/><Image source={require('../../../assets/achievements/brand-name.png')} onDisplay={()=>ready('brand')} onError={fail} style={{width:brandW,height:brandW*18/71}} contentFit="contain"/></View>}
   </View>
   <Text allowFontScaling={false} numberOfLines={2} adjustsFontSizeToFit style={{position:'absolute',left:portrait?24.6:18.2,right:18.2,top:portrait?144.6:95.7,fontFamily:fonts.noto.bold,fontSize:portrait?33.8:20.5,lineHeight:portrait?44:30,textAlign:portrait?'left':'center',color:'white'}}>{content.title.replace(' 코스','코스')} {content.outcome.includes('완주')?'완주':'러닝 기록'}</Text>
   <View style={{position:'absolute',...map,borderRadius:9,overflow:'hidden',backgroundColor:'#F0F4F3'}}>

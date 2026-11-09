@@ -10,19 +10,21 @@
     "tests/achievement-card.test.mjs",
     "tests/components/achievements.test.tsx",
     "tests/components/run-card-export.test.tsx",
-    "assets/achievements/sharing-20261109/brand.png",
     "assets/achievements/sharing-20261109/chevron.svg",
-    "assets/achievements/sharing-20261109/image.png",
     "assets/achievements/sharing-20261109/instagram.png",
     "assets/achievements/sharing-20261109/kakao.svg",
-    "assets/achievements/sharing-20261109/link.png",
     "assets/achievements/sharing-20261109/map.svg",
     "assets/achievements/sharing-20261109/share.svg",
     "assets/achievements/sharing-20261109/story.png",
     "src/features/achievements/PlatformShareCard.tsx",
     "src/features/achievements/SharingPlatformView.tsx",
     "src/features/achievements/use-share-map.ts",
-    "tests/components/share-map.test.tsx"
+    "tests/components/share-map.test.tsx",
+    "assets/achievements/sharing-20261109/link.svg",
+    "assets/achievements/sharing-20261109/link-selected.svg",
+    "assets/achievements/sharing-20261109/image.svg",
+    "assets/achievements/sharing-20261109/image-selected.svg",
+    "tests/components/share-card-readiness.test.tsx"
   ],
   "behavior": "changed",
   "decision": "2026-11-09 user Figma 643:4169/4246/6323/4439/4535 and completed-detail 35:5820/494:2835 replace the previous combined sharing screen.",
@@ -69,8 +71,9 @@
     "evidence": [
       "Figma QYRGII8OdvQB1SrtH3BA08 nodes643:4169,643:4246,643:6323,643:4439,643:4535,35:5820,494:2835 screenshots and high-fidelity context reviewed.",
       "assets/achievements/sharing-20261109/README.md records original assets, slots, callsites and intrinsic dimensions. Dynamic sample avatar/map/address values are not reused as static artwork.",
-      "Requested phone screen verification follows the signed main installation; no local emulator run is planned."
+      "Requested phone screen verification follows the signed main installation; no local emulator run is planned.",
+      "Android29 run42617250079 passed native export/save contracts; manual artifact review found flattened icon/brand backgrounds. Original SVG states and byte-identical transparent brand layers replace those exports before release."
     ]
   },
-  "native": "No native dependency, permission or schema changes. Use the existing capture/SAF/system-sharing modules. Run only relevant local checks and the required ready-PR Android29/36 gate once; main evidence reuse remains automatic."
+  "native": "No native dependency, permission or schema changes. Use the existing capture/SAF/system-sharing modules. Run only relevant local checks and the required ready-PR Android29/36 gate after the visual correction; main evidence reuse remains automatic."
 }
