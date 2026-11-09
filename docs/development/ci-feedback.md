@@ -46,7 +46,7 @@ PC Python 도구 검사는 실제 Android 통과가 아니다. 단독 모드는 
 
 `Observe verification`은 Verify 완료 이벤트마다 원본 회차별 메타데이터를90일 아티팩트로 보존한다. 기본 브랜치의 코드와 읽기 전용 API만 사용하고 PR 코드·아티팩트를 실행하지 않는다. 제품 필수 게이트와 독립적이며 관측 실패는 관측 미완료로 표시한다. 예약·자동 게시·배포는 없다.
 
-누적 비교는 Actions의 `Observe verification → Run workflow`, 또는 읽기 전용 GitHub 토큰을 환경변수 `GH_TOKEN`에 둔 환경에서 `npm run qa:metrics`로 실행한다. 토큰을 명령 인자나 기록에 넣지 않는다. 결과는 `test-results/ci-metrics/window.json`/`window.md`와 Actions 요약이다. 공개 저장소의 무인증 조회는 API 한도 때문에 실패할 수 있으며 일부 결과를 성공으로 내지 않는다.
+누적 비교는 main의 Verify 완료 때 자동 갱신한다. Actions의 `Observe verification → Run workflow`, 또는 읽기 전용 GitHub 토큰을 환경변수 `GH_TOKEN`에 둔 환경의 `npm run qa:metrics`로도 갱신할 수 있다. 토큰을 명령 인자나 기록에 넣지 않는다. 결과는 `test-results/ci-metrics/window.json`/`window.md`와 Actions 요약이다. 공개 저장소의 무인증 조회는 API 한도 때문에 실패할 수 있으며 일부 결과를 성공으로 내지 않는다.
 
 수집 항목:
 

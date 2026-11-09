@@ -31,7 +31,7 @@ jobs:
           TARGET_RUN: ${{ github.event.workflow_run.id }}
         run: node scripts/qa/ci-metrics.mjs snapshot "$TARGET_RUN"
       - name: Report the first twenty code PRs
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main')
         env:
           GH_TOKEN: ${{ github.token }}
         run: npm run qa:metrics
