@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "scripts/qa/service_s56.py",
+    "src/app/run-card.tsx",
+    "src/features/achievements/ShareCard.tsx",
+    "src/features/running/CompletedDetail.tsx",
+    "src/features/running/RunSharePanel.tsx",
+    "src/modules/achievements/card.ts",
+    "tests/achievement-card.test.mjs",
+    "tests/components/achievements.test.tsx",
+    "tests/components/run-card-export.test.tsx",
+    "assets/achievements/sharing-20261109/brand.png",
+    "assets/achievements/sharing-20261109/chevron.svg",
+    "assets/achievements/sharing-20261109/image.png",
+    "assets/achievements/sharing-20261109/instagram.png",
+    "assets/achievements/sharing-20261109/kakao.svg",
+    "assets/achievements/sharing-20261109/link.png",
+    "assets/achievements/sharing-20261109/map.svg",
+    "assets/achievements/sharing-20261109/share.svg",
+    "assets/achievements/sharing-20261109/story.png",
+    "src/features/achievements/PlatformShareCard.tsx",
+    "src/features/achievements/SharingPlatformView.tsx",
+    "src/features/achievements/use-share-map.ts",
+    "tests/components/share-map.test.tsx"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-09 user Figma 643:4169/4246/6323/4439/4535 and completed-detail 35:5820/494:2835 replace the previous combined sharing screen.",
+  "before": "Combined image/link sections used a 1080x903 default card and independent format/toggle controls; completed detail had no share action.",
+  "after": "Four platform tabs prepare square Instagram, portrait Story, explicit link sharing, or square/portrait file saving. Both completed-record variants open the selected record and use the revised retry button.",
+  "invariants": [
+    "Preserve existing records, account ownership, cancellation, file signing and app identity.",
+    "Only publish a link after explicit confirmation; retain revocation and unavailable-service states. Do not post or select external recipients in automated checks.",
+    "Image preparation waits for displayed assets; stale account/canvas results cannot be sent. GPS metadata is not written to PNG files; rendered map/address follow the user-approved design."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/run-card-export.test.tsx",
+      "reason": "Platform format selection, retry, account-switch cancellation and retained PNG sharing."
+    },
+    {
+      "path": "tests/components/share-map.test.tsx",
+      "reason": "Offline map fallback and late previous-account preview isolation."
+    },
+    {
+      "path": "tests/components/achievements.test.tsx",
+      "reason": "Both first and subsequent completed records share exactly the selected ID and retain retry."
+    },
+    {
+      "path": "tests/components/share-card-readiness.test.tsx",
+      "reason": "Unchanged displayed-asset readiness and failure behavior still apply."
+    },
+    {
+      "path": "tests/components/achievement-export.test.tsx",
+      "reason": "Unchanged file save cancellation and partial-write cleanup remain mandatory."
+    },
+    {
+      "path": "tests/components/run-share-card.test.tsx",
+      "reason": "Existing explicit publication confirmation remains required before copying a route link."
+    },
+    {
+      "path": "tests/achievement-card.test.mjs",
+      "reason": "Square output dimensions added; legacy normalized outline and existing format contracts retained."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "Only the five sharing states and completed-detail actions change; other screen baselines and tolerances remain unchanged.",
+    "evidence": [
+      "Figma QYRGII8OdvQB1SrtH3BA08 nodes643:4169,643:4246,643:6323,643:4439,643:4535,35:5820,494:2835 screenshots and high-fidelity context reviewed.",
+      "assets/achievements/sharing-20261109/README.md records original assets, slots, callsites and intrinsic dimensions. Dynamic sample avatar/map/address values are not reused as static artwork.",
+      "Requested phone screen verification follows the signed main installation; no local emulator run is planned."
+    ]
+  },
+  "native": "No native dependency, permission or schema changes. Use the existing capture/SAF/system-sharing modules. Run only relevant local checks and the required ready-PR Android29/36 gate once; main evidence reuse remains automatic."
+}

@@ -1,11 +1,17 @@
 import { useEffect, useLayoutEffect, useRef, type Ref } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AchievementImage as Image } from './AchievementImage';
+import { PlatformShareCard } from './PlatformShareCard';
 import { fonts } from '@/theme/tokens';
 import { cardGradient, cardSize, type CardContent, type CardOptions } from '@/modules/achievements/card';
 
+export function ShareCard(props: Parameters<typeof LegacyShareCard>[0]) {
+  if(props.format==='square'||props.format==='story')return <PlatformShareCard {...props} portrait={props.format==='story'}/>;
+  return <LegacyShareCard {...props}/>;
+}
+
 /** Fixed export canvas; screen preview scales as a bitmap after capture. */
-export function ShareCard({ content, format, canvasRef, onReady, onError }: { content: CardContent; format: CardOptions['format']; canvasRef: Ref<View>; onReady(): void; onError(): void }) {
+function LegacyShareCard({ content, format, canvasRef, onReady, onError }: { content: CardContent; format: CardOptions['format']; canvasRef: Ref<View>; onReady(): void; onError(): void }) {
   const loaded = useRef(new Set<string>());
   const failed = useRef(false), notified = useRef(false);
   const callbacks = useRef({ onReady, onError });

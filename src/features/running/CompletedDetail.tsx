@@ -1,7 +1,7 @@
 import { useRef,useState } from 'react';
 import { ActivityIndicator,Alert,Pressable,ScrollView,TextInput,View } from 'react-native';
 import { Image } from 'expo-image';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBar } from '@/components/navigation/BottomTabBar';
 import { serviceTabs } from '@/features/service/navigation';
@@ -24,7 +24,7 @@ import { isSimulationRun } from '@/modules/running/simulation-record';
 import { useTerrain } from '@/features/terrain/use-terrain';
 import { usePointAddress } from '@/features/course-generation/use-point-address';
 import { DifficultyTag } from '@/features/course-generation/DifficultyTag';
-import { GenerationIcon } from '@/features/course-generation/GenerationIcon';
+
 import { DetailIcon,InformationRow } from '@/features/courses/CourseInformation';
 import { openServiceTab } from '@/features/service/open-service-tab';
 import { shareRunCourseGpx } from '@/modules/courses/share-gpx';
@@ -79,7 +79,8 @@ export default function CompletedDetail({id}:{id:string}){
      <InformationRow icon="difficulty" label="난이도"><DifficultyTag state={{kind:terrain.state.profile?'ready':terrain.state.status==='loading'?'loading':'error',profile:terrain.state.profile??undefined}}/></InformationRow>
     </View>
     <View style={{paddingHorizontal:26,marginTop:55,gap:20}}>
-     <Button testID="run-rechallenge" label="러닝 재도전하기" leading={<GenerationIcon name="run"/>} disabled={busy} onPress={rechallenge}/>
+     <Button testID="completed-share" label="공유 하기" leading={<Image source={require('../../../assets/achievements/sharing-20261109/share.svg')} style={{width:21.5,height:20.666}}/>} disabled={busy} onPress={()=>router.push({pathname:'/run-card',params:{id}})}/>
+     <Button testID="run-rechallenge" label="러닝 재도전 하기" variant="secondary" contentStyle={{minHeight:50,backgroundColor:'#D9D9D9'}} labelStyle={{fontSize:16,color:'#757575'}} disabled={busy} onPress={rechallenge}/>
      <Button testID="completed-export-gpx" label="GPX파일 다운로드" variant="secondary" contentStyle={{minHeight:50}} labelStyle={{fontSize:16}} disabled={busy} onPress={()=>void act(()=>shareRunCourseGpx(id))}/>
      <Button testID="completed-delete" label="기록 삭제하기" variant="secondary" contentStyle={{minHeight:50,backgroundColor:'transparent'}} labelStyle={{fontSize:16}} disabled={busy} onPress={remove}/>
     </View>

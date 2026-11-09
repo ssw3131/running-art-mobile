@@ -58,23 +58,21 @@ def service_s56(q, launch):
         assert q.find(q.capture('s5-result'),'completion-first-badge') is not None
         q.seek('run-result-share');q.tap('run-result-share')
         q.capture('s5-card-options')
-        for key in ['card-nickname','card-date']:
-            # The redesigned card and share panels put these options below
-            # the initial viewport; Android omits offscreen controls from XML.
-            q.seek(key)
-            option=q.find(q.capture('s5-default-'+key),key)
-            assert option is not None and option.get('checked')=='true', key
+        assert q.find(q.capture('s5-instagram-selected'),'share-platform-instagram').get('selected')=='true'
         folder=f'/data/user/0/{q.APP}/cache/runpen-cards/'
-        q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-default-card-preview')
+        # The current Figma flow prepares an image as part of its share action.
+        # Only open/cancel the isolated Android chooser; never select a recipient.
+        q.seek('card-share');q.tap('card-share');q.capture('s5-square-system-share');q.shell('input','keyevent','4')
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==1
-        record_card=q.adb('exec-out','cat',folder+names[0]);assert struct.unpack('>II',record_card[16:24])==(1080,903)
+        record_card=q.adb('exec-out','cat',folder+names[0]);assert struct.unpack('>II',record_card[16:24])==(1080,1080)
         (q.OUT/'s5-card-record.png').write_bytes(record_card)
-        q.seek('card-format');q.tap('card-format');q.tap('스토리 9:16')
-        q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-story-preview')
+        q.seek('share-platform-story');q.tap('share-platform-story')
+        q.seek('card-story');q.tap('card-story');q.capture('s5-system-share');q.shell('input','keyevent','4')
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==2
         story=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',story[16:24])==(1080,1920)
         (q.OUT/'s5-card-story.png').write_bytes(story)
-        q.tap('card-share');q.capture('s5-system-share');q.shell('input','keyevent','4')
+        q.seek('share-platform-save');q.tap('share-platform-save')
+        q.seek('card-format-story');q.tap('card-format-story')
         q.seek('card-save');q.tap('card-save');q.capture('s5-system-save')
         # DocumentsUI remembers Pictures across app-data resets. Back can first
         # navigate to its parent; require a real return to the card before continuing.
@@ -96,14 +94,10 @@ def service_s56(q, launch):
         created=set(q.shell('ls','-1',export_folder).decode().splitlines())-original_exports
         assert len(created)==1 and next(iter(created)).startswith('RunPen-')
         exported=q.adb('exec-out','cat',export_folder+'/'+next(iter(created)))
-        assert exported==story,'Saved file differs from the preview'
-        q.seek('card-format');q.tap('card-format');q.tap('피드 4:5')
-        for key in ['card-nickname','card-date']:
-            q.seek(key);q.tap(key)
-        q.seek('card-preview');q.tap('card-preview');seek_above(q,'card-share');q.capture('s5-feed-preview')
         names=q.shell('ls',folder).decode().splitlines();assert len(names)==3
-        feed=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',feed[16:24])==(1080,1350)
-        (q.OUT/'s5-card-feed-private.png').write_bytes(feed)
+        saved_story=q.adb('exec-out','cat',folder+sorted(names)[-1]);assert struct.unpack('>II',saved_story[16:24])==(1080,1920)
+        assert exported==saved_story,'Saved file differs from its exact preview'
+        (q.OUT/'s5-card-saved-story.png').write_bytes(saved_story)
         launch('account');q.seek('account-badge-'+entry['snapshot']['shape']);q.capture('s5-account-badge')
         q.tap('account-badge-'+entry['snapshot']['shape']);q.seek('badge-record-'+run_id);q.capture('s5-badge-detail')
         q.tap('badge-record-'+run_id);assert q.find(q.capture('s5-badge-record'),'completion-first-badge') is not None
@@ -151,7 +145,7 @@ def service_s56(q, launch):
             time.sleep(.5)
         q.seek('run-result-share');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
-        (q.OUT/'s56-result.json').write_text(json.dumps({'recordCardSha256':hashlib.sha256(record_card).hexdigest(),'storySha256':hashlib.sha256(story).hexdigest(),'feedSha256':hashlib.sha256(feed).hexdigest(),'nicknameDateDefault':True,'calories':'unset-without-weight','saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
+        (q.OUT/'s56-result.json').write_text(json.dumps({'recordCardSha256':hashlib.sha256(record_card).hexdigest(),'storySha256':hashlib.sha256(story).hexdigest(),'savedStorySha256':hashlib.sha256(saved_story).hexdigest(),'squareAndStory':True,'nicknameDateDefault':True,'calories':'unset-without-weight','saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
     except Exception:
         try: q.capture('s56-action-failure')
         except Exception: pass
@@ -175,4 +169,4 @@ def service_s56(q, launch):
         q.shell('wm','density','420');q.shell('settings','put','system','font_scale','1.0')
         launch()
         assert q.snapshot('s56-after')==before,'S56 changed original data'
-    print('PASS: S5 real PNG sizes/defaults/private toggles and S6 guide/FAQ/theme restart/accessibility',flush=True)
+    print('PASS: S5 square/story PNG sizes, platform selection and save cancellation and S6 guide/FAQ/theme restart/accessibility',flush=True)

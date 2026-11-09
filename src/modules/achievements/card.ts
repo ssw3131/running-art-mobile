@@ -4,10 +4,11 @@ import { homePathSvg, type HomePath } from '../home/model.ts';
 import { courseShapes, type CourseSnapshot } from '../courses/model.ts';
 import { durationLabel, paceLabel, type Run, type RunPoint } from '../running/model.ts';
 
-export type CardOptions = { format: 'story' | 'feed' | 'card'; nickname: boolean; date: boolean };
+export type CardOptions = { format: 'story' | 'feed' | 'card' | 'square'; nickname: boolean; date: boolean };
 export const defaultCardOptions: CardOptions = { format: 'story', nickname: true, date: true };
-export const cardSize = (format: CardOptions['format']) => ({ width: 1080, height: format === 'story' ? 1920 : format==='feed'?1350:903 });
-export function cardContent(run: Run, course: CourseSnapshot | null, points: readonly RunPoint[], name: string, options: CardOptions) {
+export const cardSize = (format: CardOptions['format']) => ({ width: 1080, height: format === 'story' ? 1920 : format==='square'?1080:format==='feed'?1350:903 });
+export type CardVisual = { mapUri?:string; avatarUri?:string; address?:string; calories?:string; mapCredits?:boolean; compactHeader?:boolean };
+export function cardContent(run: Run, course: CourseSnapshot | null, points: readonly RunPoint[], name: string, options: CardOptions, visual?:CardVisual) {
   if (run.status !== 'completed') throw new Error('Only completed runs can be shared');
   const paths: HomePath[] = [];
   if (course) paths.push(course.route);
@@ -24,13 +25,13 @@ export function cardContent(run: Run, course: CourseSnapshot | null, points: rea
     nickname: options.nickname ? [...name.normalize('NFC').replace(/[\p{Cc}\p{Cf}]/gu, '').trim()].slice(0, 20).join('') || '러너' : null,
     date: options.date ? `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일` : null,
     pathLabel: course ? '계획 코스 윤곽' : '실제 러닝 윤곽',
-    // Only normalized pixel coordinates enter the image. No address, map, raw GPS, or metadata.
+    // Route geometry is normalized; the selected share screen can add a rendered map/address.
     pathUri: homePathSvg(previewPaths, '#FC5602'),
-    distance: `${(run.distanceM / 1000).toFixed(2)} km`, duration: durationLabel(run.activeMs), pace: paceLabel(run.activeMs, run.distanceM),
+    distance: `${(run.distanceM / 1000).toFixed(2)} km`, duration: durationLabel(run.activeMs), pace: paceLabel(run.activeMs, run.distanceM), ...visual,
   };
 }
 export type CardContent = ReturnType<typeof cardContent>;
 export function cardGradient(format: CardOptions['format']) {
   const height = cardSize(format).height / 3;
-  return `data:image/svg+xml;base64,${fromByteArray(strToU8(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="${height}"><defs><linearGradient id="g" x1="0" y1="0" x2="0.55" y2="0.6"><stop stop-color="#FF992D"/><stop offset="1" stop-color="#FA417F"/></linearGradient></defs><rect width="360" height="${height}" fill="url(#g)"/></svg>`))}`;
+  return `data:image/svg+xml;base64,${fromByteArray(strToU8(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="${height}"><defs><linearGradient id="g" x1="0" y1="0" x2="0.55" y2="0.6"><stop stop-color="#FF9A2E"/><stop offset="1" stop-color="#FC3F80"/></linearGradient></defs><rect width="360" height="${height}" fill="url(#g)"/></svg>`))}`;
 }

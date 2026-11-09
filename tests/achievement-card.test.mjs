@@ -10,7 +10,7 @@ test('cards default to nickname/date, retain GPS segment gaps and contain normal
  const svg=Buffer.from(card.pathUri.split(',')[1],'base64').toString();
  assert.equal((svg.match(/polyline/g)||[]).length,2);assert.doesNotMatch(svg,/127\.12345678|37\.23456789/);
  assert.equal(cardContent(run,null,points,'별 러너',{format:'feed',nickname:false,date:false}).nickname,null);
- assert.deepEqual(cardSize('story'),{width:1080,height:1920});assert.deepEqual(cardSize('feed'),{width:1080,height:1350});
+ assert.deepEqual(cardSize('square'),{width:1080,height:1080});assert.deepEqual(cardSize('story'),{width:1080,height:1920});assert.deepEqual(cardSize('feed'),{width:1080,height:1350});
 });
 test('planned outline is labelled and never exposes stored course name; long traces avoid spread limits',()=>{
  const course={shape:'heart',route:[[127,37],[128,38]],name:'집 주소 사적인 이름'};
