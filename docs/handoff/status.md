@@ -1,5 +1,9 @@
 # 현재 상태와 인수인계
 
+## 2026-11-09 기획·검사 동기화·독립 진단·CI 관측 진행
+
+사용자 요청의 개선1/2/5를 `codex/ci-review-diagnostics-metrics`에서 진행한다. 같은 PR의 기획·검사 검토 누락 확인, 분야별 시나리오의 독립 시작/보존, Verify 회차별 시간·실패·재사용 관측을 구현한다. 로컬/단독 진단/전체 원격 검증·PR/main은 진행 중이며10/20 PR의 장기 효과는 아직 미관측이다. [실행 기록](../history/executed-plans/2026-11-09-1435-ci-feedback.md)·[운영](../development/ci-feedback.md).
+
 ## 2026-11-09 최종 통합본 SM-S942N 단독 실행 설치 완료
 
 사용자 요청으로 검증된 main5a6f166의 Handset preview216340449를 07:49:27에 SM-S942N(Android17/API37)에 자료 유지 교체했다. 기존 폰 서명에 맞춘 사본의1,556개 코드/자산 항목과 설치 APK 해시를 확인했고 원본 APK/metadata도 보존했다. Metro/ADB reverse 없이 홈·지도 미리보기·보관함·마이페이지/배지와 COLD 재시작을 확인했다. 기존 Google 로그인, 코스4·러닝35·좌표7,188·메모1의 내용 및 계정 설정/동기화 선택을 보존했고 임시 내부 백업·도우미를 정리했다. 최종 홈 표시·서비스 없음, USB 분리 가능하다. [설치·서명·검증 근거](../history/executed-plans/2026-11-09-0731-final-preview-phone.md).

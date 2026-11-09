@@ -18,7 +18,7 @@ on:
       android_scenario:
         description: 'Targeted diagnostics never replace the required full PR check'
         type: choice
-        options: [full, home, generation, service, achievements, accessibility, visual]
+        options: [full, home, generation, service, achievements, accessibility, visual, diagnostics]
         default: full
 
 permissions:
@@ -42,6 +42,7 @@ jobs:
       tree: ${{ steps.scope.outputs.tree }}
       matrix: ${{ steps.scope.outputs.matrix }}
       android_argument: ${{ steps.scope.outputs.android_argument }}
+      android_jobs: ${{ steps.scope.outputs.android_jobs }}
       reused: ${{ steps.reuse.outputs.reused || 'false' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -61,6 +62,17 @@ jobs:
           else
             node scripts/qa/scope.mjs "$BASE"
             node scripts/qa/docs.mjs "$BASE"
+          fi
+      - name: Check same-PR behavior and regression review
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          DRAFT: ${{ github.event.pull_request.draft }}
+        run: |
+          if [ "$DRAFT" = true ]; then
+            node scripts/qa/change-contract.mjs "$BASE" --advisory
+          else
+            node scripts/qa/change-contract.mjs "$BASE"
           fi
       - id: reuse
         name: Verify identical-tree PR evidence before reusing main results
@@ -152,6 +164,7 @@ jobs:
           retention-days: 7
 
   android:
+    name: ${{ matrix.scenario == 'full' && format('android ({0})', matrix.api) || format('diagnostic ({0})', matrix.scenario) }}
     needs: scope
     if: needs.scope.outputs.full == 'true' && needs.scope.outputs.reused != 'true' && !github.event.pull_request.draft && (github.event_name != 'workflow_dispatch' || inputs.suite == 'all' || inputs.suite == 'android')
     runs-on: ubuntu-24.04
@@ -159,7 +172,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api: ${{ fromJSON(needs.scope.outputs.matrix) }}
+        include: ${{ fromJSON(needs.scope.outputs.android_jobs) }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -238,9 +251,9 @@ jobs:
           heap-size: 256M
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
           disable-animations: true
-          script: python scripts/qa/run-membership-android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.api == 29 && '--smoke' || needs.scope.outputs.android_argument }} --output test-results/android-${{ matrix.api }}
+          script: python scripts/qa/run-membership-android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.argument }} --output test-results/android-${{ matrix.api }}
       - name: Compare reviewed API 36 screens
-        if: matrix.api == 36 && (github.event_name != 'workflow_dispatch' || inputs.android_scenario == 'full' || inputs.android_scenario == 'visual')
+        if: matrix.api == 36 && (matrix.scenario == 'full' || matrix.scenario == 'visual')
         run: node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json
       - name: Build screenshot report
         if: always()
@@ -260,7 +273,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: android-${{ matrix.api }}-${{ github.run_attempt }}
+          name: ${{ matrix.scenario == 'full' && format('android-{0}-{1}', matrix.api, github.run_attempt) || format('android-{0}-{1}-{2}', matrix.api, matrix.scenario, github.run_attempt) }}
           path: test-results/android-${{ matrix.api }}
           retention-days: 7
 

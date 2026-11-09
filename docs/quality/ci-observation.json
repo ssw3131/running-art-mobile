@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "repository": "ssw3131/running-art-mobile",
+  "since": "2026-11-09T05:35:46Z",
+  "targetPrCount": 20,
+  "failures": [{
+    "runId": 42569253461,
+    "attempt": 1,
+    "category": "test-contract",
+    "evidence": "수동227 visual 비교 실패: 새 계정0/5·0/15와 검토 기준1/5·1/15 차이. 원본 아티팩트13652593886, 실행 기록2026-11-09-1435-ci-feedback의15:13 이미지 대조. 앱 실행/정리는 통과; 단독 서버 fixture 의존 보완."
+  }],
+  "postMergeReviews": []
+}
