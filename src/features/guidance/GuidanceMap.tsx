@@ -7,7 +7,7 @@ import { useThemeColors } from '@/theme/ThemeProvider';
 import { hideMapBuildings } from '@/modules/map/buildings';
 import type { Coordinate } from '@/modules/guidance/geometry';
 import type { GuidanceState } from '@/modules/guidance/engine';
-import { COURSE_GUIDE_COLOR,RECORDED_TRAIL_COLOR } from '@/modules/running/route-colors';
+import { COURSE_GUIDE_COLOR,RECORDED_TRAIL_COLOR,COURSE_GUIDE_WIDTH,RECORDED_TRAIL_WIDTH } from '@/modules/running/route-colors';
 
 const basicStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#EDEFEA' } }] };
 const baseStyleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
@@ -42,10 +42,10 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
       onRegionWillChange={event => { if (!followLock&&event.nativeEvent.userInteraction) setFollow(false); }}>
       <Camera ref={camera} initialViewState={{ center: route[0], zoom: 16 }} />
       <GeoJSONSource id="guidance-course" data={routeData}>
-        <Layer id="guidance-course-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': 10 }} />
-        <Layer id="guidance-course-line" type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{ 'line-color': COURSE_GUIDE_COLOR, 'line-width': 6 }} />
+        <Layer id="guidance-course-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': COURSE_GUIDE_WIDTH+2 }} />
+        <Layer id="guidance-course-line" type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{ 'line-color': COURSE_GUIDE_COLOR, 'line-width': COURSE_GUIDE_WIDTH }} />
       </GeoJSONSource>
-      <GeoJSONSource id="guidance-trace" data={paths}><Layer id="guidance-trace-line" afterId="guidance-course-line" type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{ 'line-color': RECORDED_TRAIL_COLOR, 'line-width': 7 }} /></GeoJSONSource>
+      <GeoJSONSource id="guidance-trace" data={paths}><Layer id="guidance-trace-line" afterId="guidance-course-line" type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{ 'line-color': RECORDED_TRAIL_COLOR, 'line-width': RECORDED_TRAIL_WIDTH }} /></GeoJSONSource>
       {state.returnPath.length >= 2 && <GeoJSONSource id="guidance-return" data={line(state.returnPath)}><Layer id="guidance-return-line" type="line" paint={{ 'line-color': '#9C4308', 'line-width': 5, 'line-dasharray': [2, 1] }} /></GeoJSONSource>}
       {(!state.phase||state.lapStart) && <GeoJSONSource id="guidance-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.lapStart??route[0] } }}><Layer id="guidance-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#B7580A', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} /></GeoJSONSource>}
       {showPosition && <GeoJSONSource id="guidance-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.position } }}>

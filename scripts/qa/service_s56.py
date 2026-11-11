@@ -145,7 +145,7 @@ def service_s56(q, launch):
             time.sleep(.5)
         q.seek('run-result-share');q.capture('s5-result-large-font')
         launch('service-info');q.seek('support-location');q.capture('s6-menu-large-font')
-        (q.OUT/'s56-result.json').write_text(json.dumps({'recordCardSha256':hashlib.sha256(record_card).hexdigest(),'storySha256':hashlib.sha256(story).hexdigest(),'savedStorySha256':hashlib.sha256(saved_story).hexdigest(),'squareAndStory':True,'nicknameDateDefault':True,'calories':'unset-without-weight','saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
+        (q.OUT/'s56-result.json').write_text(json.dumps({'recordCardSha256':hashlib.sha256(record_card).hexdigest(),'storySha256':hashlib.sha256(story).hexdigest(),'savedStorySha256':hashlib.sha256(saved_story).hexdigest(),'squareAndStory':True,'nicknameDateDefault':True,'calories':'default-60kg-unless-configured','saveCancel':True,'savedBytesEqualPreview':True,'shareChooser':True,'themeRestart':True,'noticesOfflineDetailBack':True}),encoding='utf8')
     except Exception:
         try: q.capture('s56-action-failure')
         except Exception: pass

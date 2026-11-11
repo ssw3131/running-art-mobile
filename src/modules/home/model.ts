@@ -1,3 +1,4 @@
+import type { BadgeProgress } from '../achievements/catalog.ts';
 import type { Run } from '../running/model.ts';
 import type { CourseSummary } from '../courses/model.ts';
 import { fromByteArray } from 'base64-js';
@@ -8,7 +9,7 @@ export type HomeCourse = { course: CourseSummary; paths: HomePath[]; previewErro
 export type HomeData = {
   owner: string; monthStart: number; monthEnd: number; monthlyDistanceM: number; runCount: number;
   recent: HomeRun[]; latestCompleted: Run | null; courseCount: number; courses: HomeCourse[];
-  currentStreak: number;
+  currentStreak: number; badges?: BadgeProgress[]; completed?: HomeRun[];
 };
 export type HomeKind = 'initial' | 'history';
 export const homeKind = (data: HomeData): HomeKind => data.runCount > 0 || data.courseCount > 0 ? 'history' : 'initial';

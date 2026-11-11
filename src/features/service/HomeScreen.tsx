@@ -1,3 +1,5 @@
+import { HomeBadgeChallenge, HomeEarnedBadges } from './HomeBadges';
+import { recommendHomeBadge } from '@/modules/home/recommendation';
 import { router, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -18,7 +20,7 @@ const shapeAssets = {
   dog: { source: require('../../../assets/home/dog.svg'), width: 52.9995, height: 45.9979, name: '강아지' },
 };
 type Shape = keyof typeof shapeAssets;
-type Row = { key: string; kind: 'initial' | 'stats' | 'run-heading' | 'course-heading' | 'runs' | 'courses' | 'action' | 'credits'; runs?: HomeRun[]; courses?: HomeCourse[] };
+type Row = { key: string; kind: 'initial' | 'stats' | 'run-heading' | 'course-heading' | 'runs' | 'courses' | 'challenge' | 'badges' | 'action' | 'credits'; runs?: HomeRun[]; courses?: HomeCourse[] };
 const viewability = { itemVisiblePercentThreshold: 1 };
 const km = (distance: number) => (distance / 1000).toFixed(1);
 const date = (at: number, withWeekday = false) => {
@@ -77,22 +79,25 @@ function Stats({ data }: { data: HomeData }) {
 }
 
 export default function HomeScreen() {
-  const auth = useAuth(), c = useThemeColors(), { data, error, retry } = useHome();
-  const { width, fontScale } = useWindowDimensions(), columns = fontScale >= 1.4 ? 1 : width < 390 ? 2 : 3;
+  const auth = useAuth(), c = useThemeColors(), { data, error, retry, recommendationSeed } = useHome();
+  const { fontScale } = useWindowDimensions(), columns = fontScale >= 1.4 ? 1 : 3;
   const list = useRef<FlatList<Row>>(null), [shape, setShape] = useState<Shape>('heart'), [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState<Set<string>>(new Set());
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken<Row>[] }) => setVisible(new Set(viewableItems.map(v => v.item.key))), []);
   useFocusEffect(useCallback(() => { setFocused(true); return () => setFocused(false); }, []));
   const kind = data ? homeKind(data) : null;
+  const challenge=useMemo(()=>recommendHomeBadge(data?.badges??[],recommendationSeed??0),[data?.badges,recommendationSeed]);
   const rows = useMemo(() => {
     if (!data) return [];
     if (kind === 'initial') return [{ key: 'initial', kind: 'initial' }, { key: 'action', kind: 'action' }] as Row[];
-    const result: Row[] = [{ key: 'stats', kind: 'stats' }, { key: 'run-heading', kind: 'run-heading' }];
-    for (let i = 0; i < Math.max(data.recent.length, 1); i += columns) result.push({ key: `runs-${i}`, kind: 'runs', runs: data.recent.slice(i, i + columns) });
-    result.push({ key: 'course-heading', kind: 'course-heading' });
-    for (let i = 0; i < Math.max(data.courses.length, 1); i += columns) result.push({ key: `courses-${i}`, kind: 'courses', courses: data.courses.slice(i, i + columns) });
+    const result: Row[] = [{key:'stats',kind:'stats'},{key:'course-heading',kind:'course-heading'}];
+    for(let i=0;i<Math.max(data.courses.length,1);i+=columns)result.push({key:`courses-${i}`,kind:'courses',courses:data.courses.slice(i,i+columns)});
+    if(challenge)result.push({key:'challenge',kind:'challenge'});
+    result.push({key:'badges',kind:'badges'},{key:'run-heading',kind:'run-heading'});
+    const completed=data.completed??data.recent.filter(({run})=>run.status==='completed'&&run.courseOutcome==='finished'&&run.courseId);
+    for(let i=0;i<Math.max(completed.length,1);i+=columns)result.push({key:`runs-${i}`,kind:'runs',runs:completed.slice(i,i+columns)});
     result.push({ key: 'action', kind: 'action' }); return result;
-  }, [data, kind, columns]);
+  }, [data, kind, columns,challenge]);
   return <View style={{ flex: 1, backgroundColor: c.background }}>
     <FlatList ref={list} testID="service-home" data={rows} keyExtractor={row => row.key} extraData={{ visible, focused, shape }}
       contentContainerStyle={styles.content} viewabilityConfig={viewability} onViewableItemsChanged={onViewableItemsChanged}
@@ -104,15 +109,17 @@ export default function HomeScreen() {
         const active = focused && visible.has(item.key), cardWidth = `${100 / columns}%` as const;
         if (item.kind === 'initial') return <InitialHome shape={shape} setShape={setShape} />;
         if (item.kind === 'stats') return <Stats data={data!} />;
+        if(item.kind==='challenge')return challenge?<HomeBadgeChallenge challenge={challenge} owner={data!.owner}/>:null;
+        if(item.kind==='badges')return <HomeEarnedBadges badges={data?.badges??[]}/>;
         if (item.kind === 'run-heading' || item.kind === 'course-heading') {
           const runs = item.kind === 'run-heading';
-          return <View style={styles.sectionHeading}><AppText weight="bold" style={styles.sectionTitle}>{runs ? '최근 달린 코스' : '최근 저장 코스'}</AppText>
-            <TextLink label="더보기" testID={runs ? 'home-more-runs' : 'home-more-courses'} onPress={openCourses} /></View>;
+          return <View style={styles.sectionHeading}><AppText weight="bold" style={styles.sectionTitle}>{runs ? '완주 코스' : '저장 코스'}</AppText>
+            <TextLink label="더보기" testID={runs ? 'home-more-runs' : 'home-more-courses'} onPress={runs?()=>router.navigate({pathname:'/courses',params:{view:'runs',fromHome:'1'}}):openCourses} /></View>;
         }
         if (item.kind === 'runs') return item.runs?.length ? <View style={styles.cards}>{item.runs.map(({ run, paths }) => {
           const outcome = homeRunOutcome(run), complete = outcome === '완주';
           return <Pressable key={run.id} testID={`home-run-${run.id}`} accessibilityRole="button" accessibilityLabel={`${run.courseName || '자유 러닝'}, ${outcome ?? '러닝 기록'}, ${km(run.distanceM)} 킬로미터, ${date(run.startedAt)}`}
-            onPress={() => run.courseId ? router.push({ pathname: '/courses/[id]', params: { id:run.courseId,runId:run.id } }) : router.push({ pathname:'/runs/[id]',params:{id:run.id} })} style={[styles.card, { width: cardWidth }]}>
+            onPress={() => router.push({ pathname:'/runs/[id]',params:{id:run.id} })} style={[styles.card, { width: cardWidth }]}>
             <HomePreview paths={paths} active={active} label="실제 러닝 경로" />
             <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{ flexShrink: 1 }}>{run.courseName || '자유 러닝'}</AppText>
               {outcome && <View style={{ backgroundColor: complete ? c.muted : c.action, paddingHorizontal: 5, borderRadius: 10 }}><AppText testID={`home-outcome-${run.id}`} style={{ color: complete ? c.surface : c.onAction, fontSize: 10, lineHeight: 16 }}>{outcome}</AppText></View>}</View>
@@ -120,12 +127,12 @@ export default function HomeScreen() {
             <AppText variant="caption" style={{ color: c.subtle }}>{km(run.distanceM)} km / {durationLabel(elapsedMs(run, Date.now()))}</AppText>
             <AppText variant="caption" style={{ color: c.subtle }}>{date(run.startedAt)}</AppText>
           </Pressable>;
-        })}</View> : <AppText testID="home-empty-runs" style={{ color: c.muted }}>아직 달린 기록이 없어요. 첫 러닝을 시작해 보세요.</AppText>;
+        })}</View> : <AppText testID="home-empty-runs" style={{ color: c.muted }}>아직 완주한 코스가 없어요. 첫 완주에 도전해 보세요.</AppText>;
         if (item.kind === 'courses') return item.courses?.length ? <View style={styles.cards}>{item.courses.map(({ course, paths, previewError }) => <Pressable key={course.id}
           testID={`home-course-${course.id}`} accessibilityRole="button" accessibilityLabel={`${course.name}, ${course.lengthKm.toFixed(1)} 킬로미터, 저장 코스 보기`}
           onPress={() => router.push({ pathname: '/courses/[id]', params: { id: course.id } })} style={[styles.card, { width: cardWidth }]}>
           <HomePreview paths={paths} active={active} unavailable={previewError} synthetic={course.source === 'synthetic'} label="저장 코스 경로" />
-          <AppText variant="caption" weight="bold">{course.name}</AppText><AppText variant="caption" style={{ color: c.subtle }}>{course.lengthKm.toFixed(1)} km</AppText>
+          <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{flexShrink:1}}>{course.name}</AppText>{course.unfinished&&<AppText testID={`home-course-progress-${course.id}`} style={{fontSize:10,lineHeight:16,color:c.onAction,backgroundColor:c.action,borderRadius:10,paddingHorizontal:5}}>진행중</AppText>}</View><AppText variant="caption" style={{ color: c.subtle }}>{course.lengthKm.toFixed(1)} km</AppText>
           <AppText variant="caption" style={{ color: c.subtle }}>{date(course.createdAt)}</AppText>
         </Pressable>)}</View> : <AppText testID="home-empty-courses" style={{ color: c.muted }}>아직 저장한 코스가 없어요.</AppText>;
         if (item.kind === 'credits') return null;

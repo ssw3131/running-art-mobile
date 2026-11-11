@@ -5,14 +5,16 @@ import HomeScreen from '../../src/features/service/HomeScreen';
 
 let mockAuth: any;
 let mockFocusEpoch = 0;
+const mockCoursesList=jest.fn();
 const mockRead = jest.fn(), mockNavigate = jest.fn(), mockPush = jest.fn();
+jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>mockAuth}}));
 jest.mock('../../src/features/auth/use-auth', () => ({ useAuth: () => mockAuth }));
-jest.mock('../../src/modules/storage/database', () => ({ getStorage: async () => ({ home: { read: () => mockRead() } }) }));
+jest.mock('../../src/modules/storage/database', () => ({ getStorage: async () => ({ home: { read: () => mockRead() },courses:{list:(...args:any[])=>mockCoursesList(...args)} }) }));
 jest.mock('expo-router', () => ({ router: { navigate: (...args: any[]) => mockNavigate(...args), push: (...args: any[]) => mockPush(...args) },
   useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect, mockFocusEpoch]) }));
 jest.mock('../../src/features/service/HomePreview', () => ({ HomePreview: () => null }));
 const data = (owner = 'A') => ({ owner, monthStart: 0, monthEnd: 1, monthlyDistanceM: 3200, runCount: 0, currentStreak: 0, latestCompleted: null, courseCount: 0, courses: [], recent: [] });
-const run = { id: 'a'.repeat(32), status: 'completed', distanceM: 3200, activeMs: 100000, startedAt: 1000, courseName: null };
+const run = { id: 'a'.repeat(32), status: 'completed', distanceM: 3200, activeMs: 100000, startedAt: 1000, courseName: '하트', courseId:'course',courseOutcome:'finished' };
 beforeEach(() => { jest.useFakeTimers(); mockFocusEpoch = 0; mockAuth = { ready: true, account: { id: 'A', name: '러너' } }; mockRead.mockReset(); mockNavigate.mockReset(); mockPush.mockReset(); AppState.currentState = 'active'; });
 afterEach(() => { jest.useRealTimers(); });
 
@@ -47,12 +49,14 @@ test('UI-HOME-01: loading/error are distinct from initial, explicit retry shows 
   expect(mockNavigate.mock.lastCall?.[0]).toMatchObject({pathname:'/route-lab',params:{homeShape:'dog'}});
 });
 
-test('UI-HOME-02: unfinished stays in history and opens the existing run without resuming', async () => {
-  mockRead.mockResolvedValue({ ...data(), runCount: 1, recent: [{ run: { ...run, status: 'interrupted', courseId: 'course', courseName: '하트' }, paths: [] }] });
-  await render(<HomeScreen />);
-  expect(screen.getByTestId('home-history')).toBeVisible(); expect(screen.queryByTestId('home-active')).toBeNull();
-  expect(screen.getByTestId('home-outcome-' + run.id)).toHaveTextContent('미완주');
-  await fireEvent.press(screen.getByTestId('home-run-' + run.id)); expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'course',runId:run.id}});
+test('UI-HOME-02: unfinished course stays in saved courses, not completed history; opening does not resume GPS', async () => {
+  const course={id:'course',name:'하트',lengthKm:3,createdAt:1000,source:'osm',unfinished:true};
+  mockRead.mockResolvedValue({...data(),runCount:1,courses:[{course,paths:[]}],completed:[],recent:[{run:{...run,status:'interrupted'},paths:[]}]});
+  await render(<HomeScreen/>);
+  expect(screen.getByTestId('home-course-progress-course')).toHaveTextContent('진행중');
+  expect(screen.queryByTestId('home-run-'+run.id)).toBeNull();
+  await fireEvent.press(screen.getByTestId('home-course-course'));
+  expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'course'}});
 });
 
 test('UI-HOME-03: history opens the real record and matching archive, without guest entry', async () => {
@@ -62,7 +66,7 @@ test('UI-HOME-03: history opens the real record and matching archive, without gu
   await fireEvent.press(screen.getByTestId('home-run-' + run.id));
   expect(mockPush).toHaveBeenCalledWith({ pathname: '/runs/[id]', params: { id: run.id } });
   await fireEvent.press(screen.getByTestId('home-more-runs'));
-  expect(mockNavigate).toHaveBeenCalledWith({ pathname: '/courses', params: { view: 'courses', fromHome: '1' } });
+  expect(mockNavigate).toHaveBeenCalledWith({ pathname: '/courses', params: { view: 'runs', fromHome: '1' } });
   expect(screen.queryByTestId('home-signup')).toBeNull();
 });
 
@@ -112,4 +116,21 @@ test('returning home starts a conditions request without replacing the previousl
   expect(mockNavigate.mock.lastCall?.[0]).toEqual({ pathname: '/route-lab', params: {
     homeSection: 'conditions', homeRequest: expect.any(String), homeShape: undefined,
   } });
+});
+
+const challengeBadge={definition:{id:'heart',kind:'shape',title:'하트 코스',accent:'첫 완주',goal:1,shapes:['heart']},progress:0,earned:false,earnedAt:null,runIds:[],completedShapes:[]};
+test('badge challenge selects an existing saved course and earned badges link to their details',async()=>{
+  mockRead.mockResolvedValue({...data(),runCount:1,badges:[challengeBadge,{...challengeBadge,definition:{...challengeBadge.definition,id:'star',title:'별 코스'},earned:true,earnedAt:1000}]});
+  mockCoursesList.mockResolvedValue([{id:'saved-heart',shape:'heart'}]);
+  await render(<HomeScreen/>);
+  expect(screen.queryByTestId('home-earned-heart')).toBeNull();
+  await fireEvent.press(screen.getByTestId('home-earned-star'));
+  expect(mockPush).toHaveBeenCalledWith({pathname:'/badge-detail',params:{id:'star'}});
+  await fireEvent.press(screen.getByTestId('home-challenge-start'));
+  expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'saved-heart'}});
+});
+test('badge challenge with no saved match preselects its shape, without generating a course',async()=>{
+  mockRead.mockResolvedValue({...data(),runCount:1,badges:[challengeBadge]});mockCoursesList.mockResolvedValue([]);
+  await render(<HomeScreen/>);await fireEvent.press(screen.getByTestId('home-challenge-start'));
+  expect(mockNavigate).toHaveBeenCalledWith({pathname:'/route-lab',params:{homeShape:'heart',homeSection:'conditions',homeRequest:expect.any(String)}});
 });

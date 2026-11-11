@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import SignupScreen from '../../src/features/membership/SignupScreen';
 
 const mockAuth = { ready: true, busy: false, message: '', account: { id: 'owner-a', name: '기존 이름', picture: 'provider', email: '', avatarUrl: null } };
@@ -7,6 +7,8 @@ const mockPolicy = { id: 'qa-v1', terms: 'QA terms', privacy: 'QA privacy', publ
 let mockState: any;
 let mockBlur: (() => void) | undefined;
 const mockPrepare = jest.fn(), mockRetryPolicy = jest.fn(), mockSignOut = jest.fn(), mockReload = jest.fn(), mockSaveProfile = jest.fn(), mockAccept = jest.fn(), mockPick = jest.fn(), mockDiscard = jest.fn();
+const mockSavePreferences=jest.fn(),mockPreferences=jest.fn();
+jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({account:{preferences:()=>mockPreferences(),savePreferences:(value:any)=>mockSavePreferences(value)}})}));
 jest.mock('../../src/features/auth/use-auth', () => ({ useAuth: () => mockAuth }));
 jest.mock('../../src/features/membership/use-membership', () => ({ useMembership: () => mockState }));
 jest.mock('../../src/modules/auth/runtime', () => ({ profilePhotosEnabled: true, authentication: { getSnapshot: () => mockAuth, signOut: () => mockSignOut(), saveProfile: (...args: any[]) => mockSaveProfile(...args) } }));
@@ -19,7 +21,7 @@ jest.mock('expo-router', () => ({ router: { replace: jest.fn() }, useFocusEffect
   require('react').useEffect(() => { mockBlur = effect(); return mockBlur; }, [effect]);
 } }));
 
-beforeEach(() => { mockState = { owner: 'owner-a', status: 'loading', policy: null, policyStatus: 'unavailable', message: '', busy: false }; });
+beforeEach(() => { mockPreferences.mockResolvedValue({theme:'system',guidance:{voice:true}});mockSavePreferences.mockResolvedValue(undefined);mockState = { owner: 'owner-a', status: 'loading', policy: null, policyStatus: 'unavailable', message: '', busy: false }; });
 
 test('UI-SIGNUP-04: loading, unavailable and error stay incomplete; explicit retry and confirmed completion', async () => {
   const view = await render(<SignupScreen />);
@@ -106,4 +108,19 @@ test('preset selection marks only the prepared choice and profile save precedes 
   expect(mockSaveProfile).toHaveBeenCalledWith({ nickname: '기존 이름', picture: 'uploaded' }, photo);
   expect(screen.getByTestId('signup-nickname').props.value).toBe('기존 이름');
   expect(screen.getByTestId('signup-preset-1').props.accessibilityState.selected).toBe(true);
+});
+
+test('optional weight shows the 60kg fallback and rejects invalid input before profile or consent writes',async()=>{
+  mockState={...mockState,status:'required',policy:mockPolicy,policyStatus:'ready'};
+  await render(<SignupScreen/>);expect(screen.getByText(/기본 몸무게 60kg/)).toBeVisible();
+  await fireEvent.changeText(screen.getByTestId('signup-weight'),'0');await fireEvent.press(screen.getByTestId('signup-consent-all'));
+  await fireEvent.press(screen.getByTestId('signup-complete'));
+  expect(screen.getByTestId('signup-message')).toHaveTextContent(/10~500kg/);expect(mockAccept).not.toHaveBeenCalled();
+});
+test('signup persists valid optional weight with the existing owned preferences before consent completes',async()=>{
+  mockState={...mockState,status:'required',policy:mockPolicy,policyStatus:'ready'};
+  mockSaveProfile.mockResolvedValue(true);mockAccept.mockImplementation(async(_input:unknown,save:()=>Promise<boolean>)=>save());
+  await render(<SignupScreen/>);await fireEvent.changeText(screen.getByTestId('signup-weight'),'65.5');
+  await fireEvent.press(screen.getByTestId('signup-consent-all'));await fireEvent.press(screen.getByTestId('signup-complete'));
+  await waitFor(()=>expect(mockSavePreferences).toHaveBeenCalledWith({theme:'system',guidance:{voice:true},weightKg:65.5}));
 });

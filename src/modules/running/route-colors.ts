@@ -1,2 +1,4 @@
-export const COURSE_GUIDE_COLOR='#FF674C';
-export const RECORDED_TRAIL_COLOR='#1F6BFF';
+export const COURSE_GUIDE_COLOR='#1F6BFF';
+export const RECORDED_TRAIL_COLOR='#FC5602';
+export const COURSE_GUIDE_WIDTH=3;
+export const RECORDED_TRAIL_WIDTH=7;

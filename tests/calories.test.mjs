@@ -11,10 +11,10 @@ test('body weight requires explicit validated kilograms, accepts comma/fullwidth
  for(const input of [null,'70',Infinity,NaN,70.55])assert.throws(()=>validateWeightKg(input));
  assert.deepEqual(validatePreferences(defaultAccountPreferences),defaultAccountPreferences);
 });
-test('calories use recorded metres and explicit weight, never a default or planned course distance',()=>{
+test('calories use recorded metres and the explicit weight or user-approved 60kg default',()=>{
  assert.equal(estimatedRunningKcal(5200,70),364);assert.equal(estimatedRunningKcal(3000,65.5),197);
- assert.equal(estimatedRunningKcal(0,70),0);assert.equal(estimatedRunningKcal(3000,undefined),null);
- for(const [distance,weight] of [[-1,70],[NaN,70],[1000,0],[1000,Infinity]])assert.equal(estimatedRunningKcal(distance,weight),null);
+ assert.equal(estimatedRunningKcal(0,70),0);assert.equal(estimatedRunningKcal(3000,undefined),180);
+ for(const [distance,weight] of [[-1,70],[NaN,70],[1000,0],[1000,Infinity],[1000,null]])assert.equal(estimatedRunningKcal(distance,weight),null);
 });
 test('weight persists only inside owned local preferences and can be removed without changing other settings',async t=>{
  const db=openSqlite(':memory:');t.after(()=>db.closeAsync());await migrateDatabase(db);

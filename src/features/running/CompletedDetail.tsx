@@ -74,7 +74,7 @@ export default function CompletedDetail({id}:{id:string}){
     <View style={{paddingHorizontal:32,paddingTop:34,gap:17}}>
      <InformationRow icon="flag" label="코스명"><View style={{flexDirection:'row',gap:16,alignItems:'center'}}><AppText weight="bold" style={{fontSize:18,flexShrink:1}}>{data.course.name}</AppText><Pressable testID="completed-edit-name" accessibilityRole="button" accessibilityLabel="기록의 코스 이름 수정" hitSlop={16} onPress={()=>{setName(data.course!.name);setEditing(true);}}><DetailIcon name="edit"/></Pressable></View></InformationRow>
      <InformationRow icon="pin" label="출발지"><AppText weight="bold" style={{fontSize:16}}>{address.label}</AppText></InformationRow>
-     <InformationRow icon="map" label="전체 거리"><AppText weight="bold" style={{fontSize:18}}>{(data.run.distanceM/1000).toFixed(2)} km</AppText></InformationRow>
+     <InformationRow icon="map" label="전체 거리"><AppText testID="run-distance" weight="bold" style={{fontSize:18}}>{(data.run.distanceM/1000).toFixed(2)} km</AppText></InformationRow>
      <InformationRow icon="watch" label="실제 러닝 시간"><AppText weight="bold" style={{fontSize:18}}>{durationLabel(data.run.activeMs).replaceAll(':',' : ')}</AppText></InformationRow>
      <InformationRow icon="difficulty" label="난이도"><DifficultyTag state={{kind:terrain.state.profile?'ready':terrain.state.status==='loading'?'loading':'error',profile:terrain.state.profile??undefined}}/></InformationRow>
     </View>

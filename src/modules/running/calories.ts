@@ -1,4 +1,5 @@
 import { StorageError } from '../storage/types.ts';
+export const DEFAULT_WEIGHT_KG=60;
 export const MIN_WEIGHT_KG=10,MAX_WEIGHT_KG=500;
 export function validateWeightKg(value:unknown):number{
  if(typeof value!=='number'||!Number.isFinite(value)||value<MIN_WEIGHT_KG||value>MAX_WEIGHT_KG||Math.abs(value*10-Math.round(value*10))>1e-7)throw new StorageError('validation','체중은 10~500kg 사이, 소수점 한 자리까지 입력해 주세요.');
@@ -14,6 +15,6 @@ export function parseWeightKg(text:string):number|undefined{
  * Use the recorded distance, never the planned course length. Simulations are hypothetical only.
  */
 export function estimatedRunningKcal(distanceM:number,weightKg:number|undefined):number|null{
- if(weightKg===undefined||!Number.isFinite(distanceM)||distanceM<0)return null;
- try{const value=validateWeightKg(weightKg)*(distanceM/1000);return Number.isFinite(value)?Math.round(value):null;}catch{return null;}
+ if(!Number.isFinite(distanceM)||distanceM<0)return null;
+ try{const value=validateWeightKg(weightKg===undefined?DEFAULT_WEIGHT_KG:weightKg)*(distanceM/1000);return Number.isFinite(value)?Math.round(value):null;}catch{return null;}
 }
