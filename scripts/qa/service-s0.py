@@ -169,11 +169,12 @@ def navigation():
     returned = capture('system-back-previous-archive')
     assert find(returned, 'tab-archive').get('selected') == 'true'
     assert find(returned, '저장 코스').get('selected') == 'true'
-    tap('tab-home'); seek('home-more-runs'); tap('home-more-runs')
+    tap('tab-home'); seek('home-more-courses'); tap('home-more-courses')
     assert find(capture('archive-saved-from-home'), '저장 코스').get('selected') == 'true'
     tap('service-back')
     assert find(capture('archive-more-back-home'), 'service-home') is not None
     seek('home-more-runs'); tap('home-more-runs')
+    assert find(capture('archive-completed-from-home'), '완주 기록').get('selected') == 'true'
     tap('완주 기록')
     tap('tab-account'); tap('tab-archive')
     retained=capture('archive-view-after-tab')

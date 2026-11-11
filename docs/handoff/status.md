@@ -1,5 +1,9 @@
 # 현재 상태와 인수인계
 
+## 2026-11-12 선택 몸무게·반복 홈 PR59·SM-A102N 설치
+
+기본60kg 안내·선택 가입 입력·홈 뱃지 도전/획득 목록·미완주 우선 정렬·러닝 파랑3/주황7 경로를 [PR59](https://github.com/ssw3131/running-art-mobile/pull/59) c55c099로 올리고 SM-A102N에 preview216572743을 자료 유지 설치했다. 기존 로그인 홈·진행중 우선·획득 뱃지·완주 코스 표시와 UID/최초 설치 시각 유지 확인. 사용자 요청은 PR로 main 미병합이다. Draft251 성공, ready252 scope/fast/API 성공·Android29/36 진행 중이므로 전체 필수 통과는 아직 아니다. [실행·설치 근거](../history/executed-plans/2026-11-11-2341-home-progress-weight.md). 후속 폰 대조에서 뼈다귀 CTA의 하트 선택 결함을 발견해 12종 진입을 보완한다. API29의 이전 더보기 기대도 새 저장/완주 분리 계약에 맞춰 수정 중이다. 최종 APK 재설치와 CI는 후속.
+
 ## 2026-11-10 PR57 공유 화면 병합·필수 검사 복구 완료
 
 [PR57](https://github.com/ssw3131/running-art-mobile/pull/57)을 main8c7ab9f에 squash 병합했다. 실행247/42627593891 첫 Android36 실패는 Maestro 첫 launchApp의 ADB `device offline`/UNAVAILABLE였고, 실패 후 앱 홈/다섯 탭과 adbd 연결 종료·재연결 로그를 확인했다. 최초 cleanup 실패도 그대로 보존했다. 같은 소스의 실패 작업만1회 재실행해 Android36 full15·Android29 smoke7·자료 보존/정리·시나리오 재시도0·기존4화면 차이0·필수 게이트 통과를 원본 보고서로 확인했다. 제품·QA 코드·기준/마스크/임계값 변경 없음. ADB 단절의 근본 원인은 미확정이며 이 재실행에서 재현되지 않았다.

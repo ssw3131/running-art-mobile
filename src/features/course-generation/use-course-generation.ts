@@ -14,7 +14,7 @@ import { calculateServerRoute } from '@/modules/route-compute/mobile';
 
 import { candidateOverlay } from '@/modules/route-engine/geojson';
 import type { Point, ShapeId } from '@/modules/route-engine/types';
-import { generationRadiusKm, isGenerationDistance } from '@/modules/route-engine/service-shapes';
+import { generationRadiusKm, isGenerationDistance, SERVICE_SHAPES } from '@/modules/route-engine/service-shapes';
 import { FIGMA_SHAPE_VERSION } from '@/modules/route-engine/figma-contours';
 
 import { compareReference } from '@/modules/route-engine/verification';
@@ -108,12 +108,12 @@ export function useCourseGeneration() {
     if (!homeParams.homeRequest || homeParams.homeRequest === appliedHomeRequest.current) return;
     appliedHomeRequest.current = homeParams.homeRequest;
     if (homeParams.homeSection === 'shapes') { cancel(); setDrawingOpen(false); setTab('conditions'); return; }
-    const homeShape = homeParams.homeShape;
-    if (homeParams.homeSection !== 'conditions' && homeShape !== 'heart' && homeShape !== 'fish' && homeShape !== 'dog') return;
+    const homeShape = SERVICE_SHAPES.find(item => item.id === homeParams.homeShape)?.id;
+    if (homeParams.homeSection !== 'conditions' && !homeShape) return;
     cancel(); setDrawingOpen(false); setTab('conditions');
     // Returning home has no shape selection. Keep the user's current conditions
     // and completed result while explicitly opening the next search form.
-    if (homeShape === 'heart' || homeShape === 'fish' || homeShape === 'dog') setShape(homeShape);
+    if (homeShape) setShape(homeShape);
     if (completed) setState({ kind: 'done', message: '이전 계산 결과를 표시하고 있어요. 다시 계산하면 새 조건이 적용돼요.' });
   }, [homeParams.homeRequest, homeParams.homeShape, homeParams.homeSection, cancel, completed]));
   useFocusEffect(useCallback(() => {

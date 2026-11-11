@@ -32,7 +32,10 @@
     "tests/components/home.test.tsx",
     "tests/components/signup-screen.test.tsx",
     "tests/course-priority.test.mjs",
-    "tests/home-challenge.test.mjs"
+    "tests/home-challenge.test.mjs",
+    "scripts/qa/service-s0.py",
+    "src/features/course-generation/use-course-generation.ts",
+    "tests/components/generation-home-entry.test.tsx"
   ],
   "behavior": "changed",
   "decision": "2026-11-11 user Figma 680:2371/680:2586/542:2841/24:3818/35:4724; explicit 60kg default and visible fallback text. PR and phone installation requested; main merge is not requested.",
@@ -92,8 +95,9 @@
     "evidence": [
       "Figma screenshots and high-fidelity contexts for all five supplied nodes reviewed.",
       "assets/home/challenge-20261111/README.md records original stage layers, intrinsic dimensions and HomeBadges callsites; badge maps/profile/statistics stay dynamic.",
-      "Signed APK phone inspection follows the build. Local emulator is not used."
+      "Signed APK phone inspection follows the build. Local emulator is not used.",
+      "SM-A102N preview216572743: actual home saved progress ordering/earned badges/completed courses and challenge card displayed. Bone CTA reached conditions but retained heart; corrected product allowlist and covered nine previously excluded shapes. Follow-up APK installation pending."
     ]
   },
-  "native": "No new native dependency, schema or permission. Existing capture/maps/account preferences and signed handset workflow are reused. Draft feedback precedes ready-PR required checks; no main merge. Native home fixture now has a finished owned course; active recovery is checked through its saved-course row, preserving no-GPS-resume and original-row assertions. S56 calorie evidence is default-60kg-unless-configured; export dimensions and byte assertions remain."
+  "native": "No new native dependency, schema or permission. Existing capture/maps/account preferences and signed handset workflow are reused. Draft feedback precedes ready-PR required checks; no main merge. Native home fixture now has a finished owned course; active recovery is checked through its saved-course row, preserving no-GPS-resume and original-row assertions. S56 calorie evidence is default-60kg-unless-configured; export dimensions and byte assertions remain. Follow-up: handset bone challenge exposed the legacy three-shape entry allowlist; use SERVICE_SHAPES for all twelve and keep unknown input ignored. CI252/API29 failed old home-more-runs -> saved-tab assertion; test saved-more and completed-more separately without removing tab-history preservation checks."
 }
