@@ -247,10 +247,13 @@ def gps_navigation():
     row = query("SELECT id,status,point_count FROM running_sessions WHERE status <> 'completed'")[0]
     assert row['id'] == run_id and row['status'] == 'running' and row['point_count'] > initial_count
     seek('run-pause'); tap('run-pause')
-    tap('tab-home'); seek('home-run-' + run_id); tap('home-run-' + run_id)
+    tap('tab-home')
+    assert find(capture('gps-paused-not-completed'), 'home-run-' + run_id) is None
+    shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///runs/'+run_id,APP)
+    time.sleep(2)
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'paused'
-    # Free-running home cards open their historical detail first. Opening it
-    # must not resume or mutate the paused session.
+    # Legacy free sessions no longer appear among completed course cards.
+    # Their retained historical detail must still open without resuming GPS.
     seek('진행 중인 러닝으로 이동'); tap('진행 중인 러닝으로 이동')
     seek('run-start'); tap('run-start'); tap('계속'); inject(12)
     capture('gps-resumed')
@@ -259,7 +262,9 @@ def gps_navigation():
     time.sleep(3)
     assert find(capture('gps-cold-recovery'), 'home-history') is not None
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'interrupted'
-    seek('home-run-' + run_id); tap('home-run-' + run_id)
+    assert find(capture('gps-interrupted-not-completed'), 'home-run-' + run_id) is None
+    shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///runs/'+run_id,APP)
+    time.sleep(2)
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'interrupted'
     seek('진행 중인 러닝으로 이동'); tap('진행 중인 러닝으로 이동')
     seek('run-start'); tap('run-start'); tap('계속'); inject(16)
