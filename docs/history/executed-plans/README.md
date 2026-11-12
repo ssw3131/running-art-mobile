@@ -110,4 +110,4 @@ Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절�
 
 - [2026-11-12-2130-course-lists-badge-live.md](2026-11-12-2130-course-lists-badge-live.md) — 완료: 동일 PR59·SM-A102N 최종 설치, main 미반영.
 
-- [2026-11-12-2327-live-trail-refresh.md](2026-11-12-2327-live-trail-refresh.md) — 진행 중: 실시간 궤적 갱신 재현/수정.
+- [2026-11-12-2327-live-trail-refresh.md](2026-11-12-2327-live-trail-refresh.md) — 완료(PR59·main 미병합): 배포 최적화 경로 갱신 수정·SM-A102N 시뮬레이션 즉시 주황선 확인.

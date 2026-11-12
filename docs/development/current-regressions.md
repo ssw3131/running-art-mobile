@@ -60,3 +60,7 @@ Figma 643:4169/4246/6323/4439/4535를 기준으로 공유 화면은 인스타그
 뱃지 획득 조건은 원본494:3414 체크 SVG24x24를 사용한다. 제목/이름의 중첩 텍스트도 글꼴 크기를 명시하고 자동 줄바꿈을 허용한다. GPS 저장 transaction 성공 뒤 화면을 즉시 갱신하며, 다른 JS 인스턴스/재진입을 위한1초 폴링을 유지한다. 합류/복귀 선은 실제 주황 궤적 아래다. GPS 필터·공백·완주 판정·기록·계정 소유권은 바꾸지 않는다.
 
 관련 회귀: `home`, `saved-course-presentation`, `running-chooser`, `archive`, `runs`, `badge-gallery`, `course-generation`, `run-recording-refresh`, `guidance-trail`; Node `road-address`, `running-controller`, `archive-retry`, `home`. 기존 홈의 무작위 추천·변경된 보관함 전체 프레임 기준은 후속이며 제품 영역 마스크/허용오차로 통과시키지 않는다. 사용자 지시로 PR59 draft/main 미병합을 유지한다.
+
+## 2026-11-13 시뮬레이션 trace snapshot
+
+loop/legacy 엔진의 공개 trace는 copy-on-write로 갱신한다. 같은 배열의 push/splice는 배포 React Compiler가 GuidanceMap 하위 JSX를 재사용해 주황선을 첫 점에 고정시키므로 금지한다. 이전 snapshot/좌표는 다음 입력으로 바뀌지 않아야 한다. `guidance-trail`은 실제 Android/Hermes production Babel/React Compiler로 부모 컴포넌트를 변환한 회귀를 포함한다. Map/Camera/단일 source ID와 파랑3/주황7 순서는 유지한다. Handset44/SM-A102N 시뮬레이션 같은 화면 연속 이동에서 즉시 주황선 확인, 앞선42/43 미해결 이력은 실행 기록에 보존했다. 야외 GPS 검증으로 확대 해석하지 않는다.
