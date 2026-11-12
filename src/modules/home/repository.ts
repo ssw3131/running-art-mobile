@@ -53,8 +53,8 @@ export function createHomeRepository(database: StorageDatabase, scope: OwnerScop
         const last=await tx.getFirstAsync<{status:string;outcome:string}>(`SELECT status,course_outcome AS outcome FROM running_sessions WHERE owner_id=? AND (course_id=? OR course_snapshot_hash=?) ORDER BY (status!='completed') DESC,coalesce(ended_at,started_at) DESC,started_at DESC,id DESC LIMIT 1`,owner,summary.id,hash);
         const course={...summary,unfinished:!!last&&!(last.status==='completed'&&last.outcome==='finished'),inProgress:!!last&&last.status!=='completed'};
         try {
-          const route = decodeSnapshot(json, hash).route, step = Math.max(1, Math.ceil(route.length / 240));
-          courses.push({ course, paths: [route.filter((_, i) => i % step === 0 || i === route.length - 1)], previewError: false });
+          const snapshot = decodeSnapshot(json, hash), route = snapshot.route, step = Math.max(1, Math.ceil(route.length / 240));
+          courses.push({ course, origin: snapshot.origin, paths: [route.filter((_, i) => i % step === 0 || i === route.length - 1)], previewError: false });
         } catch { courses.push({ course, paths: [], previewError: true }); }
       }
       const completedRuns=await tx.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? AND status='completed' AND course_outcome='finished' AND course_id IS NOT NULL ORDER BY started_at DESC,id DESC LIMIT 5`,owner);

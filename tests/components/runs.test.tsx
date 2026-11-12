@@ -31,3 +31,12 @@ test('UI-RUNS-02: storage failure is announced and refresh recovers', async () =
   expect(screen.queryByRole('alert')).toBeNull();
   expect(screen.getByTestId('runs-empty')).toBeVisible();
 });
+
+test('finished list shows estimated time and finish date, without simulation labels',async()=>{
+ const endedAt=new Date(2026,10,12,1,0).getTime();
+ jest.mocked(getStorage).mockResolvedValue({runs:{finished:async()=>[{id:'finished',status:'completed',courseId:'course',courseOutcome:'finished',shape:'heart',courseName:'하트',distanceM:5000,activeMs:1000,startedAt:endedAt-7200000,endedAt,reason:'simulation'}]}} as any);
+ await render(<RunsScreen embedded/>);
+ expect(screen.getByLabelText('거리와 예상 러닝 시간')).toHaveTextContent(/5\.0 km.*00:33:00/);
+ expect(screen.getByText('2026/11/12')).toBeVisible();
+ expect(screen.queryByText('시뮬레이션')).toBeNull();
+});

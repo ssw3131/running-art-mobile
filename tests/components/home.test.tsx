@@ -53,7 +53,7 @@ test('UI-HOME-02: unfinished course stays in saved courses, not completed histor
   const course={id:'course',name:'하트',lengthKm:3,createdAt:1000,source:'osm',unfinished:true};
   mockRead.mockResolvedValue({...data(),runCount:1,courses:[{course,paths:[]}],completed:[],recent:[{run:{...run,status:'interrupted'},paths:[]}]});
   await render(<HomeScreen/>);
-  expect(screen.getByTestId('home-course-progress-course')).toHaveTextContent('진행중');
+  expect(screen.getByTestId('home-course-progress-course')).toHaveTextContent('미완주');
   expect(screen.queryByTestId('home-run-'+run.id)).toBeNull();
   await fireEvent.press(screen.getByTestId('home-course-course'));
   expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'course'}});
@@ -119,7 +119,7 @@ test('returning home starts a conditions request without replacing the previousl
 });
 
 const challengeBadge={definition:{id:'heart',kind:'shape',title:'하트 코스',accent:'첫 완주',goal:1,shapes:['heart']},progress:0,earned:false,earnedAt:null,runIds:[],completedShapes:[]};
-test('badge challenge selects an existing saved course and earned badges link to their details',async()=>{
+test('badge challenge opens its challenge detail even when a matching course is saved',async()=>{
   mockRead.mockResolvedValue({...data(),runCount:1,badges:[challengeBadge,{...challengeBadge,definition:{...challengeBadge.definition,id:'star',title:'별 코스'},earned:true,earnedAt:1000}]});
   mockCoursesList.mockResolvedValue([{id:'saved-heart',shape:'heart'}]);
   await render(<HomeScreen/>);
@@ -127,12 +127,13 @@ test('badge challenge selects an existing saved course and earned badges link to
   await fireEvent.press(screen.getByTestId('home-earned-star'));
   expect(mockPush).toHaveBeenCalledWith({pathname:'/badge-detail',params:{id:'star'}});
   await fireEvent.press(screen.getByTestId('home-challenge-start'));
-  expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'saved-heart'}});
+  expect(mockPush).toHaveBeenCalledWith({pathname:'/badge-detail',params:{id:'heart',challenge:'1'}});
 });
-test('badge challenge with no saved match preselects its shape, without generating a course',async()=>{
+test('badge challenge without saved courses still opens challenge details without generation',async()=>{
   mockRead.mockResolvedValue({...data(),runCount:1,badges:[challengeBadge]});mockCoursesList.mockResolvedValue([]);
   await render(<HomeScreen/>);await fireEvent.press(screen.getByTestId('home-challenge-start'));
-  expect(mockNavigate).toHaveBeenCalledWith({pathname:'/route-lab',params:{homeShape:'heart',homeSection:'conditions',homeRequest:expect.any(String)}});
+  expect(mockPush).toHaveBeenCalledWith({pathname:'/badge-detail',params:{id:'heart',challenge:'1'}});
+  expect(mockNavigate).not.toHaveBeenCalled();
 });
 
 test('home courses, completions and earned badges are horizontal and capped at five',async()=>{

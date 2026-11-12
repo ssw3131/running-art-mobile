@@ -12,6 +12,8 @@ import { isSimulationRun } from '@/modules/running/simulation-record';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
 import { HomePreview } from './HomePreview';
+import { RegionText } from '@/features/achievements/RegionText';
+import { estimatedRunningMinutes } from '@/features/course-generation/recommendation-metrics';
 import { useHome } from './use-home';
 
 const shapeAssets = {
@@ -117,23 +119,23 @@ export default function HomeScreen() {
             <TextLink label="더보기" testID={runs ? 'home-more-runs' : 'home-more-courses'} onPress={runs?()=>router.navigate({pathname:'/courses',params:{view:'runs',fromHome:'1'}}):openCourses} /></View>;
         }
         if (item.kind === 'runs') return item.runs?.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} testID="home-completed-carousel" contentContainerStyle={styles.cards}>{item.runs.map(({ run, paths }) => {
-          const outcome = homeRunOutcome(run), complete = outcome === '완주';
+          const outcome = homeRunOutcome(run);
           return <Pressable key={run.id} testID={`home-run-${run.id}`} accessibilityRole="button" accessibilityLabel={`${run.courseName || '자유 러닝'}, ${outcome ?? '러닝 기록'}, ${km(run.distanceM)} 킬로미터, ${date(run.startedAt)}`}
             onPress={() => router.push({ pathname:'/runs/[id]',params:{id:run.id} })} style={[styles.card, { width: cardWidth }]}>
             <HomePreview paths={paths} active={active} label="실제 러닝 경로" />
             <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{ flexShrink: 1 }}>{run.courseName || '자유 러닝'}</AppText>
-              {outcome && <View style={{ backgroundColor: complete ? c.muted : c.action, paddingHorizontal: 5, borderRadius: 10 }}><AppText testID={`home-outcome-${run.id}`} style={{ color: complete ? c.surface : c.onAction, fontSize: 10, lineHeight: 16 }}>{outcome}</AppText></View>}</View>
+              </View>
             {isSimulationRun(run)&&<AppText variant="caption" style={{color:c.selected}}>시뮬레이션</AppText>}
             <AppText variant="caption" style={{ color: c.subtle }}>{km(run.distanceM)} km / {durationLabel(elapsedMs(run, Date.now()))}</AppText>
             <AppText variant="caption" style={{ color: c.subtle }}>{date(run.startedAt)}</AppText>
           </Pressable>;
         })}</ScrollView> : <AppText testID="home-empty-runs" style={{ color: c.muted }}>아직 완주한 코스가 없어요. 첫 완주에 도전해 보세요.</AppText>;
-        if (item.kind === 'courses') return item.courses?.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} testID="home-courses-carousel" contentContainerStyle={styles.cards}>{item.courses.map(({ course, paths, previewError }) => <Pressable key={course.id}
+        if (item.kind === 'courses') return item.courses?.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} testID="home-courses-carousel" contentContainerStyle={styles.cards}>{item.courses.map(({ course, paths, previewError, origin }) => <Pressable key={course.id}
           testID={`home-course-${course.id}`} accessibilityRole="button" accessibilityLabel={`${course.name}, ${course.lengthKm.toFixed(1)} 킬로미터, 저장 코스 보기`}
           onPress={() => router.push({ pathname: '/courses/[id]', params: { id: course.id } })} style={[styles.card, { width: cardWidth }]}>
           <HomePreview paths={paths} active={active} unavailable={previewError} synthetic={course.source === 'synthetic'} label="저장 코스 경로" />
-          <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{flexShrink:1}}>{course.name}</AppText>{course.unfinished&&<AppText testID={`home-course-progress-${course.id}`} style={{fontSize:10,lineHeight:16,color:c.onAction,backgroundColor:c.action,borderRadius:10,paddingHorizontal:5}}>진행중</AppText>}</View><AppText variant="caption" style={{ color: c.subtle }}>{course.lengthKm.toFixed(1)} km</AppText>
-          <AppText variant="caption" style={{ color: c.subtle }}>{date(course.createdAt)}</AppText>
+          <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{flexShrink:1}}>{course.name}</AppText>{course.unfinished&&<AppText testID={`home-course-progress-${course.id}`} style={{fontSize:10,lineHeight:16,color:c.onAction,backgroundColor:c.action,borderRadius:10,paddingHorizontal:5}}>미완주</AppText>}</View><AppText variant="caption" style={{ color: c.subtle }}>{course.lengthKm.toFixed(1)} km / 약 {estimatedRunningMinutes(course.lengthKm)}분</AppText>
+          <RegionText lat={origin?.lat ?? paths[0]?.[0]?.[1]} lng={origin?.lng ?? paths[0]?.[0]?.[0]} style={{fontSize:11,lineHeight:16,color:c.subtle}}/>
         </Pressable>)}</ScrollView> : <AppText testID="home-empty-courses" style={{ color: c.muted }}>아직 저장한 코스가 없어요.</AppText>;
         if (item.kind === 'credits') return null;
         return <View style={styles.action}><Button label="코스 생성하러 가기" testID="open-route-lab" labelStyle={styles.actionLabel} trailing={<Icon name="chevronRight" />}

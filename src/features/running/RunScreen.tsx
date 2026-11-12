@@ -16,6 +16,7 @@ import type { GuidanceOptions, RunGuidance, RunPreparation } from '@/modules/run
 import { runFinishDestination } from '@/modules/running/finish-destination';
 import { openServiceTab } from '@/features/service/open-service-tab';
 import { guidanceNative } from '@/modules/guidance/native';
+import { subscribeRecording } from '@/modules/running/recording-events';
 
 export default function RunScreen() {
   const styles = useRunStyles(),insets=useSafeAreaInsets();
@@ -57,8 +58,9 @@ export default function RunScreen() {
       finally { polling = false; }
     };
     void poll(); const timer = setInterval(() => void poll(), 1000);
+    const unsubscribe=subscribeRecording(()=>void poll());
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') { ticks = 0; void poll(); } });
-    return () => { generation.current++; running.cancelPreparation(); clearInterval(timer); subscription.remove(); };
+    return () => { generation.current++; running.cancelPreparation(); clearInterval(timer); unsubscribe(); subscription.remove(); };
   }, [refresh, supported,owner]));
   async function act(action: () => Promise<unknown>) {
     if (working.current) return;

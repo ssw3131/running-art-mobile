@@ -37,3 +37,9 @@ test('archive month order, duplicates and unfinished/free outcomes remain truthf
  const groups=groupRunsByMonth([dec,jan,jan]);assert.deepEqual(groups.map(g=>g.key),['2027-01','2026-12']);assert.equal(groups[0].runs.length,1);
  assert.equal(runOutcomeLabel(jan),'중도 종료');assert.equal(runOutcomeLabel({...jan,courseOutcome:'finished'}),'코스 완주');assert.equal(runOutcomeLabel({...jan,courseId:null}),'자유 러닝');assert.equal(runOutcomeLabel({...jan,status:'paused',courseOutcome:'arrival-pending'}),'이어달리기');
 });
+
+test('completion month follows finish date when a session crosses midnight',()=>{
+ const startedAt=new Date(2026,10,30,23,55).getTime(),endedAt=new Date(2026,11,1,0,15).getTime();
+ const groups=groupRunsByMonth([{id:'crossing',startedAt,endedAt}]);
+ assert.equal(groups[0].key,'2026-12');
+});

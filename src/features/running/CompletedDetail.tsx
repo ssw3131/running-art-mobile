@@ -57,12 +57,12 @@ export default function CompletedDetail({id}:{id:string}){
      </View>
     </View>
     <View style={{marginTop:24,paddingHorizontal:24,alignItems:'center',gap:6}}>
-     <AppText weight="black" style={{fontSize:26,lineHeight:30,textAlign:'center'}}><AppText weight="black" style={{color:c.selected}}>{auth.account?.name||'러너'}</AppText>님{'\n'}완주를 축하합니다.</AppText>
+     <AppText weight="black" style={{fontSize:30,lineHeight:42,textAlign:'center'}}><AppText weight="black" style={{fontSize:30,lineHeight:42,color:c.selected}}>{auth.account?.name||'러너'}</AppText>님{'\n'}완주를 축하합니다.</AppText>
      <AppText weight="bold" style={{fontSize:16,lineHeight:24,textAlign:'center',color:c.subtle}}>{data.course.name} <AppText weight="bold" style={{color:c.selected}}>{count}회</AppText> 완주했어요.</AppText>
      {isSimulationRun(data.run)&&<AppText variant="caption" style={{color:c.selected}}>시뮬레이션 완주 기록</AppText>}
     </View>
     <View style={{marginTop:19,marginHorizontal:32,minHeight:161,borderRadius:20,borderWidth:2,borderColor:c.selected,backgroundColor:c.surface,padding:10,gap:9,justifyContent:'center',boxShadow:'0px 0px 5px rgba(0,0,0,.2)'}}>
-     <AppText weight="black" style={{fontSize:24,lineHeight:32,textAlign:'center'}}>{data.course.name}</AppText>
+     <AppText weight="black" style={{fontSize:28,lineHeight:40,textAlign:'center'}}>{data.course.name}</AppText>
      <View style={{height:1,backgroundColor:c.divider,marginHorizontal:8}}/>
      <View style={{flexDirection:'row',gap:24,paddingHorizontal:10}}>
       <View style={{flex:1}}><AppText weight="bold" style={{fontSize:16,lineHeight:23,color:c.subtle}}>전체 거리</AppText><AppText family="roboto" weight="black" style={{fontSize:28,lineHeight:34,color:c.selected}}>{(data.run.distanceM/1000).toFixed(1)}<AppText weight="bold" style={{fontSize:16,color:c.selected}}> km</AppText></AppText></View>

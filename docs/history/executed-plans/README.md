@@ -107,3 +107,5 @@ Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절�
 - [2026-11-11 선택 몸무게·반복 홈·미완주 우선 정렬](2026-11-11-2341-home-progress-weight.md) — PR·후속 폰 설치/버튼 확인 완료, Android 검사 진행 중
 
 - [2026-11-12 홈 가로 목록·러닝 궤적 색상 후속](2026-11-12-1917-home-carousel-running-trail.md) — PR·폰 설치 완료, 홈 기준/병합 게이트 후속
+
+- [2026-11-12-2130-course-lists-badge-live.md](2026-11-12-2130-course-lists-badge-live.md) — 진행 중: PR59 후속, main 미반영.

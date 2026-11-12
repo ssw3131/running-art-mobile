@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "assets/achievements/condition-check.svg",
+    "src/features/achievements/BadgeVisuals.tsx",
+    "src/features/course-generation/GenerationIcon.tsx",
+    "src/features/courses/CoursesScreen.tsx",
+    "src/features/courses/SavedCoursePresentation.tsx",
+    "src/features/guidance/GuidanceMap.tsx",
+    "src/features/running/CompletedDetail.tsx",
+    "src/features/running/RunScreen.tsx",
+    "src/features/running/RunsScreen.tsx",
+    "src/features/running/SavedCourseChooser.tsx",
+    "src/features/service/HomeBadges.tsx",
+    "src/features/service/HomeScreen.tsx",
+    "src/modules/home/model.ts",
+    "src/modules/home/repository.ts",
+    "src/modules/map/road-address.ts",
+    "src/modules/running/archive.ts",
+    "src/modules/running/controller.ts",
+    "src/modules/running/recording-events.ts",
+    "src/modules/running/repository.ts",
+    "src/modules/running/runtime.ts",
+    "tests/archive-retry.test.mjs",
+    "tests/components/archive.test.tsx",
+    "tests/components/badge-gallery.test.tsx",
+    "tests/components/course-generation.test.tsx",
+    "tests/components/guidance-trail.test.tsx",
+    "tests/components/home.test.tsx",
+    "tests/components/run-recording-refresh.test.tsx",
+    "tests/components/running-chooser.test.tsx",
+    "tests/components/runs.test.tsx",
+    "tests/components/saved-course-presentation.test.tsx",
+    "tests/road-address.test.mjs",
+    "tests/running-controller.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "사용자 Figma 8화면 후속, 동일 PR59에 추가하고 폰에 설치. main 병합 금지.",
+  "before": "목록 도형/전체 주소, 홈 날짜/진행중, 추천 CTA 코스 진입, 완주 목록 실제 시간/시작일/시뮬레이션 표시. 뱃지 조건 체크가 tint에 가려지고 중첩 제목은 기본 본문 크기로 렌더링됨. GPS는 1초 폴링 갱신만 수행.",
+  "after": "캐시 정적 코스 지도/도로명 주소, 홈 시간·간단한 지역·미완주/더보기, 추천 CTA 도전 상세. 완주 목록 거리+예상 시간/완주일/주황 도형과 simulation 라벨 제거. 이름과 제목의 중첩 글꼴을 명시하고 원본 투명 체크 아이콘 사용. GPS 트랜잭션 후 구독 화면 즉시 갱신, headless 폴링 보존, 합류선은 실제 경로 아래.",
+  "invariants": [
+    "실제 GPS만 주황 표시, 공백/일시정지는 잇지 않음. 필터·완주 판정·권한·DB schema 유지.",
+    "계정 전환/늦은 응답은 과거 snapshot을 현재 화면에 표시하지 않음. 원본 기록·시뮬레이션 reason 보존.",
+    "main 미병합, 기존 앱 ID·서명·폰 로그인/기록 유지. 생성/실제 러닝/사용량 소모 없음."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/home.test.tsx",
+      "reason": "홈 상태·도전 상세 이동·5개 가로 목록"
+    },
+    {
+      "path": "tests/components/saved-course-presentation.test.tsx",
+      "reason": "실제 snapshot 지도와 도로명, 계정 전환 늦은 응답 차단"
+    },
+    {
+      "path": "tests/components/run-recording-refresh.test.tsx",
+      "reason": "타이머/재진입/일시정지 없이 GPS 저장 이벤트로 points 갱신"
+    },
+    {
+      "path": "tests/running-controller.test.mjs",
+      "reason": "DB commit 후만 갱신 알림; 실패 시 거짓 알림 없음"
+    },
+    {
+      "path": "tests/components/guidance-trail.test.tsx",
+      "reason": "합류 경로가 실제 주황 선을 가리지 않음"
+    },
+    {
+      "path": "tests/road-address.test.mjs",
+      "reason": "번호 포함 도로명 보존·건물/우편번호 생략"
+    },
+    {
+      "path": "tests/archive-retry.test.mjs",
+      "reason": "자정/월 경계의 완료일 그룹"
+    },
+    {
+      "path": "tests/components/badge-gallery.test.tsx",
+      "reason": "조건 원본 체크24dp, tint 미적용"
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "별 선택시 하트 회색·선택색 변경"
+    },
+    {
+      "path": "tests/components/runs.test.tsx",
+      "reason": "예상시간·완료일·시뮬레이션 라벨 제거"
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "사용자 Figma 680:2586/542:2841/542:3009/10:2785/35:4724/35:5250/35:5820/494:3281",
+    "evidence": [
+      "8개 원본 전체 컨텍스트·스크린샷 대조. 정적 체크 노드494:3414 SVG24x24 원본 export 그대로, callsite24x24 contain/flexShrink0.",
+      "뱃지 제목32/46 전체폭 자동 줄바꿈, 중첩 텍스트 동일 크기 명시. 완주 이름30/42 및 코스명28/40.",
+      "폰 설치와 실제 화면 확인은 후속. 홈 무작위 추천 기준과 변경된 보관함 전체 화면 golden은 미검증이며 허용오차/마스크 미변경."
+    ]
+  },
+  "native": "네이티브 의존성/권한/서명/DB 구조 미변경. MapLibre 합류선 beforeId로 실제 경로 아래. 기존 1초 폴링 유지 + SQLite commit 후 이벤트 구독. 로컬 에뮬레이터 없음. 기존 PR draft 유지·서명 APK 폰 설치 후 결과 기록."
+}

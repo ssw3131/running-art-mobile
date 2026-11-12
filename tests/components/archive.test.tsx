@@ -1,3 +1,4 @@
+jest.mock('../../src/features/service/HomePreview',()=>({HomePreview:()=>null}));
 import React from 'react';
 import { act,fireEvent,render,screen } from '@testing-library/react-native';
 import CoursesScreen from '../../src/features/courses/CoursesScreen';

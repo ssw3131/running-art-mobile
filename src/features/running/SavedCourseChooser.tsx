@@ -6,28 +6,23 @@ import { AppText, Button, Icon } from '@/components/ui';
 import { getStorage } from '@/modules/storage/database';
 import type { CourseSummary } from '@/modules/courses/model';
 import { courseErrorMessage } from '@/modules/courses/model';
-import type { Origin } from '@/modules/route-engine/types';
-import { GenerationIcon, LegacyShapeIcon } from '@/features/course-generation/GenerationIcon';
-import { usePointAddress } from '@/features/course-generation/use-point-address';
+import { useSavedCoursePresentation, SavedCourseThumbnail } from '@/features/courses/SavedCoursePresentation';
 import { estimatedRunningMinutes } from '@/features/course-generation/recommendation-metrics';
 import { courseDuration } from '@/features/courses/CourseInformation';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { useAuth } from '@/features/auth/use-auth';
 import { openServiceTab } from '@/features/service/open-service-tab';
 
-const shapeIcons=['heart','star','cloud','crown','icecream','strawberry','fish','bone','whale','turtle','cat','dog'] as const;
 function SavedCourseItem({course,selected,onSelect}:{course:CourseSummary;selected:boolean;onSelect():void}){
   const c=useThemeColors();
-  const [origin,setOrigin]=useState<Origin>(),[failed,setFailed]=useState(false);
-  useFocusEffect(useCallback(()=>{let current=true;void(async()=>{try{const saved=await(await getStorage()).courses.get(course.id);if(current)setOrigin(saved.snapshot.origin);}catch{if(current)setFailed(true);}})();return()=>{current=false;};},[course.id]));
-  const address=usePointAddress(origin),shape=shapeIcons.find(s=>s===course.shape);
+  const preview=useSavedCoursePresentation(course.id);
   const statusLabel=course.inProgress?'진행중':'미완주';
   return <View style={{minHeight:100,padding:9,borderRadius:20,borderWidth:1,borderColor:selected?c.selected:'transparent',backgroundColor:c.surface,boxShadow:'0px 0px 10px rgba(0,0,0,0.12)',flexDirection:'row',alignItems:'center'}}><Pressable testID={`run-saved-course-${course.id}`} accessibilityRole="button" accessibilityLabel={`${course.name}, ${course.lengthKm.toFixed(2)}킬로미터${course.unfinished?`, ${statusLabel}`:''}`} accessibilityState={{selected}} onPress={onSelect} style={{flex:1,flexDirection:'row',alignItems:'center',gap:20}}>
-    <View style={{width:80,height:80,borderRadius:12,backgroundColor:selected?'#FFF0E8':c.navigation,alignItems:'center',justifyContent:'center'}}>{shape?<GenerationIcon name={shape} color={selected?'#FC5602':'#B3B3B3'}/>:<LegacyShapeIcon shape={course.shape}/>}</View>
+    <SavedCourseThumbnail snapshot={preview.snapshot} failed={preview.failed}/>
     <View style={{flex:1,gap:3}}>
       <View style={{flexDirection:'row',alignItems:'center',gap:5}}><AppText weight="bold" numberOfLines={1} style={{flexShrink:1,fontSize:16,lineHeight:20}}>{course.name}</AppText>{course.unfinished&&<AppText testID={`run-in-progress-${course.id}`} weight="bold" style={{fontSize:10,color:'#FFFFFF',backgroundColor:'#FC5602',paddingHorizontal:6,borderRadius:20}}>{statusLabel}</AppText>}</View>
       <View style={{gap:1}}><AppText family="roboto" weight="bold" style={{fontSize:14,lineHeight:18}}>{course.lengthKm.toFixed(2)} km</AppText><AppText family="roboto" style={{fontSize:14,lineHeight:18}}>{courseDuration(estimatedRunningMinutes(course.lengthKm)??0)}</AppText></View>
-      <AppText numberOfLines={1} style={{fontSize:13,lineHeight:17,color:c.muted}}>{failed?'주소를 확인하지 못했어요.':address.label}</AppText>
+      <AppText numberOfLines={1} style={{fontSize:13,lineHeight:17,color:c.muted}}>{preview.failed?'주소를 확인하지 못했어요.':preview.address}</AppText>
     </View></Pressable><Pressable testID={`run-course-detail-${course.id}`} accessibilityRole="button" accessibilityLabel={`${course.name} 상세 보기`} onPress={()=>router.push({pathname:'/courses/[id]',params:{id:course.id}})} style={{width:40,minHeight:80,alignItems:'center',justifyContent:'center'}}><Icon name="chevronRight" color="#D9D9D9"/></Pressable>
   </View>;
 }

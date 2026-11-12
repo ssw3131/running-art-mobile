@@ -1,3 +1,4 @@
+jest.mock('../../src/features/course-generation/GenerationIcon',()=>({GenerationIcon:({name,color}:any)=>require('react').createElement(require('react-native').View,{testID:'icon-'+name,color})}));
 jest.mock('../../src/modules/image-contour/picker',()=>({pickContourImage:jest.fn()}));
 import React from 'react';
 import { Alert } from 'react-native';
@@ -232,3 +233,12 @@ test.each(['cancelled', 'error'])('generation without a completed result returns
   expect(mockG.shape).toBe('heart');
   expect(mockG.targetKm).toBe(3);
 });
+
+ test('changing the selected shape removes the heart orange tint',async()=>{
+  const view=await render(<CourseGenerationScreen/>);
+  mockG.shape='star';await view.rerender(<CourseGenerationScreen/>);
+  const heart=screen.getByTestId('icon-heart'),star=screen.getByTestId('icon-star');
+  expect(screen.getByTestId('shape-heart').props.accessibilityState.selected).toBe(false);
+  expect(screen.getByTestId('shape-star').props.accessibilityState.selected).toBe(true);
+  expect(heart!.props.color).not.toBe(star!.props.color);expect(star!.props.color).toBe('#FC5602');
+ });

@@ -5,7 +5,7 @@ import { fromByteArray } from 'base64-js';
 
 export type HomePath = [number, number][];
 export type HomeRun = { run: Run; paths: HomePath[] };
-export type HomeCourse = { course: CourseSummary; paths: HomePath[]; previewError: boolean };
+export type HomeCourse = { course: CourseSummary; paths: HomePath[]; previewError: boolean; origin?: {lat:number;lng:number} };
 export type HomeData = {
   owner: string; monthStart: number; monthEnd: number; monthlyDistanceM: number; runCount: number;
   recent: HomeRun[]; latestCompleted: Run | null; courseCount: number; courses: HomeCourse[];

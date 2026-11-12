@@ -104,3 +104,14 @@ test('repeated headless deliveries cannot leave an interrupted or finished servi
   assert.deepEqual(calls, ['stop']);
   assert.equal((await repo.get(run.id)).pointCount, 0);
 });
+
+test('recording notification observes committed GPS before feedback and never announces a failed append',async t=>{
+ const {repo,driver,time}=await fixture(t);let reads=[],notified=0;
+ const controller=createRunController(async()=>repo,driver,undefined,()=>{notified++;reads.push(repo.active());});
+ await controller.start();time(1001000);
+ await controller.ingest([{timestamp:1001000,latitude:37,longitude:127,accuracy:5}]);
+ assert.equal(notified,1);assert.equal((await reads[0]).pointCount,1);
+ repo.append=async()=>{throw new Error('write failure');};time(1002000);
+ await controller.ingest([{timestamp:1002000,latitude:37.0001,longitude:127,accuracy:5}]);
+ assert.equal(notified,1);assert.equal((await repo.active()).status,'interrupted');
+});

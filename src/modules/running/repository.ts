@@ -49,7 +49,7 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       if(!Number.isSafeInteger(limit)||limit<1||limit>100||!Number.isSafeInteger(offset)||offset<0)throw new RunError('목록 범위가 올바르지 않아요.');
       return db.getAllAsync<FinishedRun>(`SELECT ${columns},json_extract(course_snapshot_json,'$.shape') AS shape,
         json_extract(course_snapshot_json,'$.origin.lat') AS originLat,json_extract(course_snapshot_json,'$.origin.lng') AS originLng FROM running_sessions
-        WHERE owner_id=? AND status='completed' AND course_outcome='finished' AND course_id IS NOT NULL ORDER BY started_at DESC,id DESC LIMIT ? OFFSET ?`,scope(),limit,offset);
+        WHERE owner_id=? AND status='completed' AND course_outcome='finished' AND course_id IS NOT NULL ORDER BY COALESCE(ended_at,started_at) DESC,id DESC LIMIT ? OFFSET ?`,scope(),limit,offset);
     }),
     course: (id: string) => queue(async () => {
       const row = await db.getFirstAsync<{name:string;snapshot_json:string;snapshot_hash:string}>('SELECT name,snapshot_json,snapshot_hash FROM saved_courses WHERE id=? AND owner_id=?',validateId(id),scope());

@@ -46,7 +46,7 @@ export function GenerationIcon({ name, color }: { name: keyof typeof assets | ke
 }
 
 /** Legacy engine shapes are dynamic previews, not replacements for Figma's new S2b shapes. */
-export function LegacyShapeIcon({ shape }: { shape: string }) {
+export function LegacyShapeIcon({ shape, color = '#B3B3B3' }: { shape: string; color?:string }) {
   const uri = useMemo(() => {
     const template = templateFor(shape);
     const xs = template.map(p => p.x), ys = template.map(p => p.y);
@@ -54,8 +54,8 @@ export function LegacyShapeIcon({ shape }: { shape: string }) {
     const scale = 36 / Math.max(maxX - minX, maxY - minY);
     // Built-in templates use y-down coordinates and can exceed [-1, 1].
     const points = template.map(p => `${(22 + (p.x - (minX + maxX) / 2) * scale).toFixed(2)},${(22 + (p.y - (minY + maxY) / 2) * scale).toFixed(2)}`).join(' ');
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"><polyline points="${points}" fill="none" stroke="#B3B3B3" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"><polyline points="${points}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
     return `data:image/svg+xml;base64,${fromByteArray(Uint8Array.from(svg, char => char.charCodeAt(0)))}`;
-  }, [shape]);
+  }, [shape,color]);
   return <Image source={{ uri }} style={{ width: 44, height: 44 }} accessible={false} />;
 }

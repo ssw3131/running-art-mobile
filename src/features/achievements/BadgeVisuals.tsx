@@ -1,13 +1,13 @@
 import { Image } from 'expo-image';
 import { Pressable,View } from 'react-native';
-import { AppText,Icon } from '@/components/ui';
+import { AppText } from '@/components/ui';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { BadgeImage } from './BadgeImage';
 import type { BadgeProgress } from '@/modules/achievements/catalog';
 export function BadgeHero({badge,celebrate=true,challenge=false,onReady}:{badge:BadgeProgress;celebrate?:boolean;challenge?:boolean;onReady?():void}){
  const c=useThemeColors(),d=badge.definition;
  return <View style={{alignItems:'center',gap:20}}>
-  <AppText weight="black" style={{fontSize:30,lineHeight:38,textAlign:'center'}}>{d.kind==='shape'||d.kind==='collection'?d.title+'\n':''}<AppText weight="black" style={{color:c.selected}}>{d.kind==='shape'||d.kind==='collection'?d.accent:d.title}</AppText>{!['shape','collection'].includes(d.kind)&&!(challenge&&['distance','time'].includes(d.kind))?<>{'\n'}<AppText weight="black" style={{color:challenge||d.kind==='category'?c.text:c.selected}}>{d.accent}</AppText></>:null}{' '+d.subtitle}</AppText>
+  <AppText weight="black" style={{fontSize:32,lineHeight:46,textAlign:'center',alignSelf:'stretch',flexShrink:1}}>{d.kind==='shape'||d.kind==='collection'?d.title+'\n':''}<AppText weight="black" style={{fontSize:32,lineHeight:46,color:c.selected}}>{d.kind==='shape'||d.kind==='collection'?d.accent:d.title}</AppText>{!['shape','collection'].includes(d.kind)&&!(challenge&&['distance','time'].includes(d.kind))?<>{'\n'}<AppText weight="black" style={{fontSize:32,lineHeight:46,color:challenge||d.kind==='category'?c.text:c.selected}}>{d.accent}</AppText></>:null}{' '+d.subtitle}</AppText>
   <View style={{width:'100%',height:206,alignItems:'center',justifyContent:'center'}}>
    {celebrate&&<Image source={require('../../../assets/achievements/confetti.png')} style={{position:'absolute',left:-24,right:-24,height:206}} contentFit="cover" accessible={false}/>}
    <BadgeImage id={d.id} size={170} onLoad={onReady}/>
@@ -17,7 +17,7 @@ export function BadgeHero({badge,celebrate=true,challenge=false,onReady}:{badge:
 export function BadgeCondition({text}:{text:string}){
  const c=useThemeColors();
  return <View style={{borderRadius:20,backgroundColor:c.background==='#FFFFFF'?'#F4F4F4':c.surface,padding:20,flexDirection:'row',gap:16,alignItems:'center'}}>
-  <Icon name="checkboxOn" color={c.subtle}/>
+  <Image testID="badge-condition-icon" source={require('../../../assets/achievements/condition-check.svg')} style={{width:24,height:24,flexShrink:0}} contentFit="contain" accessible={false}/>
   <View style={{flex:1,gap:4}}><AppText weight="bold" style={{fontSize:16,lineHeight:22}}>뱃지 획득 조건</AppText><AppText weight="medium" style={{fontSize:14,lineHeight:22,color:c.subtle}}>{text}</AppText></View>
  </View>;
 }

@@ -32,3 +32,9 @@ test('a first accepted GPS fix is visible and replacing actual trace updates the
  await view.rerender(<GuidanceMap route={[[127,37],[127.01,37]]} state={state}/>);
  expect(source().map((f:any)=>f.geometry.coordinates)).toEqual(state.trace);
 });
+
+test('pedestrian approach and return guide cannot cover the real orange trail',async()=>{
+ await render(<GuidanceMap route={[[127,37],[127.01,37]]} state={{...state,phase:'approach',returnPath:state.trace[0]}}/>);
+ expect(screen.getByTestId('layer-guidance-return-line').props.beforeId).toBe('guidance-course-outline');
+ expect(screen.getByTestId('layer-guidance-trace-line').props.afterId).toBe('guidance-course-line');
+});
