@@ -16,7 +16,7 @@ function RewardStage({id}:{id:string}) {
   <Image source={require('../../../assets/home/challenge-20261111/spotlight.svg')} style={{position:'absolute',left:8,top:5,width:90,height:90}}/>
   <Image source={require('../../../assets/home/challenge-20261111/plinth.svg')} style={{position:'absolute',left:8,top:88,width:90,height:6}}/>
   <Image source={require('../../../assets/home/challenge-20261111/mount.svg')} style={{position:'absolute',left:-11,top:-5,width:128,height:128}}/>
-  <View style={{position:'absolute',left:8,top:5,boxShadow:'2px 1px 1.4px rgba(31,54,36,.14)'}}><View style={{width:90,height:90,borderRadius:45,overflow:'hidden'}}><BadgeImage id={id} size={90}/></View></View>
+  <View style={{position:'absolute',left:8,top:5,borderRadius:45,boxShadow:'2px 1px 1.4px rgba(31,54,36,.14)'}}><View style={{width:90,height:90,borderRadius:45,overflow:'hidden'}}><BadgeImage id={id} size={90}/></View></View>
   {[[0,13],[102,66]].map(([left,top],i)=><Image key={i} source={require('../../../assets/home/challenge-20261111/point3.svg')} style={{position:'absolute',left,top,width:3,height:3}}/>)}
   {[[4,96],[101,1]].map(([left,top],i)=><Image key={i} source={require('../../../assets/home/challenge-20261111/point2.svg')} style={{position:'absolute',left,top,width:2,height:2}}/>)}
  </View>;

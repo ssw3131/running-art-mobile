@@ -1,3 +1,4 @@
+import { MapCredits } from '@/features/course-generation/MapCredits';
 import { View } from 'react-native';
 import { AppText, Button } from '@/components/ui';
 import { SupportPage } from '@/features/support/SupportPage';
@@ -15,5 +16,6 @@ export default function ServiceAbout() {
       ['기록 공유', '이미지 카드나 코스 링크로 내 러닝을 전해요.'], ['도전과 성취', '한 바퀴 완주하고 도형 배지를 모아보세요.'],
     ].map(([title, body]) => <View key={title} style={{ flexBasis: '45%', flexGrow: 1, padding: 16, gap: 8, borderWidth: 1, borderColor: c.divider, borderRadius: 20 }}><AppText weight="bold">{title}</AppText><AppText variant="label" style={{ color: c.muted }}>{body}</AppText></View>)}</View>
     <Button label="코스 생성하러 가기" onPress={() => openServiceTab('/route-lab')} />
+  <AppText weight="bold">지도 정보</AppText><MapCredits/>
   </SupportPage>;
 }
