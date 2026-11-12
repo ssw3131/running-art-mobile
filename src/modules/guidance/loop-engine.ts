@@ -102,9 +102,13 @@ export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:Loop
     const last=s.last,gap=!last||fix.timestamp-last.timestamp>L.gapMs,step=last?distance(last.position,fix.position):0;
     if(last&&!gap&&step/((fix.timestamp-last.timestamp)/1000)>12){s.weak=true;s.last=null;s.finishSince=null;return snapshot();}
     s.last=copy(fix);s.current=[...fix.position];s.weak=false;
-    if(gap){s.joinSince=null;s.finishSince=null;s.offSince=null;if(trace.at(-1)!.length)trace.push([]);if(s.phase==='lap')beginReturn();}
+    if(gap){s.joinSince=null;s.finishSince=null;s.offSince=null;if(trace.at(-1)!.length)trace=[...trace,[]];if(s.phase==='lap')beginReturn();}
     else s.traveled+=step;
-    if(!trace.at(-1)!.length||step>=2){trace.at(-1)!.push([...fix.position]);if(trace.at(-1)!.length>20000)trace.at(-1)!.splice(0,1000);}
+    if(!trace.at(-1)!.length||step>=2){
+      // Published snapshots are React inputs: never mutate their array identity.
+      const next=[...trace.at(-1)!,[...fix.position] as Coordinate];
+      trace=[...trace.slice(0,-1),next.length>20000?next.slice(1000):next];
+    }
     if(s.phase==='continued')return snapshot();
     if(s.phase==='approach'||s.phase==='return'){
       const initial=s.phase==='approach';

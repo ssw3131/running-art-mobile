@@ -98,12 +98,13 @@ export function createGuidance(coordinates: readonly Coordinate[], saved?: Guida
     lastAccepted = fix; last = fix; weak = false; current = [...fix.position];
     if (gap) heading = null;
     else if (step >= 0.5) heading = bearing(previous!.position, current);
-    if (gap) { if (trace.at(-1)!.length) trace.push([]); if (off || breadcrumbs.length) continuous = false; }
+    if (gap) { if (trace.at(-1)!.length) trace = [...trace, []]; if (off || breadcrumbs.length) continuous = false; }
     else if (step >= 0.5) traveled += step;
     const tail = trace.at(-1)!;
     if (!tail.length || distance(tail.at(-1)!, current) >= 2) {
       // Bound presentation history; this is an ephemeral simulation, never a user record.
-      tail.push(current); if (tail.length > 20000) tail.splice(0, 1000);
+      const next = [...tail, current];
+      trace = [...trace.slice(0, -1), next.length > 20000 ? next.slice(1000) : next];
     }
     if (arrivalSuppressedAt && distance(arrivalSuppressedAt, current) >= 5) arrivalSuppressedAt = null;
     if (rejoin) {

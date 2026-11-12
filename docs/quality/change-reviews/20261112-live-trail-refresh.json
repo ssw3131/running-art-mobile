@@ -1,17 +1,20 @@
 {
   "schemaVersion": 1,
   "paths": [
+    "src/modules/guidance/engine.ts",
+    "src/modules/guidance/loop-engine.ts",
     "src/modules/map/RouteTrailLayers.tsx",
     "src/modules/running/recorded-paths.ts",
-    "tests/components/guidance-trail.test.tsx"
+    "tests/components/guidance-trail.test.tsx",
+    "tests/running-simulation.test.mjs"
   ],
   "behavior": "changed",
   "decision": "사용자의 지도 재진입 전 주황 궤적이 그려지지 않는 보고. 기존 PR59 후속/main 미병합 유지.",
   "before": "RouteTrailLayers가 route/paths 참조로만 useMemo해 실제 시뮬레이션 엔진의 같은 trace 배열 append를 무시했다. 최초 Point가 LineString으로 바뀌지 않아 화면 재마운트 때만 현재 경로가 나타났다. 기존 검사는 새 trace 배열로 교체해 이 문제를 놓쳤다.",
-  "after": "참조 캐시를 제거하고 좌표를 복사한다. 실제 폰에서 이것만으로는 미해결이어서 파랑 정적 course와 주황 동적 overlay를 분리한다. Map/Camera/코스는 유지하고250ms throttle로 최신 trace overlay만 새 source/layer ID에 바인딩한다. 지속 입력 중에도 갱신하고 pause/end 마지막 샘플도 놓치지 않는다.",
+  "after": "시뮬레이션 엔진의 공개 trace를 copy-on-write로 만들어 React Compiler에서도 갱신이 감지되도록 한다. 이전 snapshot 배열은 다음 입력으로 수정되지 않는다. Android/Hermes production Babel로 실제 GuidanceMap을 컴파일한 회귀를 추가했다. 기존 고정 Map/Camera/단일 source를 유지하고 임시250ms overlay 교체는 철회한다.",
   "invariants": [
     "실제 GPS/시뮬레이션 좌표만 표시, pause/공백 구간 분리·필터·거리·완주 판정 유지.",
-    "Map/Camera/정적 코스 ID·레이어 순서·색/굵기·계정/기록 유지. 동적 overlay ID만 실제 폰 미해결 근거로 갱신.",
+    "Map/Camera/단일 source ID·레이어 순서·색/굵기·기록/계정 유지. 엔진의 수치/필터/완주 판정은 바꾸지 않고 표현용 trace 배열만 copy-on-write로 관리한다.",
     "같은 PR59·main 미병합, 로컬 에뮬레이터 없음."
   ],
   "tests": [
@@ -26,6 +29,10 @@
     {
       "path": "tests/components/run-recording-refresh.test.tsx",
       "reason": "GPS commit 후 재진입/타이머 없이 UI points 갱신 유지."
+    },
+    {
+      "path": "tests/running-simulation.test.mjs",
+      "reason": "기존 공개 snapshot이 다음 엔진 입력으로 변경되지 않고 새 trace 참조/좌표가 제공됨."
     }
   ],
   "visual": {
@@ -35,8 +42,9 @@
       "같은 지도 컴포넌트와 실제 엔진으로 수정 전 재현: 좌표가 늘어도 native 전달 GeoJSON은 첫 Point에 머물렀다.",
       "폰 추가 설치/확인은 후속. 실제 야외 GPS 원인이 모두 확정된 것으로 과장하지 않는다.",
       "사용자가 시뮬레이션 현상이라고 확인했다. 기존폰216654479에서0.50km 이동 중 지도 ROI 파랑3626/주황0으로 재현했다.",
-      "첫 수정216657197/49ff3d0도 실제 폰 moving 파랑2041/주황0, pause 후에도 표시 없음. 실패 원본은 Git 제외 build/live-trail-refresh-20261112/after 및 after-pause에 보존했다."
+      "첫 수정216657197/49ff3d0도 실제 폰 moving 파랑2041/주황0, pause 후에도 표시 없음. 실패 원본은 Git 제외 build/live-trail-refresh-20261112/after 및 after-pause에 보존했다.",
+      "43/216658800도 moving 주황0으로 미해결. 실제 배포 React Compiler를 적용한 회귀가 Point 고정 실패를 재현했으며, immutable trace 후 같은 검사가 LineString으로 통과했다. SDK 내부 가설은 철회."
     ]
   },
-  "native": "MapLibre GeoJSON prop만 매 렌더 fresh 직렬화 가능하도록 보완. 네이티브 의존성/권한/DB/서명 변화 없음. 네이티브 Map remount나 위치추적 재시작을 사용하지 않는다. 첫 APK 폰 검증 미해결 때문에250ms 동적 overlay source/layer만 버전별 바인딩으로 후속 보완한다. 전체 Map/Camera는 유지하며 후속 APK 확인 전 native 성공을 주장하지 않는다."
+  "native": "네이티브 의존성/권한/서명/DB 미변경. app.json의 React Compiler를 유지하면서 엔진 출력 참조를 올바르게 바꾼다. 기존 단일 source/고정 ID로 복귀, 임시 overlay 교체 제거. 42/43 native 실패 근거를 보존하고 후속 APK 확인 전 native 성공을 주장하지 않는다."
 }
