@@ -16,7 +16,7 @@ function RewardStage({id}:{id:string}) {
   <Image source={require('../../../assets/home/challenge-20261111/spotlight.svg')} style={{position:'absolute',left:8,top:5,width:90,height:90}}/>
   <Image source={require('../../../assets/home/challenge-20261111/plinth.svg')} style={{position:'absolute',left:8,top:88,width:90,height:6}}/>
   <Image source={require('../../../assets/home/challenge-20261111/mount.svg')} style={{position:'absolute',left:-11,top:-5,width:128,height:128}}/>
-  <View style={{position:'absolute',left:8,top:5,boxShadow:'2px 1px 1.4px rgba(31,54,36,.14)'}}><BadgeImage id={id} size={90}/></View>
+  <View style={{position:'absolute',left:8,top:5,boxShadow:'2px 1px 1.4px rgba(31,54,36,.14)'}}><View style={{width:90,height:90,borderRadius:45,overflow:'hidden'}}><BadgeImage id={id} size={90}/></View></View>
   {[[0,13],[102,66]].map(([left,top],i)=><Image key={i} source={require('../../../assets/home/challenge-20261111/point3.svg')} style={{position:'absolute',left,top,width:3,height:3}}/>)}
   {[[4,96],[101,1]].map(([left,top],i)=><Image key={i} source={require('../../../assets/home/challenge-20261111/point2.svg')} style={{position:'absolute',left,top,width:2,height:2}}/>)}
  </View>;
@@ -50,7 +50,7 @@ export function HomeBadgeChallenge({challenge,owner}:{challenge:HomeChallenge;ow
 }
 export function HomeEarnedBadges({badges}:{badges:BadgeProgress[]}){
  const c=useThemeColors(),{width}=useWindowDimensions(),size=Math.min(100,(width-72)/3);
- const earned=badges.filter(b=>b.earned).sort((a,b)=>(b.earnedAt??0)-(a.earnedAt??0)||a.definition.id.localeCompare(b.definition.id));
+ const earned=badges.filter(b=>b.earned).sort((a,b)=>(b.earnedAt??0)-(a.earnedAt??0)||a.definition.id.localeCompare(b.definition.id)).slice(0,5);
  return <View testID="home-earned-badges" style={{marginBottom:20,gap:5}}>
   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><AppText weight="bold" style={{fontSize:18}}>내 완주 뱃지</AppText><Pressable testID="home-badge-gallery" accessibilityRole="button" accessibilityLabel="뱃지 보관함" onPress={()=>router.push('/badges')} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:4}}><AppText style={{fontSize:16,color:c.subtle}}>뱃지 보관함</AppText><Image source={require('../../../assets/ui/chevron-right.svg')} style={{width:20,height:20}} tintColor={c.subtle}/></Pressable></View>
   {earned.length?<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:20}}>{earned.map(b=><Pressable key={b.definition.id} testID={`home-earned-${b.definition.id}`} accessibilityRole="button" accessibilityLabel={`${b.definition.title} ${b.definition.accent} 뱃지 상세`} onPress={()=>router.push({pathname:'/badge-detail',params:{id:b.definition.id}})}><BadgeImage id={b.definition.id} size={size}/></Pressable>)}</ScrollView>:<AppText style={{fontSize:12,color:c.subtle}}>첫 완주 뱃지를 모아보세요.</AppText>}

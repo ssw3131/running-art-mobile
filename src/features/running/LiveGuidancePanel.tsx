@@ -8,7 +8,7 @@ import type { ReactNode } from 'react';
 import type { GuidanceState } from '@/modules/guidance/engine';
 import { createRunGuidance } from '@/modules/running/guidance';
 import { running } from '@/modules/running/runtime';
-import type { Coordinate } from '@/modules/guidance/geometry';
+import { recordedPaths } from '@/modules/running/recorded-paths';
 import type { GuidanceOptions, RunGuidance } from '@/modules/running/guidance';
 import { durationLabel, elapsedMs, currentPaceLabel, statusLabel, type Run, type RunPoint } from '@/modules/running/model';
 import { router } from 'expo-router';
@@ -41,8 +41,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
     if(simulationState)return simulationState;
     const engine=createRunGuidance(guide.course.snapshot.route,guide.checkpoint);
     const value=run.status==='running'?engine.tick(now-run.startedAt):engine.snapshot();
-    const trace:Coordinate[][]=[];let segment=-1;
-    for(const point of points){if(point.segment!==segment){trace.push([]);segment=point.segment;}trace.at(-1)!.push([point.longitude,point.latitude]);}
+    const trace=recordedPaths(points);
     return {...value,trace};
   },[guide,now,points,run.startedAt,run.status,simulationState]);
   const focus=guide.options.mode==='focus', off=state.status==='off-route'||state.phase==='return';

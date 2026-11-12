@@ -9,6 +9,8 @@ import { useAuth } from '@/features/auth/use-auth';
 import { getStorage } from '@/modules/storage/database';
 import { authentication } from '@/modules/auth/runtime';
 import { CourseError, COURSE_NAME_MAX, courseErrorMessage, courseShapes, encodeSnapshot, savedCourseOverlay, type CourseAttempt, type CourseSnapshot } from '@/modules/courses/model';
+import { recordedPaths } from '@/modules/running/recorded-paths';
+import type { RunPoint } from '@/modules/running/model';
 import { courseContinuation } from '@/modules/courses/continuation';
 import { shareCourseGpx, shareCourseSnapshotGpx } from '@/modules/courses/share-gpx';
 import { exportErrorMessage } from '@/modules/courses/export';
@@ -27,7 +29,7 @@ import { openServiceTab } from '@/features/service/open-service-tab';
 import { serviceTabs } from '@/features/service/navigation';
 import { useThemeColors } from '@/theme/ThemeProvider';
 
-type Detail={owner:string;routeKey:string;name:string;snapshot:CourseSnapshot;savedId:string|null;last:CourseAttempt|null;activeId:string|null};
+type Detail={owner:string;routeKey:string;name:string;snapshot:CourseSnapshot;savedId:string|null;last:CourseAttempt|null;activeId:string|null;points:RunPoint[]};
 const styleUrl=mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY),emptyRoads={type:'FeatureCollection' as const,features:[]};
 export default function CourseDetailScreen() {
   const params=useLocalSearchParams<{id?:string;runId?:string;draft?:string}>(),auth=useAuth(),owner=auth.account?.id??'';
@@ -81,7 +83,8 @@ export default function CourseDetailScreen() {
         }
       }else throw new Error('후보를 다시 선택해 주세요.');
       const last=await db.courses.latestAttempt(savedId??params.id??null,encodeSnapshot(snapshot).hash),active=await db.runs.active();
-      if(ticket===revision.current&&(authentication.getSnapshot().account?.id??'')===owner){setData({owner,routeKey,name:nameValue,snapshot,savedId,last,activeId:active?.id??null});setName(nameValue);}
+      const points=last&&!(last.status==='completed'&&last.courseOutcome==='finished')?await db.runs.points(last.id):[];
+      if(ticket===revision.current&&(authentication.getSnapshot().account?.id??'')===owner){setData({owner,routeKey,name:nameValue,snapshot,savedId,last,points,activeId:active?.id??null});setName(nameValue);}
     }catch(cause){if(ticket===revision.current)setError(cause instanceof Error?cause.message:'코스를 확인하지 못했어요.');}
   },[draft,owner,params.id,params.runId,routeKey]);
   useFocusEffect(useCallback(()=>{void refresh();return()=>{revision.current++;exporting.current?.abort();setResetOpen(false);};},[refresh]));
@@ -146,7 +149,7 @@ export default function CourseDetailScreen() {
         <View style={{paddingHorizontal:24,paddingTop:20,gap:12}}>
           <AppText testID="course-origin-address" variant="label">출발지 : {pointAddress.label}</AppText>
           <View style={{height:Math.min(width-48,288),borderRadius:16,overflow:'hidden'}}>
-            <MapSurface styleUrl={styleUrl??''} position={null} origin={current.snapshot.origin} routeOverlay={overlay} showTarget={showTarget} interactive={false}
+            <MapSurface styleUrl={styleUrl??''} position={null} origin={current.snapshot.origin} routeOverlay={overlay} showTarget={showTarget} interactive={false} recordedPaths={current.last&&!(current.last.status==='completed'&&current.last.courseOutcome==='finished')?recordedPaths(current.points):undefined}
               syntheticRoads={!styleUrl||current.snapshot.source==='synthetic'?emptyRoads:undefined} routeColors={{route:'#FF5264',target:'#5197FE'}}/>
             <TargetVisibilityButton testID="course-target-toggle" checked={showTarget} onChange={setShowTarget} style={{position:'absolute',left:20,bottom:18}} />
             <Pressable testID="course-map-open" accessibilityRole="button" accessibilityLabel="지도에서 코스 보기" onPress={openMap}

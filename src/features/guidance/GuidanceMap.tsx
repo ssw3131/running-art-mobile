@@ -1,13 +1,13 @@
 import { Image as AssetImage } from 'expo-image';
 import { Camera, GeoJSONSource, Layer, Map, type CameraRef, type MapRef } from '@maplibre/maplibre-react-native';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { mapStyleUrl, themedMapStyle } from '@/modules/map/config';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { hideMapBuildings } from '@/modules/map/buildings';
 import type { Coordinate } from '@/modules/guidance/geometry';
 import type { GuidanceState } from '@/modules/guidance/engine';
-import { COURSE_GUIDE_COLOR,RECORDED_TRAIL_COLOR,COURSE_GUIDE_WIDTH,RECORDED_TRAIL_WIDTH } from '@/modules/running/route-colors';
+import { RouteTrailLayers } from '@/modules/map/RouteTrailLayers';
 
 const basicStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#EDEFEA' } }] };
 const baseStyleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
@@ -18,7 +18,6 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
   const map = useRef<MapRef>(null);
   const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
   const [follow, setFollow] = useState(true), [online, setOnline] = useState(!!styleUrl), [ready, setReady] = useState(false);
-  const routeData = useMemo(() => line(route), [route]);
   useEffect(() => {
     if (!ready || !follow) return;
     if(followLock)camera.current?.jumpTo({center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5});else camera.current?.easeTo({center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5,duration:200});
@@ -28,7 +27,6 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
     const timeout = setTimeout(() => { setOnline(false); }, 8000);
     return () => clearTimeout(timeout);
   }, [ready, online]);
-  const paths = { type: 'FeatureCollection' as const, features: state.trace.filter(p => p.length >= 2).map(line) };
   return <View style={styles.fill}>
     <Map ref={map} key={online ? 'online' : 'offline'} testID="guidance-map" style={styles.fill} mapStyle={online && styleUrl ? styleUrl : basicStyle} attribution logo={false} dragPan={!followLock} touchZoom={!followLock} touchRotate={!followLock} touchPitch={false}
       compass={compassTop!==undefined} compassHiddenFacingNorth={false} compassPosition={compassTop===undefined?undefined:{top:compassTop,right:32}}
@@ -41,11 +39,7 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
       }} onDidFailLoadingMap={() => { setReady(false); setOnline(false); }}
       onRegionWillChange={event => { if (!followLock&&event.nativeEvent.userInteraction) setFollow(false); }}>
       <Camera ref={camera} initialViewState={{ center: route[0], zoom: 16 }} />
-      <GeoJSONSource id="guidance-course" data={routeData}>
-        <Layer id="guidance-course-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': COURSE_GUIDE_WIDTH+2 }} />
-        <Layer id="guidance-course-line" type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{ 'line-color': COURSE_GUIDE_COLOR, 'line-width': COURSE_GUIDE_WIDTH }} />
-      </GeoJSONSource>
-      <GeoJSONSource id="guidance-trace" data={paths}><Layer id="guidance-trace-line" afterId="guidance-course-line" type="line" layout={{'line-cap':'round','line-join':'round'}} paint={{ 'line-color': RECORDED_TRAIL_COLOR, 'line-width': RECORDED_TRAIL_WIDTH }} /></GeoJSONSource>
+      <RouteTrailLayers id="guidance" route={route} paths={state.trace}/>
       {state.returnPath.length >= 2 && <GeoJSONSource id="guidance-return" data={line(state.returnPath)}><Layer id="guidance-return-line" type="line" paint={{ 'line-color': '#9C4308', 'line-width': 5, 'line-dasharray': [2, 1] }} /></GeoJSONSource>}
       {(!state.phase||state.lapStart) && <GeoJSONSource id="guidance-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.lapStart??route[0] } }}><Layer id="guidance-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#B7580A', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} /></GeoJSONSource>}
       {showPosition && <GeoJSONSource id="guidance-position" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: state.position } }}>

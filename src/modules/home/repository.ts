@@ -47,7 +47,7 @@ export function createHomeRepository(database: StorageDatabase, scope: OwnerScop
       const count = await tx.getFirstAsync<{ n: number }>('SELECT count(*) n FROM saved_courses WHERE owner_id=?', owner);
       const rows = await tx.getAllAsync<CourseSummary & { json: string; hash: string }>(`SELECT id,name,source,shape,target_km AS targetKm,length_km AS lengthKm,score,
         created_at AS createdAt,updated_at AS updatedAt,snapshot_json AS json,snapshot_hash AS hash FROM saved_courses c
-        WHERE owner_id=? ORDER BY ${savedCourseOrderSql} LIMIT 3`, owner);
+        WHERE owner_id=? ORDER BY ${savedCourseOrderSql} LIMIT 5`, owner);
       const courses: HomeCourse[] = [];
       for(const {json,hash,...summary} of rows){
         const last=await tx.getFirstAsync<{status:string;outcome:string}>(`SELECT status,course_outcome AS outcome FROM running_sessions WHERE owner_id=? AND (course_id=? OR course_snapshot_hash=?) ORDER BY (status!='completed') DESC,coalesce(ended_at,started_at) DESC,started_at DESC,id DESC LIMIT 1`,owner,summary.id,hash);
@@ -57,7 +57,7 @@ export function createHomeRepository(database: StorageDatabase, scope: OwnerScop
           courses.push({ course, paths: [route.filter((_, i) => i % step === 0 || i === route.length - 1)], previewError: false });
         } catch { courses.push({ course, paths: [], previewError: true }); }
       }
-      const completedRuns=await tx.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? AND status='completed' AND course_outcome='finished' AND course_id IS NOT NULL ORDER BY started_at DESC,id DESC LIMIT 3`,owner);
+      const completedRuns=await tx.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? AND status='completed' AND course_outcome='finished' AND course_id IS NOT NULL ORDER BY started_at DESC,id DESC LIMIT 5`,owner);
       const completed=[];for(const run of completedRuns)completed.push({run,paths:await trace(tx,run)});
       const records=await readBadgeRecords(tx,owner),achievements=summarizeAchievements(records,now),badges=badgeProgress(records);
       check();

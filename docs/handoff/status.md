@@ -2,7 +2,7 @@
 
 ## 2026-11-12 선택 몸무게·반복 홈 PR59·SM-A102N 설치
 
-기본60kg 안내·선택 가입 입력·홈 뱃지 도전/획득 목록·미완주 우선 정렬·러닝 파랑3/주황7 경로를 [PR59](https://github.com/ssw3131/running-art-mobile/pull/59) c55c099로 올리고 SM-A102N에 preview216572743을 자료 유지 설치했다. 기존 로그인 홈·진행중 우선·획득 뱃지·완주 코스 표시와 UID/최초 설치 시각 유지 확인. 사용자 요청은 PR로 main 미병합이다. Draft251 성공, ready252 scope/fast/API 성공·Android29/36 진행 중이므로 전체 필수 통과는 아직 아니다. [실행·설치 근거](../history/executed-plans/2026-11-11-2341-home-progress-weight.md). 후속 폰 대조에서 뼈다귀 CTA의 하트 선택 결함을 발견해 12종 진입을 보완한다. API29의 이전 더보기 기대도 새 저장/완주 분리 계약에 맞춰 수정 중이다. 최종 APK 재설치와 CI는 후속.
+기본60kg 안내·선택 가입 입력·홈 뱃지 도전/획득 목록·미완주 우선 정렬·러닝 파랑3/주황7 경로를 [PR59](https://github.com/ssw3131/running-art-mobile/pull/59) c55c099로 올리고 SM-A102N에 preview216572743을 자료 유지 설치했다. 기존 로그인 홈·진행중 우선·획득 뱃지·완주 코스 표시와 UID/최초 설치 시각 유지 확인. 사용자 요청은 PR로 main 미병합이다. Draft251 성공, ready252 scope/fast/API 성공·Android29/36 진행 중이므로 전체 필수 통과는 아직 아니다. [실행·설치 근거](../history/executed-plans/2026-11-11-2341-home-progress-weight.md). 후속 폰 대조의 뼈다귀/하트 선택 결함을 12종 진입으로 보완해 PR59 최종8c06303(앱 소스08d62af)·Handset37 preview216574539을 00:52:58 추가 설치했다. 기존 설치/로그인 유지와 실제 카드·CTA 이동·뼈다귀 선택 true를 확인하고 홈으로 복귀했다. Verify254 scope/fast/API 통과·Android29/36 진행 중, 최종 게이트와 마감 문서 원격 반영은 후속이다. 원본252는 두 API 모두 이전 더보기 기대에서 실패했으며 검사 계약을 보완했다.
 
 ## 2026-11-10 PR57 공유 화면 병합·필수 검사 복구 완료
 

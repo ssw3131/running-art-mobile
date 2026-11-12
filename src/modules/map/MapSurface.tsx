@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { MapSurfaceProps as Props } from './types';
+import { RouteTrailLayers } from './RouteTrailLayers';
 import { centerFromMap } from './coordinates';
 import { hideMapBuildings } from './buildings';
 import { themedMapStyle } from './config';
@@ -10,7 +11,7 @@ import { useThemeColors } from '@/theme/ThemeProvider';
 
 const syntheticStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#F0F2ED' } }] };
 
-function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terrainOverlay, origin, syntheticRoads, centerSelection, showTarget = true, routeColors, interactive = true, onUserMoveStart, onRetry, onFailure }: Props & { onRetry(): void; onFailure(): void }) {
+function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terrainOverlay, recordedPaths, origin, syntheticRoads, centerSelection, showTarget = true, routeColors, interactive = true, onUserMoveStart, onRetry, onFailure }: Props & { onRetry(): void; onFailure(): void }) {
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
   const buildingUpdate = useRef<Promise<boolean>>(Promise.resolve(true));
@@ -114,10 +115,10 @@ function MapAttempt({ styleUrl, position, simulationPosition, routeOverlay, terr
           {showTarget && <GeoJSONSource id="route-target" data={routeOverlay.target}>
             <Layer id="target-line" type="line" paint={{ 'line-color': routeColors?.target ?? '#B66A31', 'line-width': 2.5, 'line-dasharray': [3, 2] }} />
           </GeoJSONSource>}
-          <GeoJSONSource id="selected-route" data={routeOverlay.route}>
+          {recordedPaths ? <RouteTrailLayers id="saved-progress" route={routeOverlay.route.geometry.coordinates} paths={recordedPaths}/> : <GeoJSONSource id="selected-route" data={routeOverlay.route}>
             <Layer id="route-outline" type="line" paint={{ 'line-color': '#FFFFFF', 'line-width': 7 }} />
             <Layer id="route-line" type="line" paint={{ 'line-color': routeColors?.route ?? '#23694C', 'line-width': 4, 'line-opacity': terrainOverlay ? 0 : 1 }} />
-          </GeoJSONSource>
+          </GeoJSONSource>}
           {!routeOverlay.freeStart && <GeoJSONSource id="route-start" data={{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: routeOverlay.start } }}>
             <Layer id="route-start-dot" type="circle" paint={{ 'circle-radius': 6, 'circle-color': '#183C32', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 }} />
           </GeoJSONSource>}

@@ -134,3 +134,16 @@ test('badge challenge with no saved match preselects its shape, without generati
   await render(<HomeScreen/>);await fireEvent.press(screen.getByTestId('home-challenge-start'));
   expect(mockNavigate).toHaveBeenCalledWith({pathname:'/route-lab',params:{homeShape:'heart',homeSection:'conditions',homeRequest:expect.any(String)}});
 });
+
+test('home courses, completions and earned badges are horizontal and capped at five',async()=>{
+ const courses=Array.from({length:7},(_,i)=>({course:{id:'course'+i,name:'코스'+i,lengthKm:3,createdAt:1},paths:[]}));
+ const completed=Array.from({length:7},(_,i)=>({run:{...run,id:'run'+i},paths:[]}));
+ const badges=Array.from({length:7},(_,i)=>({...challengeBadge,earned:true,earnedAt:i,definition:{...challengeBadge.definition,id:'badge'+i}}));
+ mockRead.mockResolvedValue({...data(),runCount:7,courses,completed,badges});
+ await render(<HomeScreen/>);
+ expect(screen.getByTestId('home-courses-carousel').props.horizontal).toBe(true);expect(screen.getByTestId('home-completed-carousel').props.horizontal).toBe(true);
+ expect(screen.getByTestId('home-course-course4')).toBeVisible();expect(screen.queryByTestId('home-course-course5')).toBeNull();
+ expect(screen.getByTestId('home-run-run4')).toBeVisible();expect(screen.queryByTestId('home-run-run5')).toBeNull();
+ expect(screen.getByTestId('home-earned-badge2')).toBeVisible();expect(screen.queryByTestId('home-earned-badge1')).toBeNull();
+ expect(screen.getByText('내 완주 뱃지')).toBeVisible();
+});

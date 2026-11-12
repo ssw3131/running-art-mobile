@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/features/courses/CourseDetailScreen.tsx",
+    "src/features/courses/CoursesScreen.tsx",
+    "src/features/guidance/GuidanceMap.tsx",
+    "src/features/running/LiveGuidancePanel.tsx",
+    "src/features/service/HomeBadges.tsx",
+    "src/features/service/HomePreview.tsx",
+    "src/features/service/HomeScreen.tsx",
+    "src/modules/home/repository.ts",
+    "src/modules/map/MapSurface.tsx",
+    "src/modules/map/RouteTrailLayers.tsx",
+    "src/modules/map/types.ts",
+    "src/modules/running/recorded-paths.ts",
+    "tests/components/archive.test.tsx",
+    "tests/components/course-detail.test.tsx",
+    "tests/components/guidance-trail.test.tsx",
+    "tests/components/home.test.tsx",
+    "tests/components/live-running.test.tsx",
+    "tests/course-priority.test.mjs",
+    "tests/home.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-12 user Figma680:2586/24:3818/35:4724/35:4857: append to existing PR59, install phone, do not merge main. Home rows max5 horizontal, no thumbnail info text, circular recommendation badge, selected-only orange saved shapes, actual GPS orange and unfinished detail progress.",
+  "before": "Home saved/completed capped at3 in vertical rows, badges uncapped; opaque exported badge corners showed a square. Saved heart had baked orange tint without selection. Actual and planned paths were separate native sources and isolated GPS segments had no visible geometry; saved detail omitted recorded GPS.",
+  "after": "Home SQL and UI cap at5, horizontally scrolling saved/completed/earned rows. Badge original artwork is clipped to a circular wrapper. Only selected/current saved course tints orange. A single ordered source draws blue3px course, orange7px accepted GPS lines and isolated fixes. Saved unfinished detail reads latest owned run points and uses the same overlay; real live state keeps persisted GPS segments.",
+  "invariants": [
+    "Do not join GPS gaps/pauses or replace recorded points with planned route/progress estimates. No GPS filter, distance, navigation checkpoint or database schema changes.",
+    "Keep account-scoped reads and screen generation guards. Opening saved detail does not resume or mutate runs.",
+    "Home priority applies before LIMIT; no new synthetic records, achievements, quota consumption or real account signup.",
+    "Reuse original Figma icons/badge/stage assets without raster editing. No main merge; existing app identity and phone records preserved."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/home.test.tsx",
+      "reason": "Five-item horizontal courses/completions and earned badges, existing challenge navigation and owner/scroll behavior."
+    },
+    {
+      "path": "tests/components/guidance-trail.test.tsx",
+      "reason": "Blue course/orange wider trail, single-source ordering, separate gap segments, singleton GPS fix and live updates."
+    },
+    {
+      "path": "tests/components/live-running.test.tsx",
+      "reason": "Real persisted points reach map across rerenders without using simulation/checkpoint trace or joining pauses."
+    },
+    {
+      "path": "tests/components/course-detail.test.tsx",
+      "reason": "Latest unfinished owned run overlays segments without automatic resume; saved/retry/export contracts stay."
+    },
+    {
+      "path": "tests/components/archive.test.tsx",
+      "reason": "Only one selected saved row, priority status does not select all unfinished rows; pagination/owner transitions."
+    },
+    {
+      "path": "tests/course-priority.test.mjs",
+      "reason": "Seven courses demonstrate priority before five-item home truncation and full archive pagination."
+    },
+    {
+      "path": "tests/home.test.mjs",
+      "reason": "Real SQLite home read/ownership/traces and updated maximum."
+    },
+    {
+      "path": "tests/components/home-preview.test.tsx",
+      "reason": "Static cached snapshots and offline fallback remain stable without live native maps."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "Requested four Figma screens; no unrelated baselines/masks/tolerances changed. Previous254 full API36 functional15 passed but home golden was old recent-first layout (41618 pixels), other three screens zero difference. New home golden must be reviewed against final source.",
+    "evidence": [
+      "Full design contexts/screenshots for680:2586,24:3818,35:4724,35:4857 reviewed. Existing stage/icon assets reused at original dimensions.",
+      "Opaque source badge corners are clipped only by a 90px circular presentation wrapper, preserving original bitmap.",
+      "Final signed APK physical-phone inspection follows; actual outdoor GPS run is not performed by agent."
+    ]
+  },
+  "native": "No dependencies, permissions, schema, GPS filtering or running persistence changed. Single native GeoJSON source orders guide/trace layers. Existing source style IDs for course/trace retained; map background/position overlays unaffected. Draft fast feedback before ready full verification."
+}

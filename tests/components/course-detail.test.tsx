@@ -5,20 +5,21 @@ import CourseDetailScreen from '../../src/features/courses/CourseDetailScreen';
 import { CourseError } from '../../src/modules/courses/model';
 import { candidateDrafts } from '../../src/features/course-generation/model';
 let mockParams:any, mockLast:any, mockActive:any, mockSaved:any;
+const mockPoints=jest.fn().mockResolvedValue([]);
 const mockNavigate=jest.fn(),mockSave=jest.fn(),mockGet=jest.fn(),mockExportSnapshot=jest.fn();
 const snapshot={schemaVersion:1,engineVersion:'0.2',source:'osm',shape:'heart',origin:{lat:37,lng:127},targetKm:3,lengthKm:3,score:80,route:[[127,37],[127.01,37],[127,37]],target:[[127,37],[127.01,37],[127,37]]};
 jest.mock('expo-router',()=>({useLocalSearchParams:()=>mockParams,useFocusEffect:(fn:any)=>require('react').useEffect(fn,[fn]),router:{canGoBack:()=>true,back:jest.fn(),push:jest.fn()}}));
 jest.mock('../../src/features/auth/use-auth',()=>({useAuth:()=>({ready:true,account:{id:'owner'}})}));
 jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>({account:{id:'owner'}})}}));
-jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({courses:{get:(...args:any[])=>mockGet(...args),findHash:async()=>mockSaved,latestAttempt:async()=>mockLast,save:(...args:any[])=>mockSave(...args)},runs:{active:async()=>mockActive,guidance:async()=>({course:{name:'삭제된 코스 사본',snapshot}})}})}));
+jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({courses:{get:(...args:any[])=>mockGet(...args),findHash:async()=>mockSaved,latestAttempt:async()=>mockLast,save:(...args:any[])=>mockSave(...args)},runs:{points:(...args:any[])=>mockPoints(...args),active:async()=>mockActive,guidance:async()=>({course:{name:'삭제된 코스 사본',snapshot}})}})}));
 jest.mock('../../src/modules/courses/share-gpx',()=>({shareCourseGpx:jest.fn(),shareCourseSnapshotGpx:(...args:any[])=>mockExportSnapshot(...args)}));
 jest.mock('../../src/features/service/open-service-tab',()=>({openServiceTab:(...args:any[])=>mockNavigate(...args)}));
-jest.mock('../../src/modules/map/MapSurface',()=>()=>null);
+jest.mock('../../src/modules/map/MapSurface',()=>({__esModule:true,default:(props:any)=>require('react').createElement(require('react-native').View,{testID:'detail-map',...props})}));
 jest.mock('../../src/features/terrain/use-terrain',()=>({useTerrain:()=>({state:{status:'idle',profile:null}})}));
 jest.mock('../../src/features/terrain/TerrainPanel',()=>()=>null);
 jest.mock('../../src/features/usage/use-usage',()=>({useUsage:()=>({data:{generation:{used:2,total:5}},error:'',refresh:jest.fn()})}));
 beforeEach(()=>{
- candidateDrafts.clear();jest.spyOn(ToastAndroid,'show').mockImplementation(()=>{});
+ mockPoints.mockReset().mockResolvedValue([]);candidateDrafts.clear();jest.spyOn(ToastAndroid,'show').mockImplementation(()=>{});
  mockParams={id:'a'.repeat(32)};mockLast=null;mockActive=null;mockSaved='a'.repeat(32);
  mockGet.mockReset().mockResolvedValue({id:mockSaved,name:'저장 하트',snapshot});mockSave.mockReset().mockResolvedValue({id:'b'.repeat(32),created:true});mockNavigate.mockReset();mockExportSnapshot.mockReset().mockResolvedValue('closed');
 });
@@ -102,4 +103,11 @@ test('difficulty criteria stay expanded and terrain opens the same private snaps
  expect(candidateDrafts.get(destination.params.draft,'other')).toBeNull();
  expect(mockSave).not.toHaveBeenCalled();
  expect(screen.getByTestId('course-export-gpx')).toHaveTextContent('GPX파일 다운');
+});
+
+test('unfinished saved detail shows the latest owned run segments over its full course without resuming',async()=>{
+ mockLast={id:'r'.repeat(32),status:'completed',courseOutcome:'stopped',startedAt:1};
+ mockPoints.mockResolvedValue([{segment:0,longitude:127,latitude:37},{segment:0,longitude:127.001,latitude:37},{segment:1,longitude:127.002,latitude:37}]);
+ await render(<CourseDetailScreen/>);await waitFor(()=>expect(screen.getByTestId('detail-map').props.recordedPaths).toEqual([[[127,37],[127.001,37]],[[127.002,37]]]));
+ expect(mockPoints).toHaveBeenCalledWith(mockLast.id);expect(mockNavigate).not.toHaveBeenCalled();
 });

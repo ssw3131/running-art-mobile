@@ -9,15 +9,15 @@ const A='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',B='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbb
 test('unfinished priority happens before pagination and home truncation, isolates owners, and uses latest attempt',async t=>{
  const db=openSqlite();t.after(()=>db.closeAsync());await migrateDatabase(db);let now=1000;const courses=createCourseRepository(db,()=>++now,()=>A),route=demoCourse('normal');
  const snapshot=n=>({schemaVersion:1,engineVersion:'0.2',source:'osm',shape:'heart',origin:{lng:route[0][0],lat:route[0][1]},targetKm:n,lengthKm:3,score:80,route,target:route});
- for(let n=1;n<=5;n++)await courses.save(snapshot(n),'코스'+n,id(n));
+ for(let n=1;n<=7;n++)await courses.save(snapshot(n),'코스'+n,id(n));
  const attempt=async(n,course,owner,status,outcome,ended)=>db.runAsync('INSERT INTO running_sessions(id,owner_id,status,started_at,ended_at,checkpoint_at,resumed_at,course_id,course_outcome) VALUES(?,?,?,?,?,?,?,?,?)',id(n),owner,status,ended-10,status==='completed'?ended:null,ended,ended,course,outcome);
  await attempt(10,id(1),A,'completed','stopped',3000);
  await attempt(11,id(2),A,'interrupted','active',3001);
  await attempt(12,id(3),B,'completed','stopped',4000);
  assert.deepEqual((await courses.list(2)).map(c=>c.id),[id(2),id(1)]);
- assert.deepEqual((await courses.list(3,2)).map(c=>c.id),[id(5),id(4),id(3)]);
- assert.deepEqual((await createHomeRepository(db,()=>A).read(5000)).courses.map(c=>c.course.id),[id(2),id(1),id(5)]);
+ assert.deepEqual((await courses.list(3,2)).map(c=>c.id),[id(7),id(6),id(5)]);
+ assert.deepEqual((await createHomeRepository(db,()=>A).read(5000)).courses.map(c=>c.course.id),[id(2),id(1),id(7),id(6),id(5)]);
  await attempt(13,id(1),A,'completed','finished',5000);
- assert.deepEqual((await courses.list(3)).map(c=>c.id),[id(2),id(5),id(4)]);
+ assert.deepEqual((await courses.list(3)).map(c=>c.id),[id(2),id(7),id(6)]);
  assert.equal((await courses.list(10)).find(c=>c.id===id(1)).unfinished,false);
 });

@@ -21,3 +21,14 @@ test('UI-ARCHIVE-02: account transition suppresses old pending page and its erro
  await render(<CoursesScreen embedded/>);mockOwner='new-account';await screen.rerender(<CoursesScreen embedded/>);expect(screen.getByTestId('course-row-99')).toBeVisible();
  await act(async()=>finish([row(1)]));expect(screen.queryByTestId('course-row-1')).toBeNull();expect(screen.getByTestId('course-row-99')).toBeVisible();
 });
+
+test('only the selected saved row is highlighted; unfinished status does not select every row',async()=>{
+ const rows=[{...row(1),unfinished:true},{...row(2),unfinished:true}];
+ jest.mocked(getStorage).mockResolvedValue({courses:{recover:async()=>{},list:async()=>rows,count:async()=>2},runs:{active:async()=>({courseId:'2'})}} as any);
+ await render(<CoursesScreen embedded/>);
+ expect(screen.getByTestId('course-row-1').props.accessibilityState.selected).toBe(false);
+ expect(screen.getByTestId('course-row-2').props.accessibilityState.selected).toBe(true);
+ await fireEvent.press(screen.getByTestId('course-row-1'));
+ expect(screen.getByTestId('course-row-1').props.accessibilityState.selected).toBe(true);
+ expect(screen.getByTestId('course-row-2').props.accessibilityState.selected).toBe(false);
+});

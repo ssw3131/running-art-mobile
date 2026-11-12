@@ -18,6 +18,7 @@ export default function CoursesScreen({embedded=false}:{embedded?:boolean}) {
   const [state,setState]=useState<{owner:string|null;rows:CourseSummary[];active:string|null;total:number;more:boolean;ready:boolean;error:string}>({owner:null,rows:[],active:null,total:0,more:false,ready:false,error:''});
   const [busy,setBusy]=useState(false), generation=useRef(0),loading=useRef(false),loaded=useRef(PAGE);
   const [refreshing,setRefreshing]=useState(false);
+  const [selection,setSelection]=useState<{owner:string;id:string}|null>(null);
   const current=owner!==null && state.owner===owner;
   const fetchPage=useCallback(async(offset:number)=>{
     if(loading.current || owner===null)return;
@@ -48,11 +49,11 @@ export default function CoursesScreen({embedded=false}:{embedded?:boolean}) {
     {Platform.OS==='web'&&<AppText>저장한 코스는 Android 앱에서 확인해 주세요.</AppText>}
     {current&&state.ready&&!state.rows.length&&<AppText testID="courses-empty">아직 저장한 코스가 없어요. 계산 결과에서 원하는 후보를 저장해 보세요.</AppText>}
     {current&&state.rows.map(course=>{
-      const shape=SERVICE_SHAPES.find(s=>s.id===course.shape),active=!!course.unfinished;
+      const shape=SERVICE_SHAPES.find(s=>s.id===course.shape),active=!!course.unfinished,selected=selection?.owner===owner?selection.id===course.id:state.active===course.id;
       return <Link key={course.id} href={{pathname:'/courses/[id]',params:{id:course.id}}} asChild>
-        <Pressable testID={`course-row-${course.id}`} accessibilityRole="button" style={{minHeight:100,padding:10,borderRadius:radius.card,backgroundColor:c.surface,borderWidth:active?1:0,borderColor:c.selected,boxShadow:'0px 0px 5px rgba(0,0,0,0.15)',flexDirection:'row',alignItems:'center',gap:16}}>
-          <View style={{width:72,height:80,borderRadius:10,backgroundColor:active?'#FFEEE5':c.navigation,alignItems:'center',justifyContent:'center'}}>
-            {shape?<GenerationIcon name={shape.id}/>:course.shape==='custom'?<AppText variant="caption">사용자 도형</AppText>:<LegacyShapeIcon shape={course.shape}/>}
+        <Pressable testID={`course-row-${course.id}`} accessibilityRole="button" accessibilityState={{selected}} onPress={()=>setSelection({owner:owner!,id:course.id})} style={{minHeight:100,padding:10,borderRadius:radius.card,backgroundColor:c.surface,borderWidth:selected?1:0,borderColor:c.selected,boxShadow:'0px 0px 5px rgba(0,0,0,0.15)',flexDirection:'row',alignItems:'center',gap:16}}>
+          <View style={{width:72,height:80,borderRadius:10,backgroundColor:selected?'#FFEEE5':c.navigation,alignItems:'center',justifyContent:'center'}}>
+            {shape?<GenerationIcon name={shape.id} color={selected?c.selected:c.muted}/>:course.shape==='custom'?<AppText variant="caption">사용자 도형</AppText>:<LegacyShapeIcon shape={course.shape}/>}
           </View>
           <View style={{flex:1,gap:4}}><AppText weight="bold" numberOfLines={2}>{course.name}</AppText>
             {active&&<AppText variant="caption" weight="bold" style={{color:c.selected}}>미완주</AppText>}

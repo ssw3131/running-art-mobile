@@ -3,7 +3,7 @@ import { recommendHomeBadge } from '@/modules/home/recommendation';
 import { router, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, View, useWindowDimensions, type ViewToken } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, ScrollView, View, useWindowDimensions, type ViewToken } from 'react-native';
 import { AppText, Button, Icon } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { homeKind, homeRunOutcome, type HomeCourse, type HomeData, type HomeRun } from '@/modules/home/model';
@@ -80,7 +80,7 @@ function Stats({ data }: { data: HomeData }) {
 
 export default function HomeScreen() {
   const auth = useAuth(), c = useThemeColors(), { data, error, retry, recommendationSeed } = useHome();
-  const { fontScale } = useWindowDimensions(), columns = fontScale >= 1.4 ? 1 : 3;
+  const { fontScale } = useWindowDimensions(), cardWidth = fontScale >= 1.4 ? 180 : 115;
   const list = useRef<FlatList<Row>>(null), [shape, setShape] = useState<Shape>('heart'), [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState<Set<string>>(new Set());
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken<Row>[] }) => setVisible(new Set(viewableItems.map(v => v.item.key))), []);
@@ -91,13 +91,13 @@ export default function HomeScreen() {
     if (!data) return [];
     if (kind === 'initial') return [{ key: 'initial', kind: 'initial' }, { key: 'action', kind: 'action' }] as Row[];
     const result: Row[] = [{key:'stats',kind:'stats'},{key:'course-heading',kind:'course-heading'}];
-    for(let i=0;i<Math.max(data.courses.length,1);i+=columns)result.push({key:`courses-${i}`,kind:'courses',courses:data.courses.slice(i,i+columns)});
+    result.push({key:'courses',kind:'courses',courses:data.courses.slice(0,5)});
     if(challenge)result.push({key:'challenge',kind:'challenge'});
     result.push({key:'badges',kind:'badges'},{key:'run-heading',kind:'run-heading'});
     const completed=data.completed??data.recent.filter(({run})=>run.status==='completed'&&run.courseOutcome==='finished'&&run.courseId);
-    for(let i=0;i<Math.max(completed.length,1);i+=columns)result.push({key:`runs-${i}`,kind:'runs',runs:completed.slice(i,i+columns)});
+    result.push({key:'runs',kind:'runs',runs:completed.slice(0,5)});
     result.push({ key: 'action', kind: 'action' }); return result;
-  }, [data, kind, columns,challenge]);
+  }, [data, kind,challenge]);
   return <View style={{ flex: 1, backgroundColor: c.background }}>
     <FlatList ref={list} testID="service-home" data={rows} keyExtractor={row => row.key} extraData={{ visible, focused, shape }}
       contentContainerStyle={styles.content} viewabilityConfig={viewability} onViewableItemsChanged={onViewableItemsChanged}
@@ -106,7 +106,7 @@ export default function HomeScreen() {
         {!!error && <View testID="home-error" style={{ gap: 12 }}><AppText accessibilityRole="alert" style={{ color: c.danger }}>{error}</AppText><Button label="홈 다시 확인" testID="home-retry" onPress={retry} /></View>}
       </View>}
       renderItem={({ item }) => {
-        const active = focused && visible.has(item.key), cardWidth = `${100 / columns}%` as const;
+        const active = focused && visible.has(item.key);
         if (item.kind === 'initial') return <InitialHome shape={shape} setShape={setShape} />;
         if (item.kind === 'stats') return <Stats data={data!} />;
         if(item.kind==='challenge')return challenge?<HomeBadgeChallenge challenge={challenge} owner={data!.owner}/>:null;
@@ -116,7 +116,7 @@ export default function HomeScreen() {
           return <View style={styles.sectionHeading}><AppText weight="bold" style={styles.sectionTitle}>{runs ? '완주 코스' : '저장 코스'}</AppText>
             <TextLink label="더보기" testID={runs ? 'home-more-runs' : 'home-more-courses'} onPress={runs?()=>router.navigate({pathname:'/courses',params:{view:'runs',fromHome:'1'}}):openCourses} /></View>;
         }
-        if (item.kind === 'runs') return item.runs?.length ? <View style={styles.cards}>{item.runs.map(({ run, paths }) => {
+        if (item.kind === 'runs') return item.runs?.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} testID="home-completed-carousel" contentContainerStyle={styles.cards}>{item.runs.map(({ run, paths }) => {
           const outcome = homeRunOutcome(run), complete = outcome === '완주';
           return <Pressable key={run.id} testID={`home-run-${run.id}`} accessibilityRole="button" accessibilityLabel={`${run.courseName || '자유 러닝'}, ${outcome ?? '러닝 기록'}, ${km(run.distanceM)} 킬로미터, ${date(run.startedAt)}`}
             onPress={() => router.push({ pathname:'/runs/[id]',params:{id:run.id} })} style={[styles.card, { width: cardWidth }]}>
@@ -127,14 +127,14 @@ export default function HomeScreen() {
             <AppText variant="caption" style={{ color: c.subtle }}>{km(run.distanceM)} km / {durationLabel(elapsedMs(run, Date.now()))}</AppText>
             <AppText variant="caption" style={{ color: c.subtle }}>{date(run.startedAt)}</AppText>
           </Pressable>;
-        })}</View> : <AppText testID="home-empty-runs" style={{ color: c.muted }}>아직 완주한 코스가 없어요. 첫 완주에 도전해 보세요.</AppText>;
-        if (item.kind === 'courses') return item.courses?.length ? <View style={styles.cards}>{item.courses.map(({ course, paths, previewError }) => <Pressable key={course.id}
+        })}</ScrollView> : <AppText testID="home-empty-runs" style={{ color: c.muted }}>아직 완주한 코스가 없어요. 첫 완주에 도전해 보세요.</AppText>;
+        if (item.kind === 'courses') return item.courses?.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} testID="home-courses-carousel" contentContainerStyle={styles.cards}>{item.courses.map(({ course, paths, previewError }) => <Pressable key={course.id}
           testID={`home-course-${course.id}`} accessibilityRole="button" accessibilityLabel={`${course.name}, ${course.lengthKm.toFixed(1)} 킬로미터, 저장 코스 보기`}
           onPress={() => router.push({ pathname: '/courses/[id]', params: { id: course.id } })} style={[styles.card, { width: cardWidth }]}>
           <HomePreview paths={paths} active={active} unavailable={previewError} synthetic={course.source === 'synthetic'} label="저장 코스 경로" />
           <View style={styles.cardHeading}><AppText variant="caption" weight="bold" style={{flexShrink:1}}>{course.name}</AppText>{course.unfinished&&<AppText testID={`home-course-progress-${course.id}`} style={{fontSize:10,lineHeight:16,color:c.onAction,backgroundColor:c.action,borderRadius:10,paddingHorizontal:5}}>진행중</AppText>}</View><AppText variant="caption" style={{ color: c.subtle }}>{course.lengthKm.toFixed(1)} km</AppText>
           <AppText variant="caption" style={{ color: c.subtle }}>{date(course.createdAt)}</AppText>
-        </Pressable>)}</View> : <AppText testID="home-empty-courses" style={{ color: c.muted }}>아직 저장한 코스가 없어요.</AppText>;
+        </Pressable>)}</ScrollView> : <AppText testID="home-empty-courses" style={{ color: c.muted }}>아직 저장한 코스가 없어요.</AppText>;
         if (item.kind === 'credits') return null;
         return <View style={styles.action}><Button label="코스 생성하러 가기" testID="open-route-lab" labelStyle={styles.actionLabel} trailing={<Icon name="chevronRight" />}
           onPress={() => router.navigate({ pathname: '/route-lab', params: { homeSection: 'conditions', homeShape: kind === 'initial' ? shape : undefined, homeRequest: String(Date.now()) } })} /></View>;
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   textLink: { minHeight: 48, paddingVertical: 12, flexDirection: 'row', gap: 4, alignItems: 'center' },
   stats: { flexDirection: 'row', gap: 6, marginTop: 12 }, stat: { flex: 1, paddingHorizontal: 6, paddingVertical: 12, borderRadius: 16, gap: 10 },
   statHeading: { flexDirection: 'row', gap: 3, alignItems: 'center', justifyContent: 'center' },
-  cards: { flexDirection: 'row', marginHorizontal: -4 }, card: { paddingHorizontal: 4, gap: 3, minHeight: 48 },
+  cards: { flexDirection: 'row', gap:8 }, card: { gap: 3, minHeight: 48 },
   cardHeading: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 3, justifyContent: 'space-between', marginTop: 5 },
   action: { paddingTop: 24, paddingBottom: 8 },
   // Align the visible Noto glyphs with the centered chevron, not just the text line box.
