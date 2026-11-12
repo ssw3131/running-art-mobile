@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { Link, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, RefreshControl, ScrollView, Pressable, View } from 'react-native';
@@ -43,9 +44,9 @@ export default function RunsScreen({embedded=false}:{embedded?:boolean}) {
         <View style={{width:40,alignItems:'center'}}><AppText weight="bold" variant="heading">{new Date(run.endedAt??run.startedAt).getDate()}</AppText><AppText variant="caption">{new Date(run.endedAt??run.startedAt).toLocaleDateString('ko-KR',{weekday:'short'})}</AppText></View>
         <View style={{width:1,alignSelf:'stretch',backgroundColor:c.divider,justifyContent:'center'}}><View style={{width:7,height:7,borderRadius:4,backgroundColor:c.action,marginLeft:-3}}/></View>
         <Link href={{pathname:'/runs/[id]',params:{id:run.id}}} asChild><Pressable accessibilityRole="button" testID={`run-row-${run.id}`} style={{flex:1,minHeight:100,padding:10,borderRadius:20,backgroundColor:c.surface,boxShadow:'0px 0px 5px rgba(0,0,0,0.15)',flexDirection:'row',alignItems:'center',gap:10}}>
-          <View style={{width:72,height:72,borderRadius:36,borderWidth:1,borderColor:c.divider,alignItems:'center',justifyContent:'center'}}>{shape?<GenerationIcon name={shape.id} color="#FC5602"/>:shapeId==='custom'?<GenerationIcon name="draw" color="#FC5602"/>:shapeId?<LegacyShapeIcon shape={shapeId} color="#FC5602"/>:<Icon name="run"/>}</View>
+          <View style={{width:64,height:64,borderRadius:32,borderWidth:1,borderColor:c.divider,alignItems:'center',justifyContent:'center'}}>{shape?<GenerationIcon name={shape.id} color="#FC5602"/>:shapeId==='custom'?<GenerationIcon name="draw" color="#FC5602"/>:shapeId?<LegacyShapeIcon shape={shapeId} color="#FC5602"/>:<Icon name="run"/>}</View>
           <View style={{flex:1,gap:4}}><AppText weight="bold" numberOfLines={2}>{run.courseName??'코스'}</AppText>
-            <AppText variant="caption" accessibilityLabel="거리와 예상 러닝 시간">{(run.distanceM/1000).toFixed(1)} km　|　{courseDuration(estimatedRunningMinutes(run.distanceM/1000)??0)}</AppText><RegionText lat={record?.originLat} lng={record?.originLng}/><AppText variant="caption">{recordDate(run.endedAt??run.startedAt)}</AppText></View><Icon name="chevronRight" color={c.outline}/>
+            <AppText variant="caption" accessibilityLabel="거리와 예상 러닝 시간">{(run.distanceM/1000).toFixed(1)}{'\u00a0'}km  |  {courseDuration(estimatedRunningMinutes(run.distanceM/1000)??0)}</AppText><RegionText lat={record?.originLat} lng={record?.originLng}/><AppText variant="caption">{recordDate(run.endedAt??run.startedAt)}</AppText></View><Image source={require('../../../assets/ui/chevron-right.svg')} tintColor={c.outline} style={{width:16,height:24,flexShrink:0}} contentFit="contain" accessible={false}/>
         </Pressable></Link>
       </View>;})}
     </View>)}
