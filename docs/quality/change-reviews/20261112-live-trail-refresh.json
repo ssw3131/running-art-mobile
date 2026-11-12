@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/modules/map/RouteTrailLayers.tsx",
+    "src/modules/running/recorded-paths.ts",
+    "tests/components/guidance-trail.test.tsx"
+  ],
+  "behavior": "changed",
+  "decision": "사용자의 지도 재진입 전 주황 궤적이 그려지지 않는 보고. 기존 PR59 후속/main 미병합 유지.",
+  "before": "RouteTrailLayers가 route/paths 참조로만 useMemo해 실제 시뮬레이션 엔진의 같은 trace 배열 append를 무시했다. 최초 Point가 LineString으로 바뀌지 않아 화면 재마운트 때만 현재 경로가 나타났다. 기존 검사는 새 trace 배열로 교체해 이 문제를 놓쳤다.",
+  "after": "렌더 시 현재 경로로 native GeoJSON을 다시 만들고 좌표를 복사해 이전 전달 데이터가 나중에 변하지 않도록 한다. 지도/카메라/소스 ID 재생성 없이 점에서 선으로 갱신하고 후속 좌표도 반영한다.",
+  "invariants": [
+    "실제 GPS/시뮬레이션 좌표만 표시, pause/공백 구간 분리·필터·거리·완주 판정 유지.",
+    "Map/Camera/source ID 및 레이어 순서·색/굵기·기존 계정과 기록 유지.",
+    "같은 PR59·main 미병합, 로컬 에뮬레이터 없음."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/guidance-trail.test.tsx",
+      "reason": "실제 createRunningSimulation의 같은 route/trace 참조로 같은 지도에 연속 update, 최초 Point→LineString 및 다음 이동/이전 GeoJSON 불변 확인. 수정 전 새 검사 실패·수정 후 통과."
+    },
+    {
+      "path": "tests/components/live-running.test.tsx",
+      "reason": "실제 저장 GPS와 시뮬레이션 입력 경로·공백·화면 동작 유지."
+    },
+    {
+      "path": "tests/components/run-recording-refresh.test.tsx",
+      "reason": "GPS commit 후 재진입/타이머 없이 UI points 갱신 유지."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "정적 화면 배치 변경 없이 이동 중 주황 궤적이 화면 재진입 전에 갱신되어야 한다.",
+    "evidence": [
+      "같은 지도 컴포넌트와 실제 엔진으로 수정 전 재현: 좌표가 늘어도 native 전달 GeoJSON은 첫 Point에 머물렀다.",
+      "폰 추가 설치/확인은 후속. 실제 야외 GPS 원인이 모두 확정된 것으로 과장하지 않는다."
+    ]
+  },
+  "native": "MapLibre GeoJSON prop만 매 렌더 fresh 직렬화 가능하도록 보완. 네이티브 의존성/권한/DB/서명 변화 없음. 네이티브 Map remount나 위치추적 재시작을 사용하지 않는다."
+}

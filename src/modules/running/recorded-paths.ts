@@ -15,8 +15,8 @@ export function recordedPaths(points: readonly RunPoint[]): [number, number][][]
  * Isolated accepted fixes remain visible without joining GPS gaps. */
 export function routeTrailData(route: readonly number[][], paths: readonly number[][][]): FeatureCollection<LineString | Point> {
   return { type: 'FeatureCollection', features: [
-    ...(route.length >= 2 ? [{ type: 'Feature' as const, properties: { role: 'course' }, geometry: { type: 'LineString' as const, coordinates: [...route] } }] : []),
+    ...(route.length >= 2 ? [{ type: 'Feature' as const, properties: { role: 'course' }, geometry: { type: 'LineString' as const, coordinates: route.map(point=>[...point]) } }] : []),
     ...paths.filter(path => path.length).map(path => ({ type: 'Feature' as const, properties: { role: 'trace' },
-      geometry: path.length === 1 ? { type: 'Point' as const, coordinates: path[0] } : { type: 'LineString' as const, coordinates: path } })),
+      geometry: path.length === 1 ? { type: 'Point' as const, coordinates: [...path[0]] } : { type: 'LineString' as const, coordinates: path.map(point=>[...point]) } })),
   ] };
 }

@@ -109,3 +109,5 @@ Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절�
 - [2026-11-12 홈 가로 목록·러닝 궤적 색상 후속](2026-11-12-1917-home-carousel-running-trail.md) — PR·폰 설치 완료, 홈 기준/병합 게이트 후속
 
 - [2026-11-12-2130-course-lists-badge-live.md](2026-11-12-2130-course-lists-badge-live.md) — 완료: 동일 PR59·SM-A102N 최종 설치, main 미반영.
+
+- [2026-11-12-2327-live-trail-refresh.md](2026-11-12-2327-live-trail-refresh.md) — 진행 중: 실시간 궤적 갱신 재현/수정.

@@ -38,3 +38,23 @@ test('pedestrian approach and return guide cannot cover the real orange trail',a
  expect(screen.getByTestId('layer-guidance-return-line').props.beforeId).toBe('guidance-course-outline');
  expect(screen.getByTestId('layer-guidance-trace-line').props.afterId).toBe('guidance-course-line');
 });
+
+test('the mounted map paints growing simulation breadcrumbs even when route and trace references stay the same',async()=>{
+ const {createRunningSimulation}=require('../../src/modules/running/simulation');
+ const {offset}=require('../../src/modules/guidance/geometry');
+ const route=[[0,0],[0,240],[240,240],[240,0],[0,0]].map(([x,y])=>offset([127,37],x,y));
+ const player=createRunningSimulation(route),initial=player.play(0);
+ const view=await render(<GuidanceMap route={route} state={initial}/>);
+ const source=()=>screen.getByTestId('source-guidance-paths').props.data;
+ const previous=JSON.stringify(source());
+ const moving=player.update(1000);
+ expect(moving.trace).toBe(initial.trace);
+ expect(moving.trace.flat().length).toBeGreaterThan(1);
+ await view.rerender(<GuidanceMap route={route} state={moving}/>);
+ expect(JSON.stringify(source())).not.toBe(previous);
+ expect(source().features.filter((f:any)=>f.properties.role==='trace')[0].geometry.type).toBe('LineString');
+ const rendered=source(),frozen=JSON.stringify(rendered),next=player.update(2000);
+ expect(JSON.stringify(rendered)).toBe(frozen);
+ await view.rerender(<GuidanceMap route={route} state={next}/>);
+ expect(JSON.stringify(source())).not.toBe(frozen);
+});
