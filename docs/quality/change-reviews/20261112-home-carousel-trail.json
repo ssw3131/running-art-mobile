@@ -25,7 +25,9 @@
     "src/app/service-about.tsx",
     "src/features/service/home-thumbnail.ts",
     "src/modules/home/thumbnail-style.ts",
-    "tests/home-thumbnail-style.test.mjs"
+    "tests/home-thumbnail-style.test.mjs",
+    "tests/visual/android-linux-api36/archive.png",
+    "tests/visual/android-linux-api36/baseline.json"
   ],
   "behavior": "changed",
   "decision": "2026-11-12 user Figma680:2586/24:3818/35:4724/35:4857: append to existing PR59, install phone, do not merge main. Home rows max5 horizontal, no thumbnail info text, circular recommendation badge, selected-only orange saved shapes, actual GPS orange and unfinished detail progress.",
@@ -86,7 +88,8 @@
       "Full design contexts/screenshots for680:2586,24:3818,35:4724,35:4857 reviewed. Existing stage/icon assets reused at original dimensions.",
       "Opaque source badge corners are clipped only by a 90px circular presentation wrapper, preserving original bitmap.",
       "Final signed APK physical-phone inspection follows; actual outdoor GPS run is not performed by agent.",
-      "SM-A102N preview216642544: current unfinished whale course shows real stored orange GPS against blue remaining course. Home has horizontal thumbnails but native snapshot itself still contained attribution after label removal; thumbnail-only TileJSON metadata is now inlined and provider information is available on Service About. A second APK is required to finish this in-scope fix."
+      "SM-A102N preview216642544: current unfinished whale course shows real stored orange GPS against blue remaining course. Home has horizontal thumbnails but native snapshot itself still contained attribution after label removal; thumbnail-only TileJSON metadata is now inlined and provider information is available on Service About. A second APK is required to finish this in-scope fix.",
+      "Visual257 sourceceed70f: home42775px, archive3008px, run/account0px. Archive original/current/diff reviewed; only unselected heart orange->gray changed as requested. Archive golden updated from original native PNG with exact SHA/provenance. Home golden remains old/pending; do not mask or accept random product imagery to claim full pass."
     ]
   },
   "native": "No dependencies, permissions, schema, GPS filtering or running persistence changed. Single native GeoJSON source orders guide/trace layers. Existing source style IDs for course/trace retained; map background/position overlays unaffected. Draft fast feedback before ready full verification. Full isolated S234 now injects six moving real GPS samples, requires at least three accepted stored points and both exact blue/orange colors in the native map screenshot. This is separate from simulation; original pause/recovery/preservation assertions remain. Final handset app source stays ceed70f; this follow-up changes QA/docs only. Handset source follow-up changes only home thumbnail metadata/presentation and About credits; live GPS/map layer modules remain identical to the source under service diagnostic259."
