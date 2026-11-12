@@ -19,7 +19,9 @@
     "tests/components/home.test.tsx",
     "tests/components/live-running.test.tsx",
     "tests/course-priority.test.mjs",
-    "tests/home.test.mjs"
+    "tests/home.test.mjs",
+    "scripts/qa/live-route-colors.mjs",
+    "scripts/qa/service_s234.py"
   ],
   "behavior": "changed",
   "decision": "2026-11-12 user Figma680:2586/24:3818/35:4724/35:4857: append to existing PR59, install phone, do not merge main. Home rows max5 horizontal, no thumbnail info text, circular recommendation badge, selected-only orange saved shapes, actual GPS orange and unfinished detail progress.",
@@ -74,5 +76,5 @@
       "Final signed APK physical-phone inspection follows; actual outdoor GPS run is not performed by agent."
     ]
   },
-  "native": "No dependencies, permissions, schema, GPS filtering or running persistence changed. Single native GeoJSON source orders guide/trace layers. Existing source style IDs for course/trace retained; map background/position overlays unaffected. Draft fast feedback before ready full verification."
+  "native": "No dependencies, permissions, schema, GPS filtering or running persistence changed. Single native GeoJSON source orders guide/trace layers. Existing source style IDs for course/trace retained; map background/position overlays unaffected. Draft fast feedback before ready full verification. Full isolated S234 now injects six moving real GPS samples, requires at least three accepted stored points and both exact blue/orange colors in the native map screenshot. This is separate from simulation; original pause/recovery/preservation assertions remain. Final handset app source stays ceed70f; this follow-up changes QA/docs only."
 }

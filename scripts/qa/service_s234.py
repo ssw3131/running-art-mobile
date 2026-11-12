@@ -3,6 +3,7 @@ import json
 import re
 import time
 import struct
+import subprocess
 import zlib
 
 def service_s234(q, launch):
@@ -42,6 +43,15 @@ def service_s234(q, launch):
     fix();wait_fixed_control('run-course-start','s4-start-ready');q.tap('run-course-start');q.tap('계속');fix(5)
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
     run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
+    # Real accepted GPS samples, not the simulation screen or checkpoint path.
+    # Move only the dedicated emulator; never any attached physical handset.
+    for i in range(1,7):
+        q.adb('emu','geo','fix',str(lng),str(lat+i*.00015),'0','10');time.sleep(2)
+    recorded=q.query(f"SELECT count(*) n FROM running_points WHERE run_id='{run_id}'")[0]['n']
+    assert recorded>=3, 'Accepted GPS samples did not reach storage'
+    q.capture('s4-real-gps-colors')
+    subprocess.run(['node',str(q.ROOT/'scripts/qa/live-route-colors.mjs'),str(q.OUT/'s4-real-gps-colors.png'),str(q.OUT/'s4-real-gps-colors.json')],check=True)
+
     q.seek('guidance-recenter');q.tap('guidance-recenter');q.seek('run-pause');q.capture('s4-map-controls')
     def wait_status(expected, target=run_id):
         for _ in range(20):
