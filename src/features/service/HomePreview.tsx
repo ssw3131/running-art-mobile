@@ -16,6 +16,5 @@ export const HomePreview=memo(function HomePreview({paths,active,label,unavailab
   const uri=snapshot.key===key?snapshot.uri:null;
   return <View accessible accessibilityLabel={label} pointerEvents="none" style={{aspectRatio:1,width:'100%',backgroundColor:c.navigation,borderRadius:14,overflow:'hidden',justifyContent:'center'}}>
     {uri||drawing?<Image testID="home-preview-image" source={{uri:uri||drawing!}} contentFit={uri?'cover':'contain'} onError={()=>{if(uri)setSnapshot({key,uri:''});}} cachePolicy="memory-disk" style={StyleSheet.absoluteFill}/>:<AppText variant="caption" style={{color:c.muted,padding:8,textAlign:'center'}}>{unavailable?'경로를 읽지 못했어요':'경로 기록이 없어요'}</AppText>}
-    {!!uri&&<AppText style={{position:'absolute',bottom:0,left:0,right:0,color:c.subtle,backgroundColor:c.background,fontSize:7,lineHeight:10,textAlign:'center'}}>© MapTiler © OSM</AppText>}
   </View>;
 });

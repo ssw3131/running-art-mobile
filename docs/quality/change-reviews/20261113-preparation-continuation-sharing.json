@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/app/run-settings.tsx",
+    "src/app/run-simulation.tsx",
+    "src/features/achievements/PlatformShareCard.tsx",
+    "src/features/achievements/SharingPlatformView.tsx",
+    "src/features/course-generation/CourseGenerationScreen.tsx",
+    "src/features/running/CourseRunPreparation.tsx",
+    "src/features/running/RunScreen.tsx",
+    "src/features/running/RunSharePanel.tsx",
+    "src/features/running/use-preparation-approach.ts",
+    "src/modules/guidance/engine.ts",
+    "src/modules/guidance/loop-engine.ts",
+    "src/modules/guidance/simulator.ts",
+    "src/modules/running/native-driver.ts",
+    "src/modules/running/repository.ts",
+    "src/modules/running/simulation-record.ts",
+    "src/modules/running/simulation.ts",
+    "tests/archive-retry.test.mjs",
+    "tests/components/course-generation.test.tsx",
+    "tests/components/preparation-approach.test.tsx",
+    "tests/components/run-preparation.test.tsx",
+    "tests/components/run-share-card.test.tsx",
+    "tests/components/running-preparation.test.tsx",
+    "tests/components/share-card-readiness.test.tsx",
+    "tests/free-loop-guidance.test.mjs",
+    "tests/running-guidance.test.mjs",
+    "tests/running-simulation-record.test.mjs",
+    "src/features/achievements/ShareLinkPreview.tsx",
+    "tests/components/running-voice.test.tsx",
+    "tests/components/run-card-export.test.tsx"
+  ],
+  "behavior": "changed",
+  "decision": "사용자의 Figma6화면 후속. 준비 로딩·미완주 이어달리기·방향 음성·공유 이미지/링크·추천 재설정. 같은 PR59/main 미병합.",
+  "before": "준비 안내가 경로 준비 전 닫히고, 종료한 미완주 코스가 새 상태로 시작했다. 음성이 상태/거리 단계별로 나가며 세로 이미지의 제목은 좌측·주소/브랜드 일부 누락, 웹페이지는 비동작·긴 URL은 잘렸다. 추천 재설정이 바로 재계산했다.",
+  "after": "최신 위치/유효한 도보 경로 준비 후 확인 활성. 이전 미완주 snapshot/궤적/활동 시간을 새 시도로 복사하고 원본 종료 기록은 보존한다. 실제/모의 기록은 구분한다. 방향30m 전1회만 음성, 세로 카드 중앙 제목/주소/브랜드, 실제 URL 전체/브라우저 열기, 삭제 안내 후 설정 이동.",
+  "invariants": [
+    "기존 계정·기록·공유된 원본은 수정하지 않고 동일 owner/코스 hash로만 이어받는다. 이미 완주한 코스는 처음부터 새 도전이다.",
+    "GPS/중단 구간은 잇지 않으며 완주 판정은 엔진의 새 fix 재검증으로 결정한다. 호출자 완주 플래그는 받지 않는다. 실제와 시뮬레이션은 섞지 않는다.",
+    "공유 URL은 서버의 실제 주소이며 미공개 기록은 기존 공개 확인 후 생성한다. 저장된 URL 열기에는 재게시하지 않는다.",
+    "main 미병합·기존 앱ID/서명·자료 유지 설치, 로컬 에뮬레이터 없음."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/run-preparation.test.tsx",
+      "reason": "확인 비활성/로딩/준비 후 닫힘·권한/시작 흐름 유지."
+    },
+    {
+      "path": "tests/components/preparation-approach.test.tsx",
+      "reason": "실제 hook의 보행 경로 대기/도착 후 ready 및 요청 취소."
+    },
+    {
+      "path": "tests/running-guidance.test.mjs",
+      "reason": "다음 날 미완주 progress/points/time 복사·이전 원본 유지·새 segment, 완주 코스는 새 도전."
+    },
+    {
+      "path": "tests/running-simulation-record.test.mjs",
+      "reason": "시뮬레이션 이전 진행/궤적 재개와 최종 저장 완주 일치·원본 보존."
+    },
+    {
+      "path": "tests/free-loop-guidance.test.mjs",
+      "reason": "checkpoint 재생성에도 회전당30m 음성 이벤트1회."
+    },
+    {
+      "path": "tests/components/running-voice.test.tsx",
+      "reason": "음성 on 회전만 발화, off 무음/이탈 진동 유지."
+    },
+    {
+      "path": "tests/components/run-share-card.test.tsx",
+      "reason": "실제 전체 URL과 기존 링크 브라우저 열기·재게시 없음·공개 동의 유지."
+    },
+    {
+      "path": "tests/components/share-card-readiness.test.tsx",
+      "reason": "세로 카드 중앙 제목/주소/원본 브랜드 이미지 및 display 준비."
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "추천 삭제 안내 취소 보존·확인 후 설정 이동, 재계산/횟수 차감 없음."
+    },
+    {
+      "path": "tests/archive-retry.test.mjs",
+      "reason": "과거 항상0 재시작 계약을 사용자 지시의 미완주 활동 시간 이월로 갱신하고 원본 보존 유지."
+    },
+    {
+      "path": "tests/components/run-card-export.test.tsx",
+      "reason": "링크 미리보기의 소유자가 실제 URL을 관리하는 RunSharePanel로 이동했으므로 null로 없애던 부모 검사 mock도 실제 LinkPreview를 렌더링한다. 미리보기/플랫폼 분리 기대는 그대로 유지한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "준비 로딩/버튼 활성, 세로 카드 정렬/주소, 웹페이지 버튼/긴 URL 표시를 Figma542:3191·643:4246·643:4535·643:6323과 대조한다.",
+    "evidence": [
+      "6개 지정 노드 high-fidelity context와 원본 screenshot을 읽었다. 기존 assets/achievements의 브랜드/공유 원본을 재사용하고 지도/프로필은 사용자 데이터 동적으로 유지한다.",
+      "세로 카드의 제목과 지도 양쪽24.6dp·주소12.3dp·브랜드67.7dp 및 image display 준비를 자동 검사했다. Handset46/SM-A102N에서 준비 로딩/확인 disabled→ready enabled·도로 점선, 스토리/세로 저장 중앙 제목·주소·원본 브랜드를 육안 확인했다. 사적 원본은 Git 제외 build/preparation-sharing-20261113에만 보존한다.",
+      "링크 탭의 웹페이지/주소 영역은 폰에서 확인했고 미공개 기록의 안내를 유지했다. 실제 URL 전체·브라우저 열기/재게시 없음은 자동 검사이며 새 공개 링크 생성/외부 게시를 하지 않았다."
+    ]
+  },
+  "native": "Handset46/source2b6bd423/preview216727190을 SM-A102N에19:12:32 자료 유지 설치하고 서명/실제 APK 해시·UID/최초 설치·로그인 홈을 대조했다. 준비/공유 시각 확인·홈 복귀/위치 서비스 없음. 네이티브 의존성/권한/DB schema 미변경, 기존 Korean TTS 사용. 실제 야외 GPS/기기 음성 청취·전체 Android 게이트는 미실행."
+}

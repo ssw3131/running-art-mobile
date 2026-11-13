@@ -1,3 +1,4 @@
+import { savedCourseOrderSql } from './ordering.ts';
 import type { StorageDatabase } from '../storage/types.ts';
 import { serialDatabase } from '../storage/serial-database.ts';
 import { guestScope, type OwnerScope } from '../sync/ownership.ts';
@@ -51,7 +52,7 @@ export function createCourseRepository(db: StorageDatabase, now = Date.now, scop
       const owner = scope();
       return queue(async () => {
         if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isSafeInteger(offset) || offset < 0) throw new CourseError('validation', '목록 범위가 올바르지 않아요.');
-        const rows=await db.getAllAsync<CourseSummary>(`SELECT ${summaryColumns} FROM saved_courses WHERE owner_id=? ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?`, owner, limit, offset);
+        const rows=await db.getAllAsync<CourseSummary>(`SELECT ${summaryColumns} FROM saved_courses c WHERE owner_id=? ORDER BY ${savedCourseOrderSql} LIMIT ? OFFSET ?`, owner, limit, offset);
         return Promise.all(rows.map(async course=>{
           const last=await db.getFirstAsync<{status:string;outcome:string}>(`SELECT r.status,r.course_outcome AS outcome FROM running_sessions r
             JOIN saved_courses c ON c.id=? AND c.owner_id=r.owner_id

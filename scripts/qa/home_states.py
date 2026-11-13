@@ -26,7 +26,9 @@ def verify_home_result(q):
     # Check regeneration while this process still owns a completed result.
     # Later cold-start/GPS scenarios intentionally clear in-memory recommendations.
     q.seek('generation-edit'); q.tap('generation-edit')
-    assert q.find(q.capture('home-regeneration-sheet'), 'regeneration-confirm') is not None
+    warning = q.capture('home-regeneration-sheet')
+    assert q.find(warning, '저장하지 않은 생성 코스는 삭제되고 코스 설정 페이지로 이동합니다.') is not None
+    assert q.find(warning, '확인') is not None and q.find(warning, '취소') is not None
     q.tap('취소'); q.seek('candidate-0')
     candidate = q.find(q.capture('home-regeneration-cancel-preserved'), 'candidate-0')
     assert candidate.get('content-desc') == previous
@@ -86,14 +88,17 @@ def verify_home_states(q, launch):
         assert q.find(q.capture('home-saved-detail'),'course-title') is not None
         q.shell('am','force-stop',q.APP)
         q.shell('sqlite3', q.DB, f"INSERT INTO running_sessions(id,status,started_at,ended_at,checkpoint_at,resumed_at,owner_id,distance_m,active_ms,point_count) VALUES('{run_id}','completed',{now},{now+10000},{now},{now},'{q.OWNER}',3200,100000,4);")
+        # Returning-home completed cards now represent finished courses only.
+        # Link this disposable session to the existing disposable saved snapshot.
+        q.shell('sqlite3',q.DB,f"UPDATE running_sessions SET course_id='{'d'*32}',course_name=(SELECT name FROM saved_courses WHERE id='{'d'*32}'),course_outcome='finished',course_snapshot_json=(SELECT snapshot_json FROM saved_courses WHERE id='{'d'*32}'),course_snapshot_hash=(SELECT snapshot_hash FROM saved_courses WHERE id='{'d'*32}') WHERE id='{run_id}';")
         for i, (lat, lng) in enumerate([(37.5, 127), (37.501, 127.001), (37.502, 127), (37.5, 127)], 1):
             q.shell('sqlite3', q.DB, f"INSERT INTO running_points VALUES('{run_id}',{i},0,{now+i},{lat},{lng},5);")
         launch(); q.tap('tab-home')
+        assert q.find(q.capture('home-history-top'),'home-history') is not None
         q.seek('home-run-'+run_id)
         if getattr(q, 'MAP_PREVIEWS', False):
             time.sleep(8)  # Allow native styles/tiles to load before pixel review.
         history = q.capture('home-history')
-        assert q.find(history, 'home-history') is not None
         preview = q.find(history, '실제 러닝 경로') or q.find(history,'home-run-'+run_id)
         subprocess.run(['node', str(q.ROOT / 'scripts/qa/home-preview.mjs'), str(q.OUT / 'home-history.png'),
                         *re.findall(r'\d+', preview.get('bounds')), 'map' if getattr(q, 'MAP_PREVIEWS', False) else 'fallback'], check=True)
@@ -106,6 +111,7 @@ def verify_home_states(q, launch):
         q.shell('cmd','uimode','night','yes'); launch(); q.capture('home-history-dark')
         q.shell('cmd','uimode','night',night.group(1)); launch()
         q.seek('home-run-' + run_id); q.tap('home-run-' + run_id)
+        q.seek('run-distance')
         assert q.find(q.capture('home-record-detail'), 'run-distance').get('text') == '3.20 km'
         q.tap('service-back'); q.tap('tab-home')
         for status in ['paused', 'interrupted']:
@@ -113,7 +119,10 @@ def verify_home_states(q, launch):
             q.shell('sqlite3', q.DB, f"UPDATE running_sessions SET status='{status}',ended_at=NULL WHERE id='{run_id}';")
             launch(); q.tap('tab-home')
             assert q.find(q.capture('home-' + status), 'home-history') is not None
-            q.seek('home-run-'+run_id); q.tap('home-run-'+run_id); q.capture('home-' + status + '-return')
+            q.seek('home-course-'+'d'*32)
+            assert q.find(q.capture('home-'+status+'-badge'),'home-course-progress-'+'d'*32) is not None
+            assert q.find(q.capture('home-'+status+'-not-completed'),'home-run-'+run_id) is None
+            q.tap('home-course-'+'d'*32); q.capture('home-' + status + '-return')
             assert q.query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == status, 'Home must not resume GPS'
         q.shell('am', 'force-stop', q.APP)
         q.shell('sqlite3', q.DB, f"UPDATE running_sessions SET status='completed',ended_at={now+10000} WHERE id='{run_id}';")

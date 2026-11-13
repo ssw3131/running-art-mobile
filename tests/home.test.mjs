@@ -114,8 +114,8 @@ test('saved-only home, latest three ordering, corrupted preview and deleting all
   }, `코스 ${n}`);
   const before = await f.db.getAllAsync('SELECT * FROM saved_courses ORDER BY id');
   const data = await f.home.read(NOW);
-  assert.equal(homeKind(data), 'history'); assert.equal(data.courseCount, 4); assert.equal(data.courses.length, 3);
-  assert.deepEqual(data.courses.map(item => item.course.name), ['코스 4', '코스 3', '코스 2']);
+  assert.equal(homeKind(data), 'history'); assert.equal(data.courseCount, 4); assert.equal(data.courses.length, 4);
+  assert.deepEqual(data.courses.map(item => item.course.name), ['코스 4', '코스 3', '코스 2', '코스 1']);
   assert.equal(data.latestCompleted, null); assert.equal(data.monthlyDistanceM, 0); assert.equal(data.currentStreak, 0);
   assert.ok(data.courses.every(item => item.paths[0].length > 1));
   assert.deepEqual(await f.db.getAllAsync('SELECT * FROM saved_courses ORDER BY id'), before);

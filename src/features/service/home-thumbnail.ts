@@ -1,14 +1,15 @@
 import { StaticMapImageManager } from '@maplibre/maplibre-react-native';
+import { thumbnailStyle } from '@/modules/home/thumbnail-style';
 import type { HomePath } from '@/modules/home/model';
 
 const images=new Map<string,Promise<string>>(),styles=new Map<string,Promise<Record<string,unknown>>>();
 let queue:Promise<unknown>=Promise.resolve();
 /** One offscreen snapshot at a time: scrolling never mounts an interactive map. */
 export function homeThumbnail(paths:HomePath[],styleUrl:string):Promise<string>{
-  const key=JSON.stringify([styleUrl,paths]);const existing=images.get(key);if(existing)return existing;
+  const key=JSON.stringify(['clean-thumbnail-v2',styleUrl,paths]);const existing=images.get(key);if(existing)return existing;
   const work=async()=>{
     let style=styles.get(styleUrl);
-    if(!style){style=fetch(styleUrl).then(r=>{if(!r.ok)throw new Error('Map style unavailable');return r.json() as Promise<Record<string,unknown>>;});styles.set(styleUrl,style);}
+    if(!style){style=fetch(styleUrl).then(r=>{if(!r.ok)throw new Error('Map style unavailable');return r.json() as Promise<Record<string,unknown>>;}).then(value=>thumbnailStyle(value));styles.set(styleUrl,style);}
     const base=await style,points=paths.flat();if(!points.length)throw new Error('Empty preview');
     const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]),dx=Math.max(.0001,Math.max(...xs)-Math.min(...xs))*.12,dy=Math.max(.0001,Math.max(...ys)-Math.min(...ys))*.12;
     const data={type:'FeatureCollection',features:paths.filter(p=>p.length>1).map(coordinates=>({type:'Feature',properties:{},geometry:{type:'LineString',coordinates}}))};

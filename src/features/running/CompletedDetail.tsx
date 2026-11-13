@@ -57,12 +57,12 @@ export default function CompletedDetail({id}:{id:string}){
      </View>
     </View>
     <View style={{marginTop:24,paddingHorizontal:24,alignItems:'center',gap:6}}>
-     <AppText weight="black" style={{fontSize:26,lineHeight:30,textAlign:'center'}}><AppText weight="black" style={{color:c.selected}}>{auth.account?.name||'러너'}</AppText>님{'\n'}완주를 축하합니다.</AppText>
+     <AppText weight="black" style={{fontSize:30,lineHeight:42,textAlign:'center'}}><AppText weight="black" style={{fontSize:30,lineHeight:42,color:c.selected}}>{auth.account?.name||'러너'}</AppText>님{'\n'}완주를 축하합니다.</AppText>
      <AppText weight="bold" style={{fontSize:16,lineHeight:24,textAlign:'center',color:c.subtle}}>{data.course.name} <AppText weight="bold" style={{color:c.selected}}>{count}회</AppText> 완주했어요.</AppText>
      {isSimulationRun(data.run)&&<AppText variant="caption" style={{color:c.selected}}>시뮬레이션 완주 기록</AppText>}
     </View>
     <View style={{marginTop:19,marginHorizontal:32,minHeight:161,borderRadius:20,borderWidth:2,borderColor:c.selected,backgroundColor:c.surface,padding:10,gap:9,justifyContent:'center',boxShadow:'0px 0px 5px rgba(0,0,0,.2)'}}>
-     <AppText weight="black" style={{fontSize:24,lineHeight:32,textAlign:'center'}}>{data.course.name}</AppText>
+     <AppText weight="black" style={{fontSize:28,lineHeight:40,textAlign:'center'}}>{data.course.name}</AppText>
      <View style={{height:1,backgroundColor:c.divider,marginHorizontal:8}}/>
      <View style={{flexDirection:'row',gap:24,paddingHorizontal:10}}>
       <View style={{flex:1}}><AppText weight="bold" style={{fontSize:16,lineHeight:23,color:c.subtle}}>전체 거리</AppText><AppText family="roboto" weight="black" style={{fontSize:28,lineHeight:34,color:c.selected}}>{(data.run.distanceM/1000).toFixed(1)}<AppText weight="bold" style={{fontSize:16,color:c.selected}}> km</AppText></AppText></View>
@@ -74,7 +74,7 @@ export default function CompletedDetail({id}:{id:string}){
     <View style={{paddingHorizontal:32,paddingTop:34,gap:17}}>
      <InformationRow icon="flag" label="코스명"><View style={{flexDirection:'row',gap:16,alignItems:'center'}}><AppText weight="bold" style={{fontSize:18,flexShrink:1}}>{data.course.name}</AppText><Pressable testID="completed-edit-name" accessibilityRole="button" accessibilityLabel="기록의 코스 이름 수정" hitSlop={16} onPress={()=>{setName(data.course!.name);setEditing(true);}}><DetailIcon name="edit"/></Pressable></View></InformationRow>
      <InformationRow icon="pin" label="출발지"><AppText weight="bold" style={{fontSize:16}}>{address.label}</AppText></InformationRow>
-     <InformationRow icon="map" label="전체 거리"><AppText weight="bold" style={{fontSize:18}}>{(data.run.distanceM/1000).toFixed(2)} km</AppText></InformationRow>
+     <InformationRow icon="map" label="전체 거리"><AppText testID="run-distance" weight="bold" style={{fontSize:18}}>{(data.run.distanceM/1000).toFixed(2)} km</AppText></InformationRow>
      <InformationRow icon="watch" label="실제 러닝 시간"><AppText weight="bold" style={{fontSize:18}}>{durationLabel(data.run.activeMs).replaceAll(':',' : ')}</AppText></InformationRow>
      <InformationRow icon="difficulty" label="난이도"><DifficultyTag state={{kind:terrain.state.profile?'ready':terrain.state.status==='loading'?'loading':'error',profile:terrain.state.profile??undefined}}/></InformationRow>
     </View>

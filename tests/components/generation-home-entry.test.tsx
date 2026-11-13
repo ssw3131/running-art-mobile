@@ -40,3 +40,15 @@ test('home conditions request preserves the completed route, shape and distance 
   await rerender({});
   expect(result.current.tab).toBe('results');
 });
+
+
+test.each(['star','cloud','crown','icecream','strawberry','bone','whale','turtle','cat'])('badge challenge selects %s without starting a calculation',async shape=>{
+ const {result,rerender}=await renderHook(()=>useCourseGeneration());
+ await act(()=>result.current.setTargetKm(7));
+ mockParams={homeSection:'conditions',homeRequest:'badge-'+shape,homeShape:shape};
+ await rerender({});
+ expect(result.current.shape).toBe(shape);
+ expect(result.current.targetKm).toBe(7);
+ expect(result.current.tab).toBe('conditions');
+ expect(mockJobs.start).not.toHaveBeenCalled();
+});

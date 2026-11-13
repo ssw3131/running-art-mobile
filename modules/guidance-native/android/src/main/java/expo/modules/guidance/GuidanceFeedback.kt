@@ -24,19 +24,32 @@ class GuidanceFeedback(private val context: Context) : TextToSpeech.OnInitListen
   @Volatile private var vibrations = 0
   private var pending: Pair<String, String>? = null
   private var closed = false
+  private val triedEngines = mutableSetOf<String>()
+  private var selectedPackage: String? = null
 
   init { handler.post { if (!closed) tts = TextToSpeech(context.applicationContext, this) } }
   override fun onInit(status: Int) {
     handler.post {
       val engine = tts ?: return@post
       if (closed) return@post
-      val offline = engine.voices?.firstOrNull { it.locale.language == "ko" && !it.isNetworkConnectionRequired }
-      if (status != TextToSpeech.SUCCESS || engine.setLanguage(Locale.KOREAN) < TextToSpeech.LANG_AVAILABLE || offline == null) {
-        error = "오프라인 한국어 음성이 없어요. Android 음성 출력 설정에서 한국어를 설치해 주세요."
-        Log.w(TAG, "tts_unavailable")
+      val language = if (status == TextToSpeech.SUCCESS) engine.setLanguage(Locale.KOREAN) else TextToSpeech.LANG_NOT_SUPPORTED
+      if (status != TextToSpeech.SUCCESS || language < TextToSpeech.LANG_AVAILABLE) {
+        (selectedPackage ?: engine.defaultEngine)?.let { triedEngines.add(it) }
+        val alternative = engine.engines.firstOrNull { it.name !in triedEngines }
+        if (alternative != null) {
+          selectedPackage = alternative.name; triedEngines.add(alternative.name)
+          engine.shutdown(); tts = TextToSpeech(context.applicationContext, this, alternative.name)
+          return@post
+        }
+        error = "한국어 음성을 사용할 수 없어요. Android 음성 출력 설정에서 한국어를 선택해 주세요."
+        Log.w(TAG, "tts_unavailable status=$status language=$language")
         return@post
       }
-      engine.voice = offline
+      // Some engines populate voices only after setLanguage. Prefer offline,
+      // but retain the engine's Korean default when it has no enumerated voice.
+      val korean = engine.voices?.filter { it.locale.language == "ko" }
+      val selected = korean?.firstOrNull { !it.isNetworkConnectionRequired } ?: korean?.firstOrNull()
+      selected?.let { engine.voice = it }
       engine.setSpeechRate(1f)
       engine.setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())
       engine.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
@@ -45,7 +58,7 @@ class GuidanceFeedback(private val context: Context) : TextToSpeech.OnInitListen
         @Deprecated("Deprecated in Java") override fun onError(id: String?) { error = "음성을 재생하지 못했어요. 문자 안내를 확인해 주세요."; Log.e(TAG, "tts_error id=$id") }
       })
       ready = true; error = ""
-      Log.i(TAG, "tts_ready offline=true")
+      Log.i(TAG, "tts_ready offline=${selected?.isNetworkConnectionRequired != true}")
       pending?.let { speak(it.first, it.second) }; pending = null
     }
   }

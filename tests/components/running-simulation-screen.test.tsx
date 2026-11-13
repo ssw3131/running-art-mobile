@@ -1,0 +1,26 @@
+import React from 'react';
+import { AppState } from 'react-native';
+import { act, render, waitFor } from '@testing-library/react-native';
+import RunSimulationScreen from '../../src/app/run-simulation';
+import { createRunningSimulation } from '../../src/modules/running/simulation';
+const mockRoute:[number,number][]=[[127,37],[127.005,37],[127.005,37.005],[127,37.005],[127,37]];
+const mockSnapshot={schemaVersion:1,engineVersion:'0.2',source:'osm',shape:'heart',origin:{lat:37,lng:127},targetKm:2,lengthKm:2,score:80,route:mockRoute,target:mockRoute};
+let mockContinuation:any,mockPanel:any;
+const mockFeedback=jest.fn();
+jest.mock('expo-router',()=>({router:{push:jest.fn(),replace:jest.fn()},useLocalSearchParams:()=>({courseId:'a'.repeat(32)}),useFocusEffect:(f:any)=>require('react').useEffect(f,[f])}));
+jest.mock('../../src/features/auth/use-auth',()=>({useAuth:()=>({account:{id:'owner'}})}));
+jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>({account:{id:'owner'}})}}));
+jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({courses:{get:async()=>({id:'a'.repeat(32),name:'코스',snapshot:mockSnapshot})},account:{preferences:async()=>({guidance:{voice:true,background:true,mode:'map'}})},runs:{active:async()=>null,simulationContinuation:async()=>mockContinuation,newSimulationId:async()=>'c'.repeat(32)}})}));
+jest.mock('../../src/modules/guidance/native',()=>({guidanceNative:{prepareLive:jest.fn(),silenceLive:jest.fn(),liveStatus:()=>({voiceReady:true,voiceError:''}),feedbackLive:(...args:any[])=>mockFeedback(...args)}}));
+jest.mock('../../src/modules/guidance/activity',()=>({guidanceActivity:{active:()=>false,set:jest.fn()}}));
+jest.mock('../../src/modules/running/navigation',()=>({planApproach:jest.fn()}));
+jest.mock('../../src/features/running/LiveGuidancePanel',()=>({__esModule:true,default:(p:any)=>{mockPanel=p;return require('react').createElement(require('react-native').Text,{},'지도');}}));
+beforeEach(()=>{AppState.currentState='active';jest.useFakeTimers();mockFeedback.mockClear();const player=createRunningSimulation(mockRoute);player.play(0);player.update(2000);player.pause(2000);mockContinuation={recordId:'b'.repeat(32),checkpoint:player.checkpoint(),trace:player.snapshot().trace,...player.recording()};});
+afterEach(()=>jest.useRealTimers());
+test('real simulation screen loads committed continuation before play and inherits voice preferences through spoken turns',async()=>{
+ await render(<RunSimulationScreen/>);await waitFor(()=>expect(mockPanel?.guide.options.voice).toBe(true));
+ expect(mockPanel.run.status).toBe('paused');expect(mockPanel.simulationState.progressM).toBeGreaterThan(100);expect(mockPanel.simulationState.trace.flat().length).toBeGreaterThan(10);
+ await act(()=>mockPanel.onPauseResume());for(let i=0;i<50;i++)await act(()=>jest.advanceTimersByTime(100));
+ expect(mockFeedback).toHaveBeenCalled();expect(mockFeedback.mock.calls.every(c=>/회전|유턴/.test(c[1]))).toBe(true);
+ const spoken=mockFeedback.mock.calls.length;await act(()=>jest.advanceTimersByTime(100));expect(mockFeedback).toHaveBeenCalledTimes(spoken);
+});

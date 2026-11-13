@@ -1,9 +1,11 @@
+import { getStorage } from '@/modules/storage/database';
+import { parseWeightKg, DEFAULT_WEIGHT_KG } from '@/modules/running/calories';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppText, Button } from '@/components/ui';
+import { AppText, Button, TextField } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import { useProfilePhoto } from '@/features/account/use-profile-photo';
 import { openServiceTab } from '@/features/service/open-service-tab';
@@ -34,6 +36,8 @@ export default function SignupScreen() {
 function SignupEditor() {
   const auth = useAuth(), registration = useMembership(), c = useThemeColors();
   const owner = auth.account?.id;
+  const [weight, setWeight] = useState(''),weightTouched=useRef(false);
+  useEffect(()=>{if(!owner)return;let live=true;void getStorage().then(db=>db.account.preferences()).then(p=>{if(live&&!weightTouched.current&&authentication.getSnapshot().account?.id===owner&&p.weightKg!==undefined)setWeight(String(p.weightKg));}).catch(()=>{});return()=>{live=false;};},[owner]);
   const [nickname, setNickname] = useState(suggestedNickname(auth.account?.name));
   const [picture, setPicture] = useState<ProfileInput['picture']>(auth.account?.picture ?? 'initials');
   const [selection, setSelection] = useState<number | 'gallery' | null>(null);
@@ -62,12 +66,20 @@ function SignupEditor() {
     lock.current = true; setWorking(true); setMessage('');
     try {
       const value = signupNickname(nickname, auth.account.name);
+      const weightKg = parseWeightKg(weight);
       const saved = await membership.accept({ policyId: policy.id, terms: true, privacy: true }, async () => {
         if (!alive()) return false;
         // Save even an unchanged default once: service entry follows a confirmed
         // profile operation as well as the consent receipt, never Auth alone.
         const confirmed = await authentication.saveProfile({ nickname: value, picture }, photo ?? undefined);
         if (!alive() || !confirmed) return false;
+        const db=await getStorage();
+        if(!alive())return false;
+        const preferences=await db.account.preferences();
+        if(!alive())return false;
+        if(weightTouched.current){if(weightKg===undefined)delete preferences.weightKg;else preferences.weightKg=weightKg;}
+        await db.account.savePreferences(preferences);
+        if(!alive())return false;
         replacePhoto(null);
         return true;
       });
@@ -109,7 +121,8 @@ function SignupEditor() {
       </View>
       <ConsentForm policy={registration.policy} policyStatus={registration.policyStatus} policyMessage={registration.policyMessage} onRetryPolicy={() => { void membership.retryPolicy(); }}
         email={auth.account.email} nickname={nickname} onNickname={setNickname} busy={busy} message={message || registration.message || auth.message}
-        onSubmit={() => { void complete(); }} profile={profile} />
+        onSubmit={() => { void complete(); }} profile={profile}
+        weight={<View style={{gap:12}}><View><TextField testID="signup-weight" label="몸무게" labelContent={<><AppText variant="heading" weight="bold">몸무게</AppText><AppText variant="label" weight="bold">(선택)</AppText></>} value={weight} onChangeText={value=>{weightTouched.current=true;setWeight(value);}} placeholder="몸무게 입력" keyboardType="decimal-pad" editable={!busy} maxLength={5} style={{paddingRight:45}}/><AppText pointerEvents="none" style={{position:'absolute',right:16,bottom:17,fontSize:14,color:c.subtle}}>kg</AppText></View><AppText style={{fontSize:11,lineHeight:20,color:c.subtle,textAlign:'center'}}>정확한 칼로리 소모량 계산을 위해 몸무게를 입력해 주세요.{'\n'}입력하지 않으면 기본 몸무게 {DEFAULT_WEIGHT_KG}kg으로 칼로리를 계산해요.</AppText></View>} />
     </>;
   return <SafeAreaView edges={['bottom']} style={{ flex: 1 }}><KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
     <ScrollView testID="signup-details" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 26, paddingTop: 36, paddingBottom: 37, gap: 30, width: '100%', maxWidth: 412, alignSelf: 'center' }}>

@@ -9,6 +9,7 @@ export type MapSurfaceProps = {
   simulationPosition?: [number, number];
   routeOverlay?: RouteOverlay | null;
   showTarget?: boolean;
+  recordedPaths?: number[][][];
   interactive?: boolean;
   onUserMoveStart?(): void;
   routeColors?: { route: string; target: string };

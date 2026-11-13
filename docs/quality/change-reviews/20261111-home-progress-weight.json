@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "assets/home/challenge-20261111/chevron.svg",
+    "assets/home/challenge-20261111/mount.svg",
+    "assets/home/challenge-20261111/orbit.png",
+    "assets/home/challenge-20261111/plinth.svg",
+    "assets/home/challenge-20261111/point2.svg",
+    "assets/home/challenge-20261111/point3.svg",
+    "assets/home/challenge-20261111/spotlight.svg",
+    "scripts/qa/home_states.py",
+    "scripts/qa/service_s56.py",
+    "src/features/account/AccountScreen.tsx",
+    "src/features/achievements/RunMetrics.tsx",
+    "src/features/guidance/GuidanceMap.tsx",
+    "src/features/membership/ConsentForm.tsx",
+    "src/features/membership/SignupScreen.tsx",
+    "src/features/running/CompletedDetail.tsx",
+    "src/features/service/HomeBadges.tsx",
+    "src/features/service/HomeScreen.tsx",
+    "src/features/service/use-home.ts",
+    "src/modules/achievements/repository.ts",
+    "src/modules/courses/ordering.ts",
+    "src/modules/courses/repository.ts",
+    "src/modules/home/model.ts",
+    "src/modules/home/recommendation.ts",
+    "src/modules/home/repository.ts",
+    "src/modules/running/calories.ts",
+    "src/modules/running/route-colors.ts",
+    "tests/calories.test.mjs",
+    "tests/components/achievements.test.tsx",
+    "tests/components/home.test.tsx",
+    "tests/components/signup-screen.test.tsx",
+    "tests/course-priority.test.mjs",
+    "tests/home-challenge.test.mjs",
+    "scripts/qa/service-s0.py",
+    "src/features/course-generation/use-course-generation.ts",
+    "tests/components/generation-home-entry.test.tsx"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-11 user Figma 680:2371/680:2586/542:2841/24:3818/35:4724; explicit 60kg default and visible fallback text. PR and phone installation requested; main merge is not requested.",
+  "before": "Signup had no weight input; absent weight meant no calories. Home listed recent runs first and had no challenge/earned badges. Course pages sorted by creation before unfinished status. Guidance used a thick warm guide and blue trail.",
+  "after": "Optional owned weight entry, displayed 60kg fallback, saved-course-first home with stable session-random easy unearned challenge and earned badge links, completed-only course history, globally paginated unfinished priority, and 3px blue guide/7px orange live trail.",
+  "invariants": [
+    "Never fabricate achievement flags, sample routes, or calories from planned distance. Rebuild earned progress from owned completed records.",
+    "Keep account/theme/voice preferences, signup explicit profile and consent confirmation, existing records and app identity. No real signup/consent or new test runs on the phone.",
+    "Challenge navigation does not generate a course or consume allowance; saved shape goes to its selected detail, missing shape preselects conditions only. Owner changes cancel late navigation.",
+    "Apply ordering before LIMIT/OFFSET and home truncation, matching the latest active/real-ended attempt; do not resume GPS when opening a course."
+  ],
+  "tests": [
+    {
+      "path": "tests/course-priority.test.mjs",
+      "reason": "Real SQLite pagination, top-three home selection, owner isolation and latest completion."
+    },
+    {
+      "path": "tests/home-challenge.test.mjs",
+      "reason": "Unearned closest targets, session-seed stability, random alternatives and missing shape selection."
+    },
+    {
+      "path": "tests/calories.test.mjs",
+      "reason": "Recorded metres, explicit or 60kg fallback, invalid weights and owned preference persistence."
+    },
+    {
+      "path": "tests/components/home.test.tsx",
+      "reason": "Completed-only history, saved vs missing challenge course routes, earned-only badge detail, account/scroll safeguards."
+    },
+    {
+      "path": "tests/components/signup-screen.test.tsx",
+      "reason": "Optional input, fallback copy, invalid input before writes and preference merge before consent."
+    },
+    {
+      "path": "tests/components/signup.test.tsx",
+      "reason": "Existing explicit policy/consent controls remain intact."
+    },
+    {
+      "path": "tests/components/achievements.test.tsx",
+      "reason": "Default 60kg estimate, explicit weight and simulation labels."
+    },
+    {
+      "path": "tests/components/home-preview.test.tsx",
+      "reason": "Existing static previews remain stable."
+    },
+    {
+      "path": "tests/components/generation-home-entry.test.tsx",
+      "reason": "Challenge shape and normal home conditions preserve generation entry contracts."
+    },
+    {
+      "path": "tests/components/archive.test.tsx",
+      "reason": "Archive pagination and ownership remain intact."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "Requested home/signup weight and live guide palette only; preserve unrelated static baseline/masks/tolerances.",
+    "evidence": [
+      "Figma screenshots and high-fidelity contexts for all five supplied nodes reviewed.",
+      "assets/home/challenge-20261111/README.md records original stage layers, intrinsic dimensions and HomeBadges callsites; badge maps/profile/statistics stay dynamic.",
+      "Signed APK phone inspection follows the build. Local emulator is not used.",
+      "SM-A102N preview216572743: actual home saved progress ordering/earned badges/completed courses and challenge card displayed. Bone CTA reached conditions but retained heart; corrected product allowlist and covered nine previously excluded shapes. Follow-up APK installation pending."
+    ]
+  },
+  "native": "No new native dependency, schema or permission. Existing capture/maps/account preferences and signed handset workflow are reused. Draft feedback precedes ready-PR required checks; no main merge. Native home fixture now has a finished owned course; active recovery is checked through its saved-course row, preserving no-GPS-resume and original-row assertions. S56 calorie evidence is default-60kg-unless-configured; export dimensions and byte assertions remain. Follow-up: handset bone challenge exposed the legacy three-shape entry allowlist; use SERVICE_SHAPES for all twelve and keep unknown input ignored. CI252/API29 failed old home-more-runs -> saved-tab assertion; test saved-more and completed-more separately without removing tab-history preservation checks. Full-flow legacy free-run tests now assert exclusion from completed-home cards and open the retained historical detail by existing deep link; paused/interrupted state, explicit resume/confirmation, GPS point growth, cold recovery and final service cleanup assertions remain."
+}

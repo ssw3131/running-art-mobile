@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import { useAuth } from '@/features/auth/use-auth';
 import { getStorage } from '@/modules/storage/database';
@@ -10,6 +10,8 @@ export type HomeLoad = { owner: string; data: HomeData | null; error: string };
 export function useHome() {
   const auth = useAuth(), owner = auth.ready && auth.account ? auth.account.id : null;
   const [state, setState] = useState<HomeLoad>({ owner: '', data: null, error: '' });
+  const [recommendationSeed,setRecommendationSeed]=useState(()=>Math.random());
+  useEffect(()=>{let previous=AppState.currentState;const listener=AppState.addEventListener('change',next=>{if(next==='active'&&previous!=='active')setRecommendationSeed(Math.random());previous=next;});return()=>listener.remove();},[]);
   const [attempt, setAttempt] = useState(0);
   useFocusEffect(useCallback(() => {
     if (owner === null) return;
@@ -36,5 +38,5 @@ export function useHome() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner, attempt]));
   // Hide the preceding account's data in the very render that changes ownership.
-  return { ...(owner !== null && state.owner === owner ? state : { owner: '', data: null, error: '' }), retry: () => setAttempt(value => value + 1) };
+  return { ...(owner !== null && state.owner === owner ? state : { owner: '', data: null, error: '' }), recommendationSeed,retry: () => setAttempt(value => value + 1) };
 }

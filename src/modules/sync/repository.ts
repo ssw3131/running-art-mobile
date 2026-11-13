@@ -92,6 +92,16 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
       await tx.runAsync('INSERT INTO sync_accounts(owner_id,enabled) VALUES(?,1) ON CONFLICT(owner_id) DO UPDATE SET enabled=1', owner);
     }),
     disable: async (owner: string) => transaction(owner, tx => tx.runAsync('UPDATE sync_accounts SET enabled=0 WHERE owner_id=?', owner)),
+    shareRecord:(owner:string,id:string):Promise<PendingRecord&{dirty:number}>=>transaction(owner,async tx=>{
+      const item=await tx.getFirstAsync<Metadata>(`SELECT ${meta} FROM running_sessions WHERE owner_id=? AND id=? AND status='completed'`,owner,id);
+      if(!item)throw new SyncError('공유할 완주 기록을 찾을 수 없어요.');
+      if(await tx.getFirstAsync("SELECT id FROM sync_conflicts WHERE owner_id=? AND kind='run' AND id=?",owner,id))throw new SyncError('이 기록의 동기화 충돌을 먼저 확인해 주세요.');
+      const summary=(await tx.getFirstAsync<Run>(`SELECT ${runColumns} FROM running_sessions WHERE owner_id=? AND id=?`,owner,id))!;
+      const points=await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,id);
+      const saved=summary.courseId?readRunGuidance((await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`,id))!):null;
+      const payload=JSON.stringify(saved?{schemaVersion:2,points,course:saved.course,outcome:summary.courseOutcome}:points);
+      return {kind:'run',id,remoteVersion:item.remoteVersion,mutationId:item.mutationId,dirty:item.dirty,deleted:false,summary,payload};
+    }),
     pending: async (owner: string): Promise<PendingRecord[]> => transaction(owner, async tx => {
       const rows: PendingRecord[] = [];
       for (const kind of ['course', 'run'] as const) {

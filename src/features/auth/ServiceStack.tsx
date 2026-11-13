@@ -1,6 +1,6 @@
 import { Stack, useNavigationContainerRef } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import { AppText } from '@/components/ui';
 import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { useThemeColors } from '@/theme/ThemeProvider';
@@ -63,6 +63,10 @@ export function ServiceStack() {
     header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back menu={!!auth.account} /> }}>
     <Stack.Protected guard={access === 'service'}>
       {privateScreens.map(([name, title]) => <Stack.Screen key={name} name={name} options={{ title,
+        // A native map can leave Android's slide transition and accessibility
+        // hierarchy unfinished. Open this candidate detail without blending
+        // the two native surfaces; retain the stack and ordinary back action.
+        ...(Platform.OS === 'android' && name === 'course-candidate' ? { animation: 'none' as const } : {}),
         headerShown: name !== '(tabs)' && name !== 'guidance' && name !== 'run-simulation' && name !== 'course-location-picker' && name !== 'course-map',
         ...(name === 'service-info' || name === 'course-candidate' || name === 'run-settings' || name === 'run-card' ? { header: () => <ServiceHeader title={title} back menu={false} /> } : {}),
       }} />)}

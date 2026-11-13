@@ -192,3 +192,22 @@ test('a stopped course remains in saved courses with an unfinished badge',async 
  const f=await fixture(t);const run=await f.runs.start(f.course.id,gps(0));f.time(1000);await f.runs.append([gps(1000)]);await f.runs.transition(run.id,'completed');
  assert.equal((await f.runs.get(run.id)).courseOutcome,'stopped');assert.equal((await f.courses.list())[0].unfinished,true);
 });
+
+test('starting an unfinished saved course carries committed progress and orange points without modifying its old record',async t=>{
+ const f=await fixture(t),first=await f.runs.start(f.course.id,gps(0)),source=createSimulator(route,'normal');
+ for(let i=0;i<45;i++){const sample=source.step();f.time(sample.timestamp);await f.runs.append([gps(sample.timestamp,sample.position)]);}
+ await f.runs.transition(first.id,'completed');const before=await f.runs.get(first.id),guide=await f.runs.guidance(first.id),points=await f.runs.points(first.id);
+ assert.equal(before.courseOutcome,'stopped');assert.ok(guide.state.progressM>30);
+ f.time(86400000);const resumed=await f.runs.start(f.course.id,gps(86400000,source.sample().position));
+ assert.notEqual(resumed.id,first.id);assert.equal(resumed.distanceM,before.distanceM);assert.equal(resumed.activeMs,before.activeMs);assert.equal(resumed.breakPending,1);
+ assert.deepEqual(await f.runs.points(resumed.id),points);assert.equal((await f.runs.guidance(resumed.id)).state.progressM,guide.state.progressM);
+ assert.deepEqual(await f.runs.get(first.id),before);assert.deepEqual(await f.runs.points(first.id),points);
+ const next=source.step();f.time(86401000);await f.runs.append([gps(86401000,next.position)]);
+ const continued=await f.runs.points(resumed.id);assert.equal(continued.at(-1).segment,points.at(-1).segment+1);assert.equal((await f.runs.get(resumed.id)).activeMs,before.activeMs+1000);
+});
+
+test('a completed course starts a fresh challenge rather than copying a finished lap',async t=>{
+ const f=await fixture(t),{run}=await complete(f);await f.runs.transition(run.id,'completed');const before=await f.runs.get(run.id);
+ const at=before.checkpointAt-BASE+10000;f.time(at);const next=await f.runs.start(f.course.id,gps(at));
+ assert.equal(next.activeMs,0);assert.equal(next.distanceM,0);assert.equal(next.pointCount,0);assert.equal((await f.runs.guidance(next.id)).state.progressM,0);assert.equal((await f.runs.get(run.id)).courseOutcome,'finished');
+});

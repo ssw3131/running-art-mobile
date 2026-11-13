@@ -1,5 +1,7 @@
 # 실제 실행한 계획 모음
 
+- [2026-11-13 PR59 병합과 필수 검사 보완](2026-11-13-2208-pr59-merge.md) — 진행 중, Verify275 fast/API/Android29 통과·Android36 이전 재설정 기대 실패 확인
+
 - [2026-11-09 기획·검사 동기화, 독립 진단, CI 효과 측정](2026-11-09-1435-ci-feedback.md) — 완료, PR55/main190d898·여섯 독립 진단·전체234·동일 트리 main235/자동 관측 통과, 최초 화면 실패 보존·10/20 PR 장기 효과는 후속
 
 - [2026-11-09 최종 통합본 단독 실행 preview 설치](2026-11-09-0731-final-preview-phone.md) — 완료, main5a6f166/preview216340449를 SM-S942N에 자료 유지 설치, 단독 시작·재시작·Google 로그인·4코스/35러닝/7,188좌표·설정 보존 및 도우미 정리
@@ -103,3 +105,15 @@
 Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절차를 수행합니다. 사람이 직접 기록할 때도 같은 규칙과 [템플릿](../../../.agents/skills/running-art-plan-record/assets/executed-plan-template.md)을 사용합니다. 예약 실행이나 파일 변경 감시 서비스는 아닙니다.
 
 - [2026-11-09-2110-sharing-platforms](2026-11-09-2110-sharing-platforms.md) — 부분 완료: PR57/main8c7ab9f·Android36 15/29 7·기존4화면 차이0·자료 보존/정리·필수 게이트 통과, 최초 ADB 단절과 1회 재실행 근거 보존, 최종 폰 설치/화면 검증 후속.
+
+- [2026-11-11 선택 몸무게·반복 홈·미완주 우선 정렬](2026-11-11-2341-home-progress-weight.md) — PR·후속 폰 설치/버튼 확인 완료, Android 검사 진행 중
+
+- [2026-11-12 홈 가로 목록·러닝 궤적 색상 후속](2026-11-12-1917-home-carousel-running-trail.md) — PR·폰 설치 완료, 홈 기준/병합 게이트 후속
+
+- [2026-11-12-2130-course-lists-badge-live.md](2026-11-12-2130-course-lists-badge-live.md) — 완료: 동일 PR59·SM-A102N 최종 설치, main 미반영.
+
+- [2026-11-12-2327-live-trail-refresh.md](2026-11-12-2327-live-trail-refresh.md) — 완료(PR59·main 미병합): 배포 최적화 경로 갱신 수정·SM-A102N 시뮬레이션 즉시 주황선 확인.
+
+- [2026-11-13-1834-running-preparation-sharing.md](2026-11-13-1834-running-preparation-sharing.md) — 완료(PR59·main 미병합): 준비 로딩·미완주 이어달리기·방향 음성/공유 후속, SM-A102N 설치.
+
+- [2026-11-13-2040-reported-running-sharing-fixes.md](2026-11-13-2040-reported-running-sharing-fixes.md) — 진행 중: 보고된 러닝/공유 미작동 재현·후속.

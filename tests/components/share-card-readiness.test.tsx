@@ -1,5 +1,6 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { PlatformShareCard } from '../../src/features/achievements/PlatformShareCard';
 import { ShareCard } from '../../src/features/achievements/ShareCard';
 
 jest.mock('../../src/features/achievements/AchievementImage', () => ({ AchievementImage: (props: any) => require('react').createElement(require('react-native').View, { ...props, testID: 'card-image' }) }));
@@ -52,4 +53,10 @@ test('square export waits for both transparent brand layers to display', async (
   await fireEvent(runner, 'display');
   expect(ready).toHaveBeenCalledTimes(1);
   expect(error).not.toHaveBeenCalled();
+});
+
+test('portrait exports keep the Figma centered title, address and image brand in both story and save',async()=>{
+ const ready=jest.fn();const view=await render(<PlatformShareCard content={{...content,address:'서울시 중랑구 묵동',compactHeader:true}} portrait canvasRef={null} onReady={ready} onError={jest.fn()}/>);
+ expect(screen.getByText('하트코스 완주')).toHaveStyle({textAlign:'center'});expect(screen.getByText('서울시 중랑구 묵동')).toBeVisible();
+ await fireEvent(view.root,'layout',{});for(const image of screen.getAllByTestId('card-image'))await fireEvent(image,'display');expect(ready).toHaveBeenCalledTimes(1);expect(screen.getAllByTestId('card-image')).toHaveLength(4);
 });

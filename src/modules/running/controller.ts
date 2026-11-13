@@ -14,7 +14,7 @@ export interface TrackingDriver {
   silence?(): void;
   foreground?(): boolean;
 }
-export function createRunController(repository: () => Promise<RunRepository>, driver: TrackingDriver, planner?: ApproachPlanner) {
+export function createRunController(repository: () => Promise<RunRepository>, driver: TrackingDriver, planner?: ApproachPlanner, onRecorded?:()=>void) {
   let tail: Promise<unknown> = Promise.resolve(), recovered = false;
   let failure: string | null = null;
   let preparing: AbortController | null = null, navigating: AbortController | null = null, nextNavigation = 0;
@@ -154,6 +154,7 @@ export function createRunController(repository: () => Promise<RunRepository>, dr
         if ((await repo.active())?.status !== 'running') { if (!cleanedUp) await stop(); return; }
         if (error || failure) { await fail(repo, error ?? failure!); return; }
         const result = await repo.append(fixes);
+        onRecorded?.();
         // Effects follow the transaction, so a failed write never announces a
         // successful arrival. Stopping the GPS service does not discard the run.
         if (result.paused) await stop();

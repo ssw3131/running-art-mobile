@@ -9,10 +9,10 @@ import type { MembershipState } from '@/modules/membership/controller';
 import { policyPublicationLabel } from '@/modules/membership/policy-presentation';
 
 export function ConsentForm({ policy, policyStatus = policy ? 'ready' : 'unavailable', policyMessage = '', onRetryPolicy,
-  email, nickname, onNickname, busy, message, profile, onSubmit }: {
+  email, nickname, onNickname, busy, message, profile, weight, onSubmit }: {
   policy: MembershipPolicy | null; policyStatus?: MembershipState['policyStatus']; policyMessage?: string; onRetryPolicy?(): void;
   email: string; nickname: string; onNickname(value: string): void; busy: boolean;
-  message: string; profile: ReactNode; onSubmit(): void;
+  message: string; profile: ReactNode; weight?: ReactNode; onSubmit(): void;
 }) {
   const c = useThemeColors();
   // Choices belong to a displayed version, never to whichever version arrives later.
@@ -33,6 +33,7 @@ export function ConsentForm({ policy, policyStatus = policy ? 'ready' : 'unavail
       clearable style={{ minHeight: 56 }} testID="signup-nickname" value={nickname} onChangeText={onNickname} editable={!busy} autoCorrect={false} maxLength={80}
       accessibilityHint="1~20자. 비워 두면 기존 닉네임 또는 소셜 이름을 사용해요." returnKeyType="done" /></View>
     <View style={{ marginHorizontal: 9 }}>{profile}</View>
+    {weight&&<View style={{marginHorizontal:9}}>{weight}</View>}
     <View style={{ gap: 14 }}>
       {available ? <>
         <Checkbox testID="signup-consent-all" label="필수 약관 전체 동의" labelProps={{ variant: 'heading', weight: 'bold', style: { color: c.muted } }}

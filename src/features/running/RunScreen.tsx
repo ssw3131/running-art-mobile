@@ -16,6 +16,7 @@ import type { GuidanceOptions, RunGuidance, RunPreparation } from '@/modules/run
 import { runFinishDestination } from '@/modules/running/finish-destination';
 import { openServiceTab } from '@/features/service/open-service-tab';
 import { guidanceNative } from '@/modules/guidance/native';
+import { subscribeRecording } from '@/modules/running/recording-events';
 
 export default function RunScreen() {
   const styles = useRunStyles(),insets=useSafeAreaInsets();
@@ -57,8 +58,9 @@ export default function RunScreen() {
       finally { polling = false; }
     };
     void poll(); const timer = setInterval(() => void poll(), 1000);
+    const unsubscribe=subscribeRecording(()=>void poll());
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') { ticks = 0; void poll(); } });
-    return () => { generation.current++; running.cancelPreparation(); clearInterval(timer); subscription.remove(); };
+    return () => { generation.current++; running.cancelPreparation(); clearInterval(timer); unsubscribe(); subscription.remove(); };
   }, [refresh, supported,owner]));
   async function act(action: () => Promise<unknown>) {
     if (working.current) return;
@@ -85,7 +87,7 @@ export default function RunScreen() {
   function finish() {
     if (!run) return;
     const id = run.id;
-    Alert.alert(run.courseOutcome === 'arrival-pending' ? '완주 기록을 저장할까요?' : '러닝을 종료할까요?', '현재까지 기록을 저장합니다. 종료 후에는 새 도전으로 시작하며, 여러 날의 기록을 합쳐 완주로 인정하지 않아요. 동기화를 켜둔 계정은 연결되면 서버에도 저장됩니다.', [
+    Alert.alert(run.courseOutcome === 'arrival-pending' ? '완주 기록을 저장할까요?' : '러닝을 종료할까요?', '현재까지 기록을 저장합니다. 미완주 코스는 다음에 선택하면 저장한 경로와 진행 지점부터 이어 달릴 수 있어요. 동기화를 켜둔 계정은 연결되면 서버에도 저장됩니다.', [
       { text: '취소', style: 'cancel' }, { text: '종료·저장', onPress: () => void act(async () => { await running.finish(id); router.setParams({ courseId: undefined }); const destination=runFinishDestination(await(await getStorage()).runs.get(id));if(destination.pathname==='/run-result')router.push(destination);else openServiceTab(destination); }) },
     ]);
   }

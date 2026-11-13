@@ -1,0 +1,26 @@
+import React from 'react';
+import {act,render,screen} from '@testing-library/react-native';
+import {AppState} from 'react-native';
+import RunScreen from '../../src/features/running/RunScreen';
+import {recordingChanged} from '../../src/modules/running/recording-events';
+const mockActive=jest.fn(),mockPoints=jest.fn();
+jest.mock('expo-router',()=>({router:{setParams:jest.fn()},Tabs:{Screen:()=>null},Link:()=>null,useLocalSearchParams:()=>({}),useFocusEffect:(effect:any)=>require('react').useEffect(effect,[effect])}));
+jest.mock('../../src/features/auth/use-auth',()=>({useAuth:()=>({ready:true,account:{id:'A'}})}));
+jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({runs:{active:mockActive,points:mockPoints,guidance:async()=>({options:{mode:'map'}})}})}));
+jest.mock('../../src/modules/running/runtime',()=>({running:{monitor:async()=>{},error:()=>null,cancelPreparation:()=>{}}}));
+jest.mock('../../src/modules/guidance/native',()=>({guidanceNative:null}));
+jest.mock('../../src/features/running/LiveGuidancePanel',()=>({__esModule:true,default:(props:any)=>require('react').createElement(require('react-native').View,{testID:'recording-map',...props})}));
+jest.mock('../../src/features/running/RunPath',()=>({__esModule:true,default:()=>null}));
+jest.mock('../../src/features/running/SavedCourseChooser',()=>({__esModule:true,default:()=>null}));
+jest.mock('../../src/features/running/CourseRunPreparation',()=>({__esModule:true,default:()=>null}));
+test('a committed live GPS event updates map points without pause, focus change or timer advance',async()=>{
+ jest.useFakeTimers();AppState.currentState='active';
+ const first={sequence:1,segment:0,longitude:127,latitude:37};
+ mockActive.mockResolvedValue({id:'run',status:'running',courseId:'course',pointCount:1});mockPoints.mockResolvedValue([first]);
+ const view=await render(<RunScreen/>);expect(screen.getByTestId('recording-map').props.points).toEqual([first]);
+ const second={...first,sequence:2,latitude:37.0001};
+ mockActive.mockResolvedValue({id:'run',status:'running',courseId:'course',pointCount:2});mockPoints.mockResolvedValue([first,second]);
+ await act(async()=>recordingChanged());
+ expect(screen.getByTestId('recording-map').props.points).toEqual([first,second]);
+ await view.unmount();jest.useRealTimers();
+});

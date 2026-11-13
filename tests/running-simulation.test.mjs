@@ -31,3 +31,11 @@ test('speed changes retain sampled progress and signal loss stays a real weak-si
  const s=createRunningSimulation(route);s.play(0);s.update(1000);s.speed(5,1000);const before=s.snapshot().elapsedMs;s.update(2000);assert.equal(s.snapshot().elapsedMs-before,5000);
  s.command('lost');s.update(4000);assert.equal(s.snapshot().status,'weak');assert.throws(()=>s.speed(0,4000));
 });
+
+test('published simulation trace snapshots stay immutable for production compiler memoization',()=>{
+ const player=createRunningSimulation(route),initial=player.play(0),initialJSON=JSON.stringify(initial.trace);
+ const next=player.update(1000),nextJSON=JSON.stringify(next.trace);
+ assert.notEqual(next.trace,initial.trace);assert.equal(JSON.stringify(initial.trace),initialJSON);
+ assert.ok(next.trace.flat().length>initial.trace.flat().length);
+ player.update(2000);assert.equal(JSON.stringify(next.trace),nextJSON);
+});

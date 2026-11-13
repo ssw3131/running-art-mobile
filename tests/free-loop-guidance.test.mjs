@@ -201,3 +201,8 @@ test('a slow return-path request never blocks GPS writes, and a late result cann
   release();await new Promise(r=>setTimeout(r,10));
   assert.deepEqual((await runs.guidance(run.id)).checkpoint,saved,'aborted old navigation cannot update new episode');
 });
+
+test('direction speech is one 30m cue per turn and survives checkpoint restoration without repetition',()=>{
+ const s=stream(square),events=[];for(let m=3;m<=s.lap.totalMeters;m+=3){events.push(...s.at(m).events.filter(e=>e.kind==='turn'));}
+ assert.ok(events.length>=3);assert.equal(new Set(events.map(e=>e.id)).size,events.length);assert.ok(events.every(e=>e.id.endsWith('-30')));assert.ok(events.every(e=>/좌회전|우회전|유턴/.test(e.text)));
+});

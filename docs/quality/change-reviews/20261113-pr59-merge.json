@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "scripts/qa/home_states.py",
+    "scripts/qa/home_visual.py",
+    "scripts/qa/android.py",
+    "scripts/qa/test_home_visual.py",
+    "scripts/qa/home-visual-fixture.json",
+    "tests/home-challenge.test.mjs",
+    "tests/visual/android-linux-api36/baseline.json",
+    "tests/visual/android-linux-api36/home.png",
+    "tests/visual/android-linux-api36/run.png",
+    "tests/visual/android-linux-api36/archive.png",
+    "tests/visual/android-linux-api36/account.png",
+    "scripts/qa/preparation_readiness.py",
+    "scripts/qa/test_preparation_readiness.py",
+    "scripts/qa/service-s0.py",
+    "scripts/qa/service_s234.py",
+    "src/features/running/CourseRunPreparation.tsx",
+    "src/features/running/use-preparation-approach.ts",
+    "tests/components/preparation-approach.test.tsx",
+    "src/features/auth/ServiceStack.tsx",
+    "scripts/qa/system-bar-ready.mjs",
+    "scripts/qa/system_bar_readiness.py",
+    "scripts/qa/test_system_bar_readiness.py",
+    "tests/system-bar-ready.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "사용자의 PR 병합 요청에 따라 최신 재설정 계약과 Android 검사를 맞추고 홈 화면 기준의 무작위 추천을 시험 자료로 재현 가능하게 준비한다. 연속 GPS에서도 확인 활성화가 반복 해제되는 실제 결함을 발견해, 새 위치와 수신 시각을 함께 비교하도록 같은 PR에서 고친다.",
+  "before": "Verify275 Android36이 옛 regeneration-confirm을 기대해 실패. 홈은 세션 무작위 추천 때문에 기존 시각 기준 준비가 미완료였다. 준비 hook의1초 sampled now보다 새로 수신된 정상 fix가 미래로 잘못 판정되어 enabled가 흔들렸다.",
+  "after": "삭제 안내와 확인/취소를 검사하고 취소 시 이전 후보가 유지됨을 확인한다. 홈 화면 촬영 동안만 12종 완주/누적9999m 합성 기록으로 distance-10을 유일한 최단 목표로 만든다. 촬영 후 모든 행의 원래 해시를 확인하고 다른 화면은 기존 자료를 사용한다. 준비/시작/재도전의 느린 UI 수집 중에도 emulator GPS를1초마다 공급해5초 위치 나이가 유지되도록 한다. 기존 이동 주입은 마지막 지정 좌표를 갱신하며 센서 worker와 직렬화하고, 끝나면 원래 adb 함수/worker를 정리한다. 위치 callback에서 fix/수신 시각을 같은 상태로 전달하고 hook 비교 clock을 새 observation과 함께 갱신한다. timer 만료 재평가는 유지하며 production Compiler에서도 새 fix·진짜 미래/오래된 fix·만료를 구분한다. Android 후보 상세는 slide 전환 없이 같은 stack에 진입해 지도 native surface 전환이 멈춘 상태를 피한다. 뒤로가기/이름/후보 상태는 유지한다.",
+  "invariants": [
+    "제품 코드/무작위 추천/실제 사용자 자료는 변경하지 않는다.",
+    "화면 마스크/허용오차와 기존 기능 검사 범위를 유지한다.",
+    "합성 뱃지 자료는 실제 경로 생성이나 GPS 완주 성공 증거가 아니다. 필수 전체 게이트 전 병합하지 않는다."
+  ],
+  "tests": [
+    {
+      "path": "scripts/qa/test_home_visual.py",
+      "reason": "패키지 설치 전에도 실제 migrations SQLite로12종/9999m 자료와 정상/예외 복원·기존 tombstone 보존을 검사한다."
+    },
+    {
+      "path": "tests/home-challenge.test.mjs",
+      "reason": "설치 후 실제 뱃지/추천 모형에서 native와 동일한 JSON 시험 자료의1001seeds 단일 목표를 확인한다."
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "기존 재설정 취소/후보 보존·확인 후 설정 이동 및 자동 계산 미실행 회귀를 유지한다. native 동작은 home_states.py의 실제 삭제 안내/취소 후 후보 보존으로 확인한다."
+    },
+    {
+      "path": "scripts/qa/test_preparation_readiness.py",
+      "reason": "준비 비활성→활성 관측 전 탭 금지, 안내 자동 종료/기한 초과 실패, 물리 폰 주입 거부를 검증한다. 느린 capture/tap 중 지속 공급과 중첩 feed 재사용/원래 adb 함수 복원을 추가 검증한다."
+    },
+    {
+      "path": "tests/components/preparation-approach.test.tsx",
+      "reason": "일반 및 실제 production Babel/Compiler 경로에서400ms tick 사이 새 fix 수락, 실제 미래1ms·오래된5001ms 거부와 무입력6000ms 만료. 수정 전 두 경로 실패/후 통과를 확인했다."
+    },
+    {
+      "path": "tests/components/auth-gate.test.tsx",
+      "reason": "기존 owner/접근 제한과 stack/뒤로가기 보존, Android 전환 자체는 실제 generation 재진입 시나리오로 확인"
+    },
+    {
+      "path": "scripts/qa/test_visual_readiness.py",
+      "reason": "기존 실제 PNG 정착/기한 초과 실패 검사를 유지; SystemUI 명령은 native visual 단독 및 최종 전체에서 실제 raw 비교"
+    },
+    {
+      "path": "scripts/qa/test_system_bar_readiness.py",
+      "reason": "OS 준비 미완료 원본 보존/실제 준비 후 동일 바이트 반환, 기한 초과·늦은 성공·명령 실패를 성공으로 보지 않음"
+    },
+    {
+      "path": "tests/system-bar-ready.test.mjs",
+      "reason": "현재 Pixel5 최대 신호 원본 수락·빈/부분 신호 거부, 픽셀 불변·다른 geometry/손상 거부"
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "기존에 미완료된 홈 배치 기준을 명시적 합성 자료로 검토한다. 다른 화면의 시험 자료는 유지한다.",
+    "evidence": [
+      "Verify275/43426765870, Android36 아티팩트14039101859의 home-regeneration-sheet.xml",
+      "visual279/43434891549 raw4장/정착해시/환경/원본보존·정리 확인. 전체 차이48020/4844/15617/572, 앱영역47425/4272/15045/0. 원본·현재·차이를 현재 결정/구현과 직접 대조하고 마스크/임계값 미변경. 독립 전체 검증은 후속.",
+      "Full293 attempt2/43462071933: all15 native steps passed. Original visual279 baseline / current raw / diff review: all product pixels identical, only mobile-signal inner triangle differs (home175/others173). Reviewed full-signal raw originals, final settling hashes and unchanged geometry; updated unedited baseline references. Artifact14061798586 ZIP6e5aa5bec90f34b684c73b25c67333d7bd73e28a312ae11eba0ebbec3f20ba97. No new masks or tolerances; fresh independent full verification required.",
+      "Full298/43483416357 passed all15 native steps, home/run comparison0, archive/account70 mobile-signal pixels only, app region0 all4. Artifact14068114409 ZIP899ee78f233cc638840b44093de298dcc09bcc4952dffebb7723fec1b80c1607. No further golden changes: reassert actual SystemUI mobile level4/3g for each real settling sample within the same12s deadline; raw pixels and masks/tolerances unchanged. AOSP DemoModeMobileConnectionDataSource uses shareIn(WhileSubscribed) without replay, so a pre-mount burst is not reliable for later collectors.",
+      "Visual300/43490987400: run/archive/account0, home173 only empty mobile signal, artifact14069244644 ZIP0136e04071ef7676cb869f1c26040d4877ed66dfb04b6aec2919bbe2b07b0c21. Reissuing commands alone is insufficient: API36 Pixel5 profile must visibly show the declared full-signal interior (8 actual OS pixels x958..959/y74..77, opaqueRGB102) before returning the exact device PNG. It never reads an app baseline or changes pixels/masks. Preserve unready raw frames and JSONL; same12sec deadline includes commands, PNG reads and decoder, late readiness fails. API29 capture unchanged.",
+      "Visual302/43494362013 artifact14071687982 ZIP669fde90d4afc73239488f195247fbc01119907fc24e67c607ee49c4c20b4a00: actual full signal became ready after9.448s but the shared screenshot12s window (including2s warmup) had no remaining stable interval. Keep the screenshot12s/stable1s unchanged; require a separate bounded12s OS-state preparation before starting settling, and keep per-frame state verification inside its remaining time. Both phases fail on timeout; raw waiting frames/JSONL retained. No image/baseline/mask/threshold changes.",
+      "Visual304 attempt1 setup failed before app tests: adb root connection closed (environment), artifact14072714115. Same-head attempt2 still never observed full signal in12s, artifact14074207335 ZIP7452184ce8c56d74cc463e87a4aa2727360025c9b8ff0ee4ce753233eeb15eb3. Pin the actual dedicated API36 emulator modem with gsm signal-profile4 at startup, require OK/noKO receipt, retain radio-profile.json and report metadata. Emulator console documents the next radio update may take15s, so pin before app/auth/fixture setup rather than extending capture deadlines. Actual full-signal readiness, original image comparison, geometry/masks/tolerances remain unchanged."
+    ]
+  },
+  "native": "연속 GPS 조건의 service289에서도 시간 비교 결함이 재현되어 fix와 수신 시각을 함께 갱신한다. 새 APK의 API36 서비스 단독 진단에서 준비·시작·재도전/실제 GPS 색상·보존을 먼저 확인하고 이후 ready PR API29/36 전체와4화면 차이0·verification-gate를 통과해야 한다. 이전 visual279는 전체 기능 증거가 아니다. Verify294 원본처럼 후보 상세 전환이 끝나지 않는 문제는 Android 후보 상세 animation none으로 보완 후 generation 단독에서 생성/재진입/이름 보존을 확인하고 최종 전체 게이트를 새로 수행한다."
+}

@@ -64,3 +64,11 @@ test('variation challenges list the actual qualifying records without a category
  await render(<BadgeDetailScreen/>);expect(screen.queryByRole('progressbar')).toBeNull();
  expect(screen.getByTestId('badge-record-1')).toBeVisible();expect(screen.getByTestId('badge-record-2')).toBeVisible();expect(screen.queryByTestId('badge-share')).toBeNull();
 });
+
+test('badge condition uses the original transparent check artwork with a visible 24dp frame',async()=>{
+ mockData=data([record('a')]);mockParams={id:'heart'};
+ await render(<BadgeDetailScreen/>);
+ const icon=screen.getByTestId('badge-condition-icon');
+ expect(StyleSheet.flatten(icon.props.style)).toMatchObject({width:24,height:24});
+ expect(icon.props.tintColor).toBeUndefined();
+});

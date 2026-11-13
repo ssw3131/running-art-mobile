@@ -43,7 +43,7 @@ export default function RunSettingsScreen(){
           </Pressable>)}
         </View>
       </View>
-      <SettingToggle testID="run-voice" label="음성 피드백" description="이동 방향과 코스 이탈을 소리로 안내해요."
+      <SettingToggle testID="run-voice" label="음성 피드백" description="회전할 방향이 바뀔 때 음성으로 안내해요."
         icon={require('../../assets/running/voice.svg')} checked={options.voice} disabled={!prefs||busy} onChange={voice=>void change({...options,voice})}/>
       <SettingToggle testID="run-touch-lock-setting" label="러닝 화면 잠금" description="러닝으로 돌아가면 터치를 잠가요. 길게 눌러 해제할 수 있어요."
         icon={require('../../assets/running/lock.svg')} checked={options.touchLock??false} disabled={!prefs||busy} onChange={touchLock=>void change({...options,touchLock})}/>

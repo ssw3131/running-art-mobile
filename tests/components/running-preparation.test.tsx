@@ -6,6 +6,7 @@ jest.mock('expo-router',()=>({router:{push:(v:any)=>mockPush(v),setParams:(v:any
 jest.mock('expo-location',()=>({getForegroundPermissionsAsync:async()=>({granted:true,android:{accuracy:'fine'}}),hasServicesEnabledAsync:async()=>true,watchPositionAsync:async()=>({remove:jest.fn()}),Accuracy:{BestForNavigation:1}}));
 jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({courses:{get:async()=>({id:'a',name:'하트',snapshot:{route:[[127,37],[127,37.001],[127.001,37.001],[127,37]]}})}})}));
 jest.mock('../../src/modules/running/guidance',()=>({validateRunCourse:(c:any)=>c,startReadiness:()=>({ready:false,message:'GPS 준비'})}));
+jest.mock('../../src/features/running/use-preparation-approach',()=>({usePreparationApproach:()=>({ready:true,plan:null,readPlan:()=>null,error:'',retry:jest.fn()})}));
 jest.mock('../../src/features/guidance/GuidanceMap',()=>({__esModule:true,default:()=>null}));
 test('the Figma notice dismisses once, no persistent card or focus switch covers the preparation map, simulation remains separate',async()=>{
  const start=jest.fn();await render(<CourseRunPreparation id="a" busy={false} onStart={start}/>);

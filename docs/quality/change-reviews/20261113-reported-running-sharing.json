@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "modules/guidance-native/android/src/main/java/expo/modules/guidance/GuidanceFeedback.kt",
+    "src/app/run-simulation.tsx",
+    "src/features/achievements/ShareLinkPreview.tsx",
+    "src/features/course-generation/CourseGenerationScreen.tsx",
+    "src/features/courses/CourseDetailScreen.tsx",
+    "src/features/running/CourseRunPreparation.tsx",
+    "src/features/running/RunSharePanel.tsx",
+    "src/features/running/use-preparation-approach.ts",
+    "src/modules/running/repository.ts",
+    "src/modules/running/simulation.ts",
+    "tests/components/course-detail.test.tsx",
+    "tests/components/course-generation.test.tsx",
+    "tests/components/preparation-approach.test.tsx",
+    "tests/components/run-preparation.test.tsx",
+    "tests/components/run-share-card.test.tsx",
+    "tests/running-simulation-record.test.mjs",
+    "src/modules/running/restore-checkpoint.ts",
+    "tests/components/running-simulation-screen.test.tsx",
+    "src/modules/run-sharing/runtime.ts",
+    "src/modules/run-sharing/service.ts",
+    "src/modules/run-sharing/synchronize-record.ts",
+    "src/modules/sync/repository.ts",
+    "src/modules/sync/runtime.ts",
+    "tests/run-share-sync.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "사용자가 앞선 수정 미동작을 보고했고 시뮬레이션 환경이라고 확인했다. 준비10초실패통과·실제 미완주복원·음성/링크 연결·추천상세 설정 이동을 같은 PR59에 보완한다. main 미병합.",
+  "before": "sync.restore가 checkpoint를NULL로 저장하는데 simulationContinuation은NULL을 새 시도로 취급했다. 시뮬레이션 음성 기본false가 계정 설정을 덮고, TTS는한국어설정 전에offline voice를 요구해 tts_unavailable. 링크는기존URL없으면계속안내만표시·추가확인, 상세재설정은자동계산이었다.",
+  "after": "준비요청10초취소/늦은결과무시·실패문구후지도진행. 동기화/동일hash복사코스의미완주는실제점/segment로checkpoint복원하고회전된lap끝까지재생해완주저장일치. 재개는이전선을표시한일시정지로시작하며계정음성설정적용·한국어설정후offline우선/기기엔진fallback. 링크탭선택은실제URL준비/표시,웹페이지즉시열기. 상세경고확인은설정만이동.",
+  "invariants": [
+    "같은owner/hash의정지된실제/모의기록만각각이어받고원본종료기록은수정하지않는다. pause/신호공백segment를잇지않고새위치로완주판정한다.",
+    "음성은회전당1회·off무음기존정책유지,폰음량/시스템설정은변경하지않는다. 한국어엔진준비실패는화면에알린다.",
+    "링크공유탭을선택한기록에대해서만공유준비한다. 다른이미지탭은자동게시하지않고서버가반환한실제URL만표시한다. 계정변경/늦은응답보호유지.",
+    "추천상세설정이동은미저장임시후보만정리하며저장코스삭제/계산/차감없음. main미병합·에뮬레이터미실행.",
+    "링크 준비는 선택한 완주 기록 하나만 기존 서버 commit 프로토콜로 전송하며 전체 백업을 켜거나 다른 기록을 업로드/복원하지 않는다. 웹페이지는 기존 expo-web-browser로 브라우저에서 연다."
+  ],
+  "tests": [
+    {
+      "path": "tests/running-simulation-record.test.mjs",
+      "reason": "실제sync.restore→checkpointNULL→동일snapshot재저장코스→이어달리기/완주저장검사,이전기록보존."
+    },
+    {
+      "path": "tests/components/running-simulation-screen.test.tsx",
+      "reason": "실제RunSimulationScreen과엔진을실행해재개시기존선/진행/일시정지·계정voice:true·실제turnfeedback호출/중복없음."
+    },
+    {
+      "path": "tests/components/run-preparation.test.tsx",
+      "reason": "10초전확인disabled·10초실패toast/안내닫힘·지도시작버튼유지."
+    },
+    {
+      "path": "tests/components/preparation-approach.test.tsx",
+      "reason": "abort를무시하는planner도10초기한후늦은경로를표시하지않는다."
+    },
+    {
+      "path": "tests/components/run-share-card.test.tsx",
+      "reason": "링크탭진입시실제URL준비/전체주소·추가대화없이브라우저열기·라벨제거. 기존이미지공유는공개자동생성안함."
+    },
+    {
+      "path": "tests/components/course-detail.test.tsx",
+      "reason": "상세경고취소보존/확인후미저장후보만삭제및설정이동."
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "상세resetRequest를받아기존조건을채우지만start호출/차감은하지않는다."
+    },
+    {
+      "path": "tests/run-share-sync.test.mjs",
+      "reason": "백업이 꺼져도 선택한 완주 기록 하나만 전송, 다른 기록/설정 보존, 계정 변경 및 다른 기록 서버 응답은 승인하지 않음."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "준비10초실패통과,시뮬레이션재개기존선·음성오류,링크자동주소/라벨제거,상세경고의사용자흐름변경.",
+    "evidence": [
+      "Figma191:14560 high-fidelity context/screenshot 대조. 기존정적원본이미지/버튼/모달재사용,지도/사진은동적자료.",
+      "자동UI234개통과. 폰native확인은최종APK후수행하고사적원본은Git제외build/reported-fixes-20261113에보존한다."
+    ]
+  },
+  "native": "GuidanceFeedback.kt수정으로같은서명APK의실제native빌드필수. 기존폰로그tts_unavailable,설치된Samsung/Google엔진확인·미디어음량정상(변경없음). 최종native TTS준비/발화확인전청취성공을주장하지않는다."
+}

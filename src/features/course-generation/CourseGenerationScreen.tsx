@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Alert, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { AppText, Button } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import DrawingEditor, { DrawingPreview } from '@/features/route-lab/DrawingEditor';
@@ -12,7 +12,6 @@ import type { ShapeId } from '@/modules/route-engine/types';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { radius } from '@/theme/tokens';
 import { candidateDrafts, centerLabel, sameConditions, type GenerationConditions } from './model';
-import { RegenerationSheet } from './RegenerationSheet';
 import { consumeRegeneration } from './regeneration-request';
 import { Image } from 'expo-image';
 import { usePointAddress } from './use-point-address';
@@ -43,7 +42,6 @@ export default function CourseGenerationScreen() {
   const scroll = useRef<ScrollView>(null), generateButton = useRef<View>(null);
   const [confirmation, setConfirmation] = useState<GenerationConditions | null>(null);
   const [regenerating, setRegenerating] = useState(false);
-  const [resetOpen,setResetOpen]=useState(false);
   const [place, setPlace] = useState<{ address: string; lat: number; lng: number } | null>(null);
   const generationRef = useRef(g);
   const placeRef = useRef(setPlace);
@@ -63,7 +61,7 @@ export default function CourseGenerationScreen() {
   const addressOrigin = choosing ? current.origin : result?.origin ?? current.origin;
   const pointAddress = usePointAddress(addressOrigin, place && Math.abs(place.lat-addressOrigin.lat)<0.00001 && Math.abs(place.lng-addressOrigin.lng)<0.00001 ? place.address : '');
   const locationLabel = (origin: {lat: number; lng: number}) => place && Math.abs(place.lat-origin.lat)<0.00001 && Math.abs(place.lng-origin.lng)<0.00001 ? place.address : pointAddress.label;
-  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false);setResetOpen(false); }, []));
+  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, []));
   useFocusEffect(useCallback(() => {
     const picked = consumeCourseLocation();
     if (!picked) return;
@@ -79,11 +77,11 @@ export default function CourseGenerationScreen() {
     if(!agreed){state.reset();state.setTab('conditions');return;}
     state.setTargetKm(agreed.targetKm);state.setShape(agreed.shape);state.setCustomTemplate(agreed.customTemplate??null);
     state.center.choose(agreed.origin);state.setFixedCenter(true);state.setValidCenter(true);state.setMapMoving(false);
-    state.start(agreed);
+    state.reset();state.setTab('conditions');
   }, [homeParams.resetRequest,auth.account?.id]));
   const [draftOwner,setDraftOwner]=useState(auth.account?.id);
   if(draftOwner!==auth.account?.id){
-    setDraftOwner(auth.account?.id);setConfirmation(null);setImageOpen(false);setPlace(null);setResetOpen(false);
+    setDraftOwner(auth.account?.id);setConfirmation(null);setImageOpen(false);setPlace(null);
   }
   const chooseTab = (tab: 'conditions' | 'results') => { g.setTab(tab); };
   useEffect(() => {
@@ -204,9 +202,8 @@ export default function CourseGenerationScreen() {
         </View>
       </>}
     </ScrollView> : <RecommendationResults g={g} terrain={terrain} location={locationLabel(result?.origin ?? current.origin)}
-      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => { if (resultConditions) setResetOpen(true); else { g.reset(); g.setTab('conditions'); } }} onDetail={index => detail(false, index)}
+      showTarget={showTarget} onTarget={setShowTarget} onEdit={() => {if(!result){g.reset();g.setTab('conditions');return;}Alert.alert('재설정 및 재생성하기','저장하지 않은 생성 코스는 삭제되고 코스 설정 페이지로 이동합니다.',[{text:'취소',style:'cancel'},{text:'확인',onPress:()=>{candidateDrafts.discardUnsaved(auth.account?.id??'guest');g.reset();g.setTab('conditions');}}]);}} onDetail={index => detail(false, index)}
       onMap={() => detail(false, g.selected, true)} onRun={() => detail(true)} status={status} />}
-    <RegenerationSheet visible={resetOpen} count={result?.result.candidates.length??0} onClose={()=>setResetOpen(false)} onConfirm={()=>{setResetOpen(false);if(resultConditions&&!busy){candidateDrafts.discardUnsaved(auth.account?.id??'guest');g.start(resultConditions);}}}/>
     <GenerationConfirmationSheet conditions={confirmation} location={confirmation ? locationLabel(confirmation.origin) : ''}
       regenerating={regenerating} onClose={() => setConfirmation(null)} onConfirm={confirm} returnFocusRef={generateButton} />
     {g.drawingOpen && <DrawingEditor initial={g.customTemplate} onCancel={() => g.setDrawingOpen(false)}

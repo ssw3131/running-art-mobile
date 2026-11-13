@@ -73,3 +73,11 @@ test('UI-LIVE-03: long press keeps the modal until release so the next pause is 
  expect(p.onOptions).toHaveBeenLastCalledWith({...p.guide.options,touchLock:false});
  await fireEvent.press(screen.getByTestId('run-pause'));expect(p.onPauseResume).toHaveBeenCalledTimes(1);
 });
+
+test('real recorded GPS points, not checkpoint trace, reach the live map with pause gaps preserved',async()=>{
+ const p=props(),points:any=[{sequence:1,segment:0,longitude:127,latitude:37,timestamp:1000},{sequence:2,segment:0,longitude:127.001,latitude:37,timestamp:2000},{sequence:3,segment:1,longitude:127.002,latitude:37,timestamp:25000}];
+ const view=await render(<LiveGuidancePanel {...p} guide={{...guide,options:{...guide.options,mode:'map'}}} points={points}/>);
+ expect(screen.getByTestId('live-map').props.state.trace).toEqual([[[127,37],[127.001,37]],[[127.002,37]]]);
+ await view.rerender(<LiveGuidancePanel {...p} guide={{...guide,options:{...guide.options,mode:'map'}}} points={[...points,{...points[2],sequence:4,longitude:127.003,timestamp:26000}]}/>);
+ expect(screen.getByTestId('live-map').props.state.trace[1]).toEqual([[127.002,37],[127.003,37]]);
+});

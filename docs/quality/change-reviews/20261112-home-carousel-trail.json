@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/features/courses/CourseDetailScreen.tsx",
+    "src/features/courses/CoursesScreen.tsx",
+    "src/features/guidance/GuidanceMap.tsx",
+    "src/features/running/LiveGuidancePanel.tsx",
+    "src/features/service/HomeBadges.tsx",
+    "src/features/service/HomePreview.tsx",
+    "src/features/service/HomeScreen.tsx",
+    "src/modules/home/repository.ts",
+    "src/modules/map/MapSurface.tsx",
+    "src/modules/map/RouteTrailLayers.tsx",
+    "src/modules/map/types.ts",
+    "src/modules/running/recorded-paths.ts",
+    "tests/components/archive.test.tsx",
+    "tests/components/course-detail.test.tsx",
+    "tests/components/guidance-trail.test.tsx",
+    "tests/components/home.test.tsx",
+    "tests/components/live-running.test.tsx",
+    "tests/course-priority.test.mjs",
+    "tests/home.test.mjs",
+    "scripts/qa/live-route-colors.mjs",
+    "scripts/qa/service_s234.py",
+    "src/app/service-about.tsx",
+    "src/features/service/home-thumbnail.ts",
+    "src/modules/home/thumbnail-style.ts",
+    "tests/home-thumbnail-style.test.mjs",
+    "tests/visual/android-linux-api36/archive.png",
+    "tests/visual/android-linux-api36/baseline.json",
+    "tests/live-route-colors.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-12 user Figma680:2586/24:3818/35:4724/35:4857: append to existing PR59, install phone, do not merge main. Home rows max5 horizontal, no thumbnail info text, circular recommendation badge, selected-only orange saved shapes, actual GPS orange and unfinished detail progress.",
+  "before": "Home saved/completed capped at3 in vertical rows, badges uncapped; opaque exported badge corners showed a square. Saved heart had baked orange tint without selection. Actual and planned paths were separate native sources and isolated GPS segments had no visible geometry; saved detail omitted recorded GPS.",
+  "after": "Home SQL and UI cap at5, horizontally scrolling saved/completed/earned rows. Badge original artwork is clipped to a circular wrapper. Only selected/current saved course tints orange. A single ordered source draws blue3px course, orange7px accepted GPS lines and isolated fixes. Saved unfinished detail reads latest owned run points and uses the same overlay; real live state keeps persisted GPS segments.",
+  "invariants": [
+    "Do not join GPS gaps/pauses or replace recorded points with planned route/progress estimates. No GPS filter, distance, navigation checkpoint or database schema changes.",
+    "Keep account-scoped reads and screen generation guards. Opening saved detail does not resume or mutate runs.",
+    "Home priority applies before LIMIT; no new synthetic records, achievements, quota consumption or real account signup.",
+    "Reuse original Figma icons/badge/stage assets without raster editing. No main merge; existing app identity and phone records preserved."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/home.test.tsx",
+      "reason": "Five-item horizontal courses/completions and earned badges, existing challenge navigation and owner/scroll behavior."
+    },
+    {
+      "path": "tests/components/guidance-trail.test.tsx",
+      "reason": "Blue course/orange wider trail, single-source ordering, separate gap segments, singleton GPS fix and live updates."
+    },
+    {
+      "path": "tests/components/live-running.test.tsx",
+      "reason": "Real persisted points reach map across rerenders without using simulation/checkpoint trace or joining pauses."
+    },
+    {
+      "path": "tests/components/course-detail.test.tsx",
+      "reason": "Latest unfinished owned run overlays segments without automatic resume; saved/retry/export contracts stay."
+    },
+    {
+      "path": "tests/components/archive.test.tsx",
+      "reason": "Only one selected saved row, priority status does not select all unfinished rows; pagination/owner transitions."
+    },
+    {
+      "path": "tests/course-priority.test.mjs",
+      "reason": "Seven courses demonstrate priority before five-item home truncation and full archive pagination."
+    },
+    {
+      "path": "tests/home.test.mjs",
+      "reason": "Real SQLite home read/ownership/traces and updated maximum."
+    },
+    {
+      "path": "tests/components/home-preview.test.tsx",
+      "reason": "Static cached snapshots and offline fallback remain stable without live native maps."
+    },
+    {
+      "path": "tests/home-thumbnail-style.test.mjs",
+      "reason": "TileJSON rendering limits and tile URLs stay intact, metadata is inlined without embedded thumbnail attribution, source objects are not mutated, unavailable tiles reject safely."
+    },
+    {
+      "path": "tests/components/support.test.tsx",
+      "reason": "Service About retains navigation/support controls with provider information available there."
+    },
+    {
+      "path": "tests/live-route-colors.test.mjs",
+      "reason": "An orange pause button outside the map region cannot falsely prove an accepted GPS trace; real map-region color pixels are required."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "Requested four Figma screens; no unrelated baselines/masks/tolerances changed. Previous254 full API36 functional15 passed but home golden was old recent-first layout (41618 pixels), other three screens zero difference. New home golden must be reviewed against final source.",
+    "evidence": [
+      "Full design contexts/screenshots for680:2586,24:3818,35:4724,35:4857 reviewed. Existing stage/icon assets reused at original dimensions.",
+      "Opaque source badge corners are clipped only by a 90px circular presentation wrapper, preserving original bitmap.",
+      "Final signed APK physical-phone inspection follows; actual outdoor GPS run is not performed by agent.",
+      "SM-A102N preview216642544: current unfinished whale course shows real stored orange GPS against blue remaining course. Home has horizontal thumbnails but native snapshot itself still contained attribution after label removal; thumbnail-only TileJSON metadata is now inlined and provider information is available on Service About. A second APK is required to finish this in-scope fix.",
+      "Visual257 sourceceed70f: home42775px, archive3008px, run/account0px. Archive original/current/diff reviewed; only unselected heart orange->gray changed as requested. Archive golden updated from original native PNG with exact SHA/provenance. Home golden remains old/pending; do not mask or accept random product imagery to claim full pass.",
+      "Final Handset39 source da57009 preview216644703 installed SM-A102N20:18:47 with UID/firstInstall/login retained. Direct phone review confirms no baked thumbnail credits, circular recommendation without square corners, saved horizontal end5, selected-only orange heart, and real stored unfinished whale GPS orange/remaining blue.",
+      "Service259 native run6ba4e30 passed preparation/S234/preservation/cleanup. Source live GPS modules match final app. Original raw screenshot reviewed; stricter post-run center-map analysis excludes orange pause controls and found2938 blue/4838 orange pixels. Corresponding probe/false-positive regression added."
+    ]
+  },
+  "native": "No dependencies, permissions, schema, GPS filtering or running persistence changed. Single native GeoJSON source orders guide/trace layers. Existing source style IDs for course/trace retained; map background/position overlays unaffected. Draft fast feedback before ready full verification. Full isolated S234 now injects six moving real GPS samples, requires at least three accepted stored points and both exact blue/orange colors in the native map screenshot. This is separate from simulation; original pause/recovery/preservation assertions remain. Final handset app source stays ceed70f; this follow-up changes QA/docs only. Handset source follow-up changes only home thumbnail metadata/presentation and About credits; live GPS/map layer modules remain identical to the source under service diagnostic259. Native service259 and all exact artifacts are preserved; it is targeted diagnostics, not a full merge gate. Home full-frame reference is pending deterministic random-data preparation; PR remains draft and no main merge."
+}

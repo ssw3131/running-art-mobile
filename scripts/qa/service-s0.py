@@ -9,6 +9,8 @@ import sys
 import time
 import uuid
 import xml.etree.ElementTree as ET
+from types import SimpleNamespace
+from preparation_readiness import confirm_preparation
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ADB = ROOT / '.tools/android-sdk/platform-tools/adb.exe'
@@ -169,11 +171,12 @@ def navigation():
     returned = capture('system-back-previous-archive')
     assert find(returned, 'tab-archive').get('selected') == 'true'
     assert find(returned, '저장 코스').get('selected') == 'true'
-    tap('tab-home'); seek('home-more-runs'); tap('home-more-runs')
+    tap('tab-home'); seek('home-more-courses'); tap('home-more-courses')
     assert find(capture('archive-saved-from-home'), '저장 코스').get('selected') == 'true'
     tap('service-back')
     assert find(capture('archive-more-back-home'), 'service-home') is not None
     seek('home-more-runs'); tap('home-more-runs')
+    assert find(capture('archive-completed-from-home'), '완주 기록').get('selected') == 'true'
     tap('완주 기록')
     tap('tab-account'); tap('tab-archive')
     retained=capture('archive-view-after-tab')
@@ -246,10 +249,13 @@ def gps_navigation():
     row = query("SELECT id,status,point_count FROM running_sessions WHERE status <> 'completed'")[0]
     assert row['id'] == run_id and row['status'] == 'running' and row['point_count'] > initial_count
     seek('run-pause'); tap('run-pause')
-    tap('tab-home'); seek('home-run-' + run_id); tap('home-run-' + run_id)
+    tap('tab-home')
+    assert find(capture('gps-paused-not-completed'), 'home-run-' + run_id) is None
+    shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///runs/'+run_id,APP)
+    time.sleep(2)
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'paused'
-    # Free-running home cards open their historical detail first. Opening it
-    # must not resume or mutate the paused session.
+    # Legacy free sessions no longer appear among completed course cards.
+    # Their retained historical detail must still open without resuming GPS.
     seek('진행 중인 러닝으로 이동'); tap('진행 중인 러닝으로 이동')
     seek('run-start'); tap('run-start'); tap('계속'); inject(12)
     capture('gps-resumed')
@@ -258,7 +264,9 @@ def gps_navigation():
     time.sleep(3)
     assert find(capture('gps-cold-recovery'), 'home-history') is not None
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'interrupted'
-    seek('home-run-' + run_id); tap('home-run-' + run_id)
+    assert find(capture('gps-interrupted-not-completed'), 'home-run-' + run_id) is None
+    shell('am','start','-W','-a','android.intent.action.VIEW','-d','runningart:///runs/'+run_id,APP)
+    time.sleep(2)
     assert query(f"SELECT status FROM running_sessions WHERE id='{run_id}'")[0]['status'] == 'interrupted'
     seek('진행 중인 러닝으로 이동'); tap('진행 중인 러닝으로 이동')
     seek('run-start'); tap('run-start'); tap('계속'); inject(16)
@@ -291,7 +299,8 @@ def course_preparation():
     adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
     tap('tab-home'); tap('home-more-courses'); tap('course-row-' + 'f'*32)
     seek('course-run'); tap('course-run')
-    tap('run-preparation-confirm')
+    confirm_preparation(SimpleNamespace(SERIAL=SERIAL, adb=adb, capture=capture, find=find, tap=tap),
+                        (lng, lat), 'course-preparation-ready')
     assert find(capture('course-preparation-map'), 'tab-run') is None
     launcher = shell('cmd', 'package', 'resolve-activity', '--brief',
                      '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER', APP).decode().strip().splitlines()[-1]

@@ -14,14 +14,14 @@ async function fixture(t){const db=openSqlite();t.after(()=>db.closeAsync());awa
  const courses=createCourseRepository(db,()=>now),runs=createRunRepository(db,()=>now);const course=await courses.save(snap,'러닝 당시 이름');
  const fix=()=>({timestamp:now,latitude:37,longitude:127,accuracy:5});
  return {db,courses,runs,course,fix,time:n=>now=BASE+n};}
-test('retry after deleted course restores immutable snapshot, starts next day from zero and retains old result',async t=>{
+test('retry after deleted course restores immutable snapshot, continues unfinished elapsed time next day and retains old result',async t=>{
  const f=await fixture(t),run=await f.runs.start(f.course.id,f.fix());
  f.time(30000);await f.runs.transition(run.id,'completed');const before=await f.runs.get(run.id),guide=await f.runs.guidance(run.id);
  await f.courses.rename(f.course.id,'변경한 이름');await f.courses.remove(f.course.id);assert.equal(await f.courses.count(),0);
  const saved=await prepareRunRetry(f,run.id,()=>{});assert.equal(saved.created,true);assert.equal(await f.courses.count(),1);
  assert.deepEqual((await f.courses.get(saved.id)).snapshot,snap);assert.equal((await f.courses.get(saved.id)).name,'러닝 당시 이름');
  const again=await prepareRunRetry(f,run.id,()=>{});assert.equal(again.id,saved.id);assert.equal(again.created,false);
- f.time(86400000);const next=await f.runs.start(saved.id,f.fix());assert.notEqual(next.id,run.id);assert.equal(next.distanceM,0);assert.equal(next.activeMs,0);assert.equal(next.courseOutcome,'active');
+ f.time(86400000);const next=await f.runs.start(saved.id,f.fix());assert.notEqual(next.id,run.id);assert.equal(next.distanceM,0);assert.equal(next.activeMs,before.activeMs);assert.equal(next.courseOutcome,'active');
  assert.deepEqual(await f.runs.get(run.id),before);assert.deepEqual((await f.runs.guidance(run.id)).checkpoint,guide.checkpoint);
  assert.equal((await f.runs.guidance(next.id)).state.progressM,0);
  await assert.rejects(prepareRunRetry(f,run.id,()=>{}),/진행 중/);
@@ -36,4 +36,10 @@ test('archive month order, duplicates and unfinished/free outcomes remain truthf
  const jan=run('a','2027-01-01T01:00:00'),dec=run('b','2026-12-31T23:00:00');
  const groups=groupRunsByMonth([dec,jan,jan]);assert.deepEqual(groups.map(g=>g.key),['2027-01','2026-12']);assert.equal(groups[0].runs.length,1);
  assert.equal(runOutcomeLabel(jan),'중도 종료');assert.equal(runOutcomeLabel({...jan,courseOutcome:'finished'}),'코스 완주');assert.equal(runOutcomeLabel({...jan,courseId:null}),'자유 러닝');assert.equal(runOutcomeLabel({...jan,status:'paused',courseOutcome:'arrival-pending'}),'이어달리기');
+});
+
+test('completion month follows finish date when a session crosses midnight',()=>{
+ const startedAt=new Date(2026,10,30,23,55).getTime(),endedAt=new Date(2026,11,1,0,15).getTime();
+ const groups=groupRunsByMonth([{id:'crossing',startedAt,endedAt}]);
+ assert.equal(groups[0].key,'2026-12');
 });

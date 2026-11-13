@@ -24,6 +24,8 @@ from service_s56 import service_s56
 from storage_readiness import wait_for_storage
 from emulator_readiness import wait_package_service
 from visual_readiness import capture_settled
+from system_bar_readiness import wait_system_bar
+from home_visual import home_visual
 import emulator_auth
 from signup_membership import signup_membership, wait_home
 from diagnostic_setup import DIAGNOSTIC_MODES, prepare_diagnostic
@@ -166,6 +168,14 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
           'mode': 'figma-generation-only' if args.figma_generation_only else 'accessibility-only' if args.accessibility_only else 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-states-only' if args.home_states_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
+# Demo mode alone does not reliably isolate this image's mobile-signal source.
+# Pin the dedicated emulator's modem before app setup; its next radio update
+# can take15s. The later raw-pixel readiness check still must observe full signal.
+if int(environment['api']) >= 36:
+    radio_response = q.adb('emu', 'gsm', 'signal-profile', '4').decode().strip()
+    assert 'OK' in radio_response and 'KO' not in radio_response, radio_response
+    report['radioSignalProfile'] = {'profile': 4, 'response': radio_response}
+    (args.output / 'radio-profile.json').write_text(json.dumps(report['radioSignalProfile']), encoding='utf8')
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 if args.figma_real_only: report['mode'] = 'figma-real-only'
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
@@ -230,23 +240,45 @@ def preserved_fixture():
     return {'course': q.query("SELECT * FROM saved_courses WHERE id='" + 'd'*32 + "'"),
             'note': q.query("SELECT * FROM storage_test_notes WHERE content='S0 preservation fixture'")}
 
-def demo(command, **values):
+def demo(command, *, timeout=120, **values):
     extras = ['-e', 'command', command]
     for key, value in values.items(): extras += ['-e', key, value]
-    q.shell('am', 'broadcast', '-a', 'com.android.systemui.demo', *extras)
+    q.adb('shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', *extras, timeout=timeout)
+
+def visual_frame(remaining, name):
+    if int(environment['api']) < 36:
+        return q.adb('exec-out', 'screencap', '-p', timeout=remaining)
+    def ready(png, left):
+        result = subprocess.run(['node', str(ROOT / 'scripts/qa/system-bar-ready.mjs')],
+                                input=png, capture_output=True, timeout=left, check=True)
+        return json.loads(result.stdout)['ready']
+    return wait_system_bar(
+        lambda left: demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=left),
+        lambda left: q.adb('exec-out', 'screencap', '-p', timeout=left),
+        ready, q.OUT, name, remaining)
+
 
 def capture_visuals():
     q.shell('settings', 'put', 'global', 'sysui_demo_allowed', '1')
     demo('enter'); demo('clock', hhmm='1200')
     demo('battery', level='100', plugged='false')
     demo('network', wifi='show', level='4', fully='true')
-    demo('network', mobile='show', datatype='none', level='4')
+    demo('network', mobile='show', datatype='3g', level='4', fully='true')
     demo('notifications', visible='false')
     screens = []
     try:
         for tab in ['home', 'run', 'archive', 'account']:
-            q.tap('tab-' + tab); q.capture('visual-' + tab)
-            capture_settled(lambda remaining: q.adb('exec-out', 'screencap', '-p', timeout=remaining), q.OUT, 'visual-' + tab)
+            if tab == 'home':
+                with home_visual(q, launch):
+                    q.tap('tab-home'); q.capture('visual-home')
+                    if int(environment['api']) >= 36:
+                        visual_frame(12, 'prepare-visual-home')
+                    capture_settled(lambda remaining: visual_frame(remaining, 'visual-' + tab), q.OUT, 'visual-home')
+            else:
+                q.tap('tab-' + tab); q.capture('visual-' + tab)
+                if int(environment['api']) >= 36:
+                    visual_frame(12, 'prepare-visual-' + tab)
+                capture_settled(lambda remaining: visual_frame(remaining, 'visual-' + tab), q.OUT, 'visual-' + tab)
             if int(environment['api']) >= 36:
                 raw = q.shell('dumpsys', 'window', 'displays').decode()
                 (q.OUT / ('visual-' + tab + '-display.txt')).write_text(raw, encoding='utf8')
