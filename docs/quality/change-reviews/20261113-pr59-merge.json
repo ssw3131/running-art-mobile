@@ -24,20 +24,16 @@
   ],
   "tests": [
     {
-      "path": "scripts/qa/home_states.py",
-      "reason": "원본 XML의 실제 삭제 안내·확인·취소와 취소 후 기존 후보 보존"
-    },
-    {
-      "path": "scripts/qa/home_visual.py",
-      "reason": "원래 테이블 전체 해시 복원, 유일한 추천 목표 확인 및 실제 Android 원본 화면"
-    },
-    {
       "path": "scripts/qa/test_home_visual.py",
       "reason": "패키지 설치 전에도 실제 migrations SQLite로12종/9999m 자료와 정상/예외 복원·기존 tombstone 보존을 검사한다."
     },
     {
       "path": "tests/home-challenge.test.mjs",
       "reason": "설치 후 실제 뱃지/추천 모형에서 native와 동일한 JSON 시험 자료의1001seeds 단일 목표를 확인한다."
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "기존 재설정 취소/후보 보존·확인 후 설정 이동 및 자동 계산 미실행 회귀를 유지한다. native 동작은 home_states.py의 실제 삭제 안내/취소 후 후보 보존으로 확인한다."
     }
   ],
   "visual": {
@@ -45,8 +41,8 @@
     "reason": "기존에 미완료된 홈 배치 기준을 명시적 합성 자료로 검토한다. 다른 화면의 시험 자료는 유지한다.",
     "evidence": [
       "Verify275/43426765870, Android36 아티팩트14039101859의 home-regeneration-sheet.xml",
-      "새 홈 원본/차이 검토와 최종 전체 게이트는 아직 대기 중",
       "visual279/43434891549 raw4장/정착해시/환경/원본보존·정리 확인. 전체 차이48020/4844/15617/572, 앱영역47425/4272/15045/0. 원본·현재·차이를 현재 결정/구현과 직접 대조하고 마스크/임계값 미변경. 독립 전체 검증은 후속."
     ]
-  }
+  },
+  "native": "visual279의 실제 API36 촬영/정착·원본 보존·정리를 확인했다. home_states.py의 재설정 경고/취소 보존은 새 ready PR 전체 API36에서 확인하고 API29 호환·나머지 기능·화면 차이0·verification-gate도 필수로 통과해야 한다. 합성 뱃지는 실제 GPS 성공 근거가 아니다."
 }
