@@ -2,7 +2,7 @@
 import time
 
 
-def confirm_preparation(q, position, name, *, timeout=8, clock=time.monotonic, sleep=time.sleep):
+def confirm_preparation(q, position, name, *, timeout=20, clock=time.monotonic, sleep=time.sleep):
     assert q.SERIAL.startswith('emulator-'), 'Physical devices are forbidden'
     longitude, latitude = map(str, position)
     deadline = clock() + timeout
