@@ -56,7 +56,8 @@
     "reason": "기존에 미완료된 홈 배치 기준을 명시적 합성 자료로 검토한다. 다른 화면의 시험 자료는 유지한다.",
     "evidence": [
       "Verify275/43426765870, Android36 아티팩트14039101859의 home-regeneration-sheet.xml",
-      "visual279/43434891549 raw4장/정착해시/환경/원본보존·정리 확인. 전체 차이48020/4844/15617/572, 앱영역47425/4272/15045/0. 원본·현재·차이를 현재 결정/구현과 직접 대조하고 마스크/임계값 미변경. 독립 전체 검증은 후속."
+      "visual279/43434891549 raw4장/정착해시/환경/원본보존·정리 확인. 전체 차이48020/4844/15617/572, 앱영역47425/4272/15045/0. 원본·현재·차이를 현재 결정/구현과 직접 대조하고 마스크/임계값 미변경. 독립 전체 검증은 후속.",
+      "Full293 attempt2/43462071933: all15 native steps passed. Original visual279 baseline / current raw / diff review: all product pixels identical, only mobile-signal inner triangle differs (home175/others173). Reviewed full-signal raw originals, final settling hashes and unchanged geometry; updated unedited baseline references. Artifact14061798586 ZIP6e5aa5bec90f34b684c73b25c67333d7bd73e28a312ae11eba0ebbec3f20ba97. No new masks or tolerances; fresh independent full verification required."
     ]
   },
   "native": "연속 GPS 조건의 service289에서도 시간 비교 결함이 재현되어 fix와 수신 시각을 함께 갱신한다. 새 APK의 API36 서비스 단독 진단에서 준비·시작·재도전/실제 GPS 색상·보존을 먼저 확인하고 이후 ready PR API29/36 전체와4화면 차이0·verification-gate를 통과해야 한다. 이전 visual279는 전체 기능 증거가 아니다."
