@@ -24,6 +24,7 @@ from service_s56 import service_s56
 from storage_readiness import wait_for_storage
 from emulator_readiness import wait_package_service
 from visual_readiness import capture_settled
+from system_bar_readiness import wait_system_bar
 from home_visual import home_visual
 import emulator_auth
 from signup_membership import signup_membership, wait_home
@@ -236,16 +237,17 @@ def demo(command, *, timeout=120, **values):
     for key, value in values.items(): extras += ['-e', key, value]
     q.adb('shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', *extras, timeout=timeout)
 
-def visual_frame(remaining):
-    # SystemUI's demo mobile flow does not replay commands to a new collector.
-    # Reassert the declared full signal after the actual tab is mounted, on
-    # each settling sample. Capture real pixels; never mask or rewrite them.
-    started = time.monotonic()
-    demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=remaining)
-    remaining -= time.monotonic() - started
-    if remaining <= 0:
-        raise TimeoutError('SystemUI preparation exceeded visual settling deadline')
-    return q.adb('exec-out', 'screencap', '-p', timeout=remaining)
+def visual_frame(remaining, name):
+    if int(environment['api']) < 36:
+        return q.adb('exec-out', 'screencap', '-p', timeout=remaining)
+    def ready(png, left):
+        result = subprocess.run(['node', str(ROOT / 'scripts/qa/system-bar-ready.mjs')],
+                                input=png, capture_output=True, timeout=left, check=True)
+        return json.loads(result.stdout)['ready']
+    return wait_system_bar(
+        lambda left: demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=left),
+        lambda left: q.adb('exec-out', 'screencap', '-p', timeout=left),
+        ready, q.OUT, name, remaining)
 
 
 def capture_visuals():
@@ -261,10 +263,10 @@ def capture_visuals():
             if tab == 'home':
                 with home_visual(q, launch):
                     q.tap('tab-home'); q.capture('visual-home')
-                    capture_settled(visual_frame, q.OUT, 'visual-home')
+                    capture_settled(lambda remaining: visual_frame(remaining, 'visual-' + tab), q.OUT, 'visual-home')
             else:
                 q.tap('tab-' + tab); q.capture('visual-' + tab)
-                capture_settled(visual_frame, q.OUT, 'visual-' + tab)
+                capture_settled(lambda remaining: visual_frame(remaining, 'visual-' + tab), q.OUT, 'visual-' + tab)
             if int(environment['api']) >= 36:
                 raw = q.shell('dumpsys', 'window', 'displays').decode()
                 (q.OUT / ('visual-' + tab + '-display.txt')).write_text(raw, encoding='utf8')
