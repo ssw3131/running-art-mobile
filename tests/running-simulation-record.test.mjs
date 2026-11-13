@@ -89,3 +89,16 @@ test('reopening a simulation twice preserves stored pause segment boundaries eve
  const points=await later.points(saved.id);assert.ok(new Set(points.map(p=>p.segment)).size>=2);
  const c=createRunningSimulation(route,await later.simulationContinuation(f.course.id));assert.equal(c.snapshot().trace.filter(p=>p.length).length,new Set(points.map(p=>p.segment)).size);
 });
+
+test('synced stopped simulation restores its missing checkpoint and resumes a re-saved copy of the same course',async t=>{
+ const f=await fixture(t),s=createRunningSimulation(route);s.play(0);s.update(3000);s.pause(3000);
+ const old=await f.runs.saveSimulation({id:await f.runs.newSimulationId(),courseId:f.course.id,...s.recording()},owner);
+ const pending=(await createSyncRepository(f.db,()=>owner).pending(owner)).find(p=>p.kind==='run'&&p.id===old.id),hash=digest(pending.payload);
+ const remote={owner_id:owner,kind:'run',record_id:old.id,version:1,mutation_id:pending.mutationId,deleted:false,summary:pending.summary,payload_path:`${owner}/run/${old.id}/${hash}.json`,payload_hash:hash};
+ const db=openSqlite();t.after(()=>db.closeAsync());await migrateDatabase(db);await createSyncRepository(db,()=>owner).restore(owner,remote,pending.payload);
+ assert.equal((await db.getFirstAsync('SELECT guidance_json FROM running_sessions WHERE id=?',old.id)).guidance_json,null);
+ const course=await createCourseRepository(db,()=>BASE+1000,()=>owner).save(snapshot,'복원한 코스','f'.repeat(32));
+ const runs=createRunRepository(db,()=>BASE+1000,()=>owner),saved=await runs.simulationContinuation(course.id);assert.ok(saved);assert.ok(saved.checkpoint.progress>100);assert.ok(saved.trace.flat().length>10);
+ const resumed=createRunningSimulation(route,saved);resumed.play(0);for(let t=100;t<60000;t+=100){if(resumed.update(t).status==='arrived')break;}
+ assert.equal(resumed.snapshot().status,'arrived');const result=await runs.saveSimulation({id:await runs.newSimulationId(),courseId:course.id,...resumed.recording()},owner);assert.equal(result.courseOutcome,'finished');assert.equal((await runs.get(old.id)).courseOutcome,'stopped');
+});

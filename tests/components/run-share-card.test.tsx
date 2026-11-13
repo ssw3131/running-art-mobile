@@ -1,5 +1,7 @@
 import React from 'react';
-import {Alert,Clipboard,Linking,Share} from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+jest.mock('expo-web-browser',()=>({openBrowserAsync:jest.fn()}));
+import {Alert,Clipboard,Share} from 'react-native';
 import {act,fireEvent,render,screen,waitFor} from '@testing-library/react-native';
 import RunSharePanel from '../../src/features/running/RunSharePanel';
 const mockCurrent=jest.fn(),mockPublish=jest.fn();
@@ -13,8 +15,14 @@ test('copying a route link waits for explicit publication confirmation and never
 });
 
 test('webpage opens the existing shared URL without republishing and the full address is displayed',async()=>{
- const url='https://runpen.example/#r/'+'a'.repeat(64);mockCurrent.mockResolvedValue(url);mockPublish.mockClear();const open=jest.spyOn(Linking,'openURL').mockResolvedValue(true);
+ const url='https://runpen.example/#r/'+'a'.repeat(64);mockCurrent.mockResolvedValue(url);mockPublish.mockClear();const open=jest.spyOn(WebBrowser,'openBrowserAsync').mockResolvedValue({type:'dismiss'});
  await render(<RunSharePanel card="platform" id="b" disabled={false} onBusy={()=>{}} previewContent={{title:'코스',outcome:'완주',pathLabel:'경로',distance:'3km',duration:'18:00',pace:'6:00'}}/>);
  await waitFor(()=>expect(screen.getByTestId('share-webpage')).toBeEnabled());expect(screen.getByTestId('run-share-url')).toHaveTextContent(url);
  await fireEvent.press(screen.getByTestId('share-webpage'));await waitFor(()=>expect(open).toHaveBeenCalledWith(url));expect(mockPublish).not.toHaveBeenCalled();open.mockRestore();
+});
+
+test('selecting link sharing prepares a new real URL before copy or opening, without an extra publication dialog',async()=>{
+ const url='https://runpen.example/#r/'+'e'.repeat(64);mockCurrent.mockResolvedValue(null);mockPublish.mockResolvedValue(url);const alert=jest.spyOn(Alert,'alert').mockImplementation(()=>{}),open=jest.spyOn(WebBrowser,'openBrowserAsync').mockResolvedValue({type:'dismiss'});
+ await render(<RunSharePanel card="platform" id="c" disabled={false} onBusy={()=>{}} previewContent={{title:'코스',outcome:'완주',pathLabel:'경로',distance:'3km',duration:'18:00',pace:'6:00'}}/>);
+ await waitFor(()=>expect(screen.getByTestId('run-share-url')).toHaveTextContent(url));expect(screen.queryByText('공유될 링크 미리보기')).toBeNull();await fireEvent.press(screen.getByTestId('share-webpage'));await waitFor(()=>expect(open).toHaveBeenCalledWith(url));expect(alert).not.toHaveBeenCalled();alert.mockRestore();open.mockRestore();
 });

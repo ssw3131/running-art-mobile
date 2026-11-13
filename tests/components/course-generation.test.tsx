@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import CourseGenerationScreen from '../../src/features/course-generation/CourseGenerationScreen';
 
+let mockParams:Record<string,string>={};
 let mockUsage: any;
 jest.mock('../../src/features/usage/use-usage', () => ({ useUsage: () => mockUsage }));
 let mockG: any;
@@ -19,7 +20,7 @@ jest.mock('../../src/modules/map/MapSurface', () => ({ __esModule: true, default
   mockMapProps = props; return require('react').createElement(require('react-native').View, { testID: 'map-preview' });
 } }));
 jest.mock('expo-router', () => ({
-  useLocalSearchParams: () => ({}),
+  useLocalSearchParams: () => mockParams,
   router: { push: (...args: any[]) => mockPush(...args) },
   useFocusEffect: (effect: any) => require('react').useEffect(effect, [effect]),
 }));
@@ -27,7 +28,7 @@ const grid = require('../../assets/route-lab/grid.json');
 const baseline = require('../fixtures/route-engine/grid-heart-v02.json').result;
 const completed = (count = 2) => ({ result: { ...baseline, candidates: baseline.candidates.slice(0, count) },
   origin: grid.origin, options: { ...grid.options, shape: 'heart', targetKm: 3 }, liveRoads: false });
-beforeEach(() => {
+beforeEach(() => {mockParams={};
   mockUsage = { data: { generation: { used: 2, total: 5 } }, error: '', refresh: jest.fn() };
   mockPush.mockReset();
   mockAccount = null;
@@ -35,7 +36,7 @@ beforeEach(() => {
     tab: 'conditions', datasetId: 'grid', dataset: { synthetic: true, input: grid, description: '가상 도로' },
     shape: 'heart', targetKm: 3, customTemplate: null, drawingOpen: false, diagnostics: false,
     state: { kind: 'idle', message: '조건을 선택해 주세요.' }, completed: null, selected: 0, seconds: 0,
-    centerState: { center: grid.origin, location: { kind: 'idle' }, position: null }, center: { beginMove: jest.fn(), move: jest.fn() },
+    centerState: { center: grid.origin, location: { kind: 'idle' }, position: null }, center: { beginMove: jest.fn(), move: jest.fn(), choose:jest.fn() },
     roads: {}, overlay: null, mapMoving: false, validCenter: true, cannotCalculate: false,
   };
   for (const key of ['reset', 'setTab', 'setShape', 'setTargetKm', 'setDrawingOpen', 'setCustomTemplate', 'setDiagnostics', 'setRoadMode', 'setDeviceOnly', 'changeSearch', 'start', 'cancel', 'locate', 'setSelected', 'setFixedCenter', 'setMapMoving', 'setMapReady', 'setValidCenter']) mockG[key] = jest.fn();
@@ -237,3 +238,9 @@ test.each(['cancelled', 'error'])('generation without a completed result returns
   expect(screen.getByTestId('shape-star').props.accessibilityState.selected).toBe(true);
   expect(heart!.props.color).not.toBe(star!.props.color);expect(star!.props.color).toBe('#FC5602');
  });
+
+test('detail reset request opens populated course settings without consuming another generation',async()=>{
+ const {requestRegeneration}=require('../../src/features/course-generation/regeneration-request');
+ mockParams={resetRequest:requestRegeneration('guest',{origin:grid.origin,shape:'star',targetKm:7})};
+ await render(<CourseGenerationScreen/>);expect(mockG.start).not.toHaveBeenCalled();expect(mockG.reset).toHaveBeenCalled();expect(mockG.setTab).toHaveBeenCalledWith('conditions');expect(mockG.setShape).toHaveBeenCalledWith('star');expect(mockG.setTargetKm).toHaveBeenCalledWith(7);
+});

@@ -77,7 +77,7 @@ export default function CourseGenerationScreen() {
     if(!agreed){state.reset();state.setTab('conditions');return;}
     state.setTargetKm(agreed.targetKm);state.setShape(agreed.shape);state.setCustomTemplate(agreed.customTemplate??null);
     state.center.choose(agreed.origin);state.setFixedCenter(true);state.setValidCenter(true);state.setMapMoving(false);
-    state.start(agreed);
+    state.reset();state.setTab('conditions');
   }, [homeParams.resetRequest,auth.account?.id]));
   const [draftOwner,setDraftOwner]=useState(auth.account?.id);
   if(draftOwner!==auth.account?.id){

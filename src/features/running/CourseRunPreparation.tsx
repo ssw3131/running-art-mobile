@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import * as Location from 'expo-location';
-import { ActivityIndicator, Alert, AppState, BackHandler, View } from 'react-native';
+import { ActivityIndicator, Alert, AppState, BackHandler, ToastAndroid, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getStorage } from '@/modules/storage/database';
@@ -16,7 +16,7 @@ import { RunningControls } from './RunningControls';
 
 export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(prepared: RunPreparation): void }) {
   const insets=useSafeAreaInsets();
-  const [notice,setNotice]=useState(true),[course,setCourse]=useState<RunCourse|null>(null),[fix,setFix]=useState<Fix|null>(null),[error,setError]=useState('');
+  const [notice,setNotice]=useState(true),[course,setCourse]=useState<RunCourse|null>(null),[fix,setFix]=useState<Fix|null>(null),[error,setError]=useState(''),[skipped,setSkipped]=useState(false);
   const latestFix=useRef<Fix|null>(null);
   const generation=useRef(0),subscription=useRef<Location.LocationSubscription|null>(null),locating=useRef<number|null>(null);
   const cancelPreparation=useCallback(()=>{if(!busy)router.setParams({courseId:undefined});},[busy]);
@@ -49,7 +49,12 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
     const state=AppState.addEventListener('change',value=>{if(value==='background'){generation.current++;locating.current=null;subscription.current?.remove();subscription.current=null;setFix(null);latestFix.current=null;}if(value==='active'&&!subscription.current)void locate();});
     return()=>{generation.current++;locating.current=null;subscription.current?.remove();subscription.current=null;latestFix.current=null;state.remove();};
   },[locate]));
-  const approach=usePreparationApproach(course,fix,!busy);
+  const approach=usePreparationApproach(course,fix,!busy&&!skipped);
+  useFocusEffect(useCallback(()=>{
+    if(!notice||approach.ready)return;
+    const timer=setTimeout(()=>{setSkipped(true);setNotice(false);ToastAndroid.show('코스 이동 경로를 찾지 못했어요. 지도에서 코스를 확인해 주세요.',ToastAndroid.LONG);},approach.error?0:10000);
+    return()=>clearTimeout(timer);
+  },[notice,approach.ready,approach.error]));
   const preview=course?createGuidance(course.snapshot.route).snapshot():null;
   if(preview){preview.phase='approach';preview.lapStart=null;
     if(fix){preview.position=[fix.longitude,fix.latitude];if(approach.plan)preview.returnPath=approach.plan.path;}

@@ -5,6 +5,7 @@ import { authConfig } from '../auth/config';
 import { getStorage } from '../storage/database';
 import { createSyncRemote } from './remote';
 import { resolveConflict, synchronize } from './engine';
+import { synchronizeSharedRun } from '../run-sharing/synchronize-record';
 import { SyncError, syncErrorMessage } from './model';
 import type { SyncConflict, SyncRepository } from './repository';
 
@@ -78,7 +79,18 @@ async function automatically() {
   await refresh();
   if (active && state.status?.enabled) await execute();
 }
+async function shareRun(owner:string,id:string):Promise<void>{
+  held++;abort?.abort();
+  try{
+    if(operation)await operation;
+    const current=epoch,cancel=new AbortController();
+    const check=()=>{if(current!==epoch||authentication.getSnapshot().account?.id!==owner)throw new SyncError('계정이 바뀌어 공유 준비를 중단했어요.');};
+    check();const repository=(await getStorage()).sync,remote=await remoteFor(owner,cancel.signal);check();
+    await synchronizeSharedRun({owner,id,repository,remote,check});
+  }finally{held=Math.max(0,held-1);}
+}
 export const personalSync={
+  shareRun,
   hold:async()=>{held++;abort?.abort();if(operation) await operation;},
   release:()=>{held=Math.max(0,held-1);},
   getSnapshot:()=>state,

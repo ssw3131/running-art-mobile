@@ -6,7 +6,7 @@ import type { RunShareRemote } from './remote.ts';
 export function createRunSharing(deps: {
   base: string; owner(): string | null;
   load(id: string): Promise<{ run: Run; points: RunPoint[]; course: RunCourse | null }>;
-  sync(owner: string): Promise<void>;
+  sync(owner: string,id:string): Promise<void>;
   remote(owner: string): Promise<RunShareRemote>;
   exclusive(work: () => Promise<void>): Promise<void>;
 }) {
@@ -26,7 +26,7 @@ export function createRunSharing(deps: {
         // Read before syncing as well, so another account's stale screen cannot
         // cause an unrelated upload. Reload after sync in case conflict resolved.
         await deps.load(id); check(owner);
-        await deps.sync(owner); check(owner);
+        await deps.sync(owner,id); check(owner);
         const { run, points, course } = await deps.load(id); check(owner);
         const snapshot = makeSharedRun(run, points, course);
         const remote = await deps.remote(owner); check(owner);

@@ -27,7 +27,7 @@ export function usePreparationApproach(course:RunCourse|null,fix:Fix|null,enable
     pending.current?.cancel.abort();pending.current=null;
     if(Date.now()-failureAt.current<30000)return;
     const request={cancel:new AbortController(),origin:position},ticket=generation.current;pending.current=request;
-    const timeout=setTimeout(()=>request.cancel.abort(),30000);
+    const timeout=setTimeout(()=>{if(active.current&&ticket===generation.current&&pending.current===request){pending.current=null;failureAt.current=Date.now();request.cancel.abort();setError('코스 이동 경로를 찾지 못했어요.');}},10000);
     void planApproach({course:course.snapshot,position,accuracy:fix.accuracy},request.cancel.signal).then(value=>{
       if(!active.current||ticket!==generation.current||pending.current!==request)return;
       validApproach(value,course.snapshot,latest.current??position);latestPlan.current=value;setPlan(value);setError('');

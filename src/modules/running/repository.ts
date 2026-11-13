@@ -7,6 +7,7 @@ import { type GuidanceEvent, type GuidanceFix } from '../guidance/engine.ts';
 import { createRunGuidance, guidanceColumns, readRunGuidance, startReadiness, validateRunCourse, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
 import { validApproach, type ApproachPlan } from './approach.ts';
 import { buildSimulationRecord, isSimulationRun } from './simulation-record.ts';
+import { restoreRunCheckpoint } from './restore-checkpoint.ts';
 import { recordedPaths } from './recorded-paths.ts';
 import type { SimulationContinuation } from './simulation.ts';
 import { defaultAccountPreferences, validatePreferences } from '../account/model.ts';
@@ -34,10 +35,11 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
   return {
     simulationContinuation:(courseId:string)=>queue(async():Promise<SimulationContinuation|null>=>{
       const owner=scope();
-      const row=await db.getFirstAsync<Run&GuidanceRow>(`SELECT ${columns},${guidanceColumns} FROM running_sessions WHERE owner_id=? AND course_id=? AND reason LIKE '[시뮬레이션]%' ORDER BY coalesce(ended_at,started_at) DESC,id DESC LIMIT 1`,owner,validateId(courseId));
-      if(!row||row.status!=='completed'||row.courseOutcome!=='stopped'||!row.guidance_json)return null;
-      const checkpoint=JSON.parse(row.guidance_json);if(checkpoint.version!==2||checkpoint.finished)return null;
+      const row=await db.getFirstAsync<Run&GuidanceRow>(`SELECT ${columns},${guidanceColumns} FROM running_sessions WHERE owner_id=? AND (course_id=? OR course_snapshot_hash=(SELECT snapshot_hash FROM saved_courses WHERE id=? AND owner_id=?)) AND reason LIKE '[시뮬레이션]%' ORDER BY coalesce(ended_at,started_at) DESC,id DESC LIMIT 1`,owner,validateId(courseId),courseId,owner);
+      if(!row||row.status!=='completed'||row.courseOutcome!=='stopped')return null;
       const points=await db.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,row.id);
+      const guide=readRunGuidance(row)!;const checkpoint=restoreRunCheckpoint(guide.course,row,points,row.guidance_json);
+      if(checkpoint.version!==2||checkpoint.finished)return null;
       if(scope()!==owner)throw new RunError('계정이 변경되었어요.');
       return {recordId:row.id,checkpoint,trace:recordedPaths(points),elapsedMs:row.activeMs,fixes:points.map(p=>({position:[p.longitude,p.latitude],accuracy:p.accuracy??30,timestamp:p.timestamp-row.startedAt}))};
     }),
@@ -54,8 +56,9 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       if(input.continuedFrom){
         const prior=await read(tx,validateId(input.continuedFrom),expectedOwner);
         const raw=await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`,prior.id);
-        if(!isSimulationRun(prior)||prior.status!=='completed'||prior.courseOutcome!=='stopped'||prior.courseId!==input.courseId||raw?.course_snapshot_hash!==saved.snapshot_hash||!raw.guidance_json)throw new RunError('이어서 달릴 시뮬레이션 기록을 확인할 수 없어요.');
-        continuation={run:prior,points:await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,prior.id),checkpoint:JSON.parse(raw.guidance_json)};
+        if(!isSimulationRun(prior)||prior.status!=='completed'||prior.courseOutcome!=='stopped'||raw?.course_snapshot_hash!==saved.snapshot_hash)throw new RunError('이어서 달릴 시뮬레이션 기록을 확인할 수 없어요.');
+        const points=await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,prior.id);
+        continuation={run:prior,points,checkpoint:restoreRunCheckpoint(course,prior,points,raw.guidance_json)};
       }
       const {run,points,checkpoint}=buildSimulationRecord(input.id,course,input.fixes,input.elapsedMs,now(),continuation);
       await tx.runAsync(`INSERT INTO running_sessions(id,status,started_at,ended_at,active_ms,checkpoint_at,resumed_at,distance_m,point_count,rejected_count,last_timestamp,segment,break_pending,reason,owner_id,course_id,course_name,course_outcome,course_snapshot_json,course_snapshot_hash,guidance_json,guidance_options_json)
@@ -126,8 +129,9 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
           WHERE owner_id=? AND id!=? AND (course_id=? OR course_snapshot_hash=?)
           AND (reason IS NULL OR reason NOT LIKE '[시뮬레이션]%')
           ORDER BY coalesce(ended_at,started_at) DESC,started_at DESC,id DESC LIMIT 1`,owner,row.id,courseId,course.snapshot_hash);
-        const continuation=previous?.status==='completed'&&previous.courseOutcome==='stopped'&&previous.guidance_json&&previous.course_snapshot_hash===course.snapshot_hash?previous:null;
-        const engine = createRunGuidance(snapshot.route, continuation ? JSON.parse(continuation.guidance_json!) : undefined, continuation ? undefined : approach);
+        const continuation=previous?.status==='completed'&&previous.courseOutcome==='stopped'&&previous.course_snapshot_hash===course.snapshot_hash?previous:null;
+        const priorPoints=continuation?await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,continuation.id):[];
+        const engine = createRunGuidance(snapshot.route, continuation ? restoreRunCheckpoint({id:courseId,name:course.name,snapshot},continuation,priorPoints,continuation.guidance_json) : undefined, continuation ? undefined : approach);
         if(continuation){
           engine.resume();
           await tx.runAsync(`UPDATE running_sessions SET started_at=?,active_ms=?,distance_m=?,point_count=?,rejected_count=?,last_timestamp=?,segment=?,break_pending=1 WHERE id=?`,

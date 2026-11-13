@@ -1,6 +1,6 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
-import { AppState, BackHandler, Text } from 'react-native';
+import { AppState, BackHandler, ToastAndroid, Text } from 'react-native';
 import CourseRunPreparation from '../../src/features/running/CourseRunPreparation';
 
 let mockApproachReady=true;
@@ -86,4 +86,10 @@ test('the notice blocks confirmation while the pedestrian route is loading',asyn
  expect(screen.getByTestId('run-preparation-confirm')).toBeDisabled();expect(screen.getByTestId('run-preparation-loading')).toBeVisible();
  mockApproachReady=true;await view.rerender(<CourseRunPreparation id="course" busy={false} onStart={jest.fn()}/>);
  expect(screen.getByTestId('run-preparation-confirm')).toBeEnabled();await fireEvent.press(screen.getByTestId('run-preparation-confirm'));expect(screen.queryByTestId('run-preparation-loading')).toBeNull();
+});
+
+test('after 10 seconds the notice exits with a failure message instead of blocking the runner',async()=>{
+ mockApproachReady=false;const toast=jest.spyOn(ToastAndroid,'show').mockImplementation(()=>{});await render(<CourseRunPreparation id="course" busy={false} onStart={jest.fn()}/>);
+ await act(()=>jest.advanceTimersByTime(9999));expect(screen.getByTestId('run-preparation-confirm')).toBeDisabled();
+ await act(()=>jest.advanceTimersByTime(1));expect(screen.queryByTestId('run-preparation-confirm')).toBeNull();expect(toast).toHaveBeenCalledWith(expect.stringContaining('찾지 못했어요'),ToastAndroid.LONG);expect(screen.getByTestId('run-course-start')).toBeEnabled();toast.mockRestore();
 });

@@ -1,4 +1,4 @@
-import { createLoopGuidance, courseProjection, type LoopCheckpoint } from '../guidance/loop-engine.ts';
+import { createLoopGuidance, courseProjection, loopAt, type LoopCheckpoint } from '../guidance/loop-engine.ts';
 import { createSimulator, type SimulationCommand } from '../guidance/simulator.ts';
 import type { GuidanceFix } from '../guidance/engine.ts';
 import { prepareRoute, type Coordinate } from '../guidance/geometry.ts';
@@ -8,9 +8,11 @@ import type { ApproachPlan } from './approach.ts';
  * This module has no GPS, persistence, quota, achievement or background-service access. */
 export type SimulationContinuation={recordId:string;trace:Coordinate[][];checkpoint:LoopCheckpoint;fixes:GuidanceFix[];elapsedMs:number};
 export function createRunningSimulation(route:readonly Coordinate[],previous?:SimulationContinuation){
-  const total=prepareRoute(route).totalMeters;
-  const cursor=previous?.checkpoint.origin!==null&&previous?.checkpoint.origin!==undefined?((previous.checkpoint.origin+(previous.checkpoint.direction??1)*previous.checkpoint.cursor)%total+total)%total:previous?courseProjection(route,previous.checkpoint.current).meters:0;
-  const engine=createLoopGuidance(route,previous?.checkpoint),source=createSimulator(route,'normal',previous?{cursor,elapsed:previous.elapsedMs}:undefined);
+  const checkpoint=previous?.checkpoint;
+  const directed=checkpoint?.origin!==null&&checkpoint?.origin!==undefined&&checkpoint.direction?loopAt(prepareRoute(route),checkpoint.origin,checkpoint.direction):null;
+  const sourceRoute=directed?.points??route;
+  const cursor=previous?(directed?previous.checkpoint.cursor:courseProjection(route,previous.checkpoint.current).meters):0;
+  const engine=createLoopGuidance(route,checkpoint),source=createSimulator(sourceRoute,'normal',previous?{cursor,elapsed:previous.elapsedMs}:undefined);
   const fixes:GuidanceFix[]=previous?previous.fixes.map(f=>({...f,position:[...f.position] as Coordinate})):[];
   const previousTrace=previous?.trace.map(path=>path.map(point=>[...point] as Coordinate))??[];
   if(previous)engine.resume();

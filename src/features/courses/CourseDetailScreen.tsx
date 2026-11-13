@@ -20,7 +20,6 @@ import { TargetVisibilityButton } from '@/features/course-generation/TargetVisib
 import { CourseInformation, courseDuration } from './CourseInformation';
 import { GenerationIcon } from '@/features/course-generation/GenerationIcon';
 import { usePointAddress } from '@/features/course-generation/use-point-address';
-import { RegenerationSheet } from '@/features/course-generation/RegenerationSheet';
 import { requestRegeneration } from '@/features/course-generation/regeneration-request';
 import { useTerrain } from '@/features/terrain/use-terrain';
 import MapSurface from '@/modules/map/MapSurface';
@@ -37,7 +36,6 @@ export default function CourseDetailScreen() {
   const [data,setData]=useState<Detail|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
   const [editing,setEditing]=useState(false),[name,setName]=useState('');
   const [showTarget,setShowTarget]=useState(true);
-  const [resetOpen,setResetOpen]=useState(false);
   const revision=useRef(0),working=useRef(false),exporting=useRef<AbortController|null>(null);
   const scrollY=useRef(0),keyboardTop=useRef<number|null>(null);
   const [keyboardInset,setKeyboardInset]=useState(0);
@@ -87,7 +85,7 @@ export default function CourseDetailScreen() {
       if(ticket===revision.current&&(authentication.getSnapshot().account?.id??'')===owner){setData({owner,routeKey,name:nameValue,snapshot,savedId,last,points,activeId:active?.id??null});setName(nameValue);}
     }catch(cause){if(ticket===revision.current)setError(cause instanceof Error?cause.message:'코스를 확인하지 못했어요.');}
   },[draft,owner,params.id,params.runId,routeKey]);
-  useFocusEffect(useCallback(()=>{void refresh();return()=>{revision.current++;exporting.current?.abort();setResetOpen(false);};},[refresh]));
+  useFocusEffect(useCallback(()=>{void refresh();return()=>{revision.current++;exporting.current?.abort();};},[refresh]));
   async function mutate(task:(check:()=>void)=>Promise<void>) {
     if(working.current||!current)return;working.current=true;setBusy(true);setError('');setNotice('');
     const ticket=revision.current,captured=owner;
@@ -123,7 +121,7 @@ export default function CourseDetailScreen() {
     if(next.action==='resume'){openServiceTab('/run');return;}
     const savedId=await ensureSaved(check);check();
     const prepare=()=>openServiceTab({pathname:'/run',params:{courseId:savedId}});
-    if(next.action==='new-after-stop')Alert.alert('새 도전을 시작할까요?','이전 러닝은 종료되어 새 도전으로 시작합니다.',[{text:'취소',style:'cancel'},{text:'러닝 준비',onPress:prepare}]);else prepare();
+    prepare();
   });
   const openMap=()=>{
     if(!current)return;
@@ -132,8 +130,8 @@ export default function CourseDetailScreen() {
     router.push({pathname:'/course-map',params:{draft:id,target:showTarget?'1':'0'}});
   };
   const openTerrain=()=>{if(!current)return;const id=candidateDrafts.put(current.snapshot,draft?.rank??0,owner);router.push({pathname:'/course-terrain',params:{draft:id}});};
-  const resetGeneration=()=>setResetOpen(true);
-  const regenerate=()=>{if(!current)return;setResetOpen(false);
+  const resetGeneration=()=>Alert.alert('재설정 및 재생성하기','저장하지 않은 생성 코스는 삭제되고 코스 설정 페이지로 이동합니다.',[{text:'취소',style:'cancel'},{text:'확인',onPress:regenerate}]);
+  const regenerate=()=>{if(!current)return;
     const snapshot=current.snapshot;
     const request=requestRegeneration(owner,{origin:snapshot.origin,shape:snapshot.shape,targetKm:snapshot.targetKm,customTemplate:snapshot.customTemplate});
     candidateDrafts.discardUnsaved(owner);
@@ -141,7 +139,6 @@ export default function CourseDetailScreen() {
   };
   const continuation=courseContinuation(current?.last??null,current?.activeId??null);
   return <KeyboardAvoidingView style={{flex:1,backgroundColor:c.background}} behavior={Platform.OS==='ios'?'padding':undefined}>
-    <RegenerationSheet visible={resetOpen} count={draft?.candidateCount??Math.max(1,candidateDrafts.count(owner))} onClose={()=>setResetOpen(false)} onConfirm={regenerate}/>
     <ScrollView ref={scrollRef} onContentSizeChange={()=>{if(Keyboard.isVisible())revealName();}} onScroll={event=>{scrollY.current=event.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} onLayout={()=>{if(Keyboard.isVisible())revealName();}} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30+keyboardInset,gap:24}}>
       {!current&&!error&&<ActivityIndicator accessibilityLabel="코스 불러오는 중" color={c.action}/>}
       {!current&&!!error&&<View style={{padding:24,gap:12}}><AppText accessibilityRole="alert" testID="course-detail-error">{error}</AppText><Button variant="outline" label="다시 확인" onPress={()=>void refresh()}/></View>}
