@@ -16,7 +16,8 @@ import { RunningControls } from './RunningControls';
 
 export default function CourseRunPreparation({ id, busy, onStart }: { id: string; busy: boolean; onStart(prepared: RunPreparation): void }) {
   const insets=useSafeAreaInsets();
-  const [notice,setNotice]=useState(true),[course,setCourse]=useState<RunCourse|null>(null),[fix,setFix]=useState<Fix|null>(null),[error,setError]=useState(''),[skipped,setSkipped]=useState(false);
+  const [notice,setNotice]=useState(true),[course,setCourse]=useState<RunCourse|null>(null),[observation,setObservation]=useState<{fix:Fix|null;at:number}>(()=>({fix:null,at:Date.now()})),[error,setError]=useState(''),[skipped,setSkipped]=useState(false);
+  const fix=observation.fix;
   const latestFix=useRef<Fix|null>(null);
   const generation=useRef(0),subscription=useRef<Location.LocationSubscription|null>(null),locating=useRef<number|null>(null);
   const cancelPreparation=useCallback(()=>{if(!busy)router.setParams({courseId:undefined});},[busy]);
@@ -26,7 +27,7 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
   },[cancelPreparation]));
   const locate=useCallback(async()=>{
     if(locating.current!==null)return;
-    const ticket=++generation.current;locating.current=ticket;subscription.current?.remove();subscription.current=null;setError('');setFix(null);latestFix.current=null;
+    const ticket=++generation.current;locating.current=ticket;subscription.current?.remove();subscription.current=null;setError('');setObservation({fix:null,at:Date.now()});latestFix.current=null;
     try{
       const saved=await(await getStorage()).courses.get(id);
       if(ticket!==generation.current)return;
@@ -38,7 +39,7 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
       if(ticket!==generation.current||AppState.currentState!=='active')return;
       const watch=await Location.watchPositionAsync({accuracy:Location.Accuracy.BestForNavigation,timeInterval:1000,distanceInterval:0,mayShowUserSettingsDialog:false},value=>{
         if(ticket!==generation.current)return;
-        const next={timestamp:value.timestamp,latitude:value.coords.latitude,longitude:value.coords.longitude,accuracy:value.coords.accuracy};latestFix.current=next;setFix(next);
+        const next={timestamp:value.timestamp,latitude:value.coords.latitude,longitude:value.coords.longitude,accuracy:value.coords.accuracy};latestFix.current=next;setObservation({fix:next,at:Date.now()});
       });
       if(ticket===generation.current)subscription.current=watch;else watch.remove();
     }catch(cause){if(ticket===generation.current)setError(cause instanceof Error&&['location-settings','GPS'].includes(cause.message)?'정확한 위치를 허용하고 기기의 GPS를 켜 주세요.':courseErrorMessage(cause));}
@@ -46,10 +47,10 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
   },[id]);
   useFocusEffect(useCallback(()=>{
     void locate();
-    const state=AppState.addEventListener('change',value=>{if(value==='background'){generation.current++;locating.current=null;subscription.current?.remove();subscription.current=null;setFix(null);latestFix.current=null;}if(value==='active'&&!subscription.current)void locate();});
+    const state=AppState.addEventListener('change',value=>{if(value==='background'){generation.current++;locating.current=null;subscription.current?.remove();subscription.current=null;setObservation({fix:null,at:Date.now()});latestFix.current=null;}if(value==='active'&&!subscription.current)void locate();});
     return()=>{generation.current++;locating.current=null;subscription.current?.remove();subscription.current=null;latestFix.current=null;state.remove();};
   },[locate]));
-  const approach=usePreparationApproach(course,fix,!busy&&!skipped);
+  const approach=usePreparationApproach(course,fix,observation.at,!busy&&!skipped);
   useFocusEffect(useCallback(()=>{
     if(!notice||approach.ready)return;
     const timer=setTimeout(()=>{setSkipped(true);setNotice(false);ToastAndroid.show('코스 이동 경로를 찾지 못했어요. 지도에서 코스를 확인해 주세요.',ToastAndroid.LONG);},approach.error?0:10000);

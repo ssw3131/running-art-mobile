@@ -8,7 +8,7 @@ class PreparationReadinessTest(unittest.TestCase):
     def harness(self, states, serial='emulator-5554'):
         now, calls, pending = [0], [], iter(states)
         q = SimpleNamespace(SERIAL=serial)
-        q.adb = lambda *args: calls.append(('gps', args))
+        q.adb = lambda *args, **kwargs: calls.append(('gps', args))
         q.capture = lambda name: next(pending)
         q.find = lambda tree, key: tree
         q.tap = lambda key: calls.append(('tap', key))
@@ -70,3 +70,30 @@ class PreparationReadinessTest(unittest.TestCase):
             self.assertIs(q.adb,wrapped)
         self.assertIs(q.adb,original)
         self.assertEqual(calls[-1][1][4], '37.002')
+
+    def test_failed_ui_capture_restores_original_adb(self):
+        q, _, _, _ = self.harness([])
+        original = q.adb
+        def capture(name):
+            raise RuntimeError('UI capture failed')
+        q.capture = capture
+        with self.assertRaisesRegex(RuntimeError,'UI capture failed'):
+            confirm_preparation(q,(127,37),'ready')
+        self.assertIs(q.adb,original)
+        self.assertFalse(hasattr(q,'_qa_gps_active'))
+
+    def test_background_gps_failure_cannot_report_a_successful_confirmation(self):
+        q, _, _, _ = self.harness([])
+        main, failed = threading.current_thread(), threading.Event()
+        def adb(*args, **kwargs):
+            if threading.current_thread() is not main:
+                failed.set()
+                raise RuntimeError('GPS transport failed')
+        def capture(name):
+            self.assertTrue(failed.wait(2))
+            return {'enabled':'true'}
+        q.adb, q.capture = adb, capture
+        with self.assertRaisesRegex(RuntimeError,'Continuous emulator GPS injection failed'):
+            confirm_preparation(q,(127,37),'ready',gps_interval=.005)
+        self.assertIs(q.adb,adb)
+        self.assertFalse(hasattr(q,'_qa_gps_active'))

@@ -8,9 +8,12 @@ import type { RunCourse } from '@/modules/running/guidance';
 import type { Fix } from '@/modules/running/model';
 import { isStartFix } from '@/modules/running/guidance';
 
-export function usePreparationApproach(course:RunCourse|null,fix:Fix|null,enabled=true){
-  const [now,setNow]=useState(Date.now);
-  useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[]);
+export function usePreparationApproach(course:RunCourse|null,fix:Fix|null,observedAt:number,enabled=true){
+  // A position and its wall-clock observation belong to the same event. Never
+  // compare a new fix with the preceding timer tick, which makes it look future.
+  const [clock,setClock]=useState(()=>({fix,observedAt,now:observedAt}));
+  if(clock.fix!==fix||clock.observedAt!==observedAt)setClock({fix,observedAt,now:observedAt});
+  useEffect(()=>{const timer=setInterval(()=>setClock(previous=>({...previous,now:Date.now()})),1000);return()=>clearInterval(timer);},[]);
   const [plan,setPlan]=useState<ApproachPlan|null>(null),[error,setError]=useState(''),[retry,setRetry]=useState(0);
   const generation=useRef(0),latest=useRef<Coordinate|null>(null),failureAt=useRef(0),pending=useRef<{cancel:AbortController;origin:Coordinate}|null>(null),active=useRef(false);
   const courseId=course?.id;
@@ -35,6 +38,6 @@ export function usePreparationApproach(course:RunCourse|null,fix:Fix|null,enable
   },[course,fix,plan,retry,enabled]);
   let visiblePlan:ApproachPlan|null=null;
   if(plan&&course&&fix){try{validApproach(plan,course.snapshot,[fix.longitude,fix.latitude]);visiblePlan=plan;}catch{}}
-  const ready=!!course&&isStartFix(fix,now)&&(courseProjection(course.snapshot.route,[fix.longitude,fix.latitude]).separation<=12||!!visiblePlan);
+  const ready=!!course&&isStartFix(fix,clock.now)&&(courseProjection(course.snapshot.route,[fix.longitude,fix.latitude]).separation<=12||!!visiblePlan);
   return {plan:visiblePlan,readPlan,ready,loading:!ready&&!error,error:ready?'':error,retry:()=>{failureAt.current=0;setRetry(n=>n+1);}};
 }
