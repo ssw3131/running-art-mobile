@@ -2,7 +2,7 @@ jest.mock('../../src/features/course-generation/GenerationIcon',()=>({Generation
 jest.mock('../../src/modules/image-contour/picker',()=>({pickContourImage:jest.fn()}));
 import React from 'react';
 import { Alert } from 'react-native';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import CourseGenerationScreen from '../../src/features/course-generation/CourseGenerationScreen';
 
 let mockUsage: any;
@@ -111,13 +111,14 @@ test('UI-GEN-04: target toggle changes the map layer without changing the select
 });
 
 test('UI-GEN-05: zero candidates and failure remain explicit and allow editing', async () => {
+  jest.spyOn(Alert,'alert').mockImplementation(()=>{});
   mockG.tab = 'results'; mockG.completed = completed(0); mockG.state = { kind: 'done', message: '없어요' };
   await render(<CourseGenerationScreen />);
   expect(screen.getByTestId('generation-empty')).toBeVisible();
   expect(screen.queryByTestId('candidate-detail-0')).toBeNull();
   await fireEvent.press(screen.getByTestId('generation-edit'));
   expect(mockG.start).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('취소'));
+  expect(Alert.alert).toHaveBeenCalledWith('재설정 및 재생성하기',expect.stringContaining('삭제'),expect.any(Array));
   expect(mockG.start).not.toHaveBeenCalled();
   mockG.tab = 'results'; mockG.completed = null; mockG.state = { kind: 'error', message: '도로 자료를 받을 수 없어요.' };
   await screen.rerender(<CourseGenerationScreen />);
@@ -135,20 +136,14 @@ test('UI-GEN-06: a condition changed while confirmation was open must be confirm
   expect(screen.getByText('조건이 바뀌었어요. 현재 조건을 다시 확인해 주세요.')).toBeVisible();
 });
 
-test('UI-GEN-07: regeneration confirmation preserves results on cancel and uses the original conditions once confirmed', async () => {
-  mockG.tab = 'results'; mockG.completed = completed(); mockG.shape = 'fish'; mockG.targetKm = 7;
-  const result = mockG.completed;
-  await render(<CourseGenerationScreen />);
-  await fireEvent.press(screen.getByTestId('generation-edit'));
-  expect(mockG.start).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('취소'));
-  expect(mockG.start).not.toHaveBeenCalled();
-  expect(mockG.start).not.toHaveBeenCalled();
-  expect(mockG.completed).toBe(result);
-  await fireEvent.press(screen.getByTestId('generation-edit'));
-  await fireEvent.press(screen.getByTestId('regeneration-confirm'));
-  expect(mockG.start).toHaveBeenCalledTimes(1);
-  expect(mockG.start).toHaveBeenCalledWith({origin:result.origin,...result.options});
+test('UI-GEN-07: recommendation reset warns, preserves results on cancel and returns to conditions without generating', async () => {
+  mockG.tab='results';mockG.completed=completed();const result=mockG.completed;
+  const alert=jest.spyOn(Alert,'alert').mockImplementation(()=>{});
+  await render(<CourseGenerationScreen/>);await fireEvent.press(screen.getByTestId('generation-edit'));
+  expect(mockG.reset).not.toHaveBeenCalled();expect(mockG.completed).toBe(result);expect(mockG.start).not.toHaveBeenCalled();
+  const buttons=alert.mock.calls.at(-1)![2]!;expect(buttons.map(b=>b.text)).toEqual(['취소','확인']);
+  await act(async()=>buttons.find(b=>b.text==='확인')!.onPress!());
+  expect(mockG.reset).toHaveBeenCalledTimes(1);expect(mockG.setTab).toHaveBeenCalledWith('conditions');expect(mockG.start).not.toHaveBeenCalled();alert.mockRestore();
 });
 
 test('UI-GEN-08: real-map updates preserve place input and an open distance draft', async () => {

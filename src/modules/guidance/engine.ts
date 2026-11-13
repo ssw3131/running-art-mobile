@@ -148,10 +148,8 @@ export function createGuidance(coordinates: readonly Coordinate[], saved?: Guida
     }
     if (!off && !weak) {
       const next = turns.find(t => t.meters > progress + 3);
-      if (next && next.meters - progress <= 100) {
-        const threshold = next.meters - progress <= 30 ? 30 : 100;
-        if (threshold === 30) emitted.add(`${next.id}-100`);
-        emit('turn', `${next.id}-${threshold}`, `약 ${Math.max(5, Math.round((next.meters - progress) / 5) * 5)}미터 앞에서 ${next.label}`);
+      if (next && next.meters - progress <= 30) {
+        emit('turn', `${next.id}-30`, `약 ${Math.max(5, Math.round((next.meters - progress) / 5) * 5)}미터 앞에서 ${next.label}`);
       }
       const lastSegment = route.cumulative.findLastIndex((v, i) => i < route.points.length - 1 && route.cumulative[i + 1] > v);
       const eligible = !arrivalSuppressedAt && progress >= route.cumulative[Math.max(0, lastSegment)] && progress >= route.totalMeters - GUIDANCE_LIMITS.finishRemaining && distance(current, route.points.at(-1)!) <= GUIDANCE_LIMITS.finishRadius;

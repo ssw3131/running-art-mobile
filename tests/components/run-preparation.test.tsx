@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { AppState, BackHandler, Text } from 'react-native';
 import CourseRunPreparation from '../../src/features/running/CourseRunPreparation';
 
+let mockApproachReady=true;
 let mockPosition: (value: any) => void;
 const mockRemove = jest.fn();
 const mockSetParams=jest.fn();
@@ -24,9 +25,9 @@ jest.mock('../../src/modules/running/guidance', () => ({
 }));
 jest.mock('../../src/modules/guidance/engine', () => ({ createGuidance: () => ({ snapshot: () => ({}) }) }));
 jest.mock('../../src/features/guidance/GuidanceMap', () => ({ __esModule: true, default: () => null }));
-jest.mock('../../src/features/running/use-preparation-approach', () => ({ usePreparationApproach: () => ({plan:null,readPlan:()=>null,error:'',retry:jest.fn()}) }));
+jest.mock('../../src/features/running/use-preparation-approach', () => ({ usePreparationApproach: () => ({plan:null,ready:mockApproachReady,readPlan:()=>null,error:'',retry:jest.fn()}) }));
 
-beforeEach(() => { jest.useFakeTimers(); AppState.currentState='active'; mockSetParams.mockReset(); });
+beforeEach(() => { jest.useFakeTimers(); AppState.currentState='active';mockApproachReady=true; mockSetParams.mockReset(); });
 afterEach(() => jest.useRealTimers());
 
 test('start stays visible and actionable as GPS expires; confirmation reads the latest preview', async () => {
@@ -78,4 +79,11 @@ test.each([false,true])('back cancels preparation and releases GPS without start
   expect(screen.queryByTestId('run-course-start')).toBeNull();
   expect(mockRemove).toHaveBeenCalled();expect(start).not.toHaveBeenCalled();
   await view.unmount();back.mockRestore();
+});
+
+test('the notice blocks confirmation while the pedestrian route is loading',async()=>{
+ mockApproachReady=false;const view=await render(<CourseRunPreparation id="course" busy={false} onStart={jest.fn()}/>);
+ expect(screen.getByTestId('run-preparation-confirm')).toBeDisabled();expect(screen.getByTestId('run-preparation-loading')).toBeVisible();
+ mockApproachReady=true;await view.rerender(<CourseRunPreparation id="course" busy={false} onStart={jest.fn()}/>);
+ expect(screen.getByTestId('run-preparation-confirm')).toBeEnabled();await fireEvent.press(screen.getByTestId('run-preparation-confirm'));expect(screen.queryByTestId('run-preparation-loading')).toBeNull();
 });

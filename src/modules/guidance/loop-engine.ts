@@ -124,8 +124,7 @@ export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:Loop
         else if(m.separation>L.offMeters){s.offSince??=s.now;if(s.now-s.offSince>=L.offMs){s.navigation=null;s.navigationProgress=0;s.navigationError=null;s.episode++;s.offSince=null;}}
         if(s.navigation&&s.now>0){
           const next=turnsFor(r).find(t=>t.meters>s.navigationProgress+3);
-          if(next&&next.meters-s.navigationProgress<=100){const threshold=next.meters-s.navigationProgress<=30?30:100;const id=`nav-${s.episode}-${next.id}`;if(threshold===30&&!s.emitted.includes(`${id}-100`))s.emitted.push(`${id}-100`);emit('turn',`${id}-${threshold}`,`약 ${Math.max(5,Math.round((next.meters-s.navigationProgress)/5)*5)}미터 앞에서 ${next.label}`);}
-          else emit('turn',`nav-${s.episode}-start`,initial?'보행 도로를 따라 코스 합류 지점으로 이동하세요.':'보행 도로를 따라 마지막 진행 지점으로 돌아가세요.');
+          if(next&&next.meters-s.navigationProgress<=30)emit('turn',`nav-${s.episode}-${next.id}-30`,`약 ${Math.max(5,Math.round((next.meters-s.navigationProgress)/5)*5)}미터 앞에서 ${next.label}`);
         }
       }
       return snapshot();
@@ -163,7 +162,7 @@ export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:Loop
     else if(matched.separation>L.offMeters){s.offSince??=s.now;if(s.now-s.offSince>=L.offMs)beginReturn();}else s.offSince=null;
     if(s.phase==='lap'){
       const next=turnsFor(lap).find(t=>t.meters>s.cursor+3);
-      if(next&&next.meters-s.cursor<=100){const threshold=next.meters-s.cursor<=30?30:100;if(threshold===30&&!s.emitted.includes(`${next.id}-100`))s.emitted.push(`${next.id}-100`);emit('turn',`${next.id}-${threshold}`,`약 ${Math.max(5,Math.round((next.meters-s.cursor)/5)*5)}미터 앞에서 ${next.label}`);}
+      if(next&&next.meters-s.cursor<=30)emit('turn',`${next.id}-30`,`약 ${Math.max(5,Math.round((next.meters-s.cursor)/5)*5)}미터 앞에서 ${next.label}`);
       const eligible=s.cursor>=lap.totalMeters-L.finishRemaining&&s.progress>=lap.totalMeters-L.finishRemaining&&distance(s.current,lap.points[0])<=L.finishRadius&&matched.separation<=L.returnMeters;
       if(eligible){s.finishSince??=s.now;if(s.now-s.finishSince>=L.finishMs){s.phase='arrived';s.finished=true;s.progress=original.totalMeters;emit('arrival','arrival','코스를 완주했어요. 완주 결과를 확인해 주세요.');}}else s.finishSince=null;
     }

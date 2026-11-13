@@ -17,9 +17,9 @@ export function demoCourse(scenario: Scenario): Coordinate[] {
   return meters.map(p => offset(origin, p[0], p[1]));
 }
 // This source knows the scripted path; the guidance engine only sees Fix values.
-export function createSimulator(points: readonly Coordinate[], scenario: Scenario) {
+export function createSimulator(points: readonly Coordinate[], scenario: Scenario, start?: {cursor:number;elapsed:number}) {
   const route = prepareRoute(points);
-  let cursor = 0, elapsed = 0, detourM = 0, detour: ReturnType<typeof prepareRoute> | null = null;
+  let cursor = Math.max(0,Math.min(route.totalMeters,start?.cursor??0)), elapsed = Math.max(0,start?.elapsed??0), detourM = 0, detour: ReturnType<typeof prepareRoute> | null = null;
   let mode: 'route' | 'depart' | 'return' = 'route', quality: 'normal' | 'weak' | 'lost' = 'normal';
   let autoDeparted = false, autoReturned = false;
   function command(value: SimulationCommand) {

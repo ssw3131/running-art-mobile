@@ -7,6 +7,7 @@ import { type GuidanceEvent, type GuidanceFix } from '../guidance/engine.ts';
 import { createRunGuidance, guidanceColumns, readRunGuidance, startReadiness, validateRunCourse, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
 import { validApproach, type ApproachPlan } from './approach.ts';
 import { buildSimulationRecord, isSimulationRun } from './simulation-record.ts';
+import type { SimulationContinuation } from './simulation.ts';
 import { defaultAccountPreferences, validatePreferences } from '../account/model.ts';
 
 export const columns = `id,status,started_at AS startedAt,ended_at AS endedAt,active_ms AS activeMs,
@@ -30,8 +31,17 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
     return queue(async () => { let result!: T; await db.withExclusiveTransactionAsync(async tx => { result = await task(tx); }); return result; });
   }
   return {
+    simulationContinuation:(courseId:string)=>queue(async():Promise<SimulationContinuation|null>=>{
+      const owner=scope();
+      const row=await db.getFirstAsync<Run&GuidanceRow>(`SELECT ${columns},${guidanceColumns} FROM running_sessions WHERE owner_id=? AND course_id=? AND reason LIKE '[시뮬레이션]%' ORDER BY coalesce(ended_at,started_at) DESC,id DESC LIMIT 1`,owner,validateId(courseId));
+      if(!row||row.status!=='completed'||row.courseOutcome!=='stopped'||!row.guidance_json)return null;
+      const checkpoint=JSON.parse(row.guidance_json);if(checkpoint.version!==2||checkpoint.finished)return null;
+      const points=await db.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,row.id);
+      if(scope()!==owner)throw new RunError('계정이 변경되었어요.');
+      return {recordId:row.id,checkpoint,elapsedMs:row.activeMs,fixes:points.map(p=>({position:[p.longitude,p.latitude],accuracy:p.accuracy??30,timestamp:p.timestamp-row.startedAt}))};
+    }),
     newSimulationId:()=>queue(async()=>{const row=await db.getFirstAsync<{id:string}>('SELECT lower(hex(randomblob(16))) AS id');if(!row)throw new RunError('기록 번호를 만들지 못했어요.');return row.id;}),
-    saveSimulation:(input:{id:string;courseId:string;fixes:readonly GuidanceFix[];elapsedMs:number},expectedOwner:string)=>transaction(async tx=>{
+    saveSimulation:(input:{id:string;courseId:string;fixes:readonly GuidanceFix[];elapsedMs:number;continuedFrom?:string},expectedOwner:string)=>transaction(async tx=>{
       const check=()=>{if(scope()!==expectedOwner)throw new RunError('계정이 바뀌어 시뮬레이션 기록을 저장하지 않았어요.');};check();validateId(input.id);
       const existing=await tx.getFirstAsync<Run&{owner_id:string}>(`SELECT ${columns},owner_id FROM running_sessions WHERE id=?`,input.id);
       if(existing){if(existing.owner_id!==expectedOwner||!isSimulationRun(existing)||existing.courseId!==input.courseId)throw new RunError('다른 기록을 바꿀 수 없어요.');return existing;}
@@ -39,7 +49,14 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       const saved=await tx.getFirstAsync<{name:string;snapshot_json:string;snapshot_hash:string}>('SELECT name,snapshot_json,snapshot_hash FROM saved_courses WHERE id=? AND owner_id=?',validateId(input.courseId),expectedOwner);
       if(!saved)throw new RunError('내 계정의 코스를 찾을 수 없어요.');
       const course=validateRunCourse({id:input.courseId,name:saved.name,snapshot:decodeSnapshot(saved.snapshot_json,saved.snapshot_hash)});
-      const {run,points,checkpoint}=buildSimulationRecord(input.id,course,input.fixes,input.elapsedMs,now());
+      let continuation:Parameters<typeof buildSimulationRecord>[5];
+      if(input.continuedFrom){
+        const prior=await read(tx,validateId(input.continuedFrom),expectedOwner);
+        const raw=await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`,prior.id);
+        if(!isSimulationRun(prior)||prior.status!=='completed'||prior.courseOutcome!=='stopped'||prior.courseId!==input.courseId||raw?.course_snapshot_hash!==saved.snapshot_hash||!raw.guidance_json)throw new RunError('이어서 달릴 시뮬레이션 기록을 확인할 수 없어요.');
+        continuation={run:prior,points:await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,prior.id),checkpoint:JSON.parse(raw.guidance_json)};
+      }
+      const {run,points,checkpoint}=buildSimulationRecord(input.id,course,input.fixes,input.elapsedMs,now(),continuation);
       await tx.runAsync(`INSERT INTO running_sessions(id,status,started_at,ended_at,active_ms,checkpoint_at,resumed_at,distance_m,point_count,rejected_count,last_timestamp,segment,break_pending,reason,owner_id,course_id,course_name,course_outcome,course_snapshot_json,course_snapshot_hash,guidance_json,guidance_options_json)
         VALUES(?,'completed',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,run.id,run.startedAt,run.endedAt,run.activeMs,run.checkpointAt,run.resumedAt,run.distanceM,run.pointCount,run.rejectedCount,run.lastTimestamp,run.segment,run.breakPending,run.reason,expectedOwner,course.id,course.name,run.courseOutcome!,saved.snapshot_json,saved.snapshot_hash,JSON.stringify(checkpoint),JSON.stringify(defaultAccountPreferences.guidance));
       for(const point of points)await tx.runAsync('INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy) VALUES(?,?,?,?,?,?,?)',run.id,point.sequence,point.segment,point.timestamp,point.latitude,point.longitude,point.accuracy);
@@ -102,8 +119,22 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
         const readiness = startReadiness({ id: courseId, name: course.name, snapshot }, initialFix ?? null, at, approach);
         if (!readiness.ready) throw new RunError(readiness.message);
         if(approach)validApproach(approach,snapshot,[initialFix!.longitude,initialFix!.latitude]);
-        const engine = createRunGuidance(snapshot.route, undefined, approach);
-        engine.ingest({ position: [initialFix!.longitude, initialFix!.latitude], accuracy: initialFix!.accuracy!, timestamp: 0 });
+        // Start a new attempt with the last real, unfinished attempt's committed
+        // progress. Keep the old completed row immutable for sync/shared links.
+        const previous = await tx.getFirstAsync<Run & GuidanceRow>(`SELECT ${columns},${guidanceColumns} FROM running_sessions
+          WHERE owner_id=? AND id!=? AND (course_id=? OR course_snapshot_hash=?)
+          AND (reason IS NULL OR reason NOT LIKE '[시뮬레이션]%')
+          ORDER BY coalesce(ended_at,started_at) DESC,started_at DESC,id DESC LIMIT 1`,owner,row.id,courseId,course.snapshot_hash);
+        const continuation=previous?.status==='completed'&&previous.courseOutcome==='stopped'&&previous.guidance_json&&previous.course_snapshot_hash===course.snapshot_hash?previous:null;
+        const engine = createRunGuidance(snapshot.route, continuation ? JSON.parse(continuation.guidance_json!) : undefined, continuation ? undefined : approach);
+        if(continuation){
+          engine.resume();
+          await tx.runAsync(`UPDATE running_sessions SET started_at=?,active_ms=?,distance_m=?,point_count=?,rejected_count=?,last_timestamp=?,segment=?,break_pending=1 WHERE id=?`,
+            continuation.startedAt,continuation.activeMs,continuation.distanceM,continuation.pointCount,continuation.rejectedCount,continuation.lastTimestamp,continuation.segment,row.id);
+          await tx.runAsync(`INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy)
+            SELECT ?,sequence,segment,timestamp,latitude,longitude,accuracy FROM running_points WHERE run_id=?`,row.id,continuation.id);
+        }
+        engine.ingest({ position: [initialFix!.longitude, initialFix!.latitude], accuracy: initialFix!.accuracy!, timestamp: continuation ? at-continuation.startedAt : 0 });
         const encoded = encodeSnapshot(snapshot);
         const preferences = await tx.getFirstAsync<{ preferences_json: string }>('SELECT preferences_json FROM account_preferences WHERE owner_id=?', owner);
         const options = validatePreferences(preferences ? JSON.parse(preferences.preferences_json) : defaultAccountPreferences).guidance;

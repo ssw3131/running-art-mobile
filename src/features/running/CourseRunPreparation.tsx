@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import * as Location from 'expo-location';
-import { Alert, AppState, BackHandler, View } from 'react-native';
+import { ActivityIndicator, Alert, AppState, BackHandler, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getStorage } from '@/modules/storage/database';
@@ -63,6 +63,6 @@ export default function CourseRunPreparation({ id, busy, onStart }: { id: string
     </View>
     <View style={{paddingHorizontal:26,paddingBottom:8}}><Button testID="run-simulation-open" compact variant="outline" label="러닝 시뮬레이션 · 30배속" disabled={busy||!course} onPress={()=>{router.setParams({courseId:undefined});router.push({pathname:'/run-simulation',params:{courseId:id}});}}/></View>
     <View style={{paddingBottom:insets.bottom}}><RunningControls busy={busy} paused preparation canStart={!!course} onSettings={()=>router.push('/run-settings')} onStartPause={()=>onStart({courseId:id,read:()=>({fix:latestFix.current,plan:approach.readPlan()})})} onFinish={finish}/></View>
-    <AppModal icon={<Image source={require('../../../assets/generation/run.svg')} tintColor="#FC5602" style={{width:34,height:34}}/>} visible={notice} title="코스 위에서 러닝을 시작해요." onClose={cancelPreparation} footer={<Button testID="run-preparation-confirm" compact variant="outline" label="확인" style={{width:212,alignSelf:'center'}} onPress={()=>setNotice(false)}/>}><Text style={{textAlign:'center',fontSize:13,color:'#828387'}}>{'현재 위치 버튼을 눌러 내 위치를 확인한 뒤,\n지도 위 코스 라인 가까이 이동하세요.\n\n준비가 되면 하단의 시작 버튼을 눌러\n러닝을 시작할 수 있어요.'}</Text></AppModal>
+    <AppModal icon={<Image source={require('../../../assets/generation/run.svg')} tintColor="#FC5602" style={{width:34,height:34}}/>} visible={notice} title="코스 위에서 러닝을 시작해요." onClose={cancelPreparation} footer={<Button testID="run-preparation-confirm" compact variant="outline" label="확인" disabled={busy||!approach.ready||!!error} style={{width:212,alignSelf:'center'}} onPress={()=>setNotice(false)}/>}><Text style={{textAlign:'center',fontSize:13,color:'#828387'}}>{'현재 위치 버튼을 눌러 내 위치를 확인한 뒤,\n지도 위 코스 라인 가까이 이동하세요.\n\n준비가 되면 하단의 시작 버튼을 눌러\n러닝을 시작할 수 있어요.'}</Text>{(!approach.ready||!!error)&&<View style={{alignItems:'center',gap:8,marginTop:12}}>{!error&&!approach.error&&<><ActivityIndicator color="#FC5602"/><Text testID="run-preparation-loading" accessibilityLiveRegion="polite" style={{fontSize:13,textAlign:'center'}}>{fix?'코스까지 도보 경로를 준비하고 있어요.':'현재 위치를 확인하고 있어요.'}</Text></>}{!!(error||approach.error)&&<><Text accessibilityRole="alert" style={{fontSize:13,textAlign:'center'}}>{error||approach.error}</Text><Button compact variant="outline" label="다시 확인" onPress={()=>{if(error)void locate();else approach.retry();}}/></>}</View>}</AppModal>
   </View>;
 }

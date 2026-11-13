@@ -34,9 +34,10 @@ export default function RunSimulationScreen(){
       const saved=await db.courses.get(courseId??'');
       if(closed||authentication.getSnapshot().account?.id!==owner)return;
       const value=validateRunCourse({id:saved.id,name:saved.name,snapshot:saved.snapshot});
+      const continuation=await db.runs.simulationContinuation(courseId??'');
       recordId.current=await db.runs.newSimulationId();savingRef.current=false;finishedRef.current=false;
       if(closed||authentication.getSnapshot().account?.id!==owner)return;
-      guidanceActivity.set(true);ownsActivity.current=true;setLoadedKey(sessionKey);setCourse(value);session.current=createRunningSimulation(value.snapshot.route);setActive(session.current);const token=simulationSettings.create(owner??'',{...defaultGuidanceOptions,voice:false,background:false});settingsToken.current=token;setSettingsId(token);setState(session.current.play(clock()));
+      guidanceActivity.set(true);ownsActivity.current=true;setLoadedKey(sessionKey);setCourse(value);session.current=createRunningSimulation(value.snapshot.route,continuation??undefined);setActive(session.current);const token=simulationSettings.create(owner??'',{...defaultGuidanceOptions,voice:false,background:false});settingsToken.current=token;setSettingsId(token);setState(session.current.play(clock()));
     }catch(cause){if(!closed)setError(cause instanceof Error?cause.message:'시뮬레이션을 열지 못했어요.');}})();
     const timer=setInterval(()=>{if(!closed&&focused.current&&AppState.currentState==='active'&&session.current?.snapshot().playing)setState(session.current.update(clock()));},100);
     const lifecycle=AppState.addEventListener('change',value=>{if(value!=='active'&&session.current)setState(session.current.pause(clock()));});
@@ -63,14 +64,14 @@ export default function RunSimulationScreen(){
   useFocusEffect(useCallback(()=>{if(!courseId)return;focused.current=true;const prefs=simulationSettings.get(settingsToken.current,owner??'');if(prefs?.ended)finishRef.current();else if(prefs)setOptions(prefs.options);
     const back=BackHandler.addEventListener('hardwareBackPress',()=>{Alert.alert('러닝을 마칠까요?','시뮬레이션 기록을 저장하고 종료해요.',[{text:'취소',style:'cancel'},{text:'종료',onPress:()=>finishRef.current()}]);return true;});
     return()=>{back.remove();focused.current=false;if(session.current)setState(session.current.pause(clock()));};},[courseId,owner]));
-  const spoken=useRef(new Set<string>()),lastSpeech=useRef(-Infinity);
-  useEffect(()=>{spoken.current.clear();lastSpeech.current=-Infinity;return()=>{guidanceNative?.silenceLive();};},[active]);
+  const spoken=useRef(new Set<string>());
+  useEffect(()=>{spoken.current.clear();return()=>{guidanceNative?.silenceLive();};},[active]);
   useEffect(()=>{
     if(!state?.playing||!options.voice||!focused.current){guidanceNative?.silenceLive();return;}
     const fresh=state.events.filter(event=>!spoken.current.has(event.id));fresh.forEach(event=>spoken.current.add(event.id));
-    const event=fresh.findLast(value=>value.kind!=='turn')??fresh.at(-1);
-    if(!event||state.elapsedMs-event.timestamp>5000||(event.kind==='turn'&&performance.now()-lastSpeech.current<3500))return;
-    guidanceNative?.prepareLive();guidanceNative?.feedbackLive(`${settingsId}:${event.id}:${performance.now()}`,event.text,event.vibrate);lastSpeech.current=performance.now();
+    const event=fresh.findLast(value=>value.kind==='turn');
+    if(!event||state.elapsedMs-event.timestamp>5000)return;
+    guidanceNative?.prepareLive();guidanceNative?.feedbackLive(`${settingsId}:${event.id}:${performance.now()}`,event.text,event.vibrate);
   },[state,options.voice,settingsId]);
   const request=state&&active?.navigationRequest(),requestKey=request?.key;
   useEffect(()=>{

@@ -70,3 +70,13 @@ test('an active attempt takes precedence over ended records even with an earlier
  assert.equal((await f.courses.latestAttempt(f.course.id,hash)).id,active.id);
  assert.equal((await f.courses.list())[0].inProgress,true);
 });
+
+test('an unfinished simulation resumes the old orange trace and progress, completes and keeps the old attempt immutable',async t=>{
+ const f=await fixture(t),s=createRunningSimulation(route);s.play(0);s.update(3000);s.pause(3000);
+ const old=await f.runs.saveSimulation({id:await f.runs.newSimulationId(),courseId:f.course.id,...s.recording()},owner);assert.equal(old.courseOutcome,'stopped');
+ const saved=await f.runs.simulationContinuation(f.course.id);assert.ok(saved);const resumed=createRunningSimulation(route,saved);
+ assert.equal(resumed.snapshot().progressM,s.snapshot().progressM);assert.ok(resumed.snapshot().trace.flat().length>10);
+ resumed.play(0);for(let t=100;t<60000;t+=100){if(resumed.update(t).status==='arrived')break;}
+ assert.equal(resumed.snapshot().status,'arrived');const later=createRunRepository(f.db,()=>BASE+1000,()=>owner);const result=await later.saveSimulation({id:await later.newSimulationId(),courseId:f.course.id,...resumed.recording()},owner);
+ assert.equal(result.courseOutcome,'finished');assert.deepEqual(await f.runs.get(old.id),old);assert.equal(await f.runs.simulationContinuation(f.course.id),null);
+});

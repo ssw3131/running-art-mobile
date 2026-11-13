@@ -65,8 +65,8 @@ export const trackingDriver: TrackingDriver = {
   feedback(events, voice) {
     // Late batched events are persisted for de-duplication but never queued as
     // obsolete speech. Keep the latest instruction; preserve an off-route buzz.
-    const latest = events.at(-1);
-    if (latest) guidanceNative?.feedbackLive(latest.id, voice ? latest.text : '', events.some(event => event.vibrate));
+    const latest = events.findLast(event=>event.kind==='turn')??events.findLast(event=>event.vibrate);
+    if (latest) guidanceNative?.feedbackLive(latest.id, voice&&latest.kind==='turn' ? latest.text : '', events.some(event => event.vibrate));
   },
   silence() { guidanceNative?.silenceLive(); },
   foreground() { return AppState.currentState === 'active'; },
