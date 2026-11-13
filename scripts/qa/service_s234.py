@@ -5,6 +5,7 @@ import time
 import struct
 import subprocess
 import zlib
+from preparation_readiness import confirm_preparation
 
 def service_s234(q, launch):
     assert q.SERIAL.startswith('emulator-')
@@ -39,7 +40,7 @@ def service_s234(q, launch):
     q.seek('run-saved-course-'+entry['id']);q.tap('run-saved-course-'+entry['id'])
     assert q.find(q.capture('s4-selected-course'),'run-saved-course-'+entry['id']).get('selected')=='true'
     wait_fixed_control('run-selected-start','s4-selected-start')
-    q.tap('run-selected-start');q.tap('run-preparation-confirm')
+    q.tap('run-selected-start');confirm_preparation(q,(lng,lat),'s4-preparation-ready')
     fix();wait_fixed_control('run-course-start','s4-start-ready');q.tap('run-course-start');q.tap('계속');fix(5)
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
     run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
@@ -92,7 +93,7 @@ def service_s234(q, launch):
     launch('runs/'+run_id);q.seek('run-rechallenge');q.capture('s3-run-detail')
     before=q.query(f"SELECT * FROM running_sessions WHERE id='{run_id}'")[0]
     assert before['status']=='completed' and before['course_outcome']=='stopped'
-    q.seek('run-rechallenge');q.tap('run-rechallenge');q.tap('run-preparation-confirm');fix();wait_fixed_control('run-course-start','s3-retry-start-ready')
+    q.seek('run-rechallenge');q.tap('run-rechallenge');confirm_preparation(q,(lng,lat),'s3-retry-preparation-ready');fix();wait_fixed_control('run-course-start','s3-retry-start-ready')
     assert not q.query("SELECT id FROM running_sessions WHERE status <> 'completed'")
     q.tap('run-course-start');q.tap('계속');fix(4)
     newer=q.query("SELECT * FROM running_sessions WHERE status <> 'completed'")[0]

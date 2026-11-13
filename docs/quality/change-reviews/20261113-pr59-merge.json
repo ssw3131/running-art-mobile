@@ -11,7 +11,11 @@
     "tests/visual/android-linux-api36/home.png",
     "tests/visual/android-linux-api36/run.png",
     "tests/visual/android-linux-api36/archive.png",
-    "tests/visual/android-linux-api36/account.png"
+    "tests/visual/android-linux-api36/account.png",
+    "scripts/qa/preparation_readiness.py",
+    "scripts/qa/test_preparation_readiness.py",
+    "scripts/qa/service-s0.py",
+    "scripts/qa/service_s234.py"
   ],
   "behavior": "changed",
   "decision": "사용자의 PR 병합 요청에 따라 최신 재설정 계약과 Android 검사를 맞추고 홈 화면 기준의 무작위 추천을 시험 자료로 재현 가능하게 준비한다.",
@@ -34,6 +38,10 @@
     {
       "path": "tests/components/course-generation.test.tsx",
       "reason": "기존 재설정 취소/후보 보존·확인 후 설정 이동 및 자동 계산 미실행 회귀를 유지한다. native 동작은 home_states.py의 실제 삭제 안내/취소 후 후보 보존으로 확인한다."
+    },
+    {
+      "path": "scripts/qa/test_preparation_readiness.py",
+      "reason": "준비 비활성→활성 관측 전 탭 금지, 안내 자동 종료/기한 초과 실패, 물리 폰 주입 거부를 검증한다."
     }
   ],
   "visual": {
@@ -44,5 +52,5 @@
       "visual279/43434891549 raw4장/정착해시/환경/원본보존·정리 확인. 전체 차이48020/4844/15617/572, 앱영역47425/4272/15045/0. 원본·현재·차이를 현재 결정/구현과 직접 대조하고 마스크/임계값 미변경. 독립 전체 검증은 후속."
     ]
   },
-  "native": "visual279의 실제 API36 촬영/정착·원본 보존·정리를 확인했다. home_states.py의 재설정 경고/취소 보존은 새 ready PR 전체 API36에서 확인하고 API29 호환·나머지 기능·화면 차이0·verification-gate도 필수로 통과해야 한다. 합성 뱃지는 실제 GPS 성공 근거가 아니다."
+  "native": "visual279의 실제 API36 촬영/정착·원본 보존·정리를 확인했다. home_states.py의 재설정 경고/취소 보존은 새 ready PR 전체 API36에서 확인하고 API29 호환·나머지 기능·화면 차이0·verification-gate도 필수로 통과해야 한다. 합성 뱃지는 실제 GPS 성공 근거가 아니다. Verify283에서 준비 확인의 즉시 탭이 disabled로 실패해 코스 상세/선택/재도전 모두 현재 코스 위치를 주기적으로 주입하며 실제 활성화를 기다리도록 맞춘다. service 단독 진단으로 준비/재도전/실제 GPS 색상을 먼저 확인한 뒤 fresh ready 전체 검사를 실행한다."
 }

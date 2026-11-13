@@ -9,6 +9,8 @@ import sys
 import time
 import uuid
 import xml.etree.ElementTree as ET
+from types import SimpleNamespace
+from preparation_readiness import confirm_preparation
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ADB = ROOT / '.tools/android-sdk/platform-tools/adb.exe'
@@ -297,7 +299,8 @@ def course_preparation():
     adb('emu', 'geo', 'fix', str(lng), str(lat), '0', '10')
     tap('tab-home'); tap('home-more-courses'); tap('course-row-' + 'f'*32)
     seek('course-run'); tap('course-run')
-    tap('run-preparation-confirm')
+    confirm_preparation(SimpleNamespace(SERIAL=SERIAL, adb=adb, capture=capture, find=find, tap=tap),
+                        (lng, lat), 'course-preparation-ready')
     assert find(capture('course-preparation-map'), 'tab-run') is None
     launcher = shell('cmd', 'package', 'resolve-activity', '--brief',
                      '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER', APP).decode().strip().splitlines()[-1]
