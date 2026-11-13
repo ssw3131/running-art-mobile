@@ -263,9 +263,13 @@ def capture_visuals():
             if tab == 'home':
                 with home_visual(q, launch):
                     q.tap('tab-home'); q.capture('visual-home')
+                    if int(environment['api']) >= 36:
+                        visual_frame(12, 'prepare-visual-home')
                     capture_settled(lambda remaining: visual_frame(remaining, 'visual-' + tab), q.OUT, 'visual-home')
             else:
                 q.tap('tab-' + tab); q.capture('visual-' + tab)
+                if int(environment['api']) >= 36:
+                    visual_frame(12, 'prepare-visual-' + tab)
                 capture_settled(lambda remaining: visual_frame(remaining, 'visual-' + tab), q.OUT, 'visual-' + tab)
             if int(environment['api']) >= 36:
                 raw = q.shell('dumpsys', 'window', 'displays').decode()
