@@ -168,6 +168,14 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'apkSha256': hashlib.sha256(args.apk.read_bytes()).hexdigest(), 'environment': environment,
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
           'mode': 'figma-generation-only' if args.figma_generation_only else 'accessibility-only' if args.accessibility_only else 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-states-only' if args.home_states_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
+# Demo mode alone does not reliably isolate this image's mobile-signal source.
+# Pin the dedicated emulator's modem before app setup; its next radio update
+# can take15s. The later raw-pixel readiness check still must observe full signal.
+if int(environment['api']) >= 36:
+    radio_response = q.adb('emu', 'gsm', 'signal-profile', '4').decode().strip()
+    assert 'OK' in radio_response and 'KO' not in radio_response, radio_response
+    report['radioSignalProfile'] = {'profile': 4, 'response': radio_response}
+    (args.output / 'radio-profile.json').write_text(json.dumps(report['radioSignalProfile']), encoding='utf8')
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 if args.figma_real_only: report['mode'] = 'figma-real-only'
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
