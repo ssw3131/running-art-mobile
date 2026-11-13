@@ -26,7 +26,9 @@ def verify_home_result(q):
     # Check regeneration while this process still owns a completed result.
     # Later cold-start/GPS scenarios intentionally clear in-memory recommendations.
     q.seek('generation-edit'); q.tap('generation-edit')
-    assert q.find(q.capture('home-regeneration-sheet'), 'regeneration-confirm') is not None
+    warning = q.capture('home-regeneration-sheet')
+    assert q.find(warning, '저장하지 않은 생성 코스는 삭제되고 코스 설정 페이지로 이동합니다.') is not None
+    assert q.find(warning, '확인') is not None and q.find(warning, '취소') is not None
     q.tap('취소'); q.seek('candidate-0')
     candidate = q.find(q.capture('home-regeneration-cancel-preserved'), 'candidate-0')
     assert candidate.get('content-desc') == previous

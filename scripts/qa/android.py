@@ -24,6 +24,7 @@ from service_s56 import service_s56
 from storage_readiness import wait_for_storage
 from emulator_readiness import wait_package_service
 from visual_readiness import capture_settled
+from home_visual import home_visual
 import emulator_auth
 from signup_membership import signup_membership, wait_home
 from diagnostic_setup import DIAGNOSTIC_MODES, prepare_diagnostic
@@ -245,8 +246,13 @@ def capture_visuals():
     screens = []
     try:
         for tab in ['home', 'run', 'archive', 'account']:
-            q.tap('tab-' + tab); q.capture('visual-' + tab)
-            capture_settled(lambda remaining: q.adb('exec-out', 'screencap', '-p', timeout=remaining), q.OUT, 'visual-' + tab)
+            if tab == 'home':
+                with home_visual(q, launch):
+                    q.tap('tab-home'); q.capture('visual-home')
+                    capture_settled(lambda remaining: q.adb('exec-out', 'screencap', '-p', timeout=remaining), q.OUT, 'visual-home')
+            else:
+                q.tap('tab-' + tab); q.capture('visual-' + tab)
+                capture_settled(lambda remaining: q.adb('exec-out', 'screencap', '-p', timeout=remaining), q.OUT, 'visual-' + tab)
             if int(environment['api']) >= 36:
                 raw = q.shell('dumpsys', 'window', 'displays').decode()
                 (q.OUT / ('visual-' + tab + '-display.txt')).write_text(raw, encoding='utf8')
