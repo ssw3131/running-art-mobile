@@ -6,14 +6,13 @@ import type { ApproachPlan } from './approach.ts';
 
 /** Foreground-only virtual fixes; the production loop engine never knows their source.
  * This module has no GPS, persistence, quota, achievement or background-service access. */
-export type SimulationContinuation={recordId:string;checkpoint:LoopCheckpoint;fixes:GuidanceFix[];elapsedMs:number};
+export type SimulationContinuation={recordId:string;trace:Coordinate[][];checkpoint:LoopCheckpoint;fixes:GuidanceFix[];elapsedMs:number};
 export function createRunningSimulation(route:readonly Coordinate[],previous?:SimulationContinuation){
   const total=prepareRoute(route).totalMeters;
   const cursor=previous?.checkpoint.origin!==null&&previous?.checkpoint.origin!==undefined?((previous.checkpoint.origin+(previous.checkpoint.direction??1)*previous.checkpoint.cursor)%total+total)%total:previous?courseProjection(route,previous.checkpoint.current).meters:0;
   const engine=createLoopGuidance(route,previous?.checkpoint),source=createSimulator(route,'normal',previous?{cursor,elapsed:previous.elapsedMs}:undefined);
   const fixes:GuidanceFix[]=previous?previous.fixes.map(f=>({...f,position:[...f.position] as Coordinate})):[];
-  const previousTrace:Coordinate[][]=[];
-  for(const [i,fix] of fixes.entries()){if(!i||fix.timestamp-fixes[i-1].timestamp>5000)previousTrace.push([]);previousTrace.at(-1)!.push([...fix.position]);}
+  const previousTrace=previous?.trace.map(path=>path.map(point=>[...point] as Coordinate))??[];
   if(previous)engine.resume();
   let playing=false,speed=30,lastClock=0,remainder=0;
   const first=previous?null:source.sample();if(first){engine.ingest(first);fixes.push(first);}

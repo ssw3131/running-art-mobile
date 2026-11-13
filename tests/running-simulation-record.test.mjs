@@ -80,3 +80,12 @@ test('an unfinished simulation resumes the old orange trace and progress, comple
  assert.equal(resumed.snapshot().status,'arrived');const later=createRunRepository(f.db,()=>BASE+1000,()=>owner);const result=await later.saveSimulation({id:await later.newSimulationId(),courseId:f.course.id,...resumed.recording()},owner);
  assert.equal(result.courseOutcome,'finished');assert.deepEqual(await f.runs.get(old.id),old);assert.equal(await f.runs.simulationContinuation(f.course.id),null);
 });
+
+test('reopening a simulation twice preserves stored pause segment boundaries even with a short virtual gap',async t=>{
+ const f=await fixture(t),a=createRunningSimulation(route);a.play(0);a.update(3000);a.pause(3000);
+ await f.runs.saveSimulation({id:await f.runs.newSimulationId(),courseId:f.course.id,...a.recording()},owner);
+ const b=createRunningSimulation(route,await f.runs.simulationContinuation(f.course.id));b.play(0);b.update(1000);b.pause(1000);
+ const later=createRunRepository(f.db,()=>BASE+1000,()=>owner);const saved=await later.saveSimulation({id:await later.newSimulationId(),courseId:f.course.id,...b.recording()},owner);
+ const points=await later.points(saved.id);assert.ok(new Set(points.map(p=>p.segment)).size>=2);
+ const c=createRunningSimulation(route,await later.simulationContinuation(f.course.id));assert.equal(c.snapshot().trace.filter(p=>p.length).length,new Set(points.map(p=>p.segment)).size);
+});

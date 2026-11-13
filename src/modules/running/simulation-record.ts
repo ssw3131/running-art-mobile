@@ -24,6 +24,7 @@ export function buildSimulationRecord(id:string,course:RunCourse,fixes:readonly 
     const classified=classifyFix(run,points.at(-1)??null,fix,fix.timestamp);run.lastTimestamp=fix.timestamp;
     if(classified.kind==='reject'){run.rejectedCount++;run.breakPending=1;continue;}
     if(classified.kind!=='point')continue;
+    if(points.length>=100000)throw new Error('한 러닝의 기록 한도에 도달했어요.');
     run.distanceM+=classified.distance;run.segment=classified.segment;run.pointCount++;run.breakPending=0;
     points.push({...fix,sequence:run.pointCount,segment:run.segment});
   }

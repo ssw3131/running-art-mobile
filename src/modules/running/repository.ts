@@ -7,6 +7,7 @@ import { type GuidanceEvent, type GuidanceFix } from '../guidance/engine.ts';
 import { createRunGuidance, guidanceColumns, readRunGuidance, startReadiness, validateRunCourse, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
 import { validApproach, type ApproachPlan } from './approach.ts';
 import { buildSimulationRecord, isSimulationRun } from './simulation-record.ts';
+import { recordedPaths } from './recorded-paths.ts';
 import type { SimulationContinuation } from './simulation.ts';
 import { defaultAccountPreferences, validatePreferences } from '../account/model.ts';
 
@@ -38,7 +39,7 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       const checkpoint=JSON.parse(row.guidance_json);if(checkpoint.version!==2||checkpoint.finished)return null;
       const points=await db.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,row.id);
       if(scope()!==owner)throw new RunError('계정이 변경되었어요.');
-      return {recordId:row.id,checkpoint,elapsedMs:row.activeMs,fixes:points.map(p=>({position:[p.longitude,p.latitude],accuracy:p.accuracy??30,timestamp:p.timestamp-row.startedAt}))};
+      return {recordId:row.id,checkpoint,trace:recordedPaths(points),elapsedMs:row.activeMs,fixes:points.map(p=>({position:[p.longitude,p.latitude],accuracy:p.accuracy??30,timestamp:p.timestamp-row.startedAt}))};
     }),
     newSimulationId:()=>queue(async()=>{const row=await db.getFirstAsync<{id:string}>('SELECT lower(hex(randomblob(16))) AS id');if(!row)throw new RunError('기록 번호를 만들지 못했어요.');return row.id;}),
     saveSimulation:(input:{id:string;courseId:string;fixes:readonly GuidanceFix[];elapsedMs:number;continuedFrom?:string},expectedOwner:string)=>transaction(async tx=>{

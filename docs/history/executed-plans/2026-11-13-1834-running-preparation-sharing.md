@@ -22,3 +22,7 @@ Figma6노드 context/screenshot 확인. 준비 ready/오류·재시도, 같은 o
 ## 원격 fast270 실패 후 검사 경계 보완
 
 source455a132/tree4fbe133을 같은 PR59에 추가, Handset45/43404282729 빌드 시작. Verify270/43404034421의 source/logic/서버 정책은 통과했으나 전체 components에서 run-card-export1건 실패(228통과)했다. 로컬 전체43 suite에서도 동일 재현. 기존 RunSharePanel null mock이 그 안으로 이동한 LinkPreview를 함께 없애는 검사 경계 문제다. 실제 미리보기/URL은 별도 run-share-card에서 검사하며 부모 export 검사 mock은 실제 LinkPreview를 렌더링하도록 보완했다. 기대 미리보기/플랫폼 분리 검사를 삭제하지 않는다. 앱 코드는 바꾸지 않으므로 빌드45의 앱 입력을 유지한다. 최초 실패 보고서는 Git 제외 build/preparation-sharing-20261113/fast270.zip과 remote-components.txt에 보존했다.
+
+## 시뮬레이션 재개 구간 경계 보완
+
+두 차례 이상 중단·재개했을 때 가상 시간 간격은 짧아도 DB segment는 끊겨 있다. 이전 trace를 시간 차로 추정하면 재진입 때 이 경계를 잇는 문제가 있어 실제 저장 segment로 복원하도록 수정했다. 두 차례 재개 회귀를 추가하며, 누적 좌표 한도도 이어달리기에 동일 적용한다. 앱 입력이 바뀌므로 빌드45를 최종 설치본으로 사용하지 않고 후속 APK를 만든다.
