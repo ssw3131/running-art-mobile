@@ -29,8 +29,10 @@ def home_visual(q, launch):
         launch()
         for _ in range(20):
             tree = q.capture('visual-home-ready')
-            title = q.find(tree, 'home-challenge-title')
-            if title is not None and title.get('text') == '누적 거리 10km':
+            # At the top of a 1080x2340 viewport the title is below the fold.
+            # The original badge and remaining-distance chip are visible.
+            if (q.find(tree, 'badge-image-distance-10') is not None
+                    and q.find(tree, '1m 남음') is not None):
                 break
             time.sleep(.5)
         else:

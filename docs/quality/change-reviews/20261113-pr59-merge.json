@@ -3,7 +3,8 @@
   "paths": [
     "scripts/qa/home_states.py",
     "scripts/qa/home_visual.py",
-    "scripts/qa/android.py"
+    "scripts/qa/android.py",
+    "scripts/qa/test_home_visual.py"
   ],
   "behavior": "changed",
   "decision": "사용자의 PR 병합 요청에 따라 최신 재설정 계약과 Android 검사를 맞추고 홈 화면 기준의 무작위 추천을 시험 자료로 재현 가능하게 준비한다.",
@@ -22,6 +23,10 @@
     {
       "path": "scripts/qa/home_visual.py",
       "reason": "원래 테이블 전체 해시 복원, 유일한 추천 목표 확인 및 실제 Android 원본 화면"
+    },
+    {
+      "path": "scripts/qa/test_home_visual.py",
+      "reason": "실제 migrations SQLite로 정상/예외 복원과 기존 tombstone 보존, 실제 뱃지/추천 모형 1001 seeds의 단일 목표를 검사한다."
     }
   ],
   "visual": {
