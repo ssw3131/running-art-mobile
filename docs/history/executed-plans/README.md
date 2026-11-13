@@ -112,4 +112,4 @@ Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절�
 
 - [2026-11-12-2327-live-trail-refresh.md](2026-11-12-2327-live-trail-refresh.md) — 완료(PR59·main 미병합): 배포 최적화 경로 갱신 수정·SM-A102N 시뮬레이션 즉시 주황선 확인.
 
-- [2026-11-13-1834-running-preparation-sharing.md](2026-11-13-1834-running-preparation-sharing.md) — 진행 중: 러닝 준비·이어달리기·공유 후속.
+- [2026-11-13-1834-running-preparation-sharing.md](2026-11-13-1834-running-preparation-sharing.md) — 완료(PR59·main 미병합): 준비 로딩·미완주 이어달리기·방향 음성/공유 후속, SM-A102N 설치.
