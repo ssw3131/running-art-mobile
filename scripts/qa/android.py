@@ -231,17 +231,29 @@ def preserved_fixture():
     return {'course': q.query("SELECT * FROM saved_courses WHERE id='" + 'd'*32 + "'"),
             'note': q.query("SELECT * FROM storage_test_notes WHERE content='S0 preservation fixture'")}
 
-def demo(command, **values):
+def demo(command, *, timeout=120, **values):
     extras = ['-e', 'command', command]
     for key, value in values.items(): extras += ['-e', key, value]
-    q.shell('am', 'broadcast', '-a', 'com.android.systemui.demo', *extras)
+    q.adb('shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', *extras, timeout=timeout)
+
+def visual_frame(remaining):
+    # SystemUI's demo mobile flow does not replay commands to a new collector.
+    # Reassert the declared full signal after the actual tab is mounted, on
+    # each settling sample. Capture real pixels; never mask or rewrite them.
+    started = time.monotonic()
+    demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=remaining)
+    remaining -= time.monotonic() - started
+    if remaining <= 0:
+        raise TimeoutError('SystemUI preparation exceeded visual settling deadline')
+    return q.adb('exec-out', 'screencap', '-p', timeout=remaining)
+
 
 def capture_visuals():
     q.shell('settings', 'put', 'global', 'sysui_demo_allowed', '1')
     demo('enter'); demo('clock', hhmm='1200')
     demo('battery', level='100', plugged='false')
     demo('network', wifi='show', level='4', fully='true')
-    demo('network', mobile='show', datatype='none', level='4')
+    demo('network', mobile='show', datatype='3g', level='4', fully='true')
     demo('notifications', visible='false')
     screens = []
     try:
@@ -249,10 +261,10 @@ def capture_visuals():
             if tab == 'home':
                 with home_visual(q, launch):
                     q.tap('tab-home'); q.capture('visual-home')
-                    capture_settled(lambda remaining: q.adb('exec-out', 'screencap', '-p', timeout=remaining), q.OUT, 'visual-home')
+                    capture_settled(visual_frame, q.OUT, 'visual-home')
             else:
                 q.tap('tab-' + tab); q.capture('visual-' + tab)
-                capture_settled(lambda remaining: q.adb('exec-out', 'screencap', '-p', timeout=remaining), q.OUT, 'visual-' + tab)
+                capture_settled(visual_frame, q.OUT, 'visual-' + tab)
             if int(environment['api']) >= 36:
                 raw = q.shell('dumpsys', 'window', 'displays').decode()
                 (q.OUT / ('visual-' + tab + '-display.txt')).write_text(raw, encoding='utf8')
