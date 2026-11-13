@@ -5,8 +5,9 @@ import time
 import struct
 import subprocess
 import zlib
-from preparation_readiness import confirm_preparation
+from preparation_readiness import confirm_preparation, with_fixture_gps
 
+@with_fixture_gps
 def service_s234(q, launch):
     assert q.SERIAL.startswith('emulator-')
     def wait_fixed_control(key, capture, selected=False):
