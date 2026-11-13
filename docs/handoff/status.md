@@ -1,8 +1,12 @@
 # 현재 상태와 인수인계
 
-## 2026-11-13 PR59 병합 요청·필수 검사 보완 중
+## 2026-11-14 PR59 병합·최종 전체 검사 완료
 
-사용자가 main 병합을 요청했다. Verify275의 fast/API/Android29는 통과했지만 Android36은 재설정 삭제 안내를 예전 생성 패널로 기대해 실패했다. 원본 XML을 확인해 기대를 최신 계약에 맞추며 취소 보존 검사를 유지한다. 홈 무작위 추천은 촬영 한정 합성 자료로 재현하며, visual279의 원본4장·정착/원본보존/정리 및 현재 계약을 대조해 기준을 갱신했다. Verify283의 fast/API/Android29는 통과했지만 Android36의 준비 확인 즉시 탭이 현재 GPS 준비 조건과 달라 실패했다. 세 진입점 대기/연속 GPS를 보완한 뒤 service289에서 실제 시각 비교 결함을 확인했다. 새 위치가 이전1초 clock보다 미래로 오판되는 것을 fix/수신 시각의 동시 갱신으로 고쳤으며 일반·production 회귀와 타입·린트/Python34개를 통과했다. 서비스 단독 진단 후 fresh ready 전체 검증을 진행한다. [실행 기록](../history/executed-plans/2026-11-13-2208-pr59-merge.md). 최종 전체 게이트와 main 반영 전이며, 아래 draft 유지 지시는 이번 병합 요청 이전 상태다.
+[PR59](https://github.com/ssw3131/running-art-mobile/pull/59)를 squash 병합해 main60db48f에 반영했다. [최종 전체308](https://github.com/ssw3131/running-art-mobile/actions/runs/43505321295)의 fast/API·Android29 7단계·Android36 15단계·자료 보존/정리·네 화면 차이0·verification-gate가 통과했다. [main309](https://github.com/ssw3131/running-art-mobile/actions/runs/43511578556)도 동일 tree의 PR 전체 증거 재사용을 확인해 통과했다. main native 재실행은 하지 않았다.
+
+정상 GPS를 미래로 오판하던 준비 clock, Android 후보 상세 slide 정지, 현행 검사·촬영 상태를 보완했다. 촬영 한정 badge 자료는 원본 행/해시·tombstone으로 복원하며 실제 emulator 무선 입력과 OS 준비를 고정했다. 기존 마스크/허용오차와 차이0 요구는 유지했다. 최종 API29의 완료 후 shell 경고2와 최초 실패·부분 진단·가설 수정은 [실행 기록](../history/executed-plans/2026-11-13-2208-pr59-merge.md)에 보존했다.
+
+원본 원격 기능 브랜치를 보존하고 완료 기능 로컬 브랜치를 정리했다. 아래 PR59 draft/main 미병합은 이번 요청 이전의 개발/설치 상태다. 새 휴대폰 설치·운영 배포는 하지 않았으며 실제 야외 장시간 GPS/배터리·최종 기기 음성 청취는 후속이다.
 
 ## 2026-11-13 러닝 준비·이어달리기·방향 음성·공유 PR59 설치 완료
 
