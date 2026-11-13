@@ -18,12 +18,13 @@
     "scripts/qa/service_s234.py",
     "src/features/running/CourseRunPreparation.tsx",
     "src/features/running/use-preparation-approach.ts",
-    "tests/components/preparation-approach.test.tsx"
+    "tests/components/preparation-approach.test.tsx",
+    "src/features/auth/ServiceStack.tsx"
   ],
   "behavior": "changed",
   "decision": "사용자의 PR 병합 요청에 따라 최신 재설정 계약과 Android 검사를 맞추고 홈 화면 기준의 무작위 추천을 시험 자료로 재현 가능하게 준비한다. 연속 GPS에서도 확인 활성화가 반복 해제되는 실제 결함을 발견해, 새 위치와 수신 시각을 함께 비교하도록 같은 PR에서 고친다.",
   "before": "Verify275 Android36이 옛 regeneration-confirm을 기대해 실패. 홈은 세션 무작위 추천 때문에 기존 시각 기준 준비가 미완료였다. 준비 hook의1초 sampled now보다 새로 수신된 정상 fix가 미래로 잘못 판정되어 enabled가 흔들렸다.",
-  "after": "삭제 안내와 확인/취소를 검사하고 취소 시 이전 후보가 유지됨을 확인한다. 홈 화면 촬영 동안만 12종 완주/누적9999m 합성 기록으로 distance-10을 유일한 최단 목표로 만든다. 촬영 후 모든 행의 원래 해시를 확인하고 다른 화면은 기존 자료를 사용한다. 준비/시작/재도전의 느린 UI 수집 중에도 emulator GPS를1초마다 공급해5초 위치 나이가 유지되도록 한다. 기존 이동 주입은 마지막 지정 좌표를 갱신하며 센서 worker와 직렬화하고, 끝나면 원래 adb 함수/worker를 정리한다. 위치 callback에서 fix/수신 시각을 같은 상태로 전달하고 hook 비교 clock을 새 observation과 함께 갱신한다. timer 만료 재평가는 유지하며 production Compiler에서도 새 fix·진짜 미래/오래된 fix·만료를 구분한다.",
+  "after": "삭제 안내와 확인/취소를 검사하고 취소 시 이전 후보가 유지됨을 확인한다. 홈 화면 촬영 동안만 12종 완주/누적9999m 합성 기록으로 distance-10을 유일한 최단 목표로 만든다. 촬영 후 모든 행의 원래 해시를 확인하고 다른 화면은 기존 자료를 사용한다. 준비/시작/재도전의 느린 UI 수집 중에도 emulator GPS를1초마다 공급해5초 위치 나이가 유지되도록 한다. 기존 이동 주입은 마지막 지정 좌표를 갱신하며 센서 worker와 직렬화하고, 끝나면 원래 adb 함수/worker를 정리한다. 위치 callback에서 fix/수신 시각을 같은 상태로 전달하고 hook 비교 clock을 새 observation과 함께 갱신한다. timer 만료 재평가는 유지하며 production Compiler에서도 새 fix·진짜 미래/오래된 fix·만료를 구분한다. Android 후보 상세는 slide 전환 없이 같은 stack에 진입해 지도 native surface 전환이 멈춘 상태를 피한다. 뒤로가기/이름/후보 상태는 유지한다.",
   "invariants": [
     "제품 코드/무작위 추천/실제 사용자 자료는 변경하지 않는다.",
     "화면 마스크/허용오차와 기존 기능 검사 범위를 유지한다.",
@@ -49,6 +50,10 @@
     {
       "path": "tests/components/preparation-approach.test.tsx",
       "reason": "일반 및 실제 production Babel/Compiler 경로에서400ms tick 사이 새 fix 수락, 실제 미래1ms·오래된5001ms 거부와 무입력6000ms 만료. 수정 전 두 경로 실패/후 통과를 확인했다."
+    },
+    {
+      "path": "tests/components/auth-gate.test.tsx",
+      "reason": "기존 owner/접근 제한과 stack/뒤로가기 보존, Android 전환 자체는 실제 generation 재진입 시나리오로 확인"
     }
   ],
   "visual": {
@@ -60,5 +65,5 @@
       "Full293 attempt2/43462071933: all15 native steps passed. Original visual279 baseline / current raw / diff review: all product pixels identical, only mobile-signal inner triangle differs (home175/others173). Reviewed full-signal raw originals, final settling hashes and unchanged geometry; updated unedited baseline references. Artifact14061798586 ZIP6e5aa5bec90f34b684c73b25c67333d7bd73e28a312ae11eba0ebbec3f20ba97. No new masks or tolerances; fresh independent full verification required."
     ]
   },
-  "native": "연속 GPS 조건의 service289에서도 시간 비교 결함이 재현되어 fix와 수신 시각을 함께 갱신한다. 새 APK의 API36 서비스 단독 진단에서 준비·시작·재도전/실제 GPS 색상·보존을 먼저 확인하고 이후 ready PR API29/36 전체와4화면 차이0·verification-gate를 통과해야 한다. 이전 visual279는 전체 기능 증거가 아니다."
+  "native": "연속 GPS 조건의 service289에서도 시간 비교 결함이 재현되어 fix와 수신 시각을 함께 갱신한다. 새 APK의 API36 서비스 단독 진단에서 준비·시작·재도전/실제 GPS 색상·보존을 먼저 확인하고 이후 ready PR API29/36 전체와4화면 차이0·verification-gate를 통과해야 한다. 이전 visual279는 전체 기능 증거가 아니다. Verify294 원본처럼 후보 상세 전환이 끝나지 않는 문제는 Android 후보 상세 animation none으로 보완 후 generation 단독에서 생성/재진입/이름 보존을 확인하고 최종 전체 게이트를 새로 수행한다."
 }
