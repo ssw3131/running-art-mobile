@@ -1,5 +1,11 @@
 # 현재 상태와 인수인계
 
+## 2026-11-14 남은 PR 전체 반영 확인·중복 종료
+
+사용자 요청으로 남아 있던 [PR24](https://github.com/ssw3131/running-art-mobile/pull/24)·[46](https://github.com/ssw3131/running-art-mobile/pull/46)·[48](https://github.com/ssw3131/running-art-mobile/pull/48)을 전부 대조했다. PR24의 제품 소스는 PR27에, PR46/48의 원본 head는 PR50에 이미 통합돼 있다. 커밋 조상과 squash tree 일치, 마지막 문서 보존을 확인해 세 중복 PR을 종료했다. 이번에 개별 merge한 것으로 표시하지 않는다. 최신 제품/검사와 원본 원격 브랜치는 보존했다.
+
+새 제품 변경 없이 이 정리 기록만 문서 PR로 반영한다. 현재 제품 검증은 아래 PR59 전체308·main309/311을 따르며, 예전 PR46의 중단된 개별 검사를 성공으로 바꾸지 않는다. [전체 대조·종료 근거](../history/executed-plans/2026-11-14-0813-remaining-pr-audit.md).
+
 ## 2026-11-14 PR59 병합·최종 전체 검사 완료
 
 [PR59](https://github.com/ssw3131/running-art-mobile/pull/59)를 squash 병합해 main60db48f에 반영했다. [최종 전체308](https://github.com/ssw3131/running-art-mobile/actions/runs/43505321295)의 fast/API·Android29 7단계·Android36 15단계·자료 보존/정리·네 화면 차이0·verification-gate가 통과했다. [main309](https://github.com/ssw3131/running-art-mobile/actions/runs/43511578556)도 동일 tree의 PR 전체 증거 재사용을 확인해 통과했다. main native 재실행은 하지 않았다.
