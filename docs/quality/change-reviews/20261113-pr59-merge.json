@@ -4,7 +4,14 @@
     "scripts/qa/home_states.py",
     "scripts/qa/home_visual.py",
     "scripts/qa/android.py",
-    "scripts/qa/test_home_visual.py"
+    "scripts/qa/test_home_visual.py",
+    "scripts/qa/home-visual-fixture.json",
+    "tests/home-challenge.test.mjs",
+    "tests/visual/android-linux-api36/baseline.json",
+    "tests/visual/android-linux-api36/home.png",
+    "tests/visual/android-linux-api36/run.png",
+    "tests/visual/android-linux-api36/archive.png",
+    "tests/visual/android-linux-api36/account.png"
   ],
   "behavior": "changed",
   "decision": "사용자의 PR 병합 요청에 따라 최신 재설정 계약과 Android 검사를 맞추고 홈 화면 기준의 무작위 추천을 시험 자료로 재현 가능하게 준비한다.",
@@ -26,7 +33,11 @@
     },
     {
       "path": "scripts/qa/test_home_visual.py",
-      "reason": "실제 migrations SQLite로 정상/예외 복원과 기존 tombstone 보존, 실제 뱃지/추천 모형 1001 seeds의 단일 목표를 검사한다."
+      "reason": "패키지 설치 전에도 실제 migrations SQLite로12종/9999m 자료와 정상/예외 복원·기존 tombstone 보존을 검사한다."
+    },
+    {
+      "path": "tests/home-challenge.test.mjs",
+      "reason": "설치 후 실제 뱃지/추천 모형에서 native와 동일한 JSON 시험 자료의1001seeds 단일 목표를 확인한다."
     }
   ],
   "visual": {
@@ -34,7 +45,8 @@
     "reason": "기존에 미완료된 홈 배치 기준을 명시적 합성 자료로 검토한다. 다른 화면의 시험 자료는 유지한다.",
     "evidence": [
       "Verify275/43426765870, Android36 아티팩트14039101859의 home-regeneration-sheet.xml",
-      "새 홈 원본/차이 검토와 최종 전체 게이트는 아직 대기 중"
+      "새 홈 원본/차이 검토와 최종 전체 게이트는 아직 대기 중",
+      "visual279/43434891549 raw4장/정착해시/환경/원본보존·정리 확인. 전체 차이48020/4844/15617/572, 앱영역47425/4272/15045/0. 원본·현재·차이를 현재 결정/구현과 직접 대조하고 마스크/임계값 미변경. 독립 전체 검증은 후속."
     ]
   }
 }

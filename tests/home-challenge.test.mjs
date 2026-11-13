@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import {badgeProgress} from '../src/modules/achievements/catalog.ts';
 import {recommendHomeBadge} from '../src/modules/home/recommendation.ts';
+
+test('the native home visual fixture has exactly one easiest goal for every random seed',()=>{
+ const f=JSON.parse(readFileSync(new URL('../scripts/qa/home-visual-fixture.json',import.meta.url),'utf8'));
+ const records=f.shapes.map((shape,i)=>({id:String(i),status:'completed',startedAt:f.startedAt+i*1000,courseId:String(i),courseOutcome:'finished',shape,targetKm:f.targetKm,activeMs:f.activeMsPerRun,distanceM:i===f.shapes.length-1?f.totalDistanceM-f.baseDistanceM*(f.shapes.length-1):f.baseDistanceM}));
+ const badges=badgeProgress(records);
+ for(let i=0;i<=1000;i++)assert.equal(recommendHomeBadge(badges,i/1000).badge.definition.id,'distance-10');
+});
 
 test('random recommendations are unearned, actionable, and stable for a session seed',()=>{
  const badges=badgeProgress([]),a=recommendHomeBadge(badges,0),b=recommendHomeBadge(badges,.99);

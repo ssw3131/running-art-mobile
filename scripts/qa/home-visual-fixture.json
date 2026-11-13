@@ -1,0 +1,8 @@
+{
+  "shapes": ["heart", "star", "cloud", "crown", "icecream", "strawberry", "fish", "bone", "whale", "turtle", "cat", "dog"],
+  "startedAt": 1791010000000,
+  "totalDistanceM": 9999,
+  "baseDistanceM": 800,
+  "activeMsPerRun": 100,
+  "targetKm": 1
+}
