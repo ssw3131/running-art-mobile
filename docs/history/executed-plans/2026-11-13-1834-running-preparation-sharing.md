@@ -18,3 +18,7 @@
 ## 구현·검증 중간 결과
 
 Figma6노드 context/screenshot 확인. 준비 ready/오류·재시도, 같은 owner/hash의 미완주 복사 재개·원본 보존, 실제/모의 구분, 방향30m 전1회, 세로 카드 중앙/주소/브랜드, 긴 실제 URL/브라우저 열기, 추천 삭제 안내→설정 구현. 첫 UI 검사는 옛 재생성 계약2건 실패 후 사용자 새 동작으로 갱신했다. 첫 시뮬레이션 재개는 화면 arrived이나 저장 stopped여서 실패했고, DB에 보존된 checkpoint를 권한/해시 대조 후 이어받아 새 fix만 재검증하도록 고쳤다. 최초 타입/린트의 hook 참조/시간·effect setState 지적도 수정했다. 옛 archive retry의 항상0 계약1건은 사용자 변경으로 활동 시간 이월 기대를 갱신했고 원본 보존 검사는 유지했다. 관련 Node113개·UI44개 및 추가 음성/지도/카드12개 통과, 타입/린트 통과. 폰 설치는 후속이다.
+
+## 원격 fast270 실패 후 검사 경계 보완
+
+source455a132/tree4fbe133을 같은 PR59에 추가, Handset45/43404282729 빌드 시작. Verify270/43404034421의 source/logic/서버 정책은 통과했으나 전체 components에서 run-card-export1건 실패(228통과)했다. 로컬 전체43 suite에서도 동일 재현. 기존 RunSharePanel null mock이 그 안으로 이동한 LinkPreview를 함께 없애는 검사 경계 문제다. 실제 미리보기/URL은 별도 run-share-card에서 검사하며 부모 export 검사 mock은 실제 LinkPreview를 렌더링하도록 보완했다. 기대 미리보기/플랫폼 분리 검사를 삭제하지 않는다. 앱 코드는 바꾸지 않으므로 빌드45의 앱 입력을 유지한다. 최초 실패 보고서는 Git 제외 build/preparation-sharing-20261113/fast270.zip과 remote-components.txt에 보존했다.

@@ -28,7 +28,8 @@
     "tests/running-guidance.test.mjs",
     "tests/running-simulation-record.test.mjs",
     "src/features/achievements/ShareLinkPreview.tsx",
-    "tests/components/running-voice.test.tsx"
+    "tests/components/running-voice.test.tsx",
+    "tests/components/run-card-export.test.tsx"
   ],
   "behavior": "changed",
   "decision": "사용자의 Figma6화면 후속. 준비 로딩·미완주 이어달리기·방향 음성·공유 이미지/링크·추천 재설정. 같은 PR59/main 미병합.",
@@ -80,6 +81,10 @@
     {
       "path": "tests/archive-retry.test.mjs",
       "reason": "과거 항상0 재시작 계약을 사용자 지시의 미완주 활동 시간 이월로 갱신하고 원본 보존 유지."
+    },
+    {
+      "path": "tests/components/run-card-export.test.tsx",
+      "reason": "링크 미리보기의 소유자가 실제 URL을 관리하는 RunSharePanel로 이동했으므로 null로 없애던 부모 검사 mock도 실제 LinkPreview를 렌더링한다. 미리보기/플랫폼 분리 기대는 그대로 유지한다."
     }
   ],
   "visual": {

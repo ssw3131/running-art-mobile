@@ -14,7 +14,7 @@ jest.mock('../../src/features/course-generation/use-point-address',()=>({usePoin
 jest.mock('../../src/features/account/use-profile-photo',()=>({useProfilePhoto:()=>null}));
 jest.mock('../../src/features/achievements/ShareCard', () => ({ ShareCard: ({ onReady, onError }: any) => require('react').createElement(require('react-native').View, { testID: 'canvas', onReady, onError }) }));
 jest.mock('../../src/features/achievements/AchievementImage', () => ({ AchievementImage: (props: any) => require('react').createElement(require('react-native').View, props) }));
-jest.mock('../../src/features/running/RunSharePanel', () => () => null);
+jest.mock('../../src/features/running/RunSharePanel', () => ({__esModule:true,default:({previewContent}:any)=>previewContent?require('react').createElement(require('../../src/features/achievements/ShareLinkPreview').LinkPreview,{content:previewContent,onOpen:jest.fn(),disabled:false}):null}));
 jest.mock('../../src/features/service/open-service-tab', () => ({ openServiceTab: jest.fn() }));
 jest.mock('react-native-view-shot', () => ({ captureRef: (...args: any[]) => mockCapture(...args), releaseCapture: (...args: any[]) => mockRelease(...args) }));
 jest.mock('../../src/modules/achievements/image-file', () => ({ retainCard: (...args: any[]) => mockRetain(...args), shareCardFile: (...args: any[]) => mockShare(...args), saveCardFile: jest.fn().mockResolvedValue('saved') }));
