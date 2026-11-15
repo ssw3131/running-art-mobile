@@ -53,3 +53,17 @@ AOSP 근거(android16-release):
 - [MobileIconsInteractor](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/mobile/domain/interactor/MobileIconsInteractor.kt): getMobileConnectionInteractorForSubId/reuseCache, 생성 시 repository 주입.
 - [MobileRepositorySwitcher](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/mobile/data/repository/MobileRepositorySwitcher.kt): getRepoForSubId는 현재 isDemoMode에 따라 실제/데모 선택.
 - [DemoMobileConnectionsRepository](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/mobile/data/repository/demo/DemoMobileConnectionsRepository.kt): DEFAULT_SUB_ID=1, event.subId로 데모 repository 생성.
+
+
+### 2026-11-15T14:04:05+09:00 독립 전후 진단
+
+수정 후보 bedd6bd의 draft43679127789 빠른 검사가 통과했다. 수정 전43678651486(c92ad2b)은 APK 빌드를 마치고 emulator 촬영 진단 중이다. 기존 실행을 취소하지 않고 비교하기 위해 같은 후보 head를 임시 qa/pr62-signal-diagnostic 브랜치에 두고 수정 후43679426258 visual 단독을 시작했다. 이 임시 원격 브랜치는 진단 종료 후 제거한다. 코드의 결과는 두 실행의 실제 증거로 기록하며 부분 진단을 전체 게이트 통과로 간주하지 않는다.
+
+수정 전 visual43678651486은 네 화면 차이0·자료 보존·정리를 통과했다. 신호 관측16개가 첫 표본에서 모두 준비 완료(0.365~0.520초)였다. 이는 간헐적 현상의 한 통과 표본이며 앞선 실패 또는 수정 가설을 증명/해소하는 결과로 쓰지 않는다. 원본 출처·보고서는 [독립 진단 근거](../../quality/evidence/pr62-systemui-diagnostic/README.md)에 보존한다. 수정 후보 draft43679127789 artifact도 대조했으며 로직582개 통과·기존skip1, UI44묶음241개, Python harness38개 통과를 확인했다.
+
+
+### 2026-11-15T14:24:41+09:00 첫 후보 진단 실패와 수집 범위 보완
+
+43679426258은 데모 명령을 보내기 전 기본 SystemUI dump 도중 ADB write failure/offline으로 실패했다. guest gate·자료 보존·visual usage setup은 통과했으나 신호999/화면 비교는 미실행이고 forwarding cleanup도 실패했다. 연결이 끊긴 근본 원인은 미확정이며 dump의 EPIPE와 연결 재생성 logcat·report를 독립 진단 근거에 보존했다.
+
+기본 service dump는 SystemUIService.java가 CRITICAL로 치환하므로 필요한 모바일 NORMAL 상태·table을 포함하지 않는다. 후속은 DemoModeController/MobileConnectionsRepository/DemoMobileConnectionLog[999]만 명시해 읽고 통신과 무관한 전체 시스템 상태 덤프는 제거한다. 신호 입력·판정·화면 기준·기한은 유지한다. Python harness38개·py_compile 통과. 수정된 후보를 visual 단독으로 다시 확인한 뒤 전체 게이트로 진행한다.

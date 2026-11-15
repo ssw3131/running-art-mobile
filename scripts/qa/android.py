@@ -257,13 +257,17 @@ def demo_mobile(*, timeout=120):
 def capture_signal_diagnostics(label):
     # Observe the OS outside the screenshot deadline, before demo teardown.
     # Only the dedicated QA emulator is accepted by this script.
+    # Explicit targets include NORMAL-priority mobile state/table buffers; the
+    # default service dump only produces an unrelated, broad CRITICAL dump.
     for service, command in [
-        ('systemui', ('dumpsys', 'activity', 'service', 'com.android.systemui/.SystemUIService')),
-        ('telephony', ('dumpsys', 'telephony.registry')),
+        ('systemui-mobile', ('dumpsys', 'activity', 'service',
+                            'com.android.systemui/.SystemUIService',
+                            'DemoModeController', 'MobileConnectionsRepository',
+                            'DemoMobileConnectionLog[999]')),
     ]:
         filename = f'{label}-{service}.txt'
         try:
-            (q.OUT / filename).write_bytes(q.adb('shell', *command, timeout=10))
+            (q.OUT / filename).write_bytes(q.shell(*command, timeout=10))
             report.setdefault('signalDiagnostics', []).append({'file': filename, 'status': 'saved'})
         except Exception as error:
             report.setdefault('signalDiagnostics', []).append({'file': filename, 'error': str(error)})
