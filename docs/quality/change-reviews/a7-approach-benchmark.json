@@ -6,7 +6,8 @@
     "src/features/approach-benchmark/input.ts",
     "src/features/approach-benchmark/runner.ts",
     "scripts/benchmarks/check-handset-approach.mjs",
-    "scripts/benchmarks/prepare-handset-approach.mjs"
+    "scripts/benchmarks/prepare-handset-approach.mjs",
+    "src/features/auth/ServiceStack.tsx"
   ],
   "behavior": "changed",
   "decision": "2026-11-15 사용자 요청: 현재 연결된 A7에서 합류 경로 반복 성능을 측정한다. 실행 기록 2026-11-15-1248-nearby-approach.md의 후속 계획.",
@@ -23,6 +24,14 @@
     {
       "reason": "제품 planner는 변경하지 않아 기존 캐시/취소/경로 회귀를 유지. 추가 scripts/benchmarks/check-handset-approach.mjs에서 실제 공개 도로·전용 SQLite 두 순서16표본과 경로 일치를 통과했다.",
       "path": "tests/nearby-approach.test.mjs"
+    },
+    {
+      "path": "tests/auth-routes.test.mjs",
+      "reason": "새 개발 진단 경로를 기존 회원 전용 목록에 등록하고 모든 화면 분류를 검사한다."
+    },
+    {
+      "path": "tests/components/auth-gate.test.tsx",
+      "reason": "진단 딥링크도 기존 게스트 접근 차단 검증에 포함한다."
     }
   ],
   "visual": {
