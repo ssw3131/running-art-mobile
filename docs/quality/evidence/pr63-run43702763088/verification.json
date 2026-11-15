@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-11-15T11:03:35.488Z",
+  "head": "9682b79eafa149678eb38b8cc81859eeacd9345f",
+  "tree": "a9051d7dd54e2d19905b71ba211639c4acb7780d",
+  "receipt": {
+    "schemaVersion": 1,
+    "tree": "a9051d7dd54e2d19905b71ba211639c4acb7780d",
+    "source": "34f23cc534e0ecdcc17fca79ff4a147f1b909161",
+    "run": "43702763088",
+    "attempt": "1",
+    "suites": [
+      "fast",
+      "api",
+      "android-36",
+      "android-29"
+    ],
+    "status": "passed"
+  },
+  "android": [
+    {
+      "api": 29,
+      "status": "passed",
+      "steps": 7,
+      "attempts": 1,
+      "retries": 0,
+      "readinessWaits": 2,
+      "transportWarnings": 0,
+      "preservation": "passed",
+      "cleanup": "passed"
+    },
+    {
+      "api": 36,
+      "status": "passed",
+      "steps": 15,
+      "attempts": 1,
+      "retries": 0,
+      "readinessWaits": 8,
+      "transportWarnings": 0,
+      "preservation": "passed",
+      "cleanup": "passed"
+    }
+  ],
+  "screens": [
+    {
+      "id": "home",
+      "pixels": 0,
+      "currentSha256": "5730b1ab64aa3cf80013ab09353aa368bc66e1d9e06e7a3daea63b825faa0595",
+      "directlyViewed": true
+    },
+    {
+      "id": "run",
+      "pixels": 0,
+      "currentSha256": "f2d94f346767ed5cc252419b13de5d5526418661cefe780664dba2fb32b34143",
+      "directlyViewed": true
+    },
+    {
+      "id": "archive",
+      "pixels": 0,
+      "currentSha256": "635b4f853cdf38068d7216b6c37639c0ef44de021206db3d3bd1586ec683eeaf",
+      "directlyViewed": true
+    },
+    {
+      "id": "account",
+      "pixels": 0,
+      "currentSha256": "8238a84f056b4fb6b70859f58746034c761c8565ee08e5cb4ed2cd22e5463207",
+      "directlyViewed": true
+    }
+  ],
+  "signals": {
+    "count": 16,
+    "allFirstSample": true,
+    "maxSeconds": 0.553
+  }
+}
