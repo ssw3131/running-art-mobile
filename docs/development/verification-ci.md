@@ -140,6 +140,8 @@ Android 10의 시스템 SQLite에는 `-json`이 없어 전용 에뮬레이터에
 
 API 36은 Pixel 5의 프레임워크/SystemUI 오버레이를 명시하고, 시스템 UI 프로세스를 갱신한 뒤 실제 시스템 바와 cutout 여백이 정해진 값이 될 때까지 기다린다. Linux 1080×2340 기준은 상단 136px·하단 63px다. Maestro와 배율 검사 뒤에도 다시 적용한다. 촬영 중 여백이 바뀌면 실패하며 원래 오버레이는 정리 단계에서 복원한다. `display-profile.txt`, `display-overlays.txt`, 화면별 display 진단과 `displayGeometry`를 보존한다. 앱 전체를 이동시키는 환경 차이를 이미지 마스크로 숨기지 않는다.
 
+모뎀 시뮬레이터는 신호를 주기적으로 낮추므로 시작할 때의 `signal-profile 4` 성공만으로 촬영 상태가 고정됐다고 보지 않는다. API36은 매 원본 PNG 표본 전에 실제 modem profile4와 SystemUI demo를 다시 전송하고, 명령 소요시간을 기존 준비/정착 예산에서 차감한다. 실제 최대 신호 픽셀을 관측해야 통과하며 부분 신호·명령 거부·늦은 성공은 실패다. 표본별 `radioSignalProfile`, demo 시작/실패 직전의 SystemUI·telephony 상태를 원본으로 남긴다. 물리 폰에는 이 설정을 적용하지 않는다. [실패 재현과 보완 검증](../quality/nearby-approach-20261115.md)을 따른다.
+
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
 
 10-13 S1 검사에서 API 29의 UI 덤프가 JUnit 성공을 출력한 뒤 비정상 shell 종료 코드를 반환하는 문제가 반복되어 캡처 완료 증명을 추가했다. 각 요청은 새 UUID 토큰을 보내고, Java 도우미는 이전 XML/토큰을 지운 뒤 새 XML이 생성된 경우에만 토큰을 기록한다. 호스트는 JUnit 성공·동일 토큰·실제 XML/PNG 읽기를 모두 확인한다. 이 조건을 충족한 비정상 shell 종료는 `ui-dump-transport.jsonl`과 보고서의 `uiDumpTransportWarnings`에 보존한다. 미완료 실행·이전 토큰·오프라인·실패한 읽기는 계속 실패하며 시나리오를 자동 재시도하지 않는다.

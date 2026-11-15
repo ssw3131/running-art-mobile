@@ -139,15 +139,15 @@ SM-A102N을 연결한 PC에서 현재 설치본·서명·versionCode·기존 코
 | 새 APK | preview216882774, 위 인수인계와 동일116,814,171바이트/SHA256 `a74fdff303993bc9cd3ef7ce174e181be5d524cc07f0457970615d5767ca0829` |
 | 서명 | 기존/새 APK의 v2 인증서 SHA256 `3cf9c514017fea99214bce3ad62b5ddfe36cd5271e129c2c7a2019037f96b179` 일치, signed-data 서명 검증. APK 전체는 CI 산출물/기존 검증 해시와 대조했으며 로컬 apksigner 재검증은 아님 |
 | 실행 상태 | 조회 시 러닝 서비스/USB reverse 없음. 앱 PID는 존재하므로 앱 전체가 종료됐다고 기록하지 않음 |
-| 자료 준비 | DB135,168·WAL90,672바이트 존재 및 DB/WAL/SHM 파일별 현재 해시를 로컬 보존. 활성 앱의 파일 지문이며 SQLite 일관 스냅샷·행 내용/로그인 보존 검증은 아님 |
+| 자료 준비 | DB135,168·WAL90,672바이트의 복사 전후 원본 해시·로컬 전송 해시 일치. 로컬 읽기 전용 SQLite quick_check=ok·v8, 완료 러닝1·좌표1·저장 코스0·메모0과 모든 사용자 테이블 행 개수/내용 해시 보존. 로그인 UI는 미재검증 |
 | 측정 환경 | 최초 배터리2%/27.4도·USB충전. 복사 중 USB 단절 뒤 재연결하여 기존 APK 전체 사본 확보. 충전 중 저잔량 측정은 성능 기준으로 사용하지 않음 |
 
-원본 실패 ZIP/preview ZIP의 SHA256은 각각 `e719de99…0c9e`/`c8ced2db…5841`로 인계와 같다. 기본 PC `.cache/pr63-pc/`에 원본 ZIP·풀린 보고서/PNG·새 APK/metadata·기존 APK 완전 사본·서명 검사 결과·기기 조회를 보존했다. 첫65,003,776바이트 사본은 미완료이며 복구/설치용이 아니다. 도구 설치·앱 설치/실행·DB 내용 복사/변경·운영 배포는 하지 않았다.
+원본 실패 ZIP/preview ZIP의 SHA256은 각각 `e719de99…0c9e`/`c8ced2db…5841`로 인계와 같다. 기본 PC `.cache/pr63-pc/`에 원본 ZIP·풀린 보고서/PNG·새 APK/metadata·기존 APK 완전 사본·서명 검사 결과·기기 조회를 보존했다. 첫65,003,776바이트 사본은 미완료이며 `.apk.partial`로 구분해 복구/설치에 사용하지 않는다. 재연결 후 DB/WAL을 Git 제외 로컬 경로 `a7-private-snapshot/`에 읽기 전용으로 복사했고 실제 행/개인 위치/계정값은 공개 문서에 넣지 않았다. 도구 설치·앱 설치/실행·휴대폰 DB 변경·운영 배포는 하지 않았다.
 
 ### 실측 시작 전 남은 조건
 
 1. 안정된 충전 상태/동일 절전·네트워크·온도 조건을 정하고 baseline6a72e79와 새 소스를 **같은 release Hermes 계측 경로**로 실행한다. 기존 development APK/Metro 수치를 release 목표로 바꾸어 쓰지 않는다.
-2. 현재 preview에는 ApproachTiming 결과 수집/내보내기가 없다. 계측 실행 경로를 별도로 준비하고 서명·버전 상승·원래 자료 보존을 확인한 뒤 설치 범위를 확정한다. 서버 기능 적용 순서는 계속 호환 서버→앱이며 미배포다.
+2. 현재 preview에는 ApproachTiming 결과 수집/내보내기가 없다. 계측 실행 경로를 별도로 준비하고 서명·버전 상승·원래 자료 보존을 확인한 뒤 설치 범위를 확정한다. 현재 개발 APK는 native 지문76fbf4…/새 APK76331c…로 달라 Metro만으로 새 소스를 검증하지 않는다. 서버 기능 적용 순서는 계속 호환 서버→앱이며 미배포다.
 3. 공개 출발지·manifest·동일 코스/합류 위치를 고정한다. 최초 조회는 별도 시험 캐시, 파일 재사용은 새 planner/유지한 시험 파일, 그래프 재사용은 `cache=graph`와 `roadMs=0`, 완성 경로는 `cache=plan`을 실제 관측한다. 사용자 도로 캐시/DB 전체를 지우지 않는다.
 4. 조건별 각20회 원본에 GPS 확보 시간, roadMs/graphMs/searchMs/totalMs, cache/radius, 성공/실패/시간 초과와 기기 조건을 남긴다. 실패를 분모에서 제외하지 않고 성공률·최초 중앙값·완성 경로P95를 계산한다. 현재 모든 실측은 미실행이다.
 
@@ -160,3 +160,12 @@ SM-A102N을 연결한 PC에서 현재 설치본·서명·versionCode·기존 코
 매 촬영 표본 직전에 modem profile4를 다시 보내고 OK/noKO를 확인한 뒤 남은 예산으로 demo를 재전송하도록 수정한다. 명령 시간도 기존12초 예산에서 차감하고 원본 픽셀 판정을 그대로 수행한다. 표본별 radio 영수증과 SystemUI/telephony 상태를 남긴다. 단순 긴 대기/재시도/PNG 가공/기준 변경은 없다. 새 Python 회귀3개는 자동 감소·재설정, 명령 실패, 명령 간 시간 차감과 늦은 성공 거부를 확인한다. PC에는 Python 실행기가 없어 원격 fast에서 확인하며 실제 visual/전체 결과 확인 전 해결 완료로 기록하지 않는다.
 
 서버 준비본은 PC에서 허용 목록22개 파일로 다시 생성했다(`.cache/pr63-pc/server-bundle-18e84de/`). 새 ZIP `server-bundle-18e84de-pc.zip`의 SHA256은 `daba2a726ceecf2d2e02d22e8478343112bc9c6a2320ecb90e2c95c58742384e`다. 생성 시각/ZIP 형식이 다른 새 묶음이며 Cloud 원본 ZIP과 동일하다고 주장하지 않는다. 운영에는 적용하지 않았다.
+
+### 수정 전 재현·수정 후 visual 통과
+
+- 수정 전8038611의 visual337/43683179656은 홈·러닝·보관함의 준비/정착 뒤 마이페이지 준비17개 표본이 모두 부분 신호여서 실패했다. 마지막 남은0.0268초의 demo 명령이 시간 초과로 끝났으며 정리는 통과했다. 아티팩트14149668465/ZIP SHA256 `c16292f4582bcd798bc51a6c9c9ebe9ce04dec69aecb77e642ecff235845a305` 원본을 `.cache/pr63-pc/visual337/`에 보존했다. 첫 홈에서부터 실패한 전체330과 구분한다.
+- 수정31a93aa의 [fast339/43684131377](https://github.com/ssw3131/running-art-mobile/actions/runs/43684131377)은 Python41·로직601/기존skip1·UI44묶음241·타입/린트/서버/OpenAPI/정책 통과다. 아티팩트14149960469/ZIP SHA256 `5c2cf5101019a881e482904714caa167ef5578b6d5c8bf948f033f72efcea78b`를 PC에 보존했다. 실제 API/DB 통합은 이 draft fast 범위가 아니다.
+- 같은31a93aa의 [visual341/43684496783](https://github.com/ssw3131/running-art-mobile/actions/runs/43684496783)은4화면 모두 차이0·원본 보존·정리·manual-verification 통과다.16개 준비/정착 표본이 전부 첫 관측에서 최대 신호였고 최장0.567초,16개 modem profile4/OK 영수증을 확인했다. 시나리오 재시도·UI 준비 대기·전송 경고0. 이전에 실패한 마이페이지 원본의 최대 신호도 직접 검토했다.
+- visual341 아티팩트14150676221/ZIP SHA256 `cdc50a4b65a963b0efb1b5fa0289baaeb614aaf8907c0219bdcd4a9613837d4d`, APK SHA256 `b57cb5bfc38928908d02fd1037cf6c09f67be2bdf2a7bba27b1ae1432af633c6`를 보존했다. SystemUI/telephony/demo 설정4개 원본 수집도 성공했다. 두 비교 실행의 에뮬레이터는37.2.13.0/build16740729이며 API36 OS fingerprint·geometry·기준 PNG·마스크/허용오차는 같다.
+
+제품 src/server/modules/assets 및 앱 설정·잠금 파일은18e84de와 같다. 이 결과는 화면 분야 수정 실증이며 최종 ready 전체/API29/36 기능 게이트와 main 반영을 대신하지 않는다. 위 기기 계측/설치·운영 배포도 계속 별도다.
