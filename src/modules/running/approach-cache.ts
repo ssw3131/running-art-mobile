@@ -39,7 +39,7 @@ export function createApproachCache(load:RoadLoader,op:Operations,yieldToHost:()
       // A remotely seeded plan is only reusable at its measured position. Any
       // movement needs a graph to distinguish parallel roads and overpasses.
       if(cached.graph){const s=await drain(op.snapWalkingSourceSteps(cached.graph,op.toPoint(origin.lat,origin.lng,cached.graph.origin),request.accuracy),signal);const ref=cached.graph.edges[s.edge].ref;if(!ref||!sameRoad(cached.source,ref))continue;}
-      else if(distance(cached.position,request.position)>1)continue;
+      else if(distance(cached.position,request.position)>0.01||distance(request.position,cached.plan.path[0])>Math.max(12,request.accuracy))continue;
       timing.cache='plan';return finish(cached.plan);
     }
     const route=prepareRoute(request.course.route),nearest=request.targetM===undefined?project(route,request.position,0,route.totalMeters,0).separation:distance(request.position,positionAt(route,request.targetM));

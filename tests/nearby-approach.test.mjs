@@ -117,3 +117,12 @@ test('coincident endpoints on disconnected levels remain ambiguous, while a real
  assert.throws(()=>finish(snapWalkingSourceSteps(buildGraph([base,other],origin,1000),{x:0,y:0},5)),/도로가 겹쳐/);
  const connected={...other,nodes:[103,102]};assert.doesNotThrow(()=>finish(snapWalkingSourceSteps(buildGraph([base,connected],origin,1000),{x:0,y:0},5)));
 });
+
+
+test('a generation seed respects current GPS accuracy and recalculates when the actual origin differs',async()=>{
+ let loads=0;const loader=async()=>{loads++;return {elements:roads,source:'test',cached:true};},source={way:1,from:1,to:2,start:0,end:.1,bidirectional:true},plan={path:[coord([0,0]),coord([400,0])],distanceM:400,targetM:0};
+ const accurate=createApproachPlanner(loader,async()=>{}),offRoad={...request,position:coord([0,20])};
+ accurate.seed({...offRoad,accuracy:30},plan,source,'unversioned');await assert.rejects(accurate(offRoad,signal()),/보행 도로 위/);assert.equal(loads,1);
+ const planner=createApproachPlanner(loader,async()=>{});planner.seed(request,plan,source,'unversioned');await planner(request,signal());assert.equal(loads,1);
+ const moved=await planner({...request,position:coord([.5,0])},signal());assert.ok(Math.abs(moved.distanceM-399.5)<.1);assert.equal(loads,2);
+});
