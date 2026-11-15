@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "source": "25811315e91cdc5db7ae3a52db2a408be0733fff",
+  "dirty": false,
+  "startedAt": "2026-11-15T05:36:36.637265+00:00",
+  "ciRun": "43680993249",
+  "apkSha256": "fe021a17386bf1f820da276f96529e07f33eb38319ea1e8eb566628c9517086a",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "visual-only",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-15T05:36:36.754635+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        }
+      ],
+      "status": "passed",
+      "preservation": {
+        "status": "passed",
+        "sha256": "a97ebbae76053ee94abe0cdb4e68eafaf447a46ca73627d701c0d88dba8e6e4b"
+      },
+      "setups": [
+        {
+          "id": "visual-server-usage",
+          "status": "passed",
+          "startedAt": "2026-11-15T05:38:31.995Z",
+          "finishedAt": "2026-11-15T05:38:32.097846+00:00",
+          "reused": false,
+          "before": {
+            "save": {
+              "used": 0,
+              "total": 15,
+              "available": true
+            },
+            "version": 1,
+            "generation": {
+              "used": 0,
+              "total": 5,
+              "available": true
+            }
+          },
+          "after": {
+            "save": {
+              "used": 1,
+              "total": 15,
+              "available": true
+            },
+            "version": 1,
+            "generation": {
+              "used": 1,
+              "total": 5,
+              "available": true
+            }
+          },
+          "evidence": "Isolated real usage RPC fixture; not generation/save UI acceptance",
+          "durationSeconds": 1.454
+        }
+      ],
+      "finishedAt": "2026-11-15T05:39:15.662974+00:00"
+    }
+  ],
+  "retries": 0,
+  "radioSignalProfile": {
+    "profile": 4,
+    "response": "OK"
+  },
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "demoMobileSubscriptionId": 999,
+  "signalDiagnostics": [
+    {
+      "file": "before-demo-systemui-mobile.txt",
+      "status": "saved"
+    },
+    {
+      "file": "after-demo-frames-systemui-mobile.txt",
+      "status": "saved"
+    }
+  ],
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-15T05:39:17.993306+00:00",
+  "uiDumpReadinessWaits": 0,
+  "uiDumpTransportWarnings": 0,
+  "status": "passed"
+}

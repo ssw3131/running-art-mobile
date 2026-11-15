@@ -154,6 +154,8 @@ API 36은 Pixel 5의 프레임워크/SystemUI 오버레이를 명시하고, 시�
 
 `scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 마스크는 근거를 기록한 작은 시스템 시계/Wi-Fi 영역만 허용한다. 현재 기준에는 main 실행에서 네 화면 모두 같은 가장자리 차이가 난 Wi-Fi 아이콘의 41×33px(`x=817,y=53`)만 제외했고 원본 PNG는 유지했다. 마스크의 위치/최대 크기를 검사하며 앱 영역·상태 표시줄 전체 가림은 거부한다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
 
+Android36은 데모의 `slot`을 subscription ID로 처리하는 새 SystemUI pipeline을 사용한다. 기본 ID1과 실제 SIM1의 표시 객체 캐시가 겹치지 않도록 촬영 데모는999를 명시한다. 촬영 전후에는 DemoModeController·MobileConnectionsRepository·DemoMobileConnectionLog[999]만 읽어 실제/데모 상태를 보존한다. 기본 service dump는 관련 NORMAL 상태를 누락하므로 사용하지 않는다. 신호의 실제 원본 픽셀 준비 판정·12초 기한과 화면 비교는 유지한다. [PR62 단독 진단과 실패 이력](../quality/evidence/pr62-systemui-diagnostic/README.md).
+
 `node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json`으로 각 회차를 비교하고, `node scripts/qa/gallery.mjs test-results/android-36`으로 기준·현재·차이와 실패 화면을 연결한 `index.html`을 만든다. `--visual-only`는 후보 촬영 전용이며 기능/안정성 통과 횟수에 포함하지 않는다.
 
 기준이 없거나 환경이 다르면 `not_run`으로 기록하고 실패 종료한다. 기준 자동 갱신 명령은 없다. S0 기존 화면은 현재 동작의 회귀 기준이며 전체 Figma 이관 완료가 아니다. 새 기준 이미지는 Figma·기존 승인 화면과 대조해 PR에 등록한다.

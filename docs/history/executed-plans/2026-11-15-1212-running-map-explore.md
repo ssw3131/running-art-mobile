@@ -67,3 +67,10 @@ AOSP 근거(android16-release):
 43679426258은 데모 명령을 보내기 전 기본 SystemUI dump 도중 ADB write failure/offline으로 실패했다. guest gate·자료 보존·visual usage setup은 통과했으나 신호999/화면 비교는 미실행이고 forwarding cleanup도 실패했다. 연결이 끊긴 근본 원인은 미확정이며 dump의 EPIPE와 연결 재생성 logcat·report를 독립 진단 근거에 보존했다.
 
 기본 service dump는 SystemUIService.java가 CRITICAL로 치환하므로 필요한 모바일 NORMAL 상태·table을 포함하지 않는다. 후속은 DemoModeController/MobileConnectionsRepository/DemoMobileConnectionLog[999]만 명시해 읽고 통신과 무관한 전체 시스템 상태 덤프는 제거한다. 신호 입력·판정·화면 기준·기한은 유지한다. Python harness38개·py_compile 통과. 수정된 후보를 visual 단독으로 다시 확인한 뒤 전체 게이트로 진행한다.
+
+
+### 2026-11-15T14:41:15+09:00 수정 후보 단독 통과·최종 전체 검증 진행
+
+2581131의 draft43680997117과 visual43680993249가 통과했다. 네 화면 차이0·원본 보존·정리·신호16개 첫 표본 준비(0.286~0.617초)와 transport 경고0을 확인했다. 실제 OS 덤프는 SIM1의 실제 repository가 유지되는 동안 별도 DemoMobileConnectionLog[999]의 primaryLevel/cdmaLevel/icon.level=4 및 느낌표 없음이 적용됨을 보여 준다. 전후 대상 dump는7/8ms에 완료됐다. 원본 텍스트/해시와 보고서·표본을 독립 진단 근거에 보존했다.
+
+이 증거를 기록한 뒤 PR62를 ready로 전환해 fast/API/Android29·36 전체 검사를 수행한다. 단독 결과를 전체 통과로 쓰지 않으며, 이전 실패와 연결 끊김 원인의 미확정 범위를 유지한다. 전체 게이트 통과 후 main 반영·필수 검사 확인·임시 브랜치 정리를 진행한다.

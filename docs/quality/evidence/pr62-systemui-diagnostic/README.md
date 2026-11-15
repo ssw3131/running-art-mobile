@@ -20,3 +20,15 @@ Android16 AOSP는 demo의 기본 subscription ID1을 사용하며 표시 interac
 43679426258은 guest gate·원본 보존·visual usage 준비 뒤, 데모를 설정하기 전 `before-demo` 기본 SystemUI dump에서 ADB 연결이 끊겼다. `adbd host-19: connection terminated: write failed`(05:22:02.219), EPIPE와 offline이 남았고 연결은 05:22:02.526에 다시 생성됐다. 신호999 명령이나 화면 비교에 도달하지 않았으므로 후보의 효과를 판정할 수 없다. backend forwarding 제거도 오류여서 전체 cleanup을 성공으로 바꾸지 않는다.
 
 artifact14148471649의 `candidate1-report.json`과 logcat 원문 781행 이후의 `candidate1-adb-excerpt.json`를 보존한다. EPIPE는 연결 끊김의 결과이며 연결 끊김의 근본 원인은 미확정이다. AOSP SystemUIService는 무인자 dump를 CRITICAL로 치환해 필요한 NORMAL 모바일 상태를 누락하므로, 후속은 `DemoModeController`, `MobileConnectionsRepository`, `DemoMobileConnectionLog[999]` 대상만 읽도록 줄인다. 기존 신호 준비/실패 판정은 유지한다.
+
+## 보완한 후보 통과
+
+[43680993249](https://github.com/ssw3131/running-art-mobile/actions/runs/43680993249), source `25811315e91cdc5db7ae3a52db2a408be0733fff`의 visual-only가 통과했다. artifact `android-36-visual-1`(ID14148154886)에서 candidate2 보고서·준비 표본·OS 상태를 보존했다. 원본 텍스트 덤프는 파일명·SHA256·전체 본문을 JSON으로 담았다.
+
+- 네 화면 모두 기존 기준 대비 차이0, 자료 보존·cleanup 통과, UI dump transport 경고0.
+- 신호 관측16개가 첫 표본에서 모두 fullSignal=true(0.286~0.617초).
+- 촬영 전/후 실제 `MobileConnectionsRepository[1]`은 동일 실제 repository를 유지한다.
+- 촬영 후 별도 `DemoMobileConnectionLog[999]`에 `primaryLevel=4`, `cdmaLevel=4`, `icon.level=4`, `icon.showExclamation=false`가 남는다. 데모 신호/표시가 실제 SIM1과 분리됐음을 확인했다.
+- 기본 광범위 dump를 대신한 대상 지정 dump는7/8ms에 완료됐다.
+
+이번 실행은 수정 효과와 신호 분리를 확인한 단독 표본이다. 과거 두 실패의 내부 캐시 상태나 별도 ADB 연결 끊김 원인을 직접 입증한 것은 아니다. 최종 PR 전체 검사는 후속이다.
