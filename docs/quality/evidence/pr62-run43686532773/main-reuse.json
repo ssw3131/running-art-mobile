@@ -1,0 +1,9 @@
+{
+  "reused": true,
+  "reason": "Same Git tree, successful full PR verification",
+  "pr": 62,
+  "run": 43686532773,
+  "attempt": 1,
+  "tree": "8fc7c3f5e0fd48f0086a55804329f54a15e90533",
+  "url": "https://github.com/ssw3131/running-art-mobile/actions/runs/43686532773"
+}

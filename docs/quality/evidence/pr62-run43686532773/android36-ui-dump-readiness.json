@@ -1,0 +1,32 @@
+[
+  {
+    "capture": "current",
+    "connectionAttempt": 1,
+    "rootAttempts": 2,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "home-paused-return",
+    "connectionAttempt": 1,
+    "rootAttempts": 3,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "home-interrupted-return",
+    "connectionAttempt": 1,
+    "rootAttempts": 3,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "course-preparation-ready",
+    "connectionAttempt": 1,
+    "rootAttempts": 2,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "s5-square-system-share",
+    "connectionAttempt": 1,
+    "rootAttempts": 4,
+    "freshHierarchy": true
+  }
+]
