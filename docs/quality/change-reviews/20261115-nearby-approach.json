@@ -43,8 +43,7 @@
     "tests/free-loop-guidance.test.mjs",
     "tests/nearby-approach.test.mjs",
     "tests/nearby-stream.test.mjs",
-    "tests/run-preparation.test.mjs",
-    ""
+    "tests/run-preparation.test.mjs"
   ],
   "behavior": "changed",
   "decision": "사용자 승인 계획: 300/500/1000m 접근 거리와 원시 유사도 5점 비교 정책, v3 진행 스트림, 현재 GPS 합류 경로 최적화를 함께 적용한다.",
