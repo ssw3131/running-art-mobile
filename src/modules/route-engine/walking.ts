@@ -40,7 +40,7 @@ export function* snapWalkingSourceSteps(graph:Graph,p:Point,accuracy:number):Ste
   for(const id of [...ids].sort((a,b)=>a-b)){
     const edge=graph.edges[id],snap=projectPoint(p,graph.nodes[edge.a],graph.nodes[edge.b]);
     if(snap.distance<=limit&&(!source||snap.distance<source.separation-1)){source={edge:id,t:snap.t,separation:snap.distance,point:snap.point};ambiguous=false;}
-    else if(source&&Math.abs(snap.distance-source.separation)<=1){const old=graph.edges[source.edge];if(![old.a,old.b].includes(edge.a)&&![old.a,old.b].includes(edge.b)&&snap.t>0.02&&snap.t<0.98)ambiguous=true;}
+    else if(source&&Math.abs(snap.distance-source.separation)<=1){const old=graph.edges[source.edge];if(![old.a,old.b].includes(edge.a)&&![old.a,old.b].includes(edge.b))ambiguous=true;}
   }
   if(!source||ambiguous)throw new WalkingError(ambiguous?'source-ambiguous':'source-missing');return source;
 }

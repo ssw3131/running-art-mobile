@@ -109,3 +109,10 @@ test('moving along a pedestrian one-way rebuilds the path on the shared graph in
  await planner(request,signal());const result=await planner({...request,position:coord([10,0])},signal());
  assert.ok(Math.abs(result.distanceM-390)<1);assert.equal(loads,1);
 });
+
+
+test('coincident endpoints on disconnected levels remain ambiguous, while a real shared OSM junction is accepted',()=>{
+ const base=way(11,[101,102],[[-100,0],[0,0]]),other=way(12,[103,104],[[0,-100],[0,0]]);
+ assert.throws(()=>finish(snapWalkingSourceSteps(buildGraph([base,other],origin,1000),{x:0,y:0},5)),/도로가 겹쳐/);
+ const connected={...other,nodes:[103,102]};assert.doesNotThrow(()=>finish(snapWalkingSourceSteps(buildGraph([base,connected],origin,1000),{x:0,y:0},5)));
+});
