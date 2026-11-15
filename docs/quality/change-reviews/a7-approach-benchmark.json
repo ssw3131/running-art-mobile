@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/app/approach-benchmark.tsx",
+    "src/features/approach-benchmark/baseline.ts",
+    "src/features/approach-benchmark/input.ts",
+    "src/features/approach-benchmark/runner.ts",
+    "scripts/benchmarks/check-handset-approach.mjs",
+    "scripts/benchmarks/prepare-handset-approach.mjs",
+    "src/features/auth/ServiceStack.tsx"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-15 사용자 요청: 현재 연결된 A7에서 합류 경로 반복 성능을 측정한다. 실행 기록 2026-11-15-1248-nearby-approach.md의 후속 계획.",
+  "before": "release Hermes의 세부 계측을 밖으로 내보내는 경로가 없어 PC 측정만 있었다.",
+  "after": "명시적으로 시작한 개발 진단 화면에서 고정 공개 입력·이전/현재 코드·격리된 SQLite 캐시로 조건별20회 및 실패를 기록한다.",
+  "invariants": [
+    "생성/저장 API 및 사용자 DB 접근 없음",
+    "기본 도로 캐시를 지우지 않음",
+    "야외 GPS 검증으로 주장하지 않음",
+    "baseline 소스는6a72e79에서 import 경로만 옮김",
+    "타임아웃/실패/네트워크 유입을 성공 표본에서 숨기지 않음"
+  ],
+  "tests": [
+    {
+      "reason": "제품 planner는 변경하지 않아 기존 캐시/취소/경로 회귀를 유지. 추가 scripts/benchmarks/check-handset-approach.mjs에서 실제 공개 도로·전용 SQLite 두 순서16표본과 경로 일치를 통과했다.",
+      "path": "tests/nearby-approach.test.mjs"
+    },
+    {
+      "path": "tests/auth-routes.test.mjs",
+      "reason": "새 개발 진단 경로를 기존 회원 전용 목록에 등록하고 모든 화면 분류를 검사한다."
+    },
+    {
+      "path": "tests/components/auth-gate.test.tsx",
+      "reason": "진단 딥링크도 기존 게스트 접근 차단 검증에 포함한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "기존 제품 화면은 유지하며 별도 개발 진단 경로만 추가",
+    "evidence": [
+      "A7 실제 진단 화면과 측정 원본을 docs/quality/evidence/a7-performance-20261115에 보존 예정; 제품 네 화면의 최종 CI 비교 유지"
+    ]
+  },
+  "native": "동일 서명 preview release를 A7 자료 유지 교체하여 Hermes/비개발모드와160표본을 확인. PR ready 최종 Android29/36 필수 게이트 유지."
+}
