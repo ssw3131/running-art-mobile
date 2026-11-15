@@ -1,8 +1,12 @@
 # 현재 상태와 인수인계
 
-## 2026-11-15 가까운 코스·합류 경로 개선 진행 중
+## 2026-11-15 가까운 코스·합류 경로 부분 완료 — PC 인계
 
-선택 출발지 기준300→500→1000m 근거리 후보와 기존 광역 후보를 비교하고,5점 초과 시 명시적으로 선택한다. v1/v2 호환 v3 진행 스트림·도로망/합류 경로 재사용·위치/경로 시간 초과 분리를 구현했다. [PR63](https://github.com/ssw3131/running-art-mobile/pull/63)의 전체 검증과 main 반영은 진행 중이다. PC 회귀와 실제폰 성능은 구분하며 운영 배포·폰 설치는 없다. [계약](../development/nearby-approach.md)·[검증/미완료](../quality/nearby-approach-20261115.md)·[실행 계획](../history/executed-plans/2026-11-15-1248-nearby-approach.md).
+[PR63](https://github.com/ssw3131/running-art-mobile/pull/63), `codex/nearby-courses-approach`에 구현을 보존했다. 제품 소스18e84de에서300/500/1000m 근거리 후보·5점 비교·v3 실제 진행·GPS 합류 캐시/최소 조회·위치15초/경로10초 재시도를 연결했다. 최종 [전체43679702434](https://github.com/ssw3131/running-art-mobile/actions/runs/43679702434)는 로직601/1skip·UI241·API·Android29 호환7단계와 보존/정리 통과, Android36 기능15단계·보존/정리 통과다. **마지막 SystemUI 최대 신호 촬영 준비가 실패해4화면 비교/필수 게이트/main 병합은 미완료**다. 같은 전체 검사를 반복하지 않고 원본을 보존해 PR을 draft로 돌렸다.
+
+PC에서는 먼저 이 브랜치/PR과 [검증·실패 원본·측정 절차](../quality/nearby-approach-20261115.md)를 읽고 SM-A102N 연결/현 설치본·자료 보존 상태를 확인한다. 실제 측정은 최초/파일/그래프/완성 경로 각20회, GPS 별도이며 아직 미실행이다. 사용자 PC에서 이미 검증했다고 보고하지 않는다. SystemUI는 원격 visual 분야 진단으로 따로 해결하고 필수 ready 검사 후 병합한다. PC 결과로 필수 게이트를 건너뛰지 않는다.
+
+제품18e84de의 [preview216882774](https://github.com/ssw3131/running-art-mobile/actions/runs/43679963544)와 서버 ZIP을 준비했고 다운로드/소스/해시 일치를 확인했다. APK는32비트 A10e ABI/동일 앱 ID·서명이며 실제 설치는 없다. 배포 순서는 호환 서버→앱이고 **운영 배포/휴대폰 설치는 별도 실행 범위**다. `.cache/releases` 및 `test-results/nearby`는 Git 제외이므로 PC로 자동 전달되지 않는다. Actions 원본은7일 보관이다. [계약](../development/nearby-approach.md)·[실행 계획](../history/executed-plans/2026-11-15-1248-nearby-approach.md).
 
 ## 2026-11-14 남은 PR 전체 반영 확인·중복 종료
 
