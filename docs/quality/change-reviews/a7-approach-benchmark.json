@@ -38,7 +38,8 @@
     "status": "changed",
     "reason": "기존 제품 화면은 유지하며 별도 개발 진단 경로만 추가",
     "evidence": [
-      "A7 실제 진단 화면과 측정 원본을 docs/quality/evidence/a7-performance-20261115에 보존 예정; 제품 네 화면의 최종 CI 비교 유지"
+      "실제 release 진단 화면의160표본/17실패를 로컬 원본에서 직접 확인했다. 개인 기기 화면은 외부에 첨부하지 않으며 익명 표본/집계를 docs/quality/evidence/a7-performance-20261115/README.md에 연결한다.",
+      "기존 제품 네 화면의 원본/기준/차이 검토는 전체366 Android36 필수 비교를 유지한다."
     ]
   },
   "native": "동일 서명 preview release를 A7 자료 유지 교체하여 Hermes/비개발모드와160표본을 확인. PR ready 최종 Android29/36 필수 게이트 유지."
