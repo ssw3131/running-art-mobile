@@ -3,6 +3,8 @@
 // routing storage/cache avoids repeated work; generators expose cancellation points.
 import type { Point, Origin, Tags, OsmElement, GraphNode, GraphEdge, Graph, SearchOptions, ProgressCallback, Steps, Placement, EvaluatedCandidate, Usage, Score, SearchResult } from './types.ts';
 
+import { walkingFieldSteps, joinFromField, WalkingError, type WalkingField } from './walking.ts';
+import { selectNearby } from './nearby.ts';
 import { SERVICE_SHAPES, serviceTemplate } from './service-shapes.ts';
 import { FIGMA_SHAPE_VERSION, figmaTemplate } from './figma-contours.ts';
 
@@ -255,7 +257,7 @@ function runnable(tags: Tags = {}): boolean {
   if (tags.sidewalk === 'no' && !['yes','designated','permissive'].includes(tags.foot ?? '')) return false;
   return true;
 }
-function *buildGraphSteps(elements: OsmElement[], origin: Origin, radius: number): Steps<Graph> {
+function *buildGraphSteps(elements: OsmElement[], origin: Origin, radius: number, clipBoundary=false): Steps<Graph> {
   const nodes: GraphNode[] = [], edges: GraphEdge[] = [], index = new Map<string, number>(), edgeKeys = new Set<string>();
   // Only actual OSM node IDs join roads: overpasses and nearby roads stay separate.
   function node(key: string, p: Point): number {
@@ -282,12 +284,14 @@ function *buildGraphSteps(elements: OsmElement[], origin: Origin, radius: number
       const a=way.geometry[i-1], b=way.geometry[i];
       if(!a || !b) continue;
       const pa=toPoint(a.lat,a.lon,origin), pb=toPoint(b.lat,b.lon,origin);
-      if(Math.hypot(pa.x,pa.y)>radius || Math.hypot(pb.x,pb.y)>radius) continue;
-      let last=node(`osm:${way.nodes[i-1]}`,pa);
+      const crossesBoundary=Math.hypot(pa.x,pa.y)>radius || Math.hypot(pb.x,pb.y)>radius;
+      if(!clipBoundary&&crossesBoundary) continue;
+      let last=crossesBoundary?-1:node(`osm:${way.nodes[i-1]}`,pa);
       // Intermediate samples are edge-specific, so long roads are snappable without false junctions.
       const count=Math.max(1,Math.ceil(dist(pa,pb)/40));
       for(let j=1;j<=count;j++) {
         if(j%64===0) yield;
+        if(crossesBoundary){const previous=lerp(pa,pb,(j-1)/count),nextPoint=lerp(pa,pb,j/count);if(Math.hypot(previous.x,previous.y)>radius||Math.hypot(nextPoint.x,nextPoint.y)>radius){last=-1;continue;}if(last<0)last=node(j===1?`osm:${way.nodes[i-1]}`:`way:${way.id}:${i}:${j-1}`,previous);}
         const next=node(j===count ? `osm:${way.nodes[i]}` : `way:${way.id}:${i}:${j}`,lerp(pa,pb,j/count));
         edge(last,next,forward,backward,way.tags!,{way:way.id,from:way.nodes[i-1],to:way.nodes[i],start:(j-1)/count,end:j/count,bidirectional:forward&&backward}); last=next;
       }
@@ -545,6 +549,9 @@ function placementError(graph: Graph,target: Point[],start: GraphNode,targetMete
 }
 function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCallback=()=>{},diagnostics?: SearchDiagnostics): Steps<SearchResult> {
   const free=options.mode==='free-loop';
+  let walking: WalkingField|null=null;
+  const stages:number[]=[];
+  if(free&&options.proximity==='nearby-v1'){try{walking=yield* walkingFieldSteps(graph,{x:0,y:0});}catch(error){if(!(error instanceof WalkingError))throw error;}}
   if(free) {
     // A reversible course cannot contain a pedestrian one-way edge. Keep IDs
     // stable so persisted OSM references and the routing caches remain valid.
@@ -634,16 +641,43 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     return {...p,...best,loop,score,loopKm:loopLength/1000,accessKm:Math.max(0,(best.usage.total-loopLength)/1000)};
   }
   const candidates: EvaluatedCandidate[]=[];let routed=0;
+  const localResults=new Map<string,EvaluatedCandidate|null>();
   const evaluated=new Set();
   const placementKey=(p: Omit<Placement, "error">)=>`${p.scale.toFixed(4)}:${p.rotation.toFixed(6)}:${p.offset.x.toFixed(2)}:${p.offset.y.toFixed(2)}`;
   function *routeBatch(batch: Placement[],phase: string): Steps<void> {
     for(let i=0;i<batch.length;i++) {
-      const p=batch[i],key=placementKey(p);if(evaluated.has(key))continue;evaluated.add(key);routed++;
+      const p=batch[i],key=placementKey(p);if(evaluated.has(key))continue;evaluated.add(key);if(!localResults.has(key))routed++;
       progress({phase:'routing',text:`${phase} · ${i+1} / ${batch.length} · 유효 후보 ${candidates.length}개`});
       yield;
-      const c=yield* evaluate(p);if(c)candidates.push(c);
+      const c=localResults.has(key)?localResults.get(key)!:yield* evaluate(p);if(c)candidates.push(c);
     }
   }
+  // Evaluate an independent nearby pool. The legacy global search and its
+  // refinement seeds remain untouched, including when a local placement matches.
+  const nearbyCandidates:EvaluatedCandidate[]=[];
+  if(options.proximity==='nearby-v1'&&walking){
+    const localKeys=new Set<string>();
+    for(const limit of [300,500,1000]){
+      const previous=stages.at(-1);stages.push(limit);
+      progress({phase:'nearby',accessLimitM:limit,text:previous?`${previous}m 이내에서 조건에 맞는 코스를 찾지 못해 ${limit}m까지 넓히고 있어요.`:`출발지에서 합류 ${limit}m 이내인 코스를 찾고 있어요.`});
+      const local:Placement[]=[],stageKeys=new Set<string>();
+      const originPoints=[walking.source.point,...walking.graph.nodes.filter(n=>walking!.costs[n.id]<=limit&&n.turn).filter((_,i)=>i%Math.max(1,Math.floor(walking!.graph.nodes.length/100))===0).slice(0,24)];
+      for(const anchor of originPoints)for(let deg=0;deg<360;deg+=15){
+        yield;const rotation=deg*Math.PI/180,c=Math.cos(rotation),s=Math.sin(rotation);
+        for(const a of anchors){
+          const offset=point(anchor.x-(a.x*c-a.y*s),anchor.y-(a.x*s+a.y*c)),target=transformPoints(base,scale,rotation,offset.x,offset.y);
+          const p:Placement={target,rotation,scale,offset,error:0},key=placementKey(p);
+          if(localKeys.has(key)||stageKeys.has(key)||target.some(t=>Math.hypot(t.x,t.y)>radius))continue;
+          stageKeys.add(key);checked++;
+          const error=placementError(graph,target,start,targetMeters,indexes.all,true);if(error===null)continue;p.error=error;local.push(p);
+        }
+      }
+      local.sort((a,b)=>a.error-b.error);
+      for(const p of local.slice(0,40)){yield;localKeys.add(placementKey(p));routed++;const c=yield* evaluate(p);localResults.set(placementKey(p),c);if(c)nearbyCandidates.push(c);}
+      if(nearbyCandidates.some(c=>(joinFromField(walking!,c.ids)?.distanceM??Infinity)<=limit))break;
+    }
+  }
+  if(options.proximity==='nearby-v1')progress({phase:'comparison',text:'가까운 후보와 모양이 더 닮은 후보를 비교하고 있어요.'});
   // Always retain the complete v0.1 pool; added exploration cannot lower the best evaluated score.
   yield* routeBatch(shortlist,'기본 경로 탐색');
   const baseline=uniqueCandidates(candidates).map(c=>({score:c.score.total,raw:c.score.raw,lengthKm:c.score.lengthKm}));
@@ -686,10 +720,11 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     const winners=diverse([...candidates].sort((a,b)=>b.score.raw-a.score.raw),8);
     yield* routeBatch((yield* variants(winners,[0.98,1,1.02],[[0,0],[-30,0],[30,0],[0,-30],[0,30]],[-2.5,0,2.5])).slice(0,80),'우수 후보 미세 조정');
   }
-  const selected=uniqueCandidates(candidates);
-  return {...(free?{mode:'free-loop' as const}:{}),version,baseline:{candidates:baseline,valid:baselineValid,routed:baselineRouted},candidates:selected.map(c=>({...c,...(free?{roadSegments:routeReferences(graph,c.ids)}:{}),scaleRatio:c.scale/scale,templatePerimeter:pathLength(c.target),roadInfo:roadInfo(graph,c.ids),route:c.route.map(({x,y})=>point(x,y)),loop:c.loop.map(({x,y})=>point(x,y)),
+  const nearby=options.proximity==='nearby-v1'?selectNearby([...candidates,...nearbyCandidates],walking,stages,overlap):null;
+  const selected=nearby?.selected??uniqueCandidates(candidates);
+  return {...(nearby?{proximity:nearby.proximity}:{}),...(free?{mode:'free-loop' as const}:{}),version,baseline:{candidates:baseline,valid:baselineValid,routed:baselineRouted},candidates:selected.map(c=>({...c,...(free?{roadSegments:routeReferences(graph,c.ids)}:{}),scaleRatio:c.scale/scale,templatePerimeter:pathLength(c.target),roadInfo:roadInfo(graph,c.ids),route:c.route.map(({x,y})=>point(x,y)),loop:c.loop.map(({x,y})=>point(x,y)),
     access:c.access.map(path=>path.map(({x,y})=>point(x,y))),ids:undefined,usage:undefined})),
-    stats:{placements:checked,routed,extraRouted:routed-baselineRouted,valid:candidates.length,roads:graph.edges.length},
+    stats:{placements:checked,routed,extraRouted:routed-baselineRouted,valid:nearby?new Set([...candidates,...nearbyCandidates]).size:candidates.length,roads:graph.edges.length},
     start:point(start.x,start.y),snapMeters:dist(start,point(0,0)),
     template:{width:Math.max(...fixed.map(p=>p.x))-Math.min(...fixed.map(p=>p.x)),height:Math.max(...fixed.map(p=>p.y))-Math.min(...fixed.map(p=>p.y)),perimeter:targetMeters}};
 }

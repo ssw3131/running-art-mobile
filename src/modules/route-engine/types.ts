@@ -31,9 +31,10 @@ export type SearchOptions = {
   shapeVersion?: 'figma-20261024';
   maxRouteKm?: number;
   customTemplate?: Point[];
+  proximity?: 'nearby-v1';
 };
 export type SearchInput = { origin: Origin; options: SearchOptions; elements: OsmElement[] };
-export type Progress = { phase: 'graph' | 'placement' | 'routing' | 'refine'; text: string };
+export type Progress = { phase: 'graph' | 'placement' | 'routing' | 'refine' | 'nearby' | 'comparison'; text: string; accessLimitM?: number };
 export type ProgressCallback = (progress: Progress) => void;
 export type Steps<T> = Generator<void, T, void>;
 export type Placement = {
@@ -56,6 +57,8 @@ export type EvaluatedCandidate = Placement & {
 };
 export type Candidate = Omit<EvaluatedCandidate, 'ids' | 'usage'> & {
   roadSegments?: RoadSegmentRef[];
+  approach?: import('./walking.ts').WalkingJoin | null;
+  recommendation?: 'nearby' | 'shape' | 'far' | 'unknown';
   ids?: undefined;
   usage?: undefined;
   scaleRatio: number;
@@ -65,6 +68,7 @@ export type Candidate = Omit<EvaluatedCandidate, 'ids' | 'usage'> & {
 export type SearchResult = {
   mode?: 'free-loop';
   version: '0.1' | '0.2';
+  proximity?: { stages: number[]; defaultIndex: number | null; comparisonRequired: boolean; sourceKnown: boolean };
   baseline: { candidates: { score: number; raw: number; lengthKm: number }[]; valid: number; routed: number };
   candidates: Candidate[];
   stats: { placements: number; routed: number; extraRouted: number; valid: number; roads: number };

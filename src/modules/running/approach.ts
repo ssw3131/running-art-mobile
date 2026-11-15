@@ -2,6 +2,8 @@ import { buildGraphSteps, toPoint, toLatLng } from '../route-engine/engine.ts';
 import type { Graph, Point, RoadSegmentRef, Steps } from '../route-engine/types.ts';
 import type { CourseSnapshot } from '../courses/model.ts';
 import type { RoadLoader } from '../road-data/client.ts';
+import { walkingIndexSteps, snapWalkingSourceSteps, WalkingError } from '../route-engine/walking.ts';
+import { createApproachCache } from './approach-cache.ts';
 import { distance, prepareRoute, positionAt, type Coordinate } from '../guidance/geometry.ts';
 
 export type ApproachPlan = { path: Coordinate[]; targetM: number; distanceM: number };
@@ -31,8 +33,9 @@ export function* approachSteps(graph: Graph,request: ApproachRequest): Steps<App
     const r=course.roadSegments?.[i];if(r){const k=key(r);const list=refs.get(k)??[];list.push(i);refs.set(k,list);}
   }
   const fixed=targetM===undefined?null:positionAt(route,targetM);
-  let source: {edge:number;t:number;separation:number}|null=null;
-  let ambiguousSource=false;
+  const source=yield* snapWalkingSourceSteps(graph,p,accuracy);
+  const index=yield* walkingIndexSteps(graph);
+  const edgeIds=course.roadSegments ? [...new Set([...refs.keys()].flatMap(k=>index.refs.get(k)??[]))].sort((a,b)=>a-b) : graph.edges.map((_,i)=>i);
   const local=course.route.map(c=>toPoint(c[1],c[0],graph.origin));
   const legacyCells=new Map<string,number[]>();
   if(!course.roadSegments)for(let i=0;i<local.length-1;i++){
@@ -41,14 +44,10 @@ export function* approachSteps(graph: Graph,request: ApproachRequest): Steps<App
       const k=`${x},${y}`,list=legacyCells.get(k)??[];list.push(i);legacyCells.set(k,list);
     }
   }
-  for(let e=0;e<graph.edges.length;e++) {
-    if(e%32===0)yield;
+  let edgeVisits=0;
+  for(const e of edgeIds) {
+    if(edgeVisits++%32===0)yield;
     const edge=graph.edges[e],a=graph.nodes[edge.a],b=graph.nodes[edge.b],snap=projectPoint(p,a,b);
-    if(snap.distance<=Math.max(12,accuracy) && (!source||snap.distance<source.separation-1)) {source={edge:e,t:snap.t,separation:snap.distance};ambiguousSource=false;}
-    else if(source && Math.abs(snap.distance-source.separation)<=1) {
-      const old=graph.edges[source.edge];
-      if(![old.a,old.b].includes(edge.a)&&![old.a,old.b].includes(edge.b)&&snap.t>0.02&&snap.t<0.98)ambiguousSource=true;
-    }
     const legacyIndices=new Set<number>();
     if(!course.roadSegments)for(let x=Math.floor(Math.min(a.x,b.x)/100);x<=Math.floor(Math.max(a.x,b.x)/100);x++)for(let y=Math.floor(Math.min(a.y,b.y)/100);y<=Math.floor(Math.max(a.y,b.y)/100);y++)for(const i of legacyCells.get(`${x},${y}`)??[])legacyIndices.add(i);
     const indices=edge.ref&&course.roadSegments?refs.get(key(edge.ref))??[]:legacyIndices;
@@ -85,7 +84,7 @@ export function* approachSteps(graph: Graph,request: ApproachRequest): Steps<App
     }
     if(list.length)targets.set(e,list);
   }
-  if(!source||ambiguousSource)throw new ApproachError(ambiguousSource?'현재 도로가 겹쳐 위치를 구분하기 어려워요. 조금 이동한 뒤 다시 확인해 주세요.':'보행 도로 위에서 현재 위치를 다시 확인해 주세요.');
+
   if(!targets.size)throw new ApproachError('조회 범위에서 코스와 연결되는 도로를 확인하지 못했어요. 코스 근처로 이동하거나 도로 자료를 다시 받아 주세요.');
   const costs=new Float64Array(graph.nodes.length).fill(Infinity),previous=new Int32Array(graph.nodes.length).fill(-1),heap=new Heap();
   const se=graph.edges[source.edge],sourcePoint={x:graph.nodes[se.a].x+(graph.nodes[se.b].x-graph.nodes[se.a].x)*source.t,y:graph.nodes[se.a].y+(graph.nodes[se.b].y-graph.nodes[se.a].y)*source.t};
@@ -115,24 +114,10 @@ export function* approachSteps(graph: Graph,request: ApproachRequest): Steps<App
   if(path.length===1)path.push([...path[0]]);
   return {path,targetM:best.m,distanceM:best.cost};
 }
-export function createApproachPlanner(load: RoadLoader,yieldToHost=()=>new Promise<void>(resolve=>setTimeout(resolve,0))): ApproachPlanner {
-  return async (request,signal)=>{
-    const check=()=>{if(signal.aborted)throw new ApproachError('합류 경로 준비를 취소했어요.');};
-    async function drain<T>(steps:Steps<T>){let since=performance.now();try{while(true){check();const r=steps.next();if(r.done)return r.value;if(performance.now()-since>=8){await yieldToHost();since=performance.now();}}}finally{steps.return(undefined as never);}}
-    let failure:unknown;
-    for(const radius of [2000,5000,10000]){
-      check();const origin={lat:request.position[1],lng:request.position[0]};
-      try {
-        const roads=await load(origin,radius,signal,'prefer-cache');
-        const graph=await drain(buildGraphSteps(roads.elements,origin,radius));
-        const result=await drain(approachSteps(graph,request));
-        // An outside detour cannot beat a route shorter than the loaded radius.
-        if(result.distanceM<radius-100 || radius===10000)return result;
-      }catch(error){check();failure=error;if(!(error instanceof ApproachError))throw error;}
-    }
-    throw failure??new ApproachError('반경 10km 안에서 합류 경로를 찾지 못했어요. 코스 근처로 이동해 주세요.');
-  };
+export function createApproachPlanner(load: RoadLoader,yieldToHost=()=>new Promise<void>(resolve=>setTimeout(resolve,0))) {
+  return createApproachCache(load, {buildGraphSteps:(elements,origin,radius)=>buildGraphSteps(elements,origin,radius,true),approachSteps,validApproach,snapWalkingSourceSteps,toPoint},yieldToHost);
 }
+export { WalkingError };
 
 export function validApproach(plan: ApproachPlan,course: CourseSnapshot,position?:Coordinate) {
   const route=prepareRoute(course.route);

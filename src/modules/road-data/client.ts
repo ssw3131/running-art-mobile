@@ -1,3 +1,4 @@
+import { observeRoadVersion } from './events.ts';
 import type { Origin, OsmElement } from '../route-engine/types.ts';
 import { createRoadChannel, DEFAULT_ROAD_BASE_URL, ROAD_PREFIX, roadBaseUrl, roadCacheOrigin } from './channel.ts';
 import type { RoadFetch } from './channel.ts';
@@ -52,6 +53,7 @@ export function createRoadLoader({ getCache, fetcher, baseUrl = DEFAULT_ROAD_BAS
       })()]);
       checkRoadCacheSignal(controller.signal);
       const { elements, ...cache } = result;
+      observeRoadVersion(source,cache.manifestHash);
       report('success', cache);
       const warning = result.updateFailed ? ' · 갱신 실패로 이전 자료 사용' : result.stale ? ' · 오래된 저장 자료' : '';
       return { elements, cached: result.downloaded === 0, cache,

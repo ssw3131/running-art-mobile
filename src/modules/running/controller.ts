@@ -1,3 +1,4 @@
+import { distance } from '../guidance/geometry.ts';
 import { RunError, type Fix } from './model.ts';
 import type { RunRepository } from './repository.ts';
 import type { GuidanceEvent } from '../guidance/engine.ts';
@@ -85,14 +86,30 @@ export function createRunController(repository: () => Promise<RunRepository>, dr
         const ready=startReadiness(course,fix,Date.now(),approach);
         // An on-course start needs no approach; never pass an obsolete plan to storage.
         if (ready.ready && ready.distanceM !== null && ready.distanceM <= 12) approach = undefined;
-        if(!ready.ready && ready.distanceM!==null && planner){
+        if(ready.distanceM!==null && ready.distanceM>12 && planner){
+          let interrupt!: (error:Error)=>void;
+          const interrupted=new Promise<never>((_,reject)=>{interrupt=reject;});
+          const abort=()=>interrupt(new RunError('합류 경로 준비를 취소했어요.'));
+          cancel.signal.addEventListener('abort',abort,{once:true});
+          const timeout=setTimeout(()=>{interrupt(new RunError('코스 이동 경로 준비 시간이 초과됐어요. 다시 확인해 주세요.'));cancel.abort();},10000);
           try {
             progress?.('코스까지의 보행 경로를 준비하고 있어요.');
-            approach=await planner({course:course.snapshot,position:[fix.longitude,fix.latitude],accuracy:fix.accuracy??30},cancel.signal);
-            if(cancel.signal.aborted)throw new RunError('합류 경로 준비를 취소했어요.');
-            fix=await locate(fix);
-            if(cancel.signal.aborted)throw new RunError('합류 경로 준비를 취소했어요.');
+            // The planner verifies the source road even for a ready preview.
+            // Its memory cache makes this a source check, not a second search.
+            const initial=fix;
+            const confirmed=await Promise.race([interrupted,(async()=>{
+              let current=initial;
+              for(let attempt=0;attempt<2;attempt++){
+                const plan=await planner({course:course.snapshot,position:[current.longitude,current.latitude],accuracy:current.accuracy??30},cancel.signal);
+                check();const latest=await locate(current);check();
+                if(distance([current.longitude,current.latitude],[latest.longitude,latest.latitude])<0.01&&current.accuracy===latest.accuracy)return {plan,fix:latest};
+                current=latest;
+              }
+              throw new RunError('현재 위치가 바뀌었어요. 합류 경로를 다시 확인해 주세요.');
+            })()]);
+            approach=confirmed.plan;fix=confirmed.fix;
           }catch(error){throw new RunError(error instanceof Error?error.message:'합류 경로를 확인하지 못했어요.');}
+          finally{clearTimeout(timeout);cancel.signal.removeEventListener('abort',abort);}
         }
         const finalReady = startReadiness(course, fix, Date.now(), approach);
         if (!finalReady.ready) throw new RunError(finalReady.message);

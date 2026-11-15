@@ -11,17 +11,14 @@ const baseline=require('../fixtures/route-engine/grid-heart-v02.json').result;
 const result:any={result:{...baseline,candidates:baseline.candidates.slice(0,1)},origin:grid.origin,options:{...grid.options,shape:'heart',targetKm:3},liveRoads:true};
 function Probe(){const states=useRecommendationApproach(result,true);return <Text testID="walking">{JSON.stringify(states)}</Text>;}
 beforeEach(()=>{mockPermission.mockReset();mockFix.mockReset();mockPlan.mockReset();mockPermission.mockResolvedValue({granted:true});});
-test('background walking distance does not opt the user into Google accuracy settings and keeps unavailable GPS explicit',async()=>{
- mockFix.mockRejectedValue(new Error('GPS unavailable'));
- await render(<Probe/>);
- await waitFor(()=>expect(screen.getByTestId('walking')).toHaveTextContent(/error/));
- expect(mockFix).toHaveBeenCalledWith({accuracy:4,mayShowUserSettingsDialog:false});
- expect(mockPlan).not.toHaveBeenCalled();
-});
-test('walking distance uses the available accurate fix and pedestrian route result',async()=>{
- mockFix.mockResolvedValue({timestamp:Date.now(),coords:{longitude:127,latitude:37,accuracy:5}});
+test('selected origin distance works without GPS and never requests location permission',async()=>{
  mockPlan.mockResolvedValue({distanceM:321});
  await render(<Probe/>);
  await waitFor(()=>expect(screen.getByTestId('walking')).toHaveTextContent(/321/));
- expect(mockPlan).toHaveBeenCalledWith(expect.objectContaining({position:[127,37],accuracy:5}),expect.any(AbortSignal));
+ expect(mockPermission).not.toHaveBeenCalled();expect(mockFix).not.toHaveBeenCalled();
+ expect(mockPlan).toHaveBeenCalledWith(expect.objectContaining({position:[grid.origin.lng,grid.origin.lat],accuracy:30}),expect.any(AbortSignal));
+});
+test('missing pedestrian connection remains explicit',async()=>{
+ mockPlan.mockRejectedValue(new Error('disconnected'));await render(<Probe/>);
+ await waitFor(()=>expect(screen.getByTestId('walking')).toHaveTextContent(/error/));
 });

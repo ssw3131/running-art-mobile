@@ -4,6 +4,7 @@ import type { Origin, ProgressCallback, SearchInput, SearchOptions } from '../..
 import type { RemoteCalculation } from '../../modules/route-compute/client.ts';
 
 export type LabCalculation = Calculation & {
+  roadVersion?: string;
   execution?: 'server' | 'device';
   fallback?: boolean;
   origin: Origin;
@@ -40,10 +41,10 @@ export function createLabSession(load: RoadLoader, run: typeof calculateRoute, n
         if (remote && liveRoads && !request.deviceOnly && request.roadMode !== 'offline') {
           callbacks.progress({ phase: 'graph', text: '서버에서 주변 도로를 확인하고 코스를 계산하고 있어요.' });
           try {
-            const value = await remote(input, controller.signal, request.roadMode === 'refresh');
+            const value = await remote(input, controller.signal, request.roadMode === 'refresh', value=>{if(current())callbacks.progress(value);});
             if (!current()) return;
             callbacks.success({ result: value.result, metrics: value.metrics, origin: input.origin, options: input.options,
-              liveRoads, execution: 'server', source: `OpenStreetMap · 서버 도로 자료 ${value.roads.release}`,
+              roadVersion: value.roads.manifestHash, liveRoads, execution: 'server', source: `OpenStreetMap · 서버 도로 자료 ${value.roads.release}`,
               cached: value.roads.cached, timing: { ...value.timing, totalMs: now() - started } });
             return;
           } catch (error) {

@@ -70,7 +70,8 @@ export function createHandler(fetcher = fetch) {
       try {
         let body;
         if (calculate) body = await boundedBody(request);
-        const forwardedHeaders = { 'content-type': 'application/json', accept: 'application/json' };
+        const wantsProgress = calculate && request.headers.get('accept') === 'application/x-ndjson';
+        const forwardedHeaders = { 'content-type': 'application/json', accept: wantsProgress ? 'application/x-ndjson' : 'application/json' };
         // The fixed compute service verifies the member and the idempotent operation.
         // Do not forward cookies or unrelated credentials to this upstream.
         if (calculate) for (const name of ['authorization', 'x-operation-id']) {
@@ -82,7 +83,11 @@ export function createHandler(fetcher = fetch) {
           body, redirect: 'manual', signal: AbortSignal.any([request.signal, AbortSignal.timeout(70000)]),
         });
         if (upstream.status >= 300 && upstream.status < 400) return error(502, 'Unexpected upstream redirect');
-        const headers = new Headers({ 'content-type': 'application/json', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' });
+        // Keep early JSON errors and legacy clients unchanged. Only the explicit
+        // progress contract may expose a streamed content type; pass its body
+        // through without buffering or transforming the first progress event.
+        const streaming = wantsProgress && upstream.headers.get('content-type')?.split(';')[0].trim() === 'application/x-ndjson';
+        const headers = new Headers({ 'content-type': streaming ? 'application/x-ndjson; charset=utf-8' : 'application/json', 'cache-control': streaming ? 'no-store, no-transform' : 'no-store', 'x-content-type-options': 'nosniff' });
         const retry = upstream.headers.get('retry-after');
         if (retry) headers.set('retry-after', retry);
         return new Response(upstream.body, { status: upstream.status, headers });

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "RunPen route compute",
-    "version": "2.0.0"
+    "version": "3.0.0"
   },
   "servers": [
     {
@@ -40,6 +40,17 @@
         "parameters": [
           {
             "in": "header",
+            "name": "Accept",
+            "required": false,
+            "schema": {
+              "enum": [
+                "application/json",
+                "application/x-ndjson"
+              ]
+            }
+          },
+          {
+            "in": "header",
             "name": "x-operation-id",
             "required": true,
             "schema": {
@@ -65,6 +76,12 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Response"
+                }
+              },
+              "application/x-ndjson": {
+                "schema": {
+                  "type": "string",
+                  "description": "Opt-in v3 newline JSON events: progress {value: phase,text,accessLimitM?}, result {value: Response}, or terminal error {code,message}. One operation ID covers every stage. Replay may return application/json."
                 }
               }
             }
@@ -219,7 +236,8 @@
           "contract": {
             "enum": [
               "runpen-routes-v1",
-              "runpen-routes-v2"
+              "runpen-routes-v2",
+              "runpen-routes-v3"
             ]
           },
           "origin": {
@@ -572,7 +590,10 @@
             "if": {
               "properties": {
                 "contract": {
-                  "const": "runpen-routes-v2"
+                  "enum": [
+                    "runpen-routes-v2",
+                    "runpen-routes-v3"
+                  ]
                 }
               }
             },
@@ -633,6 +654,40 @@
                           "maxRouteKm"
                         ]
                       }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "contract": {
+                  "const": "runpen-routes-v3"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "options": {
+                  "required": [
+                    "proximity"
+                  ],
+                  "properties": {
+                    "proximity": {
+                      "const": "nearby-v1"
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "options": {
+                  "not": {
+                    "required": [
+                      "proximity"
                     ]
                   }
                 }
@@ -824,6 +879,81 @@
                 }
               }
             }
+          },
+          "approach": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "path",
+                  "distanceM",
+                  "targetM",
+                  "source"
+                ],
+                "properties": {
+                  "path": {
+                    "$ref": "#/components/schemas/Path"
+                  },
+                  "distanceM": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "targetM": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "source": {
+                    "type": "object",
+                    "required": [
+                      "way",
+                      "from",
+                      "to",
+                      "start",
+                      "end",
+                      "bidirectional"
+                    ],
+                    "properties": {
+                      "way": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "from": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "to": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "start": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "end": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "bidirectional": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "recommendation": {
+            "enum": [
+              "nearby",
+              "shape",
+              "far",
+              "unknown"
+            ]
           }
         }
       },
@@ -841,7 +971,8 @@
           "contract": {
             "enum": [
               "runpen-routes-v1",
-              "runpen-routes-v2"
+              "runpen-routes-v2",
+              "runpen-routes-v3"
             ]
           },
           "request": {
@@ -962,6 +1093,42 @@
                   "$ref": "#/components/schemas/Candidate"
                 },
                 "maxItems": 5
+              },
+              "proximity": {
+                "type": "object",
+                "required": [
+                  "stages",
+                  "defaultIndex",
+                  "comparisonRequired",
+                  "sourceKnown"
+                ],
+                "properties": {
+                  "stages": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        300,
+                        500,
+                        1000
+                      ]
+                    },
+                    "maxItems": 3
+                  },
+                  "defaultIndex": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 4
+                  },
+                  "comparisonRequired": {
+                    "type": "boolean"
+                  },
+                  "sourceKnown": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           },
@@ -1054,7 +1221,10 @@
             "if": {
               "properties": {
                 "contract": {
-                  "const": "runpen-routes-v2"
+                  "enum": [
+                    "runpen-routes-v2",
+                    "runpen-routes-v3"
+                  ]
                 }
               }
             },
@@ -1063,7 +1233,10 @@
                 "request": {
                   "properties": {
                     "contract": {
-                      "const": "runpen-routes-v2"
+                      "enum": [
+                        "runpen-routes-v2",
+                        "runpen-routes-v3"
+                      ]
                     }
                   }
                 },
@@ -1094,6 +1267,34 @@
                   "properties": {
                     "contract": {
                       "const": "runpen-routes-v1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "contract": {
+                  "const": "runpen-routes-v3"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "result": {
+                  "required": [
+                    "proximity"
+                  ],
+                  "properties": {
+                    "candidates": {
+                      "items": {
+                        "required": [
+                          "approach",
+                          "recommendation"
+                        ]
+                      }
                     }
                   }
                 }

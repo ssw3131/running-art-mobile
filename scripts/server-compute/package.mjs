@@ -13,7 +13,7 @@ const index = readJson(path.join(values.directory, 'index.json'));
 const files = [
   ...['runtime', 'worker', 'server', 'hosted'].map(name => `scripts/server-compute/${name}.mjs`),
   'scripts/road-data/common.mjs',
-  ...['engine', 'runner', 'types'].map(name => `src/modules/route-engine/${name}.ts`),
+  ...['engine', 'runner', 'types', 'service-shapes', 'figma-contours', 'walking', 'nearby'].map(name => `src/modules/route-engine/${name}.ts`),
   'src/modules/road-data/file-format.ts',
 ];
 const copied = [];

@@ -8,18 +8,20 @@ import { ANDROID_KEY } from './prepare-membership-fixture.mjs';
 import { createUsageBackend } from '../../supabase/functions/_shared/usage-backend.ts';
 import { createUsageHandler } from '../../supabase/functions/usage/handler.ts';
 import { createComputeServer } from '../../server/route-compute/server.mjs';
-import { response } from '../../tests/helpers/compute-contract.mjs';
+import { calculateRoute } from '../../src/modules/route-engine/runner.ts';
+const grid=JSON.parse(readFileSync(new URL('../../assets/route-lab/grid.json',import.meta.url)));
 const { env, url } = isolatedSupabase();
 const usage = createUsageBackend({url:url.href,serviceKey:env.SERVICE_ROLE_KEY,identityKey:'isolated-android-usage-key-never-production'});
 const handler = createUsageHandler(usage);
 // The production HTTP handler and engine run on a public deterministic grid.
 // Only road sourcing is replaced; Auth, membership, ledger and app calls are real.
-const compute = createComputeServer({run:async (input,signal)=>{
+const compute = createComputeServer({run:async (input,signal,progress)=>{
   // The 7 km scenario explicitly cancels an in-flight calculation. Give that
   // real request a bounded latency window instead of racing the tiny grid.
   // The production handler, engine result, ledger and abort signal are unchanged.
   if(input.options.targetKm===7)await delay(30000,undefined,{signal});
-  return response(input);
+  const value=await calculateRoute({...input,origin:grid.origin,elements:grid.elements},{signal,onProgress:progress});
+  return {contract:input.contract,request:input,...value,roads:{release:'public-grid-fixture',manifestHash:'a'.repeat(64),cached:false},timing:{roadMs:0,calculationMs:value.metrics.elapsedMs,totalMs:value.metrics.elapsedMs}};
 },close:async()=>{}},{usage,ingress:()=>{}});
 compute.listen(54432,'127.0.0.1');
 const server = createServer({ key: readFileSync('.cache/qa-membership/tls/server.key'), cert: readFileSync('.cache/qa-membership/tls/server.crt') }, async (req, res) => {

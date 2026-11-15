@@ -77,7 +77,11 @@ def real_course(q):
         assert '유사도' in card and '예상 러닝 시간' in card
         cards.append(card)
     percentages=[int(re.search(r'유사도 (\d+)%',card).group(1)) for card in cards]
-    assert percentages==sorted(percentages,reverse=True)
+    assert all(0 <= value <= 100 for value in percentages)
+    q.seek('nearby-explanation'); assert q.find(q.capture('figma-nearby-policy'),'nearby-explanation') is not None
+    # Nearby and highest-score representatives precede the remaining score order.
+    # Explicit choice is required when the raw gap exceeds five or only far alternatives exist.
+    q.seek('candidate-0'); q.tap('candidate-0')
     q.seek('generation-edit'); q.tap('generation-edit'); q.capture('figma-reset-warning'); q.tap('취소')
     q.tap('generation-run'); q.capture('figma-unsaved-run-detail')
     q.seek('course-run', allow_disabled=True)

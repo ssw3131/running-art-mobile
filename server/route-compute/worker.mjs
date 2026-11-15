@@ -12,7 +12,7 @@ parentPort.on('message', async raw => {
     const input = { origin: request.origin, options: request.options, elements: roads.elements };
     validateInput(input);
     const graph = buildGraph(input.elements, input.origin, input.options.radiusKm * 1000), routing = {};
-    const result = search(graph, input.options, undefined, routing), finished = performance.now();
+    const result = search(graph, input.options, progress=>parentPort.postMessage({type:'progress',value:progress}), routing), finished = performance.now();
     parentPort.postMessage({ ok: true, value: { contract: request.contract, request, result,
       metrics: { elapsedMs: finished - ready, computeMs: finished - ready, maxSliceMs: finished - ready,
         yields: 0, nodes: graph.nodes.length, edges: graph.edges.length, routing },

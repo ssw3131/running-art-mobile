@@ -24,6 +24,7 @@ export default function RunScreen() {
   const [loadedOwner,setLoadedOwner]=useState<string|null>(null);
   const params = useLocalSearchParams<{ courseId?: string }>();
   const courseId = typeof params.courseId === 'string' ? params.courseId : undefined;
+  const [preparationRetry,setPreparationRetry]=useState(0);
   const [guide, setGuide] = useState<RunGuidance | null>(null);
   const [run, setRun] = useState<Run | null>(null), [points, setPoints] = useState<RunPoint[]>([]);
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [ready, setReady] = useState(false), [now, setNow] = useState(0);
@@ -98,7 +99,7 @@ export default function RunScreen() {
   const immersive=!!courseId||!!(run&&guide&&loadedOwner===owner);
   const screenOptions=<Tabs.Screen options={{headerShown:!immersive,tabBarStyle:immersive?{display:'none'}:undefined}}/>;
   if(run && guide && loadedOwner===owner) return <>{screenOptions}<LiveGuidancePanel key={run.id} run={run} guide={guide} points={points} now={now} busy={busy} error={error} onOptions={options} onFinish={finish} onPauseResume={run.status==='running'?()=>void act(()=>running.pause(run.id)):startOrResume}/></>;
-  if(supported&&ready&&!run&&courseId)return <>{screenOptions}<View style={{flex:1,marginTop:-insets.top}}><CourseRunPreparation key={courseId} id={courseId} busy={busy} onStart={startOrResume}/>{((busy&&!!preparationMessage)||!!error)&&<View style={{position:'absolute',top:insets.top+12,left:26,right:26,padding:12,borderRadius:12,backgroundColor:'#FFFFFF',gap:8}}>{busy&&!!preparationMessage&&<><Text testID="run-preparation-status" accessibilityLiveRegion="polite" style={styles.body}>{preparationMessage}</Text><RunButton title="러닝 시작 준비 취소" id="run-preparation-cancel" onPress={()=>running.cancelPreparation()}/></>}{!!error&&<Text testID="run-error" accessibilityRole="alert" style={styles.error}>{error}</Text>}</View>}</View></>;
+  if(supported&&ready&&!run&&courseId)return <>{screenOptions}<View style={{flex:1,marginTop:-insets.top}}><CourseRunPreparation key={`${courseId}:${preparationRetry}`} id={courseId} busy={busy} startBlocked={!!error} onStart={startOrResume}/>{((busy&&!!preparationMessage)||!!error)&&<View style={{position:'absolute',top:insets.top+12,left:26,right:26,padding:12,borderRadius:12,backgroundColor:'#FFFFFF',gap:8}}>{busy&&!!preparationMessage&&<><Text testID="run-preparation-status" accessibilityLiveRegion="polite" style={styles.body}>{preparationMessage}</Text><RunButton title="러닝 시작 준비 취소" id="run-preparation-cancel" onPress={()=>running.cancelPreparation()}/></>}{!!error&&<><Text testID="run-error" accessibilityRole="alert" style={styles.error}>{error}</Text><RunButton title="위치와 경로 다시 확인" id="run-preparation-retry" onPress={()=>{setError('');setPreparationRetry(n=>n+1);}}/></>}</View>}</View></>;
   if(supported&&ready&&loadedOwner===owner&&!run&&!courseId)return <>{screenOptions}<SavedCourseChooser key={owner} busy={busy}/></>;
   const last = points[points.length - 1];
   return <>{screenOptions}<SafeAreaView style={styles.screen} edges={['left', 'right']}><ScrollView contentContainerStyle={styles.content}>

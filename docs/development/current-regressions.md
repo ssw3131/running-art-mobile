@@ -77,3 +77,7 @@ loop/legacy 엔진의 공개 trace는 copy-on-write로 갱신한다. 같은 배�
 준비 안내는10초 내 도보 경로를 준비하지 못하면 요청을 끊고 실패 문구 후 지도 준비로 진행한다. 실패 후 GPS 러닝을 자동 시작하지 않는다. checkpoint가 없는 동기화 복원 기록도 실제 points/segment에서 복구해 미완주를 이어받으며, 원본과 같은 hash의 재저장 코스도 지원한다. 시뮬레이션 재개는 기존 선을 보여주는 일시정지로 열고 계정의 음성 설정을 따른다. 한국어 TTS는 setLanguage 후 음성을 선택하고 offline 우선/기기 대체 엔진을 지원한다.
 
 링크 탭 선택은 해당 기록의 실제 공유 URL 준비 동작이며, 준비 후 주소와 브라우저 열기를 연결한다. 다른 이미지 탭은 자동 공개하지 않는다. 추천 상세의 경고 확인은 기존 조건을 채운 설정으로 이동만 하고 계산/차감하지 않는다. 앞선 자동재계산·checkpoint필수·시뮬레이션 voice:false 고정은 이 변경으로 대체한다.
+
+## 2026-11-15 가까운 코스·합류 준비
+
+[새 계약](nearby-approach.md)이 추천의 출발지 거리, 기본 선택, 준비의 시간 초과 후 시작 동작을 대체한다. `tests/nearby-approach.test.mjs`, `tests/nearby-stream.test.mjs`, `tests/components/recommendation-approach.test.tsx`, `tests/components/preparation-approach.test.tsx`, `tests/components/run-preparation.test.tsx`를 연결한다. 기존 엔진 점수/저장·실제 위치 품질/보행 연결성은 유지한다.

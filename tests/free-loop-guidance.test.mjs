@@ -108,9 +108,9 @@ test('OSM references prevent a same-coordinate disconnected bridge from joining 
 test('road planner caps the radius at 10km, preserves offline errors, and supports cancellation',async()=>{
   const calls=[],load=async(_,radius)=>{calls.push(radius);return {elements:[],source:'fixture',cached:true};};
   await assert.rejects(createApproachPlanner(load)({course:snapshot(square),position:square[0],accuracy:5},new AbortController().signal));
-  assert.deepEqual(calls,[2000,5000,10000]);
+  assert.deepEqual(calls,[1000]); // Missing source road cannot be repaired by widening.
   const cancel=new AbortController();cancel.abort();await assert.rejects(createApproachPlanner(load)({course:snapshot(square),position:square[0],accuracy:5},cancel.signal),/취소/);
-  assert.equal(calls.length,3);
+  assert.equal(calls.length,1);
   await assert.rejects(createApproachPlanner(async()=>{throw new Error('offline missing');})({course:snapshot(square),position:square[0],accuracy:5},new AbortController().signal),/offline missing/);
 });
 test('free-loop search works without a central road and persists only a reversible closed loop',()=>{
