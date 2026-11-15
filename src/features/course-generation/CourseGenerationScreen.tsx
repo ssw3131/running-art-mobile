@@ -114,6 +114,7 @@ export default function CourseGenerationScreen() {
     g.start(agreed); scroll.current?.scrollTo({ y: 0, animated: false });
   };
   const detail = (run = false, index = g.selected, mapOnly = false) => {
+    if(index<0)return;
     if (!result) return;
     try {
       const draft = candidateDrafts.put(courseFromCalculation(result, index), index + 1, auth.account?.id ?? 'guest',result.result.candidates.length);

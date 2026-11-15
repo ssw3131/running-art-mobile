@@ -19,22 +19,23 @@ export function usePreparationApproach(course:RunCourse|null,fix:Fix|null,observ
   const courseId=course?.id;
   const latestPlan=useRef<ApproachPlan|null>(null);
   const readPlan=useCallback(()=>latestPlan.current,[]);
-  useFocusEffect(useCallback(()=>{if(!courseId)return;active.current=true;generation.current++;failureAt.current=0;latestPlan.current=null;setPlan(null);setError('');return()=>{active.current=false;generation.current++;pending.current?.cancel.abort();pending.current=null;latestPlan.current=null;};},[courseId]));
+  useFocusEffect(useCallback(()=>{if(!courseId)return;active.current=true;generation.current++;failureAt.current=0;latestPlan.current=null;setPlan(null);setError('');return()=>{active.current=false;generation.current++;pending.current?.cancel.abort('handoff');pending.current=null;latestPlan.current=null;};},[courseId]));
   useEffect(()=>{
-    if(!enabled){pending.current?.cancel.abort();pending.current=null;return;}
+    if(!enabled){pending.current?.cancel.abort('handoff');pending.current=null;return;}
     if(!active.current||!course||!fix||fix.accuracy===null||fix.accuracy>30||Date.now()-fix.timestamp>5000)return;
     const position:Coordinate=[fix.longitude,fix.latitude];latest.current=position;
     if(courseProjection(course.snapshot.route,position).separation<=12){pending.current?.cancel.abort();pending.current=null;latestPlan.current=null;return;}
     if(plan){try{validApproach(plan,course.snapshot,position);return;}catch{}}
     if(pending.current&&distance(pending.current.origin,position)<20)return;
     pending.current?.cancel.abort();pending.current=null;
-    if(Date.now()-failureAt.current<30000)return;
+    if(failureAt.current)return;
+    setError('');
     const request={cancel:new AbortController(),origin:position},ticket=generation.current;pending.current=request;
-    const timeout=setTimeout(()=>{if(active.current&&ticket===generation.current&&pending.current===request){pending.current=null;failureAt.current=Date.now();request.cancel.abort();setError('코스 이동 경로를 찾지 못했어요.');}},10000);
+    const timeout=setTimeout(()=>{if(active.current&&ticket===generation.current&&pending.current===request){pending.current=null;failureAt.current=Date.now();request.cancel.abort();setError('코스 이동 경로 준비 시간이 초과됐어요. 눌러서 다시 확인');}},10000);
     void planApproach({course:course.snapshot,position,accuracy:fix.accuracy},request.cancel.signal).then(value=>{
       if(!active.current||ticket!==generation.current||pending.current!==request)return;
       validApproach(value,course.snapshot,latest.current??position);latestPlan.current=value;setPlan(value);setError('');
-    }).catch(()=>{if(active.current&&ticket===generation.current&&pending.current===request){failureAt.current=Date.now();setError('도보 합류 경로를 확인하지 못했어요. 눌러서 다시 확인');}}).finally(()=>{clearTimeout(timeout);if(pending.current===request)pending.current=null;});
+    }).catch(cause=>{if(active.current&&ticket===generation.current&&pending.current===request){failureAt.current=Date.now();setError(cause instanceof Error?`${cause.message} 눌러서 다시 확인`:'도보 합류 경로를 확인하지 못했어요. 눌러서 다시 확인');}}).finally(()=>{clearTimeout(timeout);if(pending.current===request)pending.current=null;});
   },[course,fix,plan,retry,enabled]);
   let visiblePlan:ApproachPlan|null=null;
   if(plan&&course&&fix){try{validApproach(plan,course.snapshot,[fix.longitude,fix.latitude]);visiblePlan=plan;}catch{}}

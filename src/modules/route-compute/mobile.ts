@@ -7,7 +7,7 @@ import { meteredGeneration } from '../usage/generation';
 import { AllowanceError } from '../usage/model';
 
 const base = computeBaseUrl(process.env.EXPO_PUBLIC_COMPUTE_BASE_URL);
-export const calculateServerRoute: RemoteCalculation = async (input,signal,refresh) => {
+export const calculateServerRoute: RemoteCalculation = async (input,signal,refresh,progress) => {
   const owner = authentication.getSnapshot().account?.id;
   if (!base || !owner || !authClient) throw new AllowanceError('온라인 로그인 후 코스를 생성해 주세요.');
   const store = await getStorage();
@@ -21,5 +21,5 @@ export const calculateServerRoute: RemoteCalculation = async (input,signal,refre
     check();const {data,error}=await authClient!.auth.getSession();check();
     if(error || !data.session)throw new AllowanceError('다시 로그인해 주세요.');
     return {authorization:`Bearer ${data.session.access_token}`,'x-operation-id':id};
-  }),usageAccess,journal)(input,signal,refresh);
+  }),usageAccess,journal)(input,signal,refresh,progress);
 };

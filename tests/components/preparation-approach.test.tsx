@@ -61,6 +61,6 @@ test('starting cancels a preview request so the controller does not compete with
 
 test('10 second deadline aborts an unresponsive planner and ignores a late path',async()=>{
  jest.useFakeTimers();mockPlan.mockClear();let complete:(p:any)=>void;let signal:AbortSignal;mockPlan.mockImplementation((_r:any,s:AbortSignal)=>{signal=s;return new Promise(resolve=>{complete=resolve;});});
- const view=await render(<Probe point={{...fix,timestamp:Date.now()}} observedAt={Date.now()}/>);await act(()=>jest.advanceTimersByTime(10000));expect(signal!.aborted).toBe(true);expect(screen.getByTestId('error')).toHaveTextContent('코스 이동 경로를 찾지 못했어요.');
+ const view=await render(<Probe point={{...fix,timestamp:Date.now()}} observedAt={Date.now()}/>);await act(()=>jest.advanceTimersByTime(10000));expect(signal!.aborted).toBe(true);expect(screen.getByTestId('error')).toHaveTextContent(/코스 이동 경로 준비 시간이 초과됐어요/);
  await act(()=>complete!({path:[[126.999,37],[127,37]],distanceM:90,targetM:0}));expect(screen.getByTestId('path')).toHaveTextContent('no path');await view.unmount();jest.useRealTimers();
 });

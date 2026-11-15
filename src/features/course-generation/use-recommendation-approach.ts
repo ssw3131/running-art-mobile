@@ -1,42 +1,49 @@
 import { useCallback, useState } from 'react';
+import type { Position } from '@/modules/location/locate';
 import { useFocusEffect } from 'expo-router';
-import * as Location from 'expo-location';
-import { AppState } from 'react-native';
 import { courseFromCalculation } from '@/features/route-lab/saved-course';
 import type { LabCalculation } from '@/features/route-lab/session';
 import { planApproach } from '@/modules/running/navigation';
+import { toLatLng } from '@/modules/route-engine/engine';
+import { prepareRoute, type Coordinate } from '@/modules/guidance/geometry';
 export type WalkingDistance={kind:'loading'|'error'|'ready';distanceM?:number};
-/** Walking graph, never straight-line distance. One candidate at a time on low-memory phones. */
-export function useRecommendationApproach(result:LabCalculation|null,enabled:boolean){
-  const [data,setData]=useState<{result:LabCalculation;states:WalkingDistance[]}>();
-  const [retry,setRetry]=useState(0);
+/** Display distances from the selected origin; GPS belongs to running preparation. */
+export function useRecommendationApproach(result:LabCalculation|null,enabled:boolean,selected=0,current:Position|null=null){
   useFocusEffect(useCallback(()=>{
-    void retry;
+    if(!enabled||!result?.liveRoads||selected<0||!current||current.accuracy===null||current.accuracy>30||Date.now()-current.timestamp>5000)return;
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+    void planApproach({course:courseFromCalculation(result,selected),position:[current.longitude,current.latitude],accuracy:current.accuracy},controller.signal).catch(()=>{}).finally(()=>clearTimeout(timer));
+    return()=>{controller.abort('handoff');clearTimeout(timer);};
+  },[result,selected,enabled,current]));
+  const [data,setData]=useState<{result:LabCalculation;states:WalkingDistance[]}>();
+  useFocusEffect(useCallback(()=>{
     if(!result?.liveRoads||!enabled)return;
-    let closed=false,controller:AbortController|undefined;
-    const states:WalkingDistance[]=result.result.candidates.map(()=>({kind:'loading'}));
+    let closed=false;const controller=new AbortController();
+    const states:WalkingDistance[]=result.result.candidates.map(c=>c.approach?{kind:'ready',distanceM:c.approach.distanceM}:result.result.proximity?{kind:'error'}:{kind:'loading'});
     const publish=()=>{if(!closed)setData({result,states:[...states]});};publish();
     void(async()=>{
-      try{
-        const permission=await Location.getForegroundPermissionsAsync();if(!permission.granted)throw new Error('Location permission required');
-        const fix=await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High,mayShowUserSettingsDialog:false});
+      const order=[selected,...states.map((_,i)=>i)].filter((v,i,a)=>v>=0&&a.indexOf(v)===i);
+      for(const index of order){
         if(closed)return;
-        if(fix.coords.accuracy===null||fix.coords.accuracy>30||Date.now()-fix.timestamp>15000)throw new Error('Accurate current location required');
-        const position:[number,number]=[fix.coords.longitude,fix.coords.latitude];
-        for(let index=0;index<states.length;index++){
-          if(closed)return;
-          controller=new AbortController();const timeout=setTimeout(()=>controller?.abort(),30000);
-          try{
-            const course=courseFromCalculation(result,index);
-            const distanceM=(await planApproach({course,position,accuracy:fix.coords.accuracy},controller.signal)).distanceM;
-            states[index]={kind:'ready',distanceM};
-          }catch{states[index]={kind:'error'};}finally{clearTimeout(timeout);}
-          publish();
+        const course=courseFromCalculation(result,index),candidate=result.result.candidates[index],a=candidate.approach;
+        const position:Coordinate=[result.origin.lng,result.origin.lat];
+        if(a){
+          // Convert engine planar arclength to saved geographic arclength without
+          // projecting onto a different occurrence at a course self-crossing.
+          const route=prepareRoute(course.route);let m=0,targetM=route.totalMeters;
+          for(let i=1;i<candidate.route.length;i++){const x=candidate.route[i-1],y=candidate.route[i],length=Math.hypot(y.x-x.x,y.y-x.y);if(m+length>=a.targetM){targetM=route.cumulative[i-1]+(length?(a.targetM-m)/length:0)*(route.cumulative[i]-route.cumulative[i-1]);break;}m+=length;}
+          const path=a.path.map(p=>{const [lat,lng]=toLatLng(p,result.origin);return [lng,lat] as Coordinate;});
+          try{planApproach.seed?.({course,position,accuracy:30},{path,targetM,distanceM:a.distanceM},a.source,result.roadVersion??result.roadCache?.manifestHash??'unversioned');}catch{/* Never trust an unusable seed for a running start. */}
+          continue;
         }
-      }catch{for(let i=0;i<states.length;i++)states[i]={kind:'error'};publish();}
+        if(result.result.proximity)continue;
+        const timeout=setTimeout(()=>controller.abort(),10000);
+        try{states[index]={kind:'ready',distanceM:(await planApproach({course,position,accuracy:30},controller.signal)).distanceM};}
+        catch{states[index]={kind:'error'};}finally{clearTimeout(timeout);}
+        publish();
+      }
     })();
-    const background=AppState.addEventListener('change',state=>{if(state!=='active'){closed=true;controller?.abort();}else setRetry(value=>value+1);});
-    return()=>{closed=true;controller?.abort();background.remove();};
-  },[result,enabled,retry]));
+    return()=>{closed=true;controller.abort('handoff');};
+  },[result,enabled,selected]));
   return data?.result===result?data.states:[];
 }

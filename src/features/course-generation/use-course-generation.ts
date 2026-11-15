@@ -153,7 +153,7 @@ export function useCourseGeneration() {
     // A late GPS response must not replace the center shown in the confirmation.
     const input = restore ? { ...dataset.input, origin: restore.origin, options: restore.options } : { ...dataset.input, origin: { ...requested.origin }, options: { ...dataset.input.options, mode: dataset.synthetic ? 'anchored' as const : 'free-loop' as const, version: '0.2' as const, shape: requested.shape, targetKm: requested.targetKm,
       radiusKm: dataset.synthetic ? dataset.input.options.radiusKm : generationRadiusKm(requested.targetKm),
-      ...(!dataset.synthetic ? { shapeVersion: FIGMA_SHAPE_VERSION, maxRouteKm: 20 } : {}),
+      ...(!dataset.synthetic ? { shapeVersion: FIGMA_SHAPE_VERSION, maxRouteKm: 20, proximity: 'nearby-v1' as const } : {}),
       ...(requested.shape === 'custom' && requested.customTemplate ? { customTemplate: requested.customTemplate.map(p => ({ ...p })) } : {}) } };
     const expected = dataset.synthetic && requested.shape !== 'custom' ? referenceFor(datasetId, input.options) : null;
     const started = performance.now();
@@ -178,7 +178,8 @@ export function useCourseGeneration() {
         stopTimer(); running.current = false;
         const mismatch = expected ? compareReference(value.result, expected) : null;
         const comparison = expected ? mismatch ? `원본과 차이 있음: ${mismatch}` : '원본과 일치 (허용 오차 0.000001)' : dataset.synthetic ? '이 입력은 저장된 원본 비교 사례에 없어요.' : '선택한 지도 중심 기준 결과예요. 고정 표본의 원본 비교는 적용하지 않아요.';
-        setCompleted({ ...value, result: { ...value.result, candidates: [...value.result.candidates].sort((a, b) => b.score.raw - a.score.raw) }, comparison, maxTimerLagMs, timerTicks });
+        setSelected(value.result.proximity ? value.result.proximity.defaultIndex ?? -1 : 0);
+        setCompleted({ ...value, result: { ...value.result, candidates: value.result.proximity ? value.result.candidates : [...value.result.candidates].sort((a, b) => b.score.raw - a.score.raw) }, comparison, maxTimerLagMs, timerTicks });
         setSeconds(value.timing.totalMs / 1000);
         const where = value.execution === 'server' ? '서버에서' : value.fallback ? '서버 연결 대신 기기에서' : '기기에서';
         setState({ kind: 'done', message: value.result.candidates.length ? `${where} ${value.result.candidates.length}개 코스를 찾았어요.` : '조건에 맞는 코스가 없어요. 도형이나 거리를 바꿔 보세요.' });

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "scripts/qa/openapi.mjs",
+    "scripts/route-compute/package.mjs",
+    "scripts/server-compute/package.mjs",
+    "server/route-compute/openapi.json",
+    "server/route-compute/pool.mjs",
+    "server/route-compute/server.mjs",
+    "server/route-compute/worker.mjs",
+    "src/features/course-generation/CourseGenerationScreen.tsx",
+    "src/features/course-generation/RecommendationResults.tsx",
+    "src/features/course-generation/use-course-generation.ts",
+    "src/features/course-generation/use-recommendation-approach.ts",
+    "src/features/route-lab/session.ts",
+    "src/features/running/CourseRunPreparation.tsx",
+    "src/features/running/use-preparation-approach.ts",
+    "src/modules/road-data/client.ts",
+    "src/modules/route-compute/client.ts",
+    "src/modules/route-compute/contract.ts",
+    "src/modules/route-compute/mobile.ts",
+    "src/modules/route-engine/engine.ts",
+    "src/modules/route-engine/types.ts",
+    "src/modules/running/approach.ts",
+    "src/modules/running/navigation.ts",
+    "src/modules/usage/generation.ts",
+    "tests/components/course-generation.test.tsx",
+    "tests/components/preparation-approach.test.tsx",
+    "tests/components/recommendation-approach.test.tsx",
+    "tests/components/run-preparation.test.tsx",
+    "tests/free-loop-guidance.test.mjs",
+    "scripts/benchmarks/nearby-approach.mjs",
+    "src/modules/road-data/events.ts",
+    "src/modules/route-engine/nearby.ts",
+    "src/modules/route-engine/walking.ts",
+    "src/modules/running/approach-cache.ts",
+    "tests/nearby-approach.test.mjs",
+    "tests/nearby-stream.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "사용자 승인 계획: 300/500/1000m 접근 거리와 원시 유사도 5점 비교 정책, v3 진행 스트림, 현재 GPS 합류 경로 최적화를 함께 적용한다.",
+  "before": "광역 유사도 상위 후보만 추천하고 GPS 합류 경로를 2km부터 매번 구성했으며 준비 안내 공통10초 제한이 GPS와 경로 계산을 함께 중단했다.",
+  "after": "별도 근거리 배치와 실제 도보 거리로 대표 후보를 선택하고 확장 이유를 표시한다. 실제 GPS 경로의 1/2/5/10km 조회, 도로망/완성 경로/진행 중 요청을 재사용하며 GPS15초와 경로10초 실패·재시도를 분리한다.",
+  "invariants": [
+    "v1/v2 계약과 기존 광역 탐색 및 원시 유사도 산식을 유지한다.",
+    "생성 작업 ID와 이용 횟수 차감은 한 번이며 코스/기록/로그인/오프라인 자료 형식은 변경하지 않는다.",
+    "보행 연결이 불명확한 경우 직선 경로를 만들지 않고 1km 초과 후보를 자동 선택하지 않는다."
+  ],
+  "tests": [
+    {
+      "path": "tests/nearby-approach.test.mjs",
+      "reason": "단계·5점 경계, 도로 연결과 우회, 캐시·취소·진행 작업 인계 및 이전 최고점 보존을 확인한다."
+    },
+    {
+      "path": "tests/nearby-stream.test.mjs",
+      "reason": "실제 HTTP 진행·최종 결과, 분할 UTF-8/중단/오류, 단일 차감/재조회/기존 JSON을 확인한다."
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "대표 선택 전 상태, 확장 이유와 연결 불명확 설명을 화면 동작으로 확인한다."
+    },
+    {
+      "path": "tests/components/preparation-approach.test.tsx",
+      "reason": "GPS 흔들림과 시간 초과 이후 명시적 재시도, 늦은 응답과 취소를 확인한다."
+    },
+    {
+      "path": "tests/components/run-preparation.test.tsx",
+      "reason": "GPS15초 제한과 부정확한 반복 위치, 준비 전 시작 금지를 확인한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "추천 결과의 거리/모양 구분·접근 거리·확장 이유, 준비 중/실패 안내가 바뀐다. 정적4화면은 기존 기준을 유지한다.",
+    "evidence": [
+      "관련 UI 상태 검사를 통과한 뒤 ready PR의 실제 API29/36 생성·준비 화면 캡처를 검토하며 근거를 docs/quality/nearby-approach-20261115.md에 기록한다. 현재 실제 화면 검토는 대기이며 통과로 간주하지 않는다."
+    ]
+  },
+  "native": "ready PR의 Android29/36 전체 기능·4화면·자료 보존/정리 검사가 필수다. SM-A102N 각20회 성능 목표는 별도 실측 전 미검증으로 유지한다."
+}

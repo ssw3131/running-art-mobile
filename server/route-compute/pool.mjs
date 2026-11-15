@@ -10,7 +10,7 @@ export function createComputePool({ workerUrl = new URL('./worker.mjs', import.m
   let worker, active = false, closed = false;
   async function stop() { const old = worker; worker = undefined; if (old) await old.terminate(); }
   return {
-    async run(request, signal) {
+    async run(request, signal, onProgress) {
       if (active || closed) throw new ServiceError(503, 'busy');
       if (signal.aborted) throw new ServiceError(499, 'cancelled');
       active = true;
@@ -29,9 +29,9 @@ export function createComputePool({ workerUrl = new URL('./worker.mjs', import.m
           };
           const abort = () => { void done(new ServiceError(499, 'cancelled')); };
           const failed = () => { void done(new ServiceError(503, 'unavailable')); };
-          const message = result => { void done(result.ok ? null : new ServiceError(503, 'unavailable'), result.value); };
+          const message = result => { if(result.type==='progress'){onProgress?.(result.value);return;} void done(result.ok ? null : new ServiceError(503, 'unavailable'), result.value); };
           const timer = setTimeout(() => { void done(new ServiceError(504, 'timeout')); }, timeoutMs);
-          current.once('message', message); current.once('error', failed); current.once('exit', failed);
+          current.on('message', message); current.once('error', failed); current.once('exit', failed);
           signal.addEventListener('abort', abort, { once: true });
           current.postMessage(request);
         });

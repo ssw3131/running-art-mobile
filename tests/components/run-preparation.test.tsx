@@ -1,6 +1,6 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
-import { AppState, BackHandler, ToastAndroid, Text } from 'react-native';
+import { AppState, BackHandler, Text } from 'react-native';
 import CourseRunPreparation from '../../src/features/running/CourseRunPreparation';
 
 let mockApproachReady=true;
@@ -20,6 +20,7 @@ jest.mock('../../src/modules/storage/database', () => ({ getStorage: async () =>
 }) }));
 jest.mock('../../src/modules/running/guidance', () => ({
   validateRunCourse: (course: any) => course,
+  isStartFix: (fix:any,now:number) => !!fix && fix.accuracy !== null && fix.accuracy<=30 && now-fix.timestamp<=5000,
   startReadiness: (_course: any, fix: any, now: number) => fix && now-fix.timestamp<=5000 && fix.accuracy<=30
     ? { ready:true,distanceM:0,message:'코스 위에 있어요.' } : { ready:false,distanceM:null,message:'정확한 위치를 기다려 주세요.' },
 }));
@@ -88,8 +89,21 @@ test('the notice blocks confirmation while the pedestrian route is loading',asyn
  expect(screen.getByTestId('run-preparation-confirm')).toBeEnabled();await fireEvent.press(screen.getByTestId('run-preparation-confirm'));expect(screen.queryByTestId('run-preparation-loading')).toBeNull();
 });
 
-test('after 10 seconds the notice exits with a failure message instead of blocking the runner',async()=>{
- mockApproachReady=false;const toast=jest.spyOn(ToastAndroid,'show').mockImplementation(()=>{});await render(<CourseRunPreparation id="course" busy={false} onStart={jest.fn()}/>);
- await act(()=>jest.advanceTimersByTime(9999));expect(screen.getByTestId('run-preparation-confirm')).toBeDisabled();
- await act(()=>jest.advanceTimersByTime(1));expect(screen.queryByTestId('run-preparation-confirm')).toBeNull();expect(toast).toHaveBeenCalledWith(expect.stringContaining('찾지 못했어요'),ToastAndroid.LONG);expect(screen.getByTestId('run-course-start')).toBeEnabled();toast.mockRestore();
+test('GPS has its own 15 second deadline and a timed-out preparation cannot start a run',async()=>{
+ mockApproachReady=false;const onStart=jest.fn();await render(<CourseRunPreparation id="course" busy={false} onStart={onStart}/>);
+ await act(()=>jest.advanceTimersByTime(10000));expect(screen.getByTestId('run-preparation-confirm')).toBeDisabled();
+ await act(()=>jest.advanceTimersByTime(5000));expect(screen.queryByTestId('run-preparation-confirm')).toBeNull();expect(screen.getByText(/현재 위치 확인 시간이 초과/)).toBeVisible();expect(screen.getByTestId('run-course-start')).toBeDisabled();expect(onStart).not.toHaveBeenCalled();
+});
+
+
+test('repeated inaccurate GPS fixes do not reset the 15 second deadline',async()=>{
+ mockApproachReady=false;await render(<CourseRunPreparation id="course" busy={false} onStart={jest.fn()}/>);
+ for(let i=0;i<3;i++){
+  await act(()=>jest.advanceTimersByTime(5000));
+  await act(()=>mockPosition({timestamp:Date.now(),coords:{latitude:37,longitude:127,accuracy:100}}));
+ }
+ expect(screen.getByText(/현재 위치 확인 시간이 초과/)).toBeVisible();
+ expect(screen.getByTestId('run-course-start')).toBeDisabled();
+ await act(()=>mockPosition({timestamp:Date.now(),coords:{latitude:37,longitude:127,accuracy:5}}));
+ expect(screen.queryByText(/현재 위치 확인 시간이 초과/)).toBeNull();
 });

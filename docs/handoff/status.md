@@ -1,5 +1,9 @@
 # 현재 상태와 인수인계
 
+## 2026-11-15 가까운 코스·합류 경로 개선 진행 중
+
+선택 출발지 기준300→500→1000m 근거리 후보와 기존 광역 후보를 비교하고,5점 초과 시 명시적으로 선택한다. v1/v2 호환 v3 진행 스트림·도로망/합류 경로 재사용·위치/경로 시간 초과 분리를 구현 중이다. PC 회귀와 실제폰 성능은 구분하며 운영 배포·폰 설치는 없다. [계약](../development/nearby-approach.md)·[검증/미완료](../quality/nearby-approach-20261115.md)·[실행 계획](../history/executed-plans/2026-11-15-1248-nearby-approach.md).
+
 ## 2026-11-14 남은 PR 전체 반영 확인·중복 종료
 
 사용자 요청으로 남아 있던 [PR24](https://github.com/ssw3131/running-art-mobile/pull/24)·[46](https://github.com/ssw3131/running-art-mobile/pull/46)·[48](https://github.com/ssw3131/running-art-mobile/pull/48)을 전부 대조했다. PR24의 제품 소스는 PR27에, PR46/48의 원본 head는 PR50에 이미 통합돼 있다. 커밋 조상과 squash tree 일치, 마지막 문서 보존을 확인해 세 중복 PR을 종료했다. 이번에 개별 merge한 것으로 표시하지 않는다. 최신 제품/검사와 원본 원격 브랜치는 보존했다.

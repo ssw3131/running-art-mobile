@@ -244,3 +244,26 @@ test('detail reset request opens populated course settings without consuming ano
  mockParams={resetRequest:requestRegeneration('guest',{origin:grid.origin,shape:'star',targetKm:7})};
  await render(<CourseGenerationScreen/>);expect(mockG.start).not.toHaveBeenCalled();expect(mockG.reset).toHaveBeenCalled();expect(mockG.setTab).toHaveBeenCalledWith('conditions');expect(mockG.setShape).toHaveBeenCalledWith('star');expect(mockG.setTargetKm).toHaveBeenCalledWith(7);
 });
+
+
+test('nearby comparison requires a choice and preserves the expansion reason with separate origin distance',async()=>{
+ mockG.tab='results';mockG.completed=completed();mockG.selected=-1;mockG.state={kind:'done'};
+ mockG.completed.result.proximity={defaultIndex:null,comparisonRequired:true,sourceKnown:true,stages:[300,500]};
+ mockG.completed.result.candidates=mockG.completed.result.candidates.map((c:any,i:number)=>({...c,recommendation:i?'shape':'nearby'}));
+ await render(<CourseGenerationScreen/>);
+ expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/5점/);
+ expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/300m → 500m/);
+ expect(screen.getByText('가까운 코스')).toBeVisible();expect(screen.getByText('모양이 더 닮은 코스')).toBeVisible();
+ expect(screen.getByTestId('candidate-0').props.accessibilityState.selected).toBe(false);
+ expect(screen.queryByTestId('recommendation-map-open')).toBeNull();
+ expect(screen.getAllByText(/출발지에서 합류까지/)).toHaveLength(2);
+ await fireEvent.press(screen.getByTestId('candidate-1'));expect(mockG.setSelected).toHaveBeenCalledWith(1);
+});
+
+test('unconfirmed source connection is explained instead of suggesting a nearby course',async()=>{
+ mockG.tab='results';mockG.completed=completed(1);mockG.selected=-1;mockG.state={kind:'done'};
+ mockG.completed.result.proximity={defaultIndex:null,comparisonRequired:false,sourceKnown:false,stages:[]};
+ mockG.completed.result.candidates=mockG.completed.result.candidates.map((c:any)=>({...c,recommendation:'unknown'}));
+ await render(<CourseGenerationScreen/>);expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/보행 도로 연결을 확인하지 못/);
+ expect(screen.getByText('접근 거리 확인 불가')).toBeVisible();expect(screen.queryByText('가까운 코스')).toBeNull();
+});

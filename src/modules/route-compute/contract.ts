@@ -8,7 +8,9 @@ import { FIGMA_SHAPE_VERSION } from '../route-engine/figma-contours.ts';
 
 export const COMPUTE_CONTRACT = 'runpen-routes-v1';
 export const CURRENT_COMPUTE_CONTRACT = 'runpen-routes-v2';
-type Contract = typeof COMPUTE_CONTRACT | typeof CURRENT_COMPUTE_CONTRACT;
+export const PROXIMITY_COMPUTE_CONTRACT = 'runpen-routes-v3';
+type Contract = typeof COMPUTE_CONTRACT | typeof CURRENT_COMPUTE_CONTRACT | typeof PROXIMITY_COMPUTE_CONTRACT;
+export const computeContractFor = (options: SearchOptions): Contract => options.proximity ? PROXIMITY_COMPUTE_CONTRACT : options.shapeVersion ? CURRENT_COMPUTE_CONTRACT : COMPUTE_CONTRACT;
 export const MAX_REQUEST_BYTES = 16384;
 export const MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
 export type ComputeRequest = { contract: Contract; origin: Origin; options: SearchOptions; refresh: boolean };
@@ -20,7 +22,9 @@ export function parseComputeRequest(value: unknown): ComputeRequest {
   const fail = () => { throw new Error('지원하지 않는 코스 계산 조건이에요.'); };
   if (!value || typeof value !== 'object') return fail();
   const data = value as ComputeRequest, o = data.options;
-  const current = data.contract === CURRENT_COMPUTE_CONTRACT;
+  const nearby = data.contract === PROXIMITY_COMPUTE_CONTRACT;
+  const current = nearby || data.contract === CURRENT_COMPUTE_CONTRACT;
+  if (nearby ? o?.proximity !== 'nearby-v1' : o?.proximity !== undefined) return fail();
   if ((!current && data.contract !== COMPUTE_CONTRACT) || !data.origin || !Number.isFinite(data.origin.lat) || !Number.isFinite(data.origin.lng) ||
     !o || o.version !== '0.2' || o.mode !== 'free-loop' || !isGenerationDistance(o.targetKm) ||
     typeof data.refresh !== 'boolean') return fail();
@@ -32,6 +36,7 @@ export function parseComputeRequest(value: unknown): ComputeRequest {
   return { contract: data.contract, origin: { lat: data.origin.lat, lng: data.origin.lng },
     options: { version: '0.2', mode: 'free-loop', shape: o.shape, targetKm: o.targetKm, radiusKm: current ? generationRadiusKm(o.targetKm) : 2,
       ...(current ? { shapeVersion: FIGMA_SHAPE_VERSION, maxRouteKm: 20 } : {}),
+      ...(nearby ? { proximity: 'nearby-v1' as const } : {}),
       ...(o.shape === 'custom' ? { customTemplate: validateCustomTemplate(o.customTemplate!) } : {}) }, refresh: data.refresh };
 }
 
@@ -64,10 +69,27 @@ export function parseComputeResponse(value: unknown, request: ComputeRequest): C
       !Array.isArray(c.roadSegments) || c.roadSegments.length !== c.route.length - 1 ||
       !c.roadSegments.every(s => s && [s.way,s.from,s.to].every(n => Number.isSafeInteger(n) && n > 0) && s.from !== s.to &&
         finite(s.start) && finite(s.end) && s.start >= 0 && s.start <= 1 && s.end >= 0 && s.end <= 1 && s.start !== s.end && s.bidirectional === true)) return fail();
-    if (request.contract === CURRENT_COMPUTE_CONTRACT) {
+    if (request.contract !== COMPUTE_CONTRACT) {
       const length = pathLength(c.route), target = request.options.targetKm * 1000;
       if (length < target * 0.75 || length > Math.min(target * 1.25, 20000) || Math.abs(length / 1000 - c.score.lengthKm) > 1e-6 || c.score.raw < 0 || c.score.raw > 100) return fail();
     }
+  }
+  if (request.contract === PROXIMITY_COMPUTE_CONTRACT) {
+    const p=r.proximity;
+    if(!p||!Array.isArray(p.stages)||p.stages.length>3||p.stages.some((n,i)=>n!==[300,500,1000][i])||typeof p.sourceKnown!=='boolean'||typeof p.comparisonRequired!=='boolean'||
+      !(p.defaultIndex===null||Number.isInteger(p.defaultIndex)&&p.defaultIndex>=0&&p.defaultIndex<r.candidates.length))return fail();
+    for(const c of r.candidates){
+      if(!['nearby','shape','far','unknown'].includes(c.recommendation??''))return fail();
+      const a=c.approach;
+      if(a===null){if(c.recommendation!=='unknown')return fail();continue;}
+      if(!p.sourceKnown||!a||!path(a.path)||a.path.length<2||!finite(a.distanceM)||a.distanceM<0||!finite(a.targetM)||a.targetM<0||a.targetM>pathLength(c.route)+1||Math.abs(pathLength(a.path)-a.distanceM)>1||
+        !a.source||a.source.from===a.source.to||![a.source.way,a.source.from,a.source.to].every(n=>Number.isSafeInteger(n)&&n>0)||!finite(a.source.start)||!finite(a.source.end)||a.source.start<0||a.source.start>1||a.source.end<0||a.source.end>1||a.source.start===a.source.end||typeof a.source.bidirectional!=='boolean')return fail();
+      let m=0,endpoint=c.route.at(-1)!;
+      for(let i=1;i<c.route.length;i++){const x=c.route[i-1],y=c.route[i],length=Math.hypot(y.x-x.x,y.y-x.y);if(m+length>=a.targetM){const t=length?(a.targetM-m)/length:0;endpoint={x:x.x+t*(y.x-x.x),y:x.y+t*(y.y-x.y)};break;}m+=length;}
+      if(Math.hypot(a.path[0].x,a.path[0].y)>30.01||Math.hypot(endpoint.x-a.path.at(-1)!.x,endpoint.y-a.path.at(-1)!.y)>2)return fail();
+      if((c.recommendation==='nearby'&&a.distanceM>1000)||(c.recommendation==='far'&&a.distanceM<=1000))return fail();
+    }
+    if(p.defaultIndex!==null&&(p.comparisonRequired||!r.candidates[p.defaultIndex].approach||r.candidates[p.defaultIndex].approach!.distanceM>1000))return fail();
   }
   return data;
 }

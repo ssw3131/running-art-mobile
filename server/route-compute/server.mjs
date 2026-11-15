@@ -11,8 +11,18 @@ import { UsageError } from '../../supabase/functions/_shared/usage-backend.ts';
 export function createComputeServer(pool = createComputePool(), { admission, ingress = createIngressGate(), report = () => {}, usage = configuredUsage() } = {}) {
   let occupied = false, stopping = false, lastRejection = -Infinity;
   const server = http.createServer({ maxHeaderSize: 8192 }, async (req, res) => {
+    const streaming=req.headers.accept==='application/x-ndjson';
+    let streamBytes=0,lastProgress=0,lastPhase='';
+    const event=(value)=>{
+      if(res.destroyed||res.writableEnded)return;
+      const body=JSON.stringify(value)+'\n';streamBytes+=Buffer.byteLength(body);
+      if(streamBytes>MAX_RESPONSE_BYTES){res.destroy();return;}
+      if(!res.headersSent)res.writeHead(200,{'content-type':'application/x-ndjson; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'});
+      res.write(body);
+    };
     const reply = (status, value, retryAfter = 5) => {
       if (res.destroyed) return;
+      if(res.headersSent){event(status===200?{type:'result',value}:{type:'error',code:value.error,message:'코스 계산을 완료하지 못했어요. 다시 시도해 주세요.'});res.end();return;}
       const body = JSON.stringify(value);
       res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store',
         'x-content-type-options': 'nosniff', ...(status === 429 || status === 503 ? { 'retry-after': String(retryAfter) } : {}) });
@@ -62,7 +72,10 @@ export function createComputeServer(pool = createComputePool(), { admission, ing
       if (admission) await admission.reserve(AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]));
       if (controller.signal.aborted) throw new ServiceError(499, 'cancelled');
       report({ severity: 'INFO', event: 'compute_admitted' });
-      const value = await pool.run(request, controller.signal);
+      const value = await pool.run(request, controller.signal, progress=>{
+        if(!streaming||request.contract!=='runpen-routes-v3'||controller.signal.aborted)return;
+        const at=Date.now();if(progress.phase===lastPhase&&at-lastProgress<200)return;lastPhase=progress.phase;lastProgress=at;event({type:'progress',value:progress});
+      });
       if (Buffer.byteLength(JSON.stringify(value)) > MAX_RESPONSE_BYTES) throw new ServiceError(503, 'response_size');
       if (value.result.candidates.length) {
         const updated = await usage.command(allowance.owner, 'ready', { id: allowance.id, result: value });

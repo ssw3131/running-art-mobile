@@ -19,7 +19,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
 }) {
   const c = useThemeColors(), { height, fontScale } = useWindowDimensions();
   const result = g.completed, busy = g.state.kind === 'running', candidates = result?.result.candidates ?? [];
-  const walking=useRecommendationApproach(result??null,!busy);
+  const walking=useRecommendationApproach(result??null,!busy,g.selected,g.centerState.position);
   return <View testID="recommendation-results" style={{ flex: 1 }}>
     <View testID="recommendation-fixed-map" style={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 16, borderBottomWidth: 1, borderColor: c.divider }}>
       <View style={styles.heading}><AppText variant="caption" style={{ flex: 1 }} numberOfLines={2}>출발지 : {location}</AppText>
@@ -27,7 +27,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
       <View style={{ height: Math.min(288, Math.max(160, height * 0.29)), borderRadius: 16, overflow: 'hidden' }}>
         <MapSurface styleUrl={mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY) ?? ''} position={null} origin={result?.origin}
           syntheticRoads={g.roads} routeOverlay={g.overlay} showTarget={showTarget} interactive={false} routeColors={{ route: '#FF5264', target: '#5197FE' }} />
-        {!!candidates.length && <Pressable testID="recommendation-map-open" accessibilityRole="button" accessibilityLabel="지도에서 코스 보기" onPress={onMap}
+        {!!candidates.length && g.selected>=0 && <Pressable testID="recommendation-map-open" accessibilityRole="button" accessibilityLabel="지도에서 코스 보기" onPress={onMap}
           style={[styles.mapOpen, { backgroundColor: c.surface, borderColor: c.outline }]}>
           <Image source={require('../../../assets/generation/recommendations/search.svg')} style={{ width: 20, height: 20 }} contentFit="contain" accessible={false} />
         </Pressable>}
@@ -37,17 +37,19 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
     <ScrollView testID="recommendation-list-scroll" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 12 }}>
       {(busy || g.state.kind === 'error' || g.state.kind === 'cancelled') && status}
       <View testID={g.state.kind === 'done' ? 'calculation-done' : undefined} style={[styles.list, { backgroundColor: c.background }]}>
-        <AppText weight="bold" style={{ fontSize: 18, lineHeight: 26 }}>유사도가 높은 추천 코스 {candidates.length}개</AppText>
+        <AppText weight="bold" style={{ fontSize: 18, lineHeight: 26 }}>{result?.result.proximity ? '거리와 모양을 비교할 코스' : '유사도가 높은 추천 코스'} {candidates.length}개</AppText>
+        {result?.result.proximity && <AppText testID="nearby-explanation" variant="caption">{!result.result.proximity.sourceKnown?'출발지의 보행 도로 연결을 확인하지 못했어요. 접근 거리는 확인 불가로 표시하며 코스를 자동 선택하지 않아요.':result.result.proximity.comparisonRequired?'가까운 코스와 모양이 더 닮은 코스의 유사도 차이가 5점을 넘어요. 이동 거리와 모양을 비교해 선택해 주세요.':result.result.proximity.defaultIndex===null?'합류 1km 이내에서 추천할 코스를 확인하지 못했어요. 이동 거리를 확인하고 대안을 선택해 주세요.':'접근 거리와 모양을 함께 고려한 가까운 코스를 추천해요.'}{result.result.proximity.stages.length>1?` 가까운 범위에서 후보를 찾지 못해 ${result.result.proximity.stages.join('m → ')}m 순으로 넓혀 찾았어요.`:''}</AppText>}
         {candidates.map((candidate, index) => <View key={index} style={[styles.card, { borderColor: g.selected === index ? c.action : c.divider, backgroundColor: c.surface }]}>
           <Pressable testID={`candidate-${index}`} accessibilityRole="button" accessibilityLabel={`유사도 ${similarityPercent(candidate.score.raw)}% · ${candidate.score.lengthKm.toFixed(2)} km · 예상 러닝 시간 약 ${estimatedRunningMinutes(candidate.score.lengthKm)}분`}
             accessibilityState={{ selected: g.selected === index }} onPress={() => g.setSelected(index)} style={[styles.selection, { flexWrap: fontScale >= 1.4 ? 'wrap' : 'nowrap' }]}>
             <View style={[styles.rank, { backgroundColor: g.selected === index ? c.action : c.navigation }]}>
               <AppText family="roboto" weight="black" style={{ fontSize: 20, color: g.selected === index ? c.onAction : c.text }}>{similarityPercent(candidate.score.raw)}%</AppText></View>
             <View style={{ flex: 1, minWidth: 110, gap: 6 }}>
+              {candidate.recommendation&&<AppText weight="bold">{{nearby:'가까운 코스',shape:'모양이 더 닮은 코스',far:candidate.score.raw===Math.max(...candidates.filter(x=>x.approach).map(x=>x.score.raw))?'모양이 더 닮은 코스 · 먼 거리 대안':'먼 거리 대안',unknown:'접근 거리 확인 불가'}[candidate.recommendation]}</AppText>}
               <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}><AppText style={[styles.label, { color: c.muted }]}>코스 난이도 :</AppText><DifficultyTag state={result?.liveRoads ? terrain.states[index] ?? { kind: 'loading' } : undefined} /></View>
-              <AppText style={[styles.label, { color: c.muted }]}>총 러닝 거리 : <AppText weight="bold" style={styles.value}>{candidate.score.lengthKm.toFixed(2)}km</AppText></AppText>
+              <AppText style={[styles.label, { color: c.muted }]}>도형 코스 거리 : <AppText weight="bold" style={styles.value}>{candidate.score.lengthKm.toFixed(2)}km</AppText></AppText>
               <AppText style={[styles.label, { color: c.muted }]}>예상 러닝 시간 : <AppText weight="bold" style={styles.value}>약 {estimatedRunningMinutes(candidate.score.lengthKm)}분</AppText></AppText>
-              <AppText style={[styles.label,{color:c.muted}]}>코스까지 이동 거리 : <AppText weight="bold" style={styles.value}>{walking[index]?.kind==='ready'?`${(walking[index].distanceM!/1000).toFixed(2)}km`:walking[index]?.kind==='error'?'확인 불가':'조회 중'}</AppText></AppText>
+              <AppText style={[styles.label,{color:c.muted}]}>출발지에서 합류까지 : <AppText weight="bold" style={styles.value}>{walking[index]?.kind==='ready'?`${(walking[index].distanceM!/1000).toFixed(2)}km`:walking[index]?.kind==='error'?'확인 불가':'조회 중'}</AppText></AppText>
             </View>
           </Pressable>
           <Pressable testID={`candidate-detail-${index}`} accessibilityRole="button" accessibilityLabel={`${index + 1}번 추천 코스 상세보기`} onPress={() => onDetail(index)} style={styles.detail}>
@@ -60,7 +62,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
       {terrain.states.some(state => state.kind === 'error') && <Button compact variant="outline" label="난이도 다시 조회" onPress={terrain.retry} />}
     <View testID="recommendation-actions" style={{ paddingHorizontal: 10, paddingVertical: 28, gap: 20, backgroundColor: c.surface }}>
       <Button variant="secondary" label="재설정 및 재생성하기" testID="generation-edit" onPress={onEdit} disabled={busy} labelStyle={{ fontSize: 16 }} />
-      {!!candidates.length && result?.liveRoads && <Button label="실시간 러닝 시작하기" testID="generation-run" leading={<GenerationIcon name="run" />} onPress={onRun} />}
+      {!!candidates.length && result?.liveRoads && <Button label="실시간 러닝 시작하기" testID="generation-run" disabled={g.selected<0} leading={<GenerationIcon name="run" />} onPress={onRun} />}
     </View>
     </ScrollView>
   </View>;
