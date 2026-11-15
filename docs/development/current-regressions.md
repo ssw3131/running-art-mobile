@@ -6,6 +6,7 @@
 
 | 분야 | 현재 확인한 기대 동작·보존 조건 | 관련 회귀와 진단 |
 | --- | --- | --- |
+| 러닝 지도 둘러보기 (2026-11-15) | 현재 위치 중앙·진행 방향 위쪽 자동 추적이 기본이다. 드래그·확대 시 카메라 추적만 중지하고 GPS 기록·안내·주황 궤적은 계속 갱신한다. 현재 위치 버튼은 최신 위치·방향·기본 배율16.5로 복귀한다. 회전·기울이기는 제한하며 터치 잠금 중 이동·확대도 차단한다. 일시정지·시뮬레이션에도 같은 조작을 허용한다. | `guidance-trail`, `live-running`, `navigation-bearing`, `run-settings`; service 진단 |
 | 홈 → 코스 생성 | 항상 조건 설정을 연다. 현재 입력과 이전 추천 결과는 보존하고 결과 보기로 돌아간다. 새 생성 확정 전에는 재계산하지 않는다. 일반 탭 이동의 화면 보존과 홈 CTA를 구분한다. 임시 추천 결과를 앱 종료 후 영구 보존한다고 가정하지 않는다. | `generation-home-entry`, `home`, `open-service-tab`; home 진단 |
 | 생성 조건·확인 | 거리1~10km 슬라이더/11~20km 입력, 폼 아래 스크롤 생성 버튼. 주소 조회값/상태는 폼과 확인창에서 일치해야 하고 조회 실패가 선택 좌표를 바꾸면 안 된다. 확인 취소·스크롤·그리기 취소 후 좌표를 보존한다. | `generation-distance`, `course-generation`, `course-location-picker`, `point-address`; generation/accessibility 진단 |
 | 러닝 준비·잠금 | 저장 코스를 선택해 준비한다. 준비 취소와 종료 복귀를 구분한다. 현재 러닝의 잠금 해제 저장과 다음 러닝의 계정 기본값은 별개다. 기존 종료 기록·새 재도전 ID·자료 보존을 검사한다. | `running-chooser`, `running-preparation`, `live-running`, `run-settings`; service 진단 |
