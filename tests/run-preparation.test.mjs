@@ -24,11 +24,11 @@ async function fixture(t) {
   return {repo,course,route,outside,fix,plan,calls,driver,controller,progress};
 }
 
-test('fresh prepared GPS and approach start without a second GPS watch or routing request', async t => {
+test('fresh prepared GPS starts without another GPS watch and validates the cached source road', async t => {
   const f = await fixture(t);
   const run = await f.controller.start(f.course.id, {courseId:f.course.id,read:()=>({fix:f.fix(),plan:f.plan})}, value=>f.progress.push(value));
   assert.equal(run.status,'running');
-  assert.deepEqual(f.calls,{locate:0,plan:0,start:1});
+  assert.deepEqual(f.calls,{locate:0,plan:1,start:1});
   assert.equal((await f.repo.guidance(run.id)).state.phase,'approach');
   assert.match(f.progress.at(-1),/기록/);
 });
@@ -45,7 +45,7 @@ test('permission time uses the latest preview fix, not the fix captured when pre
 test('stale preview needs one fresh fix but keeps a still-valid approach', async t => {
   const f = await fixture(t);
   await f.controller.start(f.course.id,{courseId:f.course.id,read:()=>({fix:{...f.fix(),timestamp:Date.now()-60000},plan:f.plan})});
-  assert.deepEqual(f.calls,{locate:1,plan:0,start:1});
+  assert.deepEqual(f.calls,{locate:1,plan:1,start:1});
 });
 
 test('a plan for an old position is rebuilt once and a fresh fix is reused after quick routing', async t => {
@@ -79,4 +79,19 @@ test('poor accuracy and stale GPS cannot create a session even if a driver retur
     assert.equal(await f.repo.active(),null);
   }
   assert.equal(f.calls.start,0);
+});
+
+
+test('a preview path cannot bypass a changed or ambiguous source road at start',async t=>{
+ const f=await fixture(t),controller=createRunController(async()=>f.repo,f.driver,async()=>{throw Error('현재 도로가 겹쳐 위치를 구분하기 어려워요.');});
+ await assert.rejects(controller.start(f.course.id,{courseId:f.course.id,read:()=>({fix:f.fix(),plan:f.plan})}),/도로가 겹쳐/);
+ assert.equal(await f.repo.active(),null);assert.equal(f.calls.start,0);
+});
+
+test('starting has a 10 second route deadline even for an uncooperative planner',async t=>{
+ const f=await fixture(t);let routing=false;const controller=createRunController(async()=>f.repo,f.driver,async()=>{routing=true;return new Promise(()=>{});});
+ t.mock.timers.enable({apis:['setTimeout']});
+ const starting=controller.start(f.course.id,{courseId:f.course.id,read:()=>({fix:f.fix(),plan:f.plan})});
+ while(!routing)await setImmediate();t.mock.timers.tick(10000);
+ await assert.rejects(starting,/시간이 초과/);assert.equal(await f.repo.active(),null);assert.equal(f.calls.start,0);
 });

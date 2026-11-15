@@ -31,6 +31,7 @@ export function createApproachCache(load:RoadLoader,op:Operations,yieldToHost:()
     const finish=(plan:ApproachPlan)=>{if(revision!==roadRevision)throw new Error('도로 자료가 갱신됐어요. 경로를 다시 확인해 주세요.');if(signal.aborted)throw new Error('합류 경로 준비를 취소했어요.');timing.totalMs=performance.now()-started;report?.(timing);return op.validApproach(plan,request.course,request.position);};
     for(const cached of [...plans].reverse()){
       if(cached.key!==key||distance(cached.position,request.position)>30)continue;
+      if(!cached.source.bidirectional&&distance(cached.position,request.position)>1)continue;
       // A remotely seeded plan is only reusable at its measured position. Any
       // movement needs a graph to distinguish parallel roads and overpasses.
       if(cached.graph){const s=await drain(op.snapWalkingSourceSteps(cached.graph,op.toPoint(origin.lat,origin.lng,cached.graph.origin),request.accuracy),signal);const ref=cached.graph.edges[s.edge].ref;if(!ref||!sameRoad(cached.source,ref))continue;}

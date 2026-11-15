@@ -40,7 +40,7 @@ test('long boundary roads remain snappable and a real outside detour expands to 
 });
 test('nearby parallel roads are not accepted through a cached plan',async()=>{
  const other=way(3,[10,11],[[0,10],[300,10]]);const planner=createApproachPlanner(async()=>({elements:[...roads,other],source:'test',cached:true}),async()=>{});
- await planner(request,signal());await assert.rejects(planner({...request,position:coord([100,10])},signal()));
+ await planner(request,signal());await assert.rejects(planner({...request,position:coord([0,10])},signal()));
 });
 test('one-way approach distance field respects direction and joins the reachable side',()=>{
  const directed=[way(1,[1,2],[[0,0],[400,0]],{highway:'footway','oneway:foot':'-1'}),roads[1]];
@@ -101,4 +101,11 @@ test('graph eviction also releases paths that retained an evicted graph',async()
  await planner(request,signal());assert.equal(planner.stats().plans,1);
  for(const x of [3000,6000])await assert.rejects(planner({...request,position:coord([x,0])},signal()));
  assert.equal(planner.stats().graphs,2);assert.equal(planner.stats().plans,0);
+});
+
+
+test('moving along a pedestrian one-way rebuilds the path on the shared graph instead of sending the runner backwards',async()=>{
+ let loads=0;const planner=createApproachPlanner(async()=>{loads++;return {elements:[way(1,[1,2],[[0,0],[400,0]],{highway:'footway','oneway:foot':'yes'}),roads[1]],source:'test',cached:true};},async()=>{});
+ await planner(request,signal());const result=await planner({...request,position:coord([10,0])},signal());
+ assert.ok(Math.abs(result.distanceM-390)<1);assert.equal(loads,1);
 });

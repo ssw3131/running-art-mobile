@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "paths": [
     "scripts/benchmarks/nearby-approach.mjs",
+    "scripts/benchmarks/nearby-quality.mjs",
     "scripts/qa/android-membership-proxy.mjs",
     "scripts/qa/course_generation.py",
     "scripts/qa/course_generation_figma.py",
@@ -18,6 +19,7 @@
     "src/features/course-generation/use-recommendation-approach.ts",
     "src/features/route-lab/session.ts",
     "src/features/running/CourseRunPreparation.tsx",
+    "src/features/running/RunScreen.tsx",
     "src/features/running/use-preparation-approach.ts",
     "src/modules/road-data/client.ts",
     "src/modules/road-data/events.ts",
@@ -30,6 +32,7 @@
     "src/modules/route-engine/walking.ts",
     "src/modules/running/approach-cache.ts",
     "src/modules/running/approach.ts",
+    "src/modules/running/controller.ts",
     "src/modules/running/navigation.ts",
     "src/modules/usage/generation.ts",
     "tests/components/course-generation.test.tsx",
@@ -40,7 +43,8 @@
     "tests/free-loop-guidance.test.mjs",
     "tests/nearby-approach.test.mjs",
     "tests/nearby-stream.test.mjs",
-    "scripts/benchmarks/nearby-quality.mjs"
+    "tests/run-preparation.test.mjs",
+    ""
   ],
   "behavior": "changed",
   "decision": "사용자 승인 계획: 300/500/1000m 접근 거리와 원시 유사도 5점 비교 정책, v3 진행 스트림, 현재 GPS 합류 경로 최적화를 함께 적용한다.",
@@ -71,6 +75,10 @@
     {
       "path": "tests/components/run-preparation.test.tsx",
       "reason": "GPS15초 제한과 부정확한 반복 위치, 준비 전 시작 금지를 확인한다."
+    },
+    {
+      "path": "tests/run-preparation.test.mjs",
+      "reason": "준비 경로가 있어도 시작 시 도로 확인을 거치고 경로10초 제한/취소에서는 기록이 생기지 않음을 확인한다."
     }
   ],
   "visual": {

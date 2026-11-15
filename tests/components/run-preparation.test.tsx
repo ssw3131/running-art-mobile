@@ -107,3 +107,9 @@ test('repeated inaccurate GPS fixes do not reset the 15 second deadline',async()
  await act(()=>mockPosition({timestamp:Date.now(),coords:{latitude:37,longitude:127,accuracy:5}}));
  expect(screen.queryByText(/현재 위치 확인 시간이 초과/)).toBeNull();
 });
+
+
+test('a failed actual start blocks the start control until explicit retry',async()=>{
+ await render(<CourseRunPreparation id="course" busy={false} startBlocked onStart={jest.fn()}/>);
+ expect(screen.getByTestId('run-course-start')).toBeDisabled();expect(screen.queryByTestId('run-preparation-confirm')).toBeNull();
+});
