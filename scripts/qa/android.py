@@ -252,10 +252,33 @@ def visual_frame(remaining, name):
         result = subprocess.run(['node', str(ROOT / 'scripts/qa/system-bar-ready.mjs')],
                                 input=png, capture_output=True, timeout=left, check=True)
         return json.loads(result.stdout)['ready']
-    return wait_system_bar(
-        lambda left: demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=left),
-        lambda left: q.adb('exec-out', 'screencap', '-p', timeout=left),
-        ready, q.OUT, name, remaining)
+    try:
+        return wait_system_bar(
+            lambda left: demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=left),
+            lambda left: q.adb('exec-out', 'screencap', '-p', timeout=left),
+            ready, q.OUT, name, remaining)
+    except Exception:
+        # Preserve the live demo/repository state before capture_visuals exits
+        # demo mode. A modem command's OK is not evidence of the rendered level.
+        save_system_bar_state(name + '-failed')
+        raise
+
+
+def save_system_bar_state(name):
+    diagnostics = []
+    for suffix, command in [
+        ('systemui', ('shell', 'dumpsys', 'activity', 'service', 'com.android.systemui/.SystemUIService')),
+        ('telephony', ('shell', 'dumpsys', 'telephony.registry')),
+        ('demo-allowed', ('shell', 'settings', 'get', 'global', 'sysui_demo_allowed')),
+        ('demo-on', ('shell', 'settings', 'get', 'global', 'sysui_tuner_demo_on')),
+    ]:
+        filename = name + '-' + suffix + '.txt'
+        try:
+            (q.OUT / filename).write_bytes(q.adb(*command, timeout=20))
+            diagnostics.append({'file': filename, 'status': 'saved'})
+        except Exception as error:
+            diagnostics.append({'file': filename, 'error': str(error)})
+    (q.OUT / (name + '-diagnostics.json')).write_text(json.dumps(diagnostics), encoding='utf8')
 
 
 def capture_visuals():
@@ -265,6 +288,8 @@ def capture_visuals():
     demo('network', wifi='show', level='4', fully='true')
     demo('network', mobile='show', datatype='3g', level='4', fully='true')
     demo('notifications', visible='false')
+    if int(environment['api']) >= 36:
+        save_system_bar_state('visual-demo-start')
     screens = []
     try:
         for tab in ['home', 'run', 'archive', 'account']:
