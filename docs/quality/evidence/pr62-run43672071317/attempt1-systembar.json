@@ -1,0 +1,98 @@
+[
+  {
+    "capture": "prepare-visual-home",
+    "status": "failed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.403,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-01.png"
+      },
+      {
+        "elapsedSeconds": 1.061,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-02.png"
+      },
+      {
+        "elapsedSeconds": 1.725,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-03.png"
+      },
+      {
+        "elapsedSeconds": 2.386,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-04.png"
+      },
+      {
+        "elapsedSeconds": 3.057,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-05.png"
+      },
+      {
+        "elapsedSeconds": 3.723,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-06.png"
+      },
+      {
+        "elapsedSeconds": 4.372,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-07.png"
+      },
+      {
+        "elapsedSeconds": 5.054,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-08.png"
+      },
+      {
+        "elapsedSeconds": 5.711,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-09.png"
+      },
+      {
+        "elapsedSeconds": 6.364,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-10.png"
+      },
+      {
+        "elapsedSeconds": 7.051,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-11.png"
+      },
+      {
+        "elapsedSeconds": 7.716,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-12.png"
+      },
+      {
+        "elapsedSeconds": 8.378,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-13.png"
+      },
+      {
+        "elapsedSeconds": 9.1,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-14.png"
+      },
+      {
+        "elapsedSeconds": 9.752,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-15.png"
+      },
+      {
+        "elapsedSeconds": 10.414,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-16.png"
+      },
+      {
+        "elapsedSeconds": 11.069,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-17.png"
+      },
+      {
+        "elapsedSeconds": 11.762,
+        "fullSignal": false,
+        "file": "prepare-visual-home-systembar-242eb675873f4008aebafa7e627ff48c-18.png"
+      }
+    ]
+  }
+]
