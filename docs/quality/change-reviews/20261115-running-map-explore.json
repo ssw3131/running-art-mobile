@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/features/guidance/GuidanceMap.tsx",
+    "src/features/running/LiveGuidancePanel.tsx",
+    "tests/components/guidance-trail.test.tsx",
+    "tests/components/live-running.test.tsx",
+    "scripts/qa/android.py",
+    "tests/system-bar-ready.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-15 최신 코드 검토 후 사용자가 러닝 중 이동·확대, 현재 위치 복귀, 회전·기울이기 제한 및 터치 잠금 유지를 승인했다. 기존 followLock의 항상 잠금 결정을 대체한다. 사용자 후속 지시로 PR62를 막은 SystemUI 촬영 준비 문제도 진단·수정한다.",
+  "before": "러닝·일시정지·시뮬레이션 지도에서 터치 잠금과 별개로 이동·확대가 항상 차단됐다.",
+  "after": "기본 자동 추적은 유지하고 제스처가 시작되면 카메라 추적만 멈춘다. 둘러보는 동안 새 GPS 위치·궤적은 표시되며 현재 위치 버튼으로 최신 위치·방향·배율16.5 자동 추적을 복원한다. 러닝의 회전·기울이기는 제한하고 터치 잠금 중 이동·확대도 막는다. 준비 지도는 기존 회전·애니메이션 동작을 유지한다. Android36 촬영은 실제 SIM과 다른 데모 subscription999를 명시하여 신호 표시 객체의 기존 실제 repository 재사용을 피한다. 원본 화면8픽셀 관측과12초 기한을 유지하고 전후 SystemUI 데모/실제 모바일 repository 및 데모 신호 table 덤프를 보존한다. UI 계층 실패 진단에는 접근성 상태와 전환 직전 로그가 남도록 최근4000행을 수집하며 성공/준비 조건은 유지한다.",
+  "invariants": [
+    "GPS 기록·거리·페이스·안내·일시정지·종료와 DB/계정 설정 형식을 변경하지 않는다.",
+    "파랑3px 계획 코스·주황7px 실제 궤적 및 GPS 공백 분리를 유지한다.",
+    "사용자 조작 없는 카메라 갱신은 자동 추적을 중단하지 않는다. 위치·방향 갱신은 둘러보기를 강제로 종료하지 않는다.",
+    "기존 터치 잠금 모달·길게 누르기/접근성 해제와 다음 러닝 기본값을 유지한다."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/guidance-trail.test.tsx",
+      "reason": "사용자/프로그램 카메라 이벤트 구분, 둘러보기 중 위치·궤적 갱신과 카메라 불변, 최신 위치 복귀 후 지속 추적, 잠금·해제 및 준비 지도 보존."
+    },
+    {
+      "path": "tests/components/live-running.test.tsx",
+      "reason": "실제 러닝·일시정지·시뮬레이션 지도 연결과 터치 잠금 전환. 지도 조작 설정이 종료·일시정지 콜백을 호출하지 않음."
+    },
+    {
+      "path": "tests/system-bar-ready.test.mjs",
+      "reason": "원본 실패 PNG 두 장은 계속 거부하고 기준 PNG는 수락하며 이미지 바이트를 변경하지 않는 회귀."
+    },
+    {
+      "path": "scripts/qa/test_system_bar_readiness.py",
+      "reason": "기존 준비 대기·시간 초과·늦은 성공 거부·명령 오류4개 유지."
+    }
+  ],
+  "visual": {
+    "status": "unchanged",
+    "reason": "기본 추적 위치·배율·방향, 경로 색상·두께, 버튼·문구·레이아웃은 유지한다. 사용자 조작 시 카메라 상태만 바뀌며 정적 기준·마스크·허용오차는 변경하지 않는다."
+  },
+  "native": "MapLibre 기존 제스처/userInteraction 이벤트를 쓰며 의존성·권한·네이티브 모듈은 변경하지 않는다. 지도 관련18개·로직582/UI241/Python38, visual43680993249의 네 화면 차이0·실제 SIM1/데모999 분리를 확인했다. 최종43682166854는 fast/API/Android29 통과 뒤 Android36 코스 생성 상세 재진입에서 fresh UI hierarchy를 얻지 못해 실패했다. 원본 PNG/window/activity/logcat을 보존했으며 root cause는 미확정이다. 실패 관측을 보완한3ce2ae2의 generation43684697820에서 생성·이름 편집/탭 복귀·큰 글씨/키보드 및 자료 보존/정리가 통과했다. 이전 실패는 미재현·원인 미확정이며 최신 ready 전체 검증을 진행한다. 실제 폰 제스처/야외 GPS는 별도 범위다."
+}

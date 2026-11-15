@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "source": "78d5456eb86db978044a42702e622bb1ccf05f12",
+  "dirty": false,
+  "startedAt": "2026-11-15T03:36:50.568948+00:00",
+  "ciRun": "43672071317",
+  "apkSha256": "36c5124436986c250cceb8bfcb9e42058a29306153a380aac023ec689d4041ba",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "full",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-15T03:36:50.682271+00:00",
+      "status": "failed",
+      "preservation": {
+        "status": "passed",
+        "sha256": "f5b0d72a097e8ecbf4154d2dceef024e83b7693adc0f9bbf11c97e892cb81df0"
+      },
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S1-membership-explicit-consent",
+          "status": "passed"
+        },
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:39:43.340066+00:00",
+          "durationSeconds": 46.751,
+          "finishedAt": "2026-11-15T03:40:30.091499+00:00"
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:40:30.091667+00:00",
+          "durationSeconds": 160.561,
+          "finishedAt": "2026-11-15T03:43:10.652362+00:00"
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:43:10.652807+00:00",
+          "durationSeconds": 105.864,
+          "finishedAt": "2026-11-15T03:44:56.516945+00:00"
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:44:56.517376+00:00",
+          "durationSeconds": 19.085,
+          "finishedAt": "2026-11-15T03:45:15.602488+00:00"
+        },
+        {
+          "id": "S0-04-save",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:45:15.648260+00:00",
+          "durationSeconds": 229.502,
+          "finishedAt": "2026-11-15T03:49:05.150818+00:00"
+        },
+        {
+          "id": "S0-04-restart",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:49:05.151442+00:00",
+          "durationSeconds": 14.257,
+          "finishedAt": "2026-11-15T03:49:19.408912+00:00"
+        },
+        {
+          "id": "S0-06-gps",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:49:19.412148+00:00",
+          "durationSeconds": 108.839,
+          "finishedAt": "2026-11-15T03:51:08.251757+00:00"
+        },
+        {
+          "id": "S0-05-preparation",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:51:08.252361+00:00",
+          "durationSeconds": 41.985,
+          "finishedAt": "2026-11-15T03:51:50.237881+00:00"
+        },
+        {
+          "id": "S234-01-integrated",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:51:50.238396+00:00",
+          "durationSeconds": 245.571,
+          "finishedAt": "2026-11-15T03:55:55.810008+00:00"
+        },
+        {
+          "id": "S0-07-deep-link-gpx",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:55:55.810542+00:00",
+          "durationSeconds": 55.74,
+          "finishedAt": "2026-11-15T03:56:51.550864+00:00"
+        },
+        {
+          "id": "S0-08-accessibility",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:56:51.551391+00:00",
+          "durationSeconds": 42.548,
+          "finishedAt": "2026-11-15T03:57:34.100566+00:00"
+        },
+        {
+          "id": "S2a-02-accessibility",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:57:34.101296+00:00",
+          "durationSeconds": 70.427,
+          "finishedAt": "2026-11-15T03:58:44.529391+00:00"
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "startedAt": "2026-11-15T03:58:44.530108+00:00",
+          "durationSeconds": 175.512,
+          "finishedAt": "2026-11-15T04:01:40.043300+00:00"
+        }
+      ]
+    }
+  ],
+  "retries": 0,
+  "radioSignalProfile": {
+    "profile": 4,
+    "response": "OK"
+  },
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "error": "SystemUI full signal not ready within visual settling deadline",
+  "failureDiagnostics": [
+    {
+      "file": "failure-raw.png",
+      "status": "saved"
+    },
+    {
+      "file": "failure-window.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-activity.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-logcat.txt",
+      "status": "saved"
+    }
+  ],
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-15T04:02:22.436087+00:00",
+  "uiDumpReadinessWaits": 5,
+  "uiDumpTransportWarnings": 0,
+  "status": "failed"
+}

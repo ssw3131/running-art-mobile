@@ -1,6 +1,6 @@
 # 가까운 코스·합류 경로 검증
 
-기준 main6a72e79, 제품 소스18e84de. **부분 완료·PC 인계**다. 로직601·UI241·API·Android29는 통과했고 Android36 기능15단계/보존/정리는 통과했지만 마지막 SystemUI 화면 촬영 준비가 실패해 필수 게이트/main 병합은 미완료다. 실제 SM-A102N·운영 배포·APK 설치·휴대폰 성능 목표는 미검증이다. PR63을 draft로 돌리고 전체 재실행 없이 원본 근거를 보존했다.
+**PR62·PR63 통합 A7 검증 진행 중**이다. 이전 main6a72e79 기준 제품18e84de/검사b98e602의 전체346은 Android29 실패 작업1회 재실행 뒤 모든 필수 게이트를 통과했다. 그동안 PR62와 기록 PR64가 main25c390a에 반영돼 새 통합 소스의 검증이 필요하다. 사용자 요청대로 두 기능을 A7에서 함께 검증한 뒤 PR63을 병합한다. 최초 실패·진단·이전 기준 성공은 아래에 보존하며 최신 통합본·폰·성능 통과로 대신하지 않는다.
 
 ## 확인한 범위
 
@@ -169,3 +169,24 @@ SM-A102N을 연결한 PC에서 현재 설치본·서명·versionCode·기존 코
 - visual341 아티팩트14150676221/ZIP SHA256 `cdc50a4b65a963b0efb1b5fa0289baaeb614aaf8907c0219bdcd4a9613837d4d`, APK SHA256 `b57cb5bfc38928908d02fd1037cf6c09f67be2bdf2a7bba27b1ae1432af633c6`를 보존했다. SystemUI/telephony/demo 설정4개 원본 수집도 성공했다. 두 비교 실행의 에뮬레이터는37.2.13.0/build16740729이며 API36 OS fingerprint·geometry·기준 PNG·마스크/허용오차는 같다.
 
 제품 src/server/modules/assets 및 앱 설정·잠금 파일은18e84de와 같다. 이 결과는 화면 분야 수정 실증이며 최종 ready 전체/API29/36 기능 게이트와 main 반영을 대신하지 않는다. 위 기기 계측/설치·운영 배포도 계속 별도다.
+
+## 이전 기준 최종 전체346과 최신 main 통합
+
+[전체346/43686012871](https://github.com/ssw3131/running-art-mobile/actions/runs/43686012871)의 head는b98e602, 실제 checkout5011d14, tree531bee3161e2e7dbea0189b7784b39209eb67457이다. 문서 반영 직후 ready 전환으로 draft345는 취소됐고 전체346만 필수 검사를 수행했다. fast의 Python41·로직601/기존skip1·UI241·타입/린트/OpenAPI/정책, 실제 PostgreSQL/Auth/Storage 및 접근 분리/복구 검사가 통과했다.
+
+Android36은15단계·네 화면 차이0·원본 자료 보존/정리 통과, 시나리오 재시도0/UI 계층 준비 대기8/전송 경고0이다.16개 신호 표본은 모두 첫 관측에서 최대 신호, 최장0.504초이며 modem profile4/OK 영수증과 SystemUI/telephony 진단4개를 확인했다. 추천의 도형 거리/접근 거리 구분·가까운 대표 안내와 러닝 시작 안내 원본을 검토했다. 모든 오프코스/시간 초과 시각 상태 검토를 뜻하지 않는다.
+
+Android29 첫 실행은 S0-02-draft 코스 상세 service-back 직후 앱이 종료됐다. Missing control: tab-courses의 원본 로그는06:51:10.509Z hwuiTask1의 SIGSEGV/0x40, libgui SurfaceComposerClient::Transaction::getLayerState → deferTransactionUntil_legacy → SurfaceView.applySurfaceTransforms/positionChanged를 보여 준다. 전체 원본 보존 단계는 미도달, 정리는 통과했다. 이전 전체330의 같은 OS/geometry/fixture에서7단계 통과한 원본과 대조했고, [공식 Android10 SurfaceView](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-10.0.0_r47/core/java/android/view/SurfaceView.java)의 Surface 수명 경쟁 가능성을 확인했다. 원인을 단순 환경 장애로 확정하지 않는다.
+
+전체 첫 회차 종료 뒤 실패한 Android29 작업만 소스·시나리오·기한 변경 없이1회 재실행했다. GitHub 회차2의7단계·보존/정리와 verification-gate가 통과했다. UI 계층 준비 대기4개, 고유 영수증과 JUnit OK를 확인한 dump 전송 종료139 경고1개를 보존했다. 내부 시나리오 재시도0과 GitHub 작업 재실행1회를 구분한다. **최초 네이티브 충돌 수정 완료나 ARM/OpenGL A7 무영향을 뜻하지 않는다.**
+
+| 원본 | 아티팩트 | ZIP SHA256 |
+| --- | --- | --- |
+| fast346 |14150751933|9e84941a0374afeb7104de070157d9be87e6a9380e5eff0b53edca5c5b0362e7|
+| API346 |14149959101|67edc5010949c26c1b66c46d571668a3db19e24dfbf2f522f03a20abe7524a1f|
+| Android36 성공 |14151278438|28a46d4817606126fb5ba631d1838e4fe1c463a03136f958919a2fe99e0048d0|
+| Android29 최초 충돌 |14150524293|7a218e7e6214f4f02cddfbc0f7766889bfbd7e7928c53863bd7a8c4acb73f143|
+| Android29 재실행 성공 |14152382693|f917f8ec30057efe0f2825df7bd449bb604c5439a208b09c4f8a5d18f2cc6d18|
+| 회차2 정확한 tree 영수증 |14152895779|2d87913f356164574c9be8d3182fb55f1c3c767b2b503ca00a4890a00ff15bc6|
+
+이후 병합 요청은 최신 main과 충돌405로 반영되지 않았다.07:25:31Z에 이미 병합된 PR62/main3fa67ce와 문서 PR64/main25c390a를 가져와 양쪽 인수인계를 보존한다. Android16의 실제 SIM1/데모999 분리가 main에 실증됐으므로 통합본은 main의 android.py/system_bar_readiness.py와 기존 검사를 그대로 채택한다. PR63의 실제 radio 매 표본 pin 실험과 전용3개 검사는 함께 제거하며 기존 원본 신호 판정/실패/기한 검사는 유지한다. 실험 기록은 위와 Git 이력에 남긴다. 이 통합은 새 source/tree이므로 전체346 성공을 재사용하지 않고 새 검증을 수행한다.

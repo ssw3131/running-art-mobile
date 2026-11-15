@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "source": "5706f8da57b2afd2d9ea3912db66d20dd79f3f8e",
+  "dirty": false,
+  "startedAt": "2026-11-15T06:52:47.364013+00:00",
+  "ciRun": "43686532773",
+  "apkSha256": "63393f98bdbde7a801e812e29dcb9f7608cc1eb043836a2db8b28db42c741ed1",
+  "environment": {
+    "host": "Linux",
+    "api": "29",
+    "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64:10/QSR1.211112.011/13135432:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "smoke",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-15T06:52:47.481092+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S1-membership-explicit-consent",
+          "status": "passed"
+        },
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:55:05.259886+00:00",
+          "durationSeconds": 41.312,
+          "finishedAt": "2026-11-15T06:55:46.571982+00:00"
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:55:46.572131+00:00",
+          "durationSeconds": 153.442,
+          "finishedAt": "2026-11-15T06:58:20.014006+00:00"
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:58:20.014409+00:00",
+          "durationSeconds": 83.968,
+          "finishedAt": "2026-11-15T06:59:43.982828+00:00"
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:59:43.983164+00:00",
+          "durationSeconds": 16.062,
+          "finishedAt": "2026-11-15T07:00:00.045638+00:00"
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "startedAt": "2026-11-15T07:00:00.046014+00:00",
+          "durationSeconds": 152.576,
+          "finishedAt": "2026-11-15T07:02:32.622654+00:00"
+        }
+      ],
+      "status": "passed",
+      "preservation": {
+        "status": "passed",
+        "sha256": "6c419132f0d1da2e5ebe36ab0e8386556d4b685756a59b3b96e373ed5f9cf2bd"
+      },
+      "finishedAt": "2026-11-15T07:03:18.940159+00:00"
+    }
+  ],
+  "retries": 0,
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-15T07:03:21.429531+00:00",
+  "uiDumpReadinessWaits": 2,
+  "uiDumpTransportWarnings": 2,
+  "status": "passed"
+}

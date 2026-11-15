@@ -140,13 +140,12 @@ Android 10의 시스템 SQLite에는 `-json`이 없어 전용 에뮬레이터에
 
 API 36은 Pixel 5의 프레임워크/SystemUI 오버레이를 명시하고, 시스템 UI 프로세스를 갱신한 뒤 실제 시스템 바와 cutout 여백이 정해진 값이 될 때까지 기다린다. Linux 1080×2340 기준은 상단 136px·하단 63px다. Maestro와 배율 검사 뒤에도 다시 적용한다. 촬영 중 여백이 바뀌면 실패하며 원래 오버레이는 정리 단계에서 복원한다. `display-profile.txt`, `display-overlays.txt`, 화면별 display 진단과 `displayGeometry`를 보존한다. 앱 전체를 이동시키는 환경 차이를 이미지 마스크로 숨기지 않는다.
 
-모뎀 시뮬레이터는 신호를 주기적으로 낮추므로 시작할 때의 `signal-profile 4` 성공만으로 촬영 상태가 고정됐다고 보지 않는다. API36은 매 원본 PNG 표본 전에 실제 modem profile4와 SystemUI demo를 다시 전송하고, 명령 소요시간을 기존 준비/정착 예산에서 차감한다. 실제 최대 신호 픽셀을 관측해야 통과하며 부분 신호·명령 거부·늦은 성공은 실패다. 표본별 `radioSignalProfile`, demo 시작/실패 직전의 SystemUI·telephony 상태를 원본으로 남긴다. 물리 폰에는 이 설정을 적용하지 않는다. [실패 재현과 보완 검증](../quality/nearby-approach-20261115.md)을 따른다.
 
 시나리오 재실행은 이전 실패를 지우지 않는다. `--output`을 바꾸어 새 진단 실행을 보존한다. UI 계층이 준비될 때까지 기다리는 동작과 시나리오 전체 재시도를 구분한다.
 
 10-13 S1 검사에서 API 29의 UI 덤프가 JUnit 성공을 출력한 뒤 비정상 shell 종료 코드를 반환하는 문제가 반복되어 캡처 완료 증명을 추가했다. 각 요청은 새 UUID 토큰을 보내고, Java 도우미는 이전 XML/토큰을 지운 뒤 새 XML이 생성된 경우에만 토큰을 기록한다. 호스트는 JUnit 성공·동일 토큰·실제 XML/PNG 읽기를 모두 확인한다. 이 조건을 충족한 비정상 shell 종료는 `ui-dump-transport.jsonl`과 보고서의 `uiDumpTransportWarnings`에 보존한다. 미완료 실행·이전 토큰·오프라인·실패한 읽기는 계속 실패하며 시나리오를 자동 재시도하지 않는다.
 
-10-14 S234에서 같은 유형의 활성 루트 미준비 캡처 실패가 Windows와 Linux에 남아, Java 도우미의 한 접근성 연결에서 최대 5초·250ms 간격으로 새 XML을 기다린다. 과거/빈 파일 제거와 호출별 UUID 영수증·JUnit 성공·XML/PNG 실제 읽기 조건은 유지한다. `ui-dump-readiness.jsonl`/`uiDumpReadinessWaits`는 준비 대기를, 기존 `uiDumpTransportWarnings`는 완료 후 비정상 shell 종료를 별도로 기록한다. 전체 시나리오 재시도와 혼동하지 않는다. 한계를 넘으면 계속 실패하며, 계층 덤프가 실패해도 독립 PNG·window/activity·logcat을 정리 전에 수집한다. 제품 결함이나 빈 화면을 환경 실패로 자동 분류하지 않는다. 앱 초기화 후 시드를 넣기 전에는 실제 DB 파일과 필요한 9개 테이블을 최대 30초 읽기 전용으로 확인한다. 도우미가 테이블을 대신 만들지 않으며 부분 스키마·오프라인은 준비 완료로 인정하지 않는다.
+10-14 S234에서 같은 유형의 활성 루트 미준비 캡처 실패가 Windows와 Linux에 남아, Java 도우미의 한 접근성 연결에서 최대 5초·250ms 간격으로 새 XML을 기다린다. 과거/빈 파일 제거와 호출별 UUID 영수증·JUnit 성공·XML/PNG 실제 읽기 조건은 유지한다. `ui-dump-readiness.jsonl`/`uiDumpReadinessWaits`는 준비 대기를, 기존 `uiDumpTransportWarnings`는 완료 후 비정상 shell 종료를 별도로 기록한다. 전체 시나리오 재시도와 혼동하지 않는다. 한계를 넘으면 계속 실패하며, 계층 덤프가 실패해도 독립 PNG·window/activity/accessibility·logcat을 정리 전에 수집한다. 로그는 UI 계층 준비 재시도 이전의 화면 전환도 남도록 최근4000행을 보존한다. 제품 결함이나 빈 화면을 환경 실패로 자동 분류하지 않는다. 앱 초기화 후 시드를 넣기 전에는 실제 DB 파일과 필요한 9개 테이블을 최대 30초 읽기 전용으로 확인한다. 도우미가 테이블을 대신 만들지 않으며 부분 스키마·오프라인은 준비 완료로 인정하지 않는다.
 
 `--signup-only`는 가입 진입/복귀·큰 글씨 진단 한 단계와 자료 보존·정리를 실행하고 보고서 모드도 별도로 표기한다. 전체/호환 검사 통과를 대신하지 않으며 PR CI의 기존 전체·smoke 선택은 유지한다. Windows의 임시 드라이브가 부족하면 해당 명령에서만 `TEMP`/`TMP`와 Java `java.io.tmpdir`를 작업 폴더의 임시 경로로 지정한다.
 
@@ -155,6 +154,8 @@ API 36은 Pixel 5의 프레임워크/SystemUI 오버레이를 명시하고, 시�
 `--accessibility-only`는 게스트 차단 후 기존 큰 글씨/키보드와 생성 접근성 검사만 분리 실행한다. 최초 실패와 다른 출력 경로를 쓰며 입력 방식·속도·assertion을 변경하지 않는다. 전체 회귀 통과 횟수에 포함하지 않는다.
 
 `scripts/qa/visual.mjs baseline.json actual.json output-dir`는 환경이 같은 검토된 기준만 비교한다. pixelmatch 색상 임계값은 0.1이고 안티앨리어싱은 제외한다. 이 값은 화면의 10% 변경 허용 비율이 아니다. 촬영 중에만 Android 공식 상태 표시줄 데모 모드로 시계 12:00·배터리 100·신호 세기를 고정하고 촬영 뒤 해제한다. 마스크는 근거를 기록한 작은 시스템 시계/Wi-Fi 영역만 허용한다. 현재 기준에는 main 실행에서 네 화면 모두 같은 가장자리 차이가 난 Wi-Fi 아이콘의 41×33px(`x=817,y=53`)만 제외했고 원본 PNG는 유지했다. 마스크의 위치/최대 크기를 검사하며 앱 영역·상태 표시줄 전체 가림은 거부한다. 화면 내부 버튼·경로·텍스트는 가리지 않는다. 지도 배경은 별도 기준을 준비할 때까지 동작 검사와 분리한다.
+
+Android36은 데모의 `slot`을 subscription ID로 처리하는 새 SystemUI pipeline을 사용한다. 기본 ID1과 실제 SIM1의 표시 객체 캐시가 겹치지 않도록 촬영 데모는999를 명시한다. 촬영 전후에는 DemoModeController·MobileConnectionsRepository·DemoMobileConnectionLog[999]만 읽어 실제/데모 상태를 보존한다. 기본 service dump는 관련 NORMAL 상태를 누락하므로 사용하지 않는다. 신호의 실제 원본 픽셀 준비 판정·12초 기한과 화면 비교는 유지한다. [PR62 단독 진단과 실패 이력](../quality/evidence/pr62-systemui-diagnostic/README.md).
 
 `node scripts/qa/visual-suite.mjs test-results/android-36 tests/visual/android-linux-api36/baseline.json`으로 각 회차를 비교하고, `node scripts/qa/gallery.mjs test-results/android-36`으로 기준·현재·차이와 실패 화면을 연결한 `index.html`을 만든다. `--visual-only`는 후보 촬영 전용이며 기능/안정성 통과 횟수에 포함하지 않는다.
 

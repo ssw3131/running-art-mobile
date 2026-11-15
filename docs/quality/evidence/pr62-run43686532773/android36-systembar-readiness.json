@@ -1,0 +1,162 @@
+[
+  {
+    "capture": "prepare-visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.504,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.462,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.451,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.445,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.443,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.456,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.434,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.442,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.437,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.449,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.432,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.439,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.486,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.475,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.481,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.48,
+        "fullSignal": true
+      }
+    ]
+  }
+]

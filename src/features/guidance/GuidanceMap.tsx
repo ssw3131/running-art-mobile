@@ -12,7 +12,7 @@ import { RouteTrailLayers } from '@/modules/map/RouteTrailLayers';
 const basicStyle = { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#EDEFEA' } }] };
 const baseStyleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
 const line = (coordinates: Coordinate[]) => ({ type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates } });
-export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true, recenterAtBottom = false, recenterBottom = 240, onRecenter, heading, followLock=false, compassTop }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean; recenterAtBottom?: boolean; recenterBottom?:number; onRecenter?():void; heading?:number; followLock?:boolean; compassTop?:number }) {
+export default function GuidanceMap({ route, state, positionLabel = '가상 위치로 지도 이동', showPosition = true, recenterAtBottom = false, recenterBottom = 240, onRecenter, heading, navigationMode=false, gesturesEnabled=true, compassTop }: { route: Coordinate[]; state: GuidanceState; positionLabel?: string; showPosition?: boolean; recenterAtBottom?: boolean; recenterBottom?:number; onRecenter?():void; heading?:number; navigationMode?:boolean; gesturesEnabled?:boolean; compassTop?:number }) {
   const c = useThemeColors(), styleUrl = baseStyleUrl ? themedMapStyle(baseStyleUrl, c.background === '#121212') : null;
   const camera = useRef<CameraRef>(null);
   const map = useRef<MapRef>(null);
@@ -20,15 +20,15 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
   const [follow, setFollow] = useState(true), [online, setOnline] = useState(!!styleUrl), [ready, setReady] = useState(false);
   useEffect(() => {
     if (!ready || !follow) return;
-    if(followLock)camera.current?.jumpTo({center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5});else camera.current?.easeTo({center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5,duration:200});
-  }, [follow, ready, state.position,heading,followLock]);
+    if(navigationMode)camera.current?.jumpTo({center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5});else camera.current?.easeTo({center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5,duration:200});
+  }, [follow, ready, state.position,heading,navigationMode]);
   useEffect(() => {
     if (ready || !online) return;
     const timeout = setTimeout(() => { setOnline(false); }, 8000);
     return () => clearTimeout(timeout);
   }, [ready, online]);
   return <View style={styles.fill}>
-    <Map ref={map} key={online ? 'online' : 'offline'} testID="guidance-map" style={styles.fill} mapStyle={online && styleUrl ? styleUrl : basicStyle} attribution logo={false} dragPan={!followLock} touchZoom={!followLock} touchRotate={!followLock} touchPitch={false}
+    <Map ref={map} key={online ? 'online' : 'offline'} testID="guidance-map" style={styles.fill} mapStyle={online && styleUrl ? styleUrl : basicStyle} attribution logo={false} dragPan={gesturesEnabled} touchZoom={gesturesEnabled} touchRotate={gesturesEnabled&&!navigationMode} touchPitch={false}
       compass={compassTop!==undefined} compassHiddenFacingNorth={false} compassPosition={compassTop===undefined?undefined:{top:compassTop,right:32}}
       onDidFinishLoadingStyle={() => {
         buildingUpdate.current = (online && styleUrl ? hideMapBuildings(map.current) : Promise.resolve())
@@ -37,7 +37,7 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
       onDidFinishLoadingMap={() => {
         void buildingUpdate.current.then(applied => { if (applied) setReady(true); });
       }} onDidFailLoadingMap={() => { setReady(false); setOnline(false); }}
-      onRegionWillChange={event => { if (!followLock&&event.nativeEvent.userInteraction) setFollow(false); }}>
+      onRegionWillChange={event => { if (gesturesEnabled&&event.nativeEvent.userInteraction) setFollow(false); }}>
       <Camera ref={camera} initialViewState={{ center: route[0], zoom: 16 }} />
       <RouteTrailLayers id="guidance" route={route} paths={state.trace}/>
       {state.returnPath.length >= 2 && <GeoJSONSource id="guidance-return" data={line(state.returnPath)}><Layer id="guidance-return-line" beforeId="guidance-course-outline" type="line" paint={{ 'line-color': '#9C4308', 'line-width': 5, 'line-dasharray': [2, 1] }} /></GeoJSONSource>}
@@ -47,7 +47,12 @@ export default function GuidanceMap({ route, state, positionLabel = '가상 위�
         <Layer id="guidance-dot" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#147FC1', 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 4 }} />
       </GeoJSONSource>}
     </Map>
-    <Pressable testID="guidance-recenter" accessibilityLabel={positionLabel} accessibilityRole="button" style={[styles.recenter,recenterAtBottom&&{top:undefined,bottom:recenterBottom,left:32,right:undefined}]} onPress={() => { setFollow(true); camera.current?.easeTo({center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5,duration:200});onRecenter?.(); }}><AssetImage source={require('../../../assets/running/locate.svg')} style={{width:16,height:16}} /></Pressable>
+    <Pressable testID="guidance-recenter" accessibilityLabel={positionLabel} accessibilityRole="button" style={[styles.recenter,recenterAtBottom&&{top:undefined,bottom:recenterBottom,left:32,right:undefined}]} onPress={() => {
+      setFollow(true);
+      const view={center:state.position,...(heading===undefined?{}:{bearing:heading}),zoom:16.5};
+      if(navigationMode)camera.current?.jumpTo(view);else camera.current?.easeTo({...view,duration:200});
+      onRecenter?.();
+    }}><AssetImage source={require('../../../assets/running/locate.svg')} style={{width:16,height:16}} /></Pressable>
     <View style={styles.credits}>
       <Text style={styles.credit}>{online ? '© OpenStreetMap contributors' : '배경 지도 없이 경로 표시'}</Text>
       {online && <Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.maptiler.com/copyright/')}><Image source={require('@/assets/images/maptiler-logo.png')} style={{ width: 60, height: 16 }} resizeMode="contain" /></Pressable>}

@@ -1,0 +1,80 @@
+[
+  {
+    "capture": "home-saved-detail",
+    "connectionAttempt": 1,
+    "rootAttempts": 3,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "current",
+    "connectionAttempt": 1,
+    "rootAttempts": 2,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "home-paused-return",
+    "connectionAttempt": 1,
+    "rootAttempts": 2,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "home-interrupted-return",
+    "connectionAttempt": 1,
+    "rootAttempts": 3,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "current",
+    "connectionAttempt": 1,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "current",
+    "connectionAttempt": 2,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "current",
+    "connectionAttempt": 3,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "failure",
+    "connectionAttempt": 1,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "failure",
+    "connectionAttempt": 2,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "failure",
+    "connectionAttempt": 3,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "failure",
+    "connectionAttempt": 1,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "failure",
+    "connectionAttempt": 2,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  },
+  {
+    "capture": "failure",
+    "connectionAttempt": 3,
+    "rootAttempts": 20,
+    "freshHierarchy": false
+  }
+]

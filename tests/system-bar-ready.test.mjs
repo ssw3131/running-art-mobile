@@ -23,3 +23,11 @@ test('unknown geometry and malformed PNG fail', () => {
   assert.throws(() => fullSignalReady(PNG.sync.write(new PNG({ width: 1, height: 1 }))), /display profile/);
   assert.throws(() => fullSignalReady(Buffer.from('invalid')));
 });
+test('PR62 original unready SystemUI frames cannot pass the full-signal gate', () => {
+  for (const attempt of [1, 2]) {
+    const bytes = readFileSync(new URL(`../docs/quality/evidence/pr62-run43672071317/attempt${attempt}-systembar.png`, import.meta.url));
+    const before = Buffer.from(bytes);
+    assert.equal(fullSignalReady(bytes), false);
+    assert.deepEqual(bytes, before);
+  }
+});

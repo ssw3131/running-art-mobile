@@ -71,7 +71,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   </View>;
   // RootLayout already reserves the top safe area for live and simulated runs.
   return <SafeAreaView style={{flex:1,backgroundColor:focus?background:c.navigation}} edges={['bottom','left','right']}>
-    {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap followLock compassTop={mapContentTop+summaryBottom+12} heading={navigationBearing(guide.course.snapshot.route,state,guide.checkpoint)??heading} route={guide.course.snapshot.route} state={state} positionLabel={simulationState?"시뮬레이션 위치로 지도 이동":"현재 GPS 위치로 지도 이동"} recenterAtBottom/></View>}
+    {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap navigationMode gesturesEnabled={!locked} compassTop={mapContentTop+summaryBottom+12} heading={navigationBearing(guide.course.snapshot.route,state,guide.checkpoint)??heading} route={guide.course.snapshot.route} state={state} positionLabel={simulationState?"시뮬레이션 위치로 지도 이동":"현재 GPS 위치로 지도 이동"} recenterAtBottom/></View>}
     {headerAccessory}
     {focus?<ScrollView onLayout={({nativeEvent:{layout}})=>setFocusHeight(layout.height)} contentContainerStyle={{flexGrow:1,paddingHorizontal:32,paddingTop:dense?8:compact?16:30,gap:dense?6:compact?8:20,paddingBottom:dense?8:20,alignItems:'center'}}>
       <AppText testID="run-status" weight="bold" style={{color:'#FFFFFF',fontSize:compact?20:24,lineHeight:compact?26:32,textAlign:'center'}}>{title}</AppText>
