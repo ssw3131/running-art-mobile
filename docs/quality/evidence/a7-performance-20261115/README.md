@@ -55,6 +55,11 @@ PC의 공개 도로/SQLite 사전16표본은 양쪽 경로·targetM 오차1m 이
 
 Android29 내부 시나리오 재시도0, UI 계층 준비 대기3개다. UI dump가 고유 영수증과 `OK (1 test)`를 낸 뒤 전송 종료134 경고1개가 있었으며 `ui-dump-transport.jsonl` 원본을 보존했다. 경고를 제거하거나 무경고 성공으로 표현하지 않는다.
 
-Android36 첫 회차는 앱 검사 전에 `android.py:142`의 `adb root`에서 `unable to connect for root: closed`로 종료했다. APK 빌드는 성공했지만 기능/화면 검사는 시작하지 못했다. artifact14163739024/ZIP SHA256 `a82a73eb6a5f9820daf04a6944d6e993002588c670d2e1fd3ac8f5e5194b52da`와 작업 로그를 로컬에 보존했다. 첫 재실행 요청은 다른 작업 진행 중이라는 GitHub403으로 시작되지 않았고, 전체 종료 후 해당 Android36 작업만 같은 소스로1회 재실행했다. 결과는 종료 후 보완한다.
+Android36 첫 회차는 앱 검사 전에 `android.py:142`의 `adb root`에서 `unable to connect for root: closed`로 종료했다. APK 빌드는 성공했지만 기능/화면 검사는 시작하지 못했다. artifact14163739024/ZIP SHA256 `a82a73eb6a5f9820daf04a6944d6e993002588c670d2e1fd3ac8f5e5194b52da`와 작업 로그를 로컬에 보존했다. 첫 재실행 요청은 다른 작업 진행 중이라는 GitHub403으로 시작되지 않았고, 전체 종료 후 해당 Android36 작업만 같은 소스로1회 재실행했다. 재실행은15단계·원본 보존·정리와 기존 네 화면 차이0으로 통과했다. 내부 시나리오 재시도0, UI 계층 준비 대기5개, 전송 경고0이다. GitHub 작업 재실행1회와 내부 재시도0을 구분한다.
 
 Android29 artifact14163804980/ZIP SHA256 `bba26f10a5c67cfceec8333e8ee7c6e732644e9002aee40408d6d937992fcbdb`, fast artifact14163532806/ZIP SHA256 `3351cd00151555478823dd0c64811f786c3dfea894df1ef887e123387fb5a3af`도 보존했다.
+
+
+최종 Android36 artifact14165374282/ZIP SHA256 `4d082de08d6f301441c57b4820b48e8c7c68ad908635df4e0e3330a5735f0d5f`, 검증 영수증 artifact14165108569/ZIP SHA256 `6a622b06be10ecb162e17fbed3ebc589293a4c2d224a3e646d4751bac15f71ad`를 확인했다. 최종 gate는전체366 회차2의tree `52e9ac4032fdcb26d8afd3310535624b38b6392b`를 증명한다.
+
+PR68을 main `8ac1e4d61b5d0dbc3cf155dd01af50921e573d54`에 반영했다. [main검사](https://github.com/ssw3131/running-art-mobile/actions/runs/43724780870)도 동일tree의 전체366 증거를 재사용해 필수 게이트가 통과했으며 main native를 다시 실행하지 않았다. 결과 기록은 문서 전용 후속 PR에서 반영한다.
