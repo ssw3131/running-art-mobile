@@ -64,6 +64,26 @@ test.each(['running','paused','simulation'])('%s map permits exploration and onl
  expect(p.onOptions).toHaveBeenLastCalledWith({...p.guide.options,touchLock:false});
  expect(p.onPauseResume).not.toHaveBeenCalled();expect(p.onFinish).not.toHaveBeenCalled();
 });
+
+test('the recenter button stays above a growing approach card through accessory and viewport changes',async()=>{
+ const p=props();
+ const approach={...mockState,phase:'approach',returnPath:[[127,37],[127.001,37]],returnM:730} as any;
+ await render(<LiveGuidancePanel {...p} run={{...run,status:'paused'}} guide={{...guide,options:{...guide.options,mode:'map'}}} simulationState={approach}/>);
+ expect(screen.getByTestId('run-turn-distance')).toBeVisible();
+ expect(screen.getByTestId('run-return-distance')).toHaveTextContent(/730m/);
+ const layout=async(id:string,y:number,height:number)=>fireEvent(screen.getByTestId(id),'layout',{nativeEvent:{layout:{x:0,y,width:360,height}}});
+ await layout('run-map-background',0,800);
+ await layout('run-map-content',45,700);
+ await layout('run-map-instruction',650,50);
+ expect(screen.getByTestId('live-map').props.recenterBottom).toBe(240);
+ for(const box of [{height:800,contentTop:45,instructionTop:480},{height:800,contentTop:45,instructionTop:430},{height:800,contentTop:0,instructionTop:430},{height:700,contentTop:0,instructionTop:430}]){
+  await layout('run-map-background',0,box.height);
+  await layout('run-map-content',box.contentTop,box.height-box.contentTop);
+  await layout('run-map-instruction',box.instructionTop,120);
+  const buttonBottom=box.height-screen.getByTestId('live-map').props.recenterBottom;
+  expect(box.contentTop+box.instructionTop-buttonBottom).toBeGreaterThanOrEqual(12);
+ }
+});
 test('UI-LIVE-01: actual metrics and separate pause/end callbacks, persisted settings are independent',async()=>{
  const p=props();await render(<LiveGuidancePanel {...p}/>);expect(screen.getByTestId('run-distance')).toHaveTextContent('3.20 km');
  await fireEvent.press(screen.getByTestId('run-pause'));expect(p.onPauseResume).toHaveBeenCalledTimes(1);expect(p.onFinish).not.toHaveBeenCalled();

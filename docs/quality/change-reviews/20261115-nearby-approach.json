@@ -20,6 +20,7 @@
     "src/features/course-generation/use-recommendation-approach.ts",
     "src/features/route-lab/session.ts",
     "src/features/running/CourseRunPreparation.tsx",
+    "src/features/running/LiveGuidancePanel.tsx",
     "src/features/running/RunScreen.tsx",
     "src/features/running/use-preparation-approach.ts",
     "src/modules/road-data/client.ts",
@@ -37,6 +38,7 @@
     "src/modules/running/navigation.ts",
     "src/modules/usage/generation.ts",
     "tests/components/course-generation.test.tsx",
+    "tests/components/live-running.test.tsx",
     "tests/components/preparation-approach.test.tsx",
     "tests/components/recommendation-approach.test.tsx",
     "tests/components/run-preparation.test.tsx",
@@ -50,13 +52,17 @@
   "behavior": "changed",
   "decision": "사용자 승인 계획: 300/500/1000m 접근 거리와 원시 유사도 5점 비교 정책, v3 진행 스트림, 현재 GPS 합류 경로 최적화를 함께 적용한다.",
   "before": "광역 유사도 상위 후보만 추천하고 GPS 합류 경로를 2km부터 매번 구성했으며 준비 안내 공통10초 제한이 GPS와 경로 계산을 함께 중단했다.",
-  "after": "별도 근거리 배치와 실제 도보 거리로 대표 후보를 선택하고 확장 이유를 표시한다. 실제 GPS 경로의 1/2/5/10km 조회, 도로망/완성 경로/진행 중 요청을 재사용하며 GPS15초와 경로10초 실패·재시도를 분리한다. 도메인 전달 서버도 명시적 진행 요청의 NDJSON 타입/본문을 버퍼링 없이 전달하며 기존 JSON 오류와 구형 요청은 유지한다.",
+  "after": "별도 근거리 배치와 실제 도보 거리로 대표 후보를 선택하고 확장 이유를 표시한다. 실제 GPS 경로의 1/2/5/10km 조회, 도로망/완성 경로/진행 중 요청을 재사용하며 GPS15초와 경로10초 실패·재시도를 분리한다. 도메인 전달 서버도 명시적 진행 요청의 NDJSON 타입/본문을 버퍼링 없이 전달하며 기존 JSON 오류와 구형 요청은 유지한다. 실제 합류 카드가3줄로 커져도 배치를 측정해 현재 위치 버튼이 카드 위에 남게 한다.",
   "invariants": [
     "v1/v2 계약과 기존 광역 탐색 및 원시 유사도 산식을 유지한다.",
     "생성 작업 ID와 이용 횟수 차감은 한 번이며 코스/기록/로그인/오프라인 자료 형식은 변경하지 않는다.",
     "보행 연결이 불명확한 경우 직선 경로를 만들지 않고 1km 초과 후보를 자동 선택하지 않는다."
   ],
   "tests": [
+    {
+      "path": "tests/components/live-running.test.tsx",
+      "reason": "A7에서 재현한3줄 합류 카드의 현재 위치 버튼 가림을 회귀 검사한다. 카드 높이, 상단 부속 화면, 지도 높이 변화에도 버튼 하단과 카드 상단 사이12dp 여유를 확인한다."
+    },
     {
       "path": "tests/nearby-approach.test.mjs",
       "reason": "단계·5점 경계, 도로 연결과 우회, 캐시·취소·진행 작업 인계 및 이전 최고점 보존을 확인한다."
@@ -93,7 +99,8 @@
       "전체43679702434/Android36 artifact14149171021의 s2a-nearby-policy·s2a-nearby-explanation에서 가까운 코스/거리 분리/설명 표시와 course-preparation-ready·s4-preparation-ready 안내를 직접 확인했다. 오프코스 실패/시간 초과 모든 시각 상태의 검토는 아니다.",
       "Android36 기능15단계 통과 후 SystemUI 최대 신호 준비12초가 실패했다.22개 미준비 PNG/JSONL 원본 보존, 정적4화면 비교/필수 게이트 미완료. docs/quality/nearby-approach-20261115.md를 따른다.",
       "최신 main25c390a 통합 head230484d의 전체353/43692943175는 첫 회차 fast/API/Android29·36/필수 게이트 통과다. Android36 artifact14153909943의 정적4화면 현재 PNG를 직접 확인했고 기존 Wi-Fi 마스크에서 차이0, 원본 신호16개는 첫 표본/최장0.424초였다. A7 preview216893041의 로그인/기존 자유 러닝 상세/재실행과 지도 상세 복귀6회는 확인했지만 운영 서버가 v3를 거부해 추천 성공/합류/러닝 지도 조작과 각20회 성능은 미검증이다.",
-      "후속 사용자 승인으로 Cloud Run 호환 리비전을 적용한 뒤 A7에서 생성 복원/단일 차감·가까운 후보/단계 확장 설명·저장·시뮬레이션 드래그/핀치/위치 복귀/잠금·먼 코스 합류 시간 초과의 시작 차단을 확인했다. 실제 GPS 합류 성공과 전달 서버 보완 후 진행 표시·최종 tree CI는 계속 검증 중이다. 정밀 GPS는 공개 근거에 넣지 않는다."
+      "후속 사용자 승인으로 Cloud Run 호환 리비전을 적용한 뒤 A7에서 생성 복원/단일 차감·가까운 후보/단계 확장 설명·저장·시뮬레이션 드래그/핀치/위치 복귀/잠금·먼 코스 합류 시간 초과의 시작 차단을 확인했다. 실제 GPS 합류 성공과 전달 서버 보완 후 진행 표시·최종 tree CI는 계속 검증 중이다. 정밀 GPS는 공개 근거에 넣지 않는다.",
+      "A7 실제 GPS 합류 준비/시작/일시정지는 가능했지만3줄 합류 카드가 현재 위치 버튼을 덮어 지도 복귀와 확대 복원이 실패했다. 실제 카드 배치에 맞춰 버튼을 위로 옮기는 수정과 관련19개 검사/타입/린트는 통과했다. 새 정확한 소스 APK의 A7 재검증과 최종 CI는 남았으며 Worker 적용도 별도 사용자 승인 대기다."
     ]
   },
   "native": "ready PR의 Android29/36 전체 기능·4화면·자료 보존/정리 검사가 필수다. SM-A102N 각20회 성능 목표는 별도 실측 전 미검증으로 유지한다."

@@ -35,6 +35,9 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   const [locked,setLocked]=useState(guide.options.touchLock??false);
   const unlock=()=>{setLocked(false);onOptions({...guide.options,touchLock:false});};
   const [mapContentTop,setMapContentTop]=useState(0),[summaryBottom,setSummaryBottom]=useState(240);
+  const [mapHeight,setMapHeight]=useState(0),[instructionTop,setInstructionTop]=useState<number|null>(null);
+  // Approach/return cards can add a third line below the turn instruction.
+  const recenterBottom=instructionTop===null||!mapHeight?240:Math.max(240,mapHeight-mapContentTop-instructionTop+12);
   const [lockPreference,setLockPreference]=useState(guide.options.touchLock??false);
   if(lockPreference!==(guide.options.touchLock??false)){setLockPreference(guide.options.touchLock??false);setLocked(guide.options.touchLock??false);}
   const state=useMemo(()=>{
@@ -71,7 +74,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   </View>;
   // RootLayout already reserves the top safe area for live and simulated runs.
   return <SafeAreaView style={{flex:1,backgroundColor:focus?background:c.navigation}} edges={['bottom','left','right']}>
-    {!focus&&<View style={{position:'absolute',inset:0}}><GuidanceMap navigationMode gesturesEnabled={!locked} compassTop={mapContentTop+summaryBottom+12} heading={navigationBearing(guide.course.snapshot.route,state,guide.checkpoint)??heading} route={guide.course.snapshot.route} state={state} positionLabel={simulationState?"시뮬레이션 위치로 지도 이동":"현재 GPS 위치로 지도 이동"} recenterAtBottom/></View>}
+    {!focus&&<View testID="run-map-background" onLayout={({nativeEvent:{layout}})=>setMapHeight(layout.height)} style={{position:'absolute',inset:0}}><GuidanceMap navigationMode gesturesEnabled={!locked} compassTop={mapContentTop+summaryBottom+12} heading={navigationBearing(guide.course.snapshot.route,state,guide.checkpoint)??heading} route={guide.course.snapshot.route} state={state} positionLabel={simulationState?"시뮬레이션 위치로 지도 이동":"현재 GPS 위치로 지도 이동"} recenterAtBottom recenterBottom={recenterBottom}/></View>}
     {headerAccessory}
     {focus?<ScrollView onLayout={({nativeEvent:{layout}})=>setFocusHeight(layout.height)} contentContainerStyle={{flexGrow:1,paddingHorizontal:32,paddingTop:dense?8:compact?16:30,gap:dense?6:compact?8:20,paddingBottom:dense?8:20,alignItems:'center'}}>
       <AppText testID="run-status" weight="bold" style={{color:'#FFFFFF',fontSize:compact?20:24,lineHeight:compact?26:32,textAlign:'center'}}>{title}</AppText>
@@ -89,7 +92,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
       {!!run.reason&&<View style={{...card,padding:16}}><AppText accessibilityRole="alert" style={{color:c.danger}}>{run.reason}</AppText></View>}
       </View>
       <View pointerEvents="box-none" style={{flex:1}}/>
-      <View style={{paddingHorizontal:32}}>{instruction}</View>
+      <View testID="run-map-instruction" onLayout={({nativeEvent:{layout}})=>setInstructionTop(layout.y)} style={{paddingHorizontal:32}}>{instruction}</View>
     </View>}
     <ModeSwitch focus={focus} onChange={()=>onOptions({...guide.options,mode:focus?'map':'focus'})}/>{controls}
     <Modal visible={locked} animationType="fade" onRequestClose={unlock}>
