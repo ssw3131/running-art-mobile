@@ -24,7 +24,7 @@ from service_s56 import service_s56
 from storage_readiness import wait_for_storage
 from emulator_readiness import wait_package_service
 from visual_readiness import capture_settled
-from system_bar_readiness import wait_system_bar
+from system_bar_readiness import pin_system_bar, wait_system_bar
 from home_visual import home_visual
 import emulator_auth
 from signup_membership import signup_membership, wait_home
@@ -169,8 +169,9 @@ report = {'schemaVersion': 1, 'source': subprocess.check_output(['git', 'rev-par
           'fixtureSha256': hashlib.sha256((ROOT / '.cache/course-gps-qa/fixtures.json').read_bytes()).hexdigest(),
           'mode': 'figma-generation-only' if args.figma_generation_only else 'accessibility-only' if args.accessibility_only else 'achievements-only' if args.achievements_only else 'service-only' if args.service_only else 'visual-only' if args.visual_only else 'signup-only' if args.signup_only else 'home-states-only' if args.home_states_only else 'home-only' if args.home_only else 'generation-only' if args.generation_only else 'smoke' if args.smoke else 'full', 'attempts': [], 'retries': 0}
 # Demo mode alone does not reliably isolate this image's mobile-signal source.
-# Pin the dedicated emulator's modem before app setup; its next radio update
-# can take15s. The later raw-pixel readiness check still must observe full signal.
+# Seed the dedicated emulator's modem before app setup. The modem simulator
+# changes its signal every 10s, so visual_frame also refreshes it per sample.
+# The later raw-pixel readiness check still must observe full signal.
 if int(environment['api']) >= 36:
     radio_response = q.adb('emu', 'gsm', 'signal-profile', '4').decode().strip()
     assert 'OK' in radio_response and 'KO' not in radio_response, radio_response
@@ -252,9 +253,14 @@ def visual_frame(remaining, name):
         result = subprocess.run(['node', str(ROOT / 'scripts/qa/system-bar-ready.mjs')],
                                 input=png, capture_output=True, timeout=left, check=True)
         return json.loads(result.stdout)['ready']
+    def pin(left):
+        return pin_system_bar(
+            lambda budget: q.adb('emu', 'gsm', 'signal-profile', '4', timeout=budget),
+            lambda budget: demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=budget),
+            left)
     try:
         return wait_system_bar(
-            lambda left: demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=left),
+            pin,
             lambda left: q.adb('exec-out', 'screencap', '-p', timeout=left),
             ready, q.OUT, name, remaining)
     except Exception:

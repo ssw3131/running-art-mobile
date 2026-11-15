@@ -154,3 +154,9 @@ SM-A102N을 연결한 PC에서 현재 설치본·서명·versionCode·기존 코
 ### 원격 화면 진단
 
 같은8038611의 visual 전용 [실행337/43683179656](https://github.com/ssw3131/running-art-mobile/actions/runs/43683179656)을 시작했다. 기존43679702434의22개 부분 신호 PNG와 판정 실패를 재확인했고, modem profile4/OK와 실제 표시가 다른 상태다. 현재 원본에는 demo 종료 전 SystemUI repository/telephony 상태가 없어 원인을 확정할 수 없다. 다음 진단을 위해 종료 전 읽기 전용 상태 수집을 추가하며 실제 픽셀 검사·12초 기한·기준 PNG·마스크/허용오차는 유지한다. 진단/전체 게이트/main의 최종 결과는 후속 기록을 따른다.
+
+공식 [모뎀 신호 구현](https://android.googlesource.com/device/google/cuttlefish/+/refs/heads/main/host/commands/modem_simulator/network_service.cpp)의 `KeepSignalStrengthChangingLoop`는10초마다5%씩 신호를 낮추며 `HandleReceiveRemoteSignal`은 그 반복을 중단하지 않는다. [에뮬레이터 전달](https://android.googlesource.com/platform/external/qemu/+/refs/heads/emu-master-dev/android/third_party/modem-simulator/modem_main.cpp)의 profile4는 REMOTESIGNAL100을 한 번 보낸다. 초기1회 설정만으로 최대 신호가 유지된다는 기존 가정은 이 구현과 맞지 않으며, 실행별 전체 검사 소요시간에 따라 다른 신호 PNG가 나오는 현상과 일치한다. 해당 실패 실행의 당시 내부 상태를 직접 확보한 것은 아니므로 공식 구현에 근거한 원인 추론과 새 실행의 실증을 구분한다.
+
+매 촬영 표본 직전에 modem profile4를 다시 보내고 OK/noKO를 확인한 뒤 남은 예산으로 demo를 재전송하도록 수정한다. 명령 시간도 기존12초 예산에서 차감하고 원본 픽셀 판정을 그대로 수행한다. 표본별 radio 영수증과 SystemUI/telephony 상태를 남긴다. 단순 긴 대기/재시도/PNG 가공/기준 변경은 없다. 새 Python 회귀3개는 자동 감소·재설정, 명령 실패, 명령 간 시간 차감과 늦은 성공 거부를 확인한다. PC에는 Python 실행기가 없어 원격 fast에서 확인하며 실제 visual/전체 결과 확인 전 해결 완료로 기록하지 않는다.
+
+서버 준비본은 PC에서 허용 목록22개 파일로 다시 생성했다(`.cache/pr63-pc/server-bundle-18e84de/`). 새 ZIP `server-bundle-18e84de-pc.zip`의 SHA256은 `daba2a726ceecf2d2e02d22e8478343112bc9c6a2320ecb90e2c95c58742384e`다. 생성 시각/ZIP 형식이 다른 새 묶음이며 Cloud 원본 ZIP과 동일하다고 주장하지 않는다. 운영에는 적용하지 않았다.
