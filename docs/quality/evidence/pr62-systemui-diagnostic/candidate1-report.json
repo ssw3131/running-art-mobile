@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "source": "bedd6bd046e590e1f6ce7d460d1376fdd0e70473",
+  "dirty": false,
+  "startedAt": "2026-11-15T05:19:26.242750+00:00",
+  "ciRun": "43679426258",
+  "apkSha256": "57ba6c4218b1f24bd10716c3d43ae77b512d9bdd27b3f431d663fb2d02afbf14",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "visual-only",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-15T05:19:26.407739+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        }
+      ],
+      "status": "failed",
+      "preservation": {
+        "status": "passed",
+        "sha256": "bc7198af68f3bf0571445a835844f132440523a21c1bc8a0ebd63e161a8ed53b"
+      },
+      "setups": [
+        {
+          "id": "visual-server-usage",
+          "status": "passed",
+          "startedAt": "2026-11-15T05:21:53.626Z",
+          "finishedAt": "2026-11-15T05:21:53.758506+00:00",
+          "reused": false,
+          "before": {
+            "save": {
+              "used": 0,
+              "total": 15,
+              "available": true
+            },
+            "version": 1,
+            "generation": {
+              "used": 0,
+              "total": 5,
+              "available": true
+            }
+          },
+          "after": {
+            "save": {
+              "used": 1,
+              "total": 15,
+              "available": true
+            },
+            "version": 1,
+            "generation": {
+              "used": 1,
+              "total": 5,
+              "available": true
+            }
+          },
+          "evidence": "Isolated real usage RPC fixture; not generation/save UI acceptance",
+          "durationSeconds": 2.055
+        }
+      ]
+    }
+  ],
+  "retries": 0,
+  "radioSignalProfile": {
+    "profile": 4,
+    "response": "OK"
+  },
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "demoMobileSubscriptionId": 999,
+  "signalDiagnostics": [
+    {
+      "file": "before-demo-systemui.txt",
+      "error": "SERVICE com.android.systemui/.SystemUIService 845de74 pid=6416 user=0\n  Client:\n    Dump starting: 11-15 05:22:02.067\n\n    AppOpsControllerImpl:\n    ----------------------------------------------------------------------------\n    AppOpsController state:\n      Listening: true\n      Active Items:\n        AppOpItem(Op code=24, UID=10181, Package name=com.android.systemui, Paused=false)\n      Noted Items:\n\n    CRITICAL dump took 0ms -- AppOpsControllerImpl\n\n    BatteryController:\n    ----------------------------------------------------------------------------\n    BatteryController state:\n      mHasReceivedBattery=true\n      mLevel=100\n      mPluggedIn=true\n      mCharging=true\n      mCharged=false\n      mIsBatteryDefender=false\n      mIsIncompatibleCharging=false\n      mPowerSave=false\n      mStateUnknown=false\n      mStateAlert=false\n      Callbacks:------------------\n        com.google.android.systemui.reversecharging.ReverseChargingController$1@fb5cf5b\n        com.android.systemui.statusbar.phone.DozeParameters$2@f933f8\n        LightBarController: \n         mAppearance=LIGHT_STATUS_BARS LIGHT_NAVIGATION_BARS\n         stack #0: AppearanceRegion{LIGHT_STATUS_BARS bounds=[0,0][1080,2340]} isLight=true\n     mNavigationLight=true\n         mHasLightNavigationBar=true\n        \n         mStatusBarMode=0 mNavigationBarMode=0\n        \n         mForceDarkForScrim=false\n         mForceLightForScrim=false\n        \n         mQsCustomizing=false\n         mQsExpanded=false\n         mBouncerVisible=false\n         mGlobalActionsVisible=false\n         mDirectReplying=false\n         mNavbarColorManagedByIme=false\n        \n         Recent Calculation Logs:\n           setScrimState() scrimState=UNLOCKED scrimBehindAlpha=0.0 scrimInFrontColor=GradientColors(ffdad9e0, ff495d92) forceForScrim=false scrimColorIsLight=true mHasLightNavigationBar=true mBouncerVisible=false mForceDarkForScrim=false mForceLightForScrim=false timestamp=1794720110136\n           onNavigationBarAppearanceChanged() appearance=24 nbModeChanged=false navigationBarMode=0 navbarColorManagedByIme=false mHasLightNavigationBar=true ignoreScrimForce=false darkForScrim=false lightForScrim=false darkForQs=false darkForTop=false mNavigationLight=true last=false timestamp=1794720115642\n        \n         StatusBarTransitionsController:\n          mTransitionDeferring=false  mTransitionPending=false mTintChangePending=false\n          mPendingDarkIntensity=0.0 mDarkIntensity=1.0 mNextDarkIntensity=1.0\n         mAreNavigationButtonForcedVisible=false\n        \n         NavigationBarTransitionsController:\n          mTransitionDeferring=false  mTransitionPending=false mTintChangePending=false\n          mPendingDarkIntensity=0.0 mDarkIntensity=0.0 mNextDarkIntensity=0.0\n         mAreNavigationButtonForcedVisible=false\n        \n        com.android.systemui.classifier.FalsingCollectorImpl$4@6a1b90d\n        com.android.systemui.charging.WiredChargingRippleController$registerCallbacks$batteryStateChangeCallback$1@64bf0c2\n        com.android.systemui.statusbar.phone.CentralSurfacesImpl$18@9bcced3\n        com.google.android.systemui.statusbar.phone.CentralSurfacesGoogle$1@69a8a10\n        LightBarController: \n         mAppearance=LIGHT_STATUS_BARS LIGHT_NAVIGATION_BARS\n         stack #0: AppearanceRegion{LIGHT_STATUS_BARS bounds=[0,0][1080,2340]} isLight=true\n         mNavigationLight=true\n         mHasLightNavigationBar=true\n        \n         mStatusBarMode=0 mNavigationBarMode=0\n        \n         mForceDarkForScrim=false\n         mForceLightForScrim=false\n        \n         mQsCustomizing=false\n         mQsExpanded=false\n         mBouncerVisible=false\n         mGlobalActionsVisible=false\n         mDirectReplying=false\n         mNavbarColorManagedByIme=false\n        \n         Recent Calculation Logs:\n           setScrimState() scrimState=UNLOCKED scrimBehindAlpha=0.0 scrimInFrontColor=GradientColors(ffdad9e0, ff495d92) forceForScrim=false scrimColorIsLight=true mHasLightNavigationBar=true mBouncerVisible=false mForceDarkForScrim=false mForceLightForScrim=false timestamp=1794720110136\n           onNavigationBarAppearanceChanged() appearance=24 nbModeChanged=false navigationBarMode=0 navbarColorManagedByIme=false mHasLightNavigationBar=true ignoreScrimForce=false darkForScrim=false lightForScrim=false darkForQs=false darkForTop=false mNavigationLight=true last=false timestamp=1794720115642\n        \n         StatusBarTransitionsController:\n          mTransitionDeferring=false  mTransitionPending=false mTintChangePending=false\n          mPendingDarkIntensity=0.0 mDarkIntensity=1.0 mNextDarkIntensity=1.0\n         mAreNavigationButtonForcedVisible=false\n        \n         NavigationBarTransitionsController:\n          mTransitionDeferring=false  mTransitionPending=false mTintChangePending=false\n          mPendingDarkIntensity=0.0 mDarkIntensity=0.0 mNextDarkIntensity=0.0\n         mAreNavigationButtonForcedVisible=false\n        \n        com.android.systemui.statusbar.events.SystemEventCoordinator$batteryStateListener$1@e3dd909\n        com.android.systemui.battery.BatteryMeterViewController$3@e6c570e location=QS\n          BatteryMeterView:\n            mDrawable.getPowerSave: false\n            mDrawable.getDisplayShield: false\n            mDrawable.getCharging: true\n            mBatteryPercentView.getText(): 100%\n            mTextColor: #ffe3e2e9\n            mBatteryStateUnknown: false\n            mIsIncompatibleCharging: false\n            mPluggedIn: true\n            mBatteryStateAlert: false\n            mLevel: 100\n            mMode: 3\n        com.android.systemui.battery.BatteryMeterViewController$3@97b852f location=KEYGUARD\n          BatteryMeterView:\n            mDrawable.getPowerSave: false\n            mDrawable.getDisplayShield: false\n            mDrawable.getCharging: true\n            mBatteryPercentView.getText(): null\n            mTextColor: #ffffffff\n            mBatteryStateUnknown: false\n            mIsIncompatibleCharging: false\n            mPluggedIn: true\n            mBatteryStateAlert: false\n            mLevel: 100\n            mMode: 0\n        com.android.systemui.battery.BatteryMeterViewController$3@d86373c location=HOME\n          BatteryMeterView:\n            mDrawable.getPowerSave: false\n            mDrawable.getDisplayShield: false\n            mDrawable.getCharging: true\n            mBatteryPercentView.getText(): null\n            mTextColor: #99000000\n            mBatteryStateUnknown: false\n            mIsIncompatibleCharging: false\n            mPluggedIn: true\n            mBatteryStateAlert: false\n            mLevel: 100\n            mMode: 0\n        com.google.android.systemui.qs.pipeline.domain.autoaddable.ReverseChargingAutoAddable$getCallback$1@b61fcc5\n        com.android.keyguard.ClockEventController$batteryCallback$1@91ad61a\n      ------------------\n      mReverse=false\n      mExtremeSaver=false\n\n    CRITICAL dump took 25ms -- BatteryController\n\n    BluetoothController:\n    ----------------------------------------------------------------------------\n    BluetoothController state:\n      mLocalBluetoothManager=com.android.settingslib.bluetooth.LocalBluetoothManager@fc5454b\n      mEnabled=true\n      mConnectionState=DISCONNECTED\n      mAudioProfileOnly=false\n      mIsActive=false\n      mConnectedDevices=[]\n      mCallbacks.size=1\n      Bluetooth Devices:\n\n    CRITICAL dump took 0ms -- BluetoothController\n\n    CollapsedStatusBarFragment:\n    ----------------------------------------------------------------------------\n    mHasPrimaryOngoingActivity=false\n    mHasSecondaryOngoingActivity=false\n    mAnimationsEnabled=true\n    Startables: 1\n      com.android.systemui.statusbar.layout.StatusBarBoundsProvider@8805548, state: STARTED\n\n    CRITICAL dump took 0ms -- CollapsedStatusBarFragment\n\n    DeviceEntryFaceAuthRepositoryImpl:\n    ----------------------------------------------------------------------------\n    DeviceEntryFaceAuthRepositoryImpl state:\n      cancellationInProgress: kotlinx.coroutines.flow.StateFlowImpl@51d8b28\n      _isLockedOut.value: false\n      _isAuthRunning.value: false\n      isDetectionSupported: false\n      FaceManager state:\n        faceManager: null\n        sensorPropertiesInternal: null\n        supportsFaceDetection: null\n      _pendingAuthenticateRequest: null\n      authCancellationSignal: null\n      detectCancellationSignal: null\n      _authenticationStatus: null\n      _detectionStatus: null\n      currentUserId: 0\n      keyguardSessionId: null\n      lockscreenBypassEnabled: false\n\n    CRITICAL dump took 1ms -- DeviceEntryFaceAuthRepositoryImpl\n\n    DozeParameters:\n    ----------------------------------------------------------------------------\n    getAlwaysOn(): false\n    getDisplayStateSupported(): false\n    getPulseDuration(): 6730\n    getPulseInDuration(): 130\n    getPulseInVisibleDuration(): 6000\n    getPulseOutDuration(): 600\n    getPulseOnSigMotion(): false\n    getVibrateOnSigMotion(): false\n    getVibrateOnPickup(): false\n    getProxCheckBeforePulse(): true\n    getPickupVibrationThreshold(): 2000\n"
+    },
+    {
+      "file": "before-demo-telephony.txt",
+      "error": "adb: device offline\n"
+    }
+  ],
+  "error": "adb: device offline\n",
+  "failureDiagnostics": [
+    {
+      "file": "failure-raw.png",
+      "error": "error: device offline\n"
+    },
+    {
+      "file": "failure-window.txt",
+      "error": "adb: device offline\n"
+    },
+    {
+      "file": "failure-activity.txt",
+      "error": "adb: device offline\n"
+    },
+    {
+      "file": "failure-logcat.txt",
+      "status": "saved"
+    }
+  ],
+  "cleanup": {
+    "status": "failed",
+    "errors": [
+      {
+        "command": [
+          "adb",
+          "reverse"
+        ],
+        "error": "Could not remove local backend forwarding"
+      },
+      {
+        "command": [
+          "adb",
+          "reverse"
+        ],
+        "error": "Could not remove compute forwarding"
+      }
+    ]
+  },
+  "finishedAt": "2026-11-15T05:22:07.120108+00:00",
+  "uiDumpReadinessWaits": 0,
+  "uiDumpTransportWarnings": 0,
+  "status": "failed"
+}

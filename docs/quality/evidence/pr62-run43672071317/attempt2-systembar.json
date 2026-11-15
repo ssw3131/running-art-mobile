@@ -1,0 +1,218 @@
+[
+  {
+    "capture": "prepare-visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.386,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.375,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.395,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.384,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.534,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.369,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.377,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.378,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.376,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.366,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.374,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.38,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-account",
+    "status": "failed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.424,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-01.png"
+      },
+      {
+        "elapsedSeconds": 1.085,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-02.png"
+      },
+      {
+        "elapsedSeconds": 1.733,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-03.png"
+      },
+      {
+        "elapsedSeconds": 2.395,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-04.png"
+      },
+      {
+        "elapsedSeconds": 3.07,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-05.png"
+      },
+      {
+        "elapsedSeconds": 3.731,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-06.png"
+      },
+      {
+        "elapsedSeconds": 4.392,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-07.png"
+      },
+      {
+        "elapsedSeconds": 5.05,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-08.png"
+      },
+      {
+        "elapsedSeconds": 5.706,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-09.png"
+      },
+      {
+        "elapsedSeconds": 6.367,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-10.png"
+      },
+      {
+        "elapsedSeconds": 7.02,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-11.png"
+      },
+      {
+        "elapsedSeconds": 7.689,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-12.png"
+      },
+      {
+        "elapsedSeconds": 8.355,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-13.png"
+      },
+      {
+        "elapsedSeconds": 9.016,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-14.png"
+      },
+      {
+        "elapsedSeconds": 9.692,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-15.png"
+      },
+      {
+        "elapsedSeconds": 10.358,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-16.png"
+      },
+      {
+        "elapsedSeconds": 11.009,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-17.png"
+      },
+      {
+        "elapsedSeconds": 11.666,
+        "fullSignal": false,
+        "file": "prepare-visual-account-systembar-71101be6ff644ade95c15e7805045dbb-18.png"
+      }
+    ]
+  }
+]

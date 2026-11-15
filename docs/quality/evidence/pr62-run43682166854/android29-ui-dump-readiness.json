@@ -1,0 +1,26 @@
+[
+  {
+    "capture": "home-saved-detail",
+    "connectionAttempt": 1,
+    "rootAttempts": 4,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "current",
+    "connectionAttempt": 1,
+    "rootAttempts": 2,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "home-paused-return",
+    "connectionAttempt": 1,
+    "rootAttempts": 4,
+    "freshHierarchy": true
+  },
+  {
+    "capture": "s5-badge-record",
+    "connectionAttempt": 1,
+    "rootAttempts": 4,
+    "freshHierarchy": true
+  }
+]

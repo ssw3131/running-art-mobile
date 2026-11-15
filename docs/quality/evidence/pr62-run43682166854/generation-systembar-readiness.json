@@ -1,0 +1,162 @@
+[
+  {
+    "capture": "prepare-visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.395,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.374,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.393,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-home",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.402,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.385,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.378,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.393,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-run",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.361,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.36,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.353,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.351,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-archive",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.374,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "prepare-visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.446,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.403,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.386,
+        "fullSignal": true
+      }
+    ]
+  },
+  {
+    "capture": "visual-account",
+    "status": "passed",
+    "samples": [
+      {
+        "elapsedSeconds": 0.396,
+        "fullSignal": true
+      }
+    ]
+  }
+]

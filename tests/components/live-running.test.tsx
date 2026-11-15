@@ -46,6 +46,24 @@ test('map compass follows the measured summary including safe-area/accessory off
  expect(screen.getByTestId('live-map').props.compassTop).toBe(279);
  expect(screen.queryByText('위치 권한 설정')).toBeNull();
 });
+
+test.each(['running','paused','simulation'])('%s map permits exploration and only the touch-lock setting disables gestures',async mode=>{
+ const p=props();
+ p.run={...run,status:mode==='paused'?'paused':'running'};
+ p.guide={...guide,options:{...guide.options,mode:'map'}};
+ const simulationState=mode==='simulation'?mockState as any:undefined;
+ const view=await render(<LiveGuidancePanel {...p} simulationState={simulationState}/>);
+ expect(screen.getByTestId('live-map').props.navigationMode).toBe(true);
+ expect(screen.getByTestId('live-map').props.gesturesEnabled).toBe(true);
+ p.guide={...p.guide,options:{...p.guide.options,touchLock:true}};
+ await view.rerender(<LiveGuidancePanel {...p} simulationState={simulationState}/>);
+ expect(screen.getByTestId('run-touch-unlock')).toBeVisible();
+ expect(screen.getByTestId('live-map',{includeHiddenElements:true}).props.gesturesEnabled).toBe(false);
+ await fireEvent(screen.getByTestId('run-touch-unlock'),'accessibilityAction',{nativeEvent:{actionName:'activate'}});
+ expect(screen.getByTestId('live-map').props.gesturesEnabled).toBe(true);
+ expect(p.onOptions).toHaveBeenLastCalledWith({...p.guide.options,touchLock:false});
+ expect(p.onPauseResume).not.toHaveBeenCalled();expect(p.onFinish).not.toHaveBeenCalled();
+});
 test('UI-LIVE-01: actual metrics and separate pause/end callbacks, persisted settings are independent',async()=>{
  const p=props();await render(<LiveGuidancePanel {...p}/>);expect(screen.getByTestId('run-distance')).toHaveTextContent('3.20 km');
  await fireEvent.press(screen.getByTestId('run-pause'));expect(p.onPauseResume).toHaveBeenCalledTimes(1);expect(p.onFinish).not.toHaveBeenCalled();

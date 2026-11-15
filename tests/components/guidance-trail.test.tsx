@@ -10,18 +10,62 @@ jest.mock('@maplibre/maplibre-react-native',()=>{
 });
 const state:any={position:[127,37],returnPath:[],trace:[[[127,37],[127.001,37]],[[127.002,37],[127.003,37]]],phase:'lap',lapStart:[127,37]};
 test('recorded segments keep their GPS gaps and render orange above the blue course guide',async()=>{
- await render(<GuidanceMap route={[[127,37],[127.01,37]]} state={state} followLock heading={90}/>);
+ await render(<GuidanceMap route={[[127,37],[127.01,37]]} state={state} navigationMode heading={90}/>);
  const course=screen.getByTestId('layer-guidance-course-line'),trail=screen.getByTestId('layer-guidance-trace-line');
  expect(course.props.paint['line-color']).toBe('#1F6BFF');expect(trail.props.paint['line-color']).toBe('#FC5602');expect(trail.props.paint['line-width']).toBeGreaterThan(course.props.paint['line-width']);expect(trail.props.afterId).toBe(course.props.id??'guidance-course-line');
  expect(screen.getByTestId('source-guidance-paths').props.data.features.filter((f:any)=>f.properties.role==='trace').map((f:any)=>f.geometry.coordinates)).toEqual(state.trace);
 });
-test('locked map cannot drift by a gesture and immediately centers each new position and heading',async()=>{
- const view=await render(<GuidanceMap route={[[127,37],[127.01,37]]} state={state} followLock heading={90}/>);
- const map=screen.getByTestId('guidance-map');expect(map.props.dragPan).toBe(false);expect(map.props.touchRotate).toBe(false);
+test('navigation follows GPS until a gesture, keeps updating the trail while exploring, and recenters on the latest fix',async()=>{
+ const route=[[127,37],[127.01,37]],onRecenter=jest.fn();
+ const view=await render(<GuidanceMap route={route} state={state} navigationMode heading={90} onRecenter={onRecenter}/>);
+ const map=screen.getByTestId('guidance-map');
+ expect(map.props.dragPan).toBe(true);expect(map.props.touchZoom).toBe(true);
+ expect(map.props.touchRotate).toBe(false);expect(map.props.touchPitch).toBe(false);
+ await fireEvent(map,'didFinishLoadingStyle');await fireEvent(map,'didFinishLoadingMap');
+ expect(mockJump).toHaveBeenLastCalledWith({center:state.position,bearing:90,zoom:16.5});
+ await fireEvent(map,'regionWillChange',{nativeEvent:{userInteraction:false}});
+ const moving={...state,position:[127.004,37],trace:[...state.trace,[[127.004,37]]]};
+ await view.rerender(<GuidanceMap route={route} state={moving} navigationMode heading={120} onRecenter={onRecenter}/>);
+ expect(mockJump).toHaveBeenLastCalledWith({center:moving.position,bearing:120,zoom:16.5});
+ await fireEvent(map,'regionWillChange',{nativeEvent:{userInteraction:true}});
+ mockJump.mockClear();mockEase.mockClear();
+ const latest={...moving,position:[127.005,37],trace:[...state.trace,[[127.004,37],[127.005,37]]]};
+ await view.rerender(<GuidanceMap route={route} state={latest} navigationMode heading={180} onRecenter={onRecenter}/>);
+ expect(mockJump).not.toHaveBeenCalled();expect(mockEase).not.toHaveBeenCalled();
+ expect(screen.getByTestId('source-guidance-position').props.data.geometry.coordinates).toEqual(latest.position);
+ expect(screen.getByTestId('source-guidance-paths').props.data.features.filter((f:any)=>f.properties.role==='trace').map((f:any)=>f.geometry.coordinates)).toEqual(latest.trace);
+ await fireEvent.press(screen.getByTestId('guidance-recenter'));
+ expect(mockJump).toHaveBeenLastCalledWith({center:latest.position,bearing:180,zoom:16.5});
+ expect(onRecenter).toHaveBeenCalledTimes(1);
+ await fireEvent(screen.getByTestId('guidance-map'),'regionWillChange',{nativeEvent:{userInteraction:false}});
+ await view.rerender(<GuidanceMap route={route} state={{...latest,position:[127.006,37]}} navigationMode heading={210} onRecenter={onRecenter}/>);
+ expect(mockJump).toHaveBeenLastCalledWith({center:[127.006,37],bearing:210,zoom:16.5});
+});
+
+test('touch locking prevents gestures without stopping navigation updates, and unlocking allows exploration',async()=>{
+ const route=[[127,37],[127.01,37]];
+ const view=await render(<GuidanceMap route={route} state={state} navigationMode gesturesEnabled={false} heading={90}/>);
+ const map=screen.getByTestId('guidance-map');
+ expect(map.props.dragPan).toBe(false);expect(map.props.touchZoom).toBe(false);expect(map.props.touchRotate).toBe(false);
  await fireEvent(map,'didFinishLoadingStyle');await fireEvent(map,'didFinishLoadingMap');
  await fireEvent(map,'regionWillChange',{nativeEvent:{userInteraction:true}});
- await view.rerender(<GuidanceMap route={[[127,37],[127.01,37]]} state={{...state,position:[127.002,37]}} followLock heading={180}/>);
- expect(mockJump).toHaveBeenLastCalledWith({center:[127.002,37],bearing:180,zoom:16.5});
+ const latest={...state,position:[127.002,37]};
+ await view.rerender(<GuidanceMap route={route} state={latest} navigationMode gesturesEnabled={false} heading={180}/>);
+ expect(mockJump).toHaveBeenLastCalledWith({center:latest.position,bearing:180,zoom:16.5});
+ await view.rerender(<GuidanceMap route={route} state={latest} navigationMode heading={180}/>);
+ expect(screen.getByTestId('guidance-map').props.dragPan).toBe(true);
+ await fireEvent(screen.getByTestId('guidance-map'),'regionWillChange',{nativeEvent:{userInteraction:true}});
+ mockJump.mockClear();mockEase.mockClear();
+ await view.rerender(<GuidanceMap route={route} state={{...latest,position:[127.003,37]}} navigationMode heading={210}/>);
+ expect(mockJump).not.toHaveBeenCalled();expect(mockEase).not.toHaveBeenCalled();
+});
+
+test('preparation maps retain rotation and animated recentering',async()=>{
+ await render(<GuidanceMap route={[[127,37],[127.01,37]]} state={state}/>);
+ const map=screen.getByTestId('guidance-map');
+ expect(map.props.dragPan).toBe(true);expect(map.props.touchZoom).toBe(true);expect(map.props.touchRotate).toBe(true);
+ await fireEvent.press(screen.getByTestId('guidance-recenter'));
+ expect(mockEase).toHaveBeenLastCalledWith({center:state.position,zoom:16.5,duration:200});
 });
 
 test('a first accepted GPS fix is visible and replacing actual trace updates the same map source',async()=>{

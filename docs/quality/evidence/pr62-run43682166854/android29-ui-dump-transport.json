@@ -1,0 +1,38 @@
+[
+  {
+    "capture": "current",
+    "exitCode": 134,
+    "token": "70b0e36f393a4734b38c1be17a4045fa",
+    "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.585\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+  },
+  {
+    "capture": "home-interrupted",
+    "exitCode": 134,
+    "token": "6c66b3af171b41b0ab415fc52739c3f4",
+    "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.554\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+  },
+  {
+    "capture": "current",
+    "exitCode": 139,
+    "token": "f0da62e0885b42389956a252c778291b",
+    "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.548\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+  },
+  {
+    "capture": "current",
+    "exitCode": 139,
+    "token": "509baad4348a4104ab23fed2a33faa33",
+    "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.563\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+  },
+  {
+    "capture": "draft-after-detail",
+    "exitCode": 134,
+    "token": "72a5dfe88c9b461db56e18804b4b9071",
+    "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.562\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+  },
+  {
+    "capture": "draft-after-callback",
+    "exitCode": 139,
+    "token": "bdb47fecb40d4ea7896be3058049e2e3",
+    "output": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=1\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.\nTime: 0.554\n\nOK (1 test)\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n"
+  }
+]

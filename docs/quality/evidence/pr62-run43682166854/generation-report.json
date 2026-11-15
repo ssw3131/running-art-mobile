@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "source": "3ce2ae2b8458e97daa66436eaa8392ef27cc27a2",
+  "dirty": false,
+  "startedAt": "2026-11-15T06:30:40.343783+00:00",
+  "ciRun": "43684697820",
+  "apkSha256": "6ff8f7e95011de381b06097c8e52bcfdb8491f4856873f8108cb627dde3ec9eb",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "generation-only",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-15T06:30:40.469391+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S2a-01-generation",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:33:05.487986+00:00",
+          "preservation": "passed",
+          "durationSeconds": 171.431,
+          "finishedAt": "2026-11-15T06:35:56.919099+00:00"
+        },
+        {
+          "id": "S2a-02-accessibility",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:36:21.685592+00:00",
+          "preservation": "passed",
+          "durationSeconds": 61.572,
+          "finishedAt": "2026-11-15T06:37:23.257729+00:00"
+        }
+      ],
+      "status": "passed",
+      "setups": [
+        {
+          "scenario": "S2a-01-generation",
+          "startedAt": "2026-11-15T06:32:41.210402+00:00",
+          "status": "passed",
+          "freshAppData": true,
+          "durationSeconds": 24.277,
+          "finishedAt": "2026-11-15T06:33:05.487735+00:00"
+        },
+        {
+          "scenario": "S2a-02-accessibility",
+          "startedAt": "2026-11-15T06:35:56.922146+00:00",
+          "status": "passed",
+          "freshAppData": true,
+          "durationSeconds": 24.763,
+          "finishedAt": "2026-11-15T06:36:21.685111+00:00"
+        }
+      ],
+      "preservation": {
+        "status": "passed",
+        "sha256": "e3604307c73413d3976ff00b20e84d915ff7184a2dda6f951045a586ef6150c7"
+      },
+      "finishedAt": "2026-11-15T06:38:15.268285+00:00"
+    }
+  ],
+  "retries": 0,
+  "radioSignalProfile": {
+    "profile": 4,
+    "response": "OK"
+  },
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "demoMobileSubscriptionId": 999,
+  "signalDiagnostics": [
+    {
+      "file": "before-demo-systemui-mobile.txt",
+      "status": "saved"
+    },
+    {
+      "file": "after-demo-frames-systemui-mobile.txt",
+      "status": "saved"
+    }
+  ],
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-15T06:38:17.648655+00:00",
+  "uiDumpReadinessWaits": 0,
+  "uiDumpTransportWarnings": 0,
+  "status": "passed"
+}
