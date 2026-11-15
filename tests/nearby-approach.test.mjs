@@ -20,7 +20,8 @@ test('nearby planner loads 1km once, shares simultaneous work and reuses a ready
  let loads=0;const planner=createApproachPlanner(async()=>{loads++;await new Promise(r=>setTimeout(r,5));return {elements:roads,source:'test',cached:true};},async()=>{});
  const values=await Promise.all([planner(request,signal()),planner(request,signal())]);assert.deepEqual(values[0],values[1]);assert.equal(loads,1);assert.ok(Math.abs(values[0].distanceM-400)<1);
  let timing;await planner(request,signal(),value=>timing=value);assert.equal(loads,1);assert.equal(timing.cache,'plan');
- await planner({...request,targetM:100},signal());assert.equal(loads,1);planner.clear();assert.deepEqual(planner.stats(),{graphs:0,plans:0,pending:0});
+ await planner({...request,targetM:100},signal());assert.equal(loads,1);
+ const moved=await planner({...request,position:coord([50,0])},signal());assert.ok(Math.abs(moved.distanceM-350)<1);assert.equal(loads,1);planner.clear();assert.deepEqual(planner.stats(),{graphs:0,plans:0,pending:0});
 });
 test('expiry reloads roads; course changes never reuse a mismatched target',async()=>{
  let now=0,loads=0;const planner=createApproachCache(async()=>{loads++;return {elements:roads,source:'test',cached:true};},ops,async()=>{},()=>now);
@@ -86,4 +87,18 @@ test('screen handoff inherits an unfinished request; changed road data invalidat
 test('a road version update emitted by the loader does not cancel its own new calculation',async()=>{
  const planner=createApproachPlanner(async()=>{planner.roadsChanged();return {elements:roads,source:'test',cached:true};},async()=>{});
  assert.ok((await planner(request,signal())).distanceM>0);
+});
+
+
+test('a verified route just inside 1km does not trigger a redundant 2km lookup',async()=>{
+ const radii=[],planner=createApproachPlanner(async(_o,r)=>{radii.push(r);return {elements:[way(1,[1,2],[[-550,0],[400,0]]),roads[1]],source:'test',cached:true};},async()=>{});
+ const result=await planner({...request,position:coord([-550,0])},signal());assert.ok(result.distanceM>949&&result.distanceM<951);assert.deepEqual(radii,[1000]);
+});
+
+
+test('graph eviction also releases paths that retained an evicted graph',async()=>{
+ const planner=createApproachPlanner(async()=>({elements:roads,source:'test',cached:true}),async()=>{});
+ await planner(request,signal());assert.equal(planner.stats().plans,1);
+ for(const x of [3000,6000])await assert.rejects(planner({...request,position:coord([x,0])},signal()));
+ assert.equal(planner.stats().graphs,2);assert.equal(planner.stats().plans,0);
 });

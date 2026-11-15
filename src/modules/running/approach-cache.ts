@@ -38,10 +38,10 @@ export function createApproachCache(load:RoadLoader,op:Operations,yieldToHost:()
       timing.cache='plan';return finish(cached.plan);
     }
     const route=prepareRoute(request.course.route),nearest=request.targetM===undefined?project(route,request.position,0,route.totalMeters,0).separation:distance(request.position,positionAt(route,request.targetM));
-    const radii=[1000,2000,5000,10000].filter(r=>r>=nearest*1.5+100||r===10000);
-    let failure:unknown;
+    const radii=[1000,2000,5000,10000].filter(r=>r>=nearest+30||r===10000);
+    let failure:unknown;const attempted=new Set<Graph>();
     for(const radius of radii){
-      timing.radius=radius;let entry=graphs.find(g=>g.radius-distance([g.origin.lng,g.origin.lat],request.position)>=radius);
+      timing.radius=radius;let entry=graphs.find(g=>!attempted.has(g.graph)&&g.radius-distance([g.origin.lng,g.origin.lat],request.position)>=Math.min(radius,nearest+30));
       if(entry)timing.cache='graph';
       if(!entry){
         let at=performance.now();const roads=await load(origin,radius,signal,'prefer-cache');revision=roadRevision;timing.roadMs+=performance.now()-at;
@@ -49,12 +49,17 @@ export function createApproachCache(load:RoadLoader,op:Operations,yieldToHost:()
         if(old&&old!==version){graphs=graphs.filter(g=>region(g.origin)!==area);plans=plans.filter(p=>p.version===version);}versions.set(area,version);
         at=performance.now();const graph=await drain(op.buildGraphSteps(roads.elements,origin,radius),signal);timing.graphMs+=performance.now()-at;
         entry={graph,origin,radius,version,at:now()};
-        if(revision===roadRevision&&graph.nodes.length+graph.edges.length<=MAX_SIZE){graphs.push(entry);while(graphs.length>2||graphs.reduce((n,g)=>n+g.graph.nodes.length+g.graph.edges.length,0)>MAX_SIZE)graphs.shift();}
+        if(revision===roadRevision&&graph.nodes.length+graph.edges.length<=MAX_SIZE){graphs.push(entry);while(graphs.length>2||graphs.reduce((n,g)=>n+g.graph.nodes.length+g.graph.edges.length,0)>MAX_SIZE)graphs.shift();prune();}
       }
+      attempted.add(entry.graph);
       try{
         const at=performance.now(),plan=await drain(op.approachSteps(entry.graph,request),signal);timing.searchMs+=performance.now()-at;
         const remaining=entry.radius-distance([entry.origin.lng,entry.origin.lat],request.position);
-        if(plan.distanceM<remaining-100||radius===10000){
+        // Any route leaving this circle must first cover at least `remaining`
+        // from the GPS fix. Account for the verified source snap, not a fixed
+        // 100m margin that needlessly rebuilds a 950m route in a 2km graph.
+        const sourceSeparation=distance(request.position,plan.path[0]);
+        if(plan.distanceM+sourceSeparation<remaining-1||radius===10000){
           const source=await drain(op.snapWalkingSourceSteps(entry.graph,op.toPoint(origin.lat,origin.lng,entry.graph.origin),request.accuracy),signal),ref=entry.graph.edges[source.edge].ref;
           if(revision!==roadRevision)throw new Error('도로 자료가 갱신됐어요. 경로를 다시 확인해 주세요.');
           if(ref)plans.push({key,plan,position:request.position,source:ref,version:entry.version,at:now(),graph:entry.graph});

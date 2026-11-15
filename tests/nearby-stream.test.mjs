@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {once} from 'node:events';
+import {readFileSync} from 'node:fs';
+import {calculateRoute} from '../src/modules/route-engine/runner.ts';
+const grid=JSON.parse(readFileSync('assets/route-lab/grid.json'));
 import {createComputeServer} from '../server/route-compute/server.mjs';
 import {createRemoteCalculation} from '../src/modules/route-compute/client.ts';
 import {parseComputeRequest} from '../src/modules/route-compute/contract.ts';
@@ -17,10 +20,18 @@ test('stream handles split UTF-8 events and rejects missing results or terminal 
 });
 test('real HTTP emits actual progress, reserves once, replays final results and preserves JSON clients',async t=>{
  const usage=usageFixture();let runs=0;
- const server=createComputeServer({run:async(_r,_s,progress)=>{runs++;progress({phase:'nearby',text:'300m',accessLimitM:300});progress({phase:'comparison',text:'비교'});const v=value();v.result.candidates=structuredClone(response(req).result.candidates);return v;},close:async()=>{}},{usage});
+ const server=createComputeServer({run:async(input,signal,progress)=>{runs++;const v=await calculateRoute({...input,origin:grid.origin,elements:grid.elements},{signal,onProgress:progress});return {...value(),contract:input.contract,request:input,...v};},close:async()=>{}},{usage});
  server.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>server.close());
  const headers={'content-type':'application/json',accept:'application/x-ndjson',...usageHeaders()},url=`http://127.0.0.1:${server.address().port}/v1/routes`;
- const first=await fetch(url,{method:'POST',headers,body:JSON.stringify(req)});assert.match(first.headers.get('content-type'),/ndjson/);const events=(await first.text()).trim().split('\n').map(JSON.parse);assert.deepEqual(events.map(e=>e.type),['progress','progress','result']);assert.equal(usage.operations.size,1);
+ const first=await fetch(url,{method:'POST',headers,body:JSON.stringify(req)});assert.match(first.headers.get('content-type'),/ndjson/);const events=(await first.text()).trim().split('\n').map(JSON.parse);assert.equal(events.at(-1).type,'result');for(const phase of ['nearby','comparison'])assert.ok(events.some(e=>e.type==='progress'&&e.value.phase===phase));assert.equal(usage.operations.size,1);
  const replay=await fetch(url,{method:'POST',headers,body:JSON.stringify(req)});assert.equal(replay.status,200);assert.match(replay.headers.get('content-type'),/application\/json/);await replay.json();assert.equal(runs,1);
  const legacy=await fetch(url,{method:'POST',headers:{...usageHeaders(),'content-type':'application/json'},body:JSON.stringify(request)});assert.match(legacy.headers.get('content-type'),/application\/json/);await legacy.json();
+});
+
+
+test('cancel interrupts an open progress stream and releases its reader',async()=>{
+ let release,closed=false;const opened=new Promise(r=>release=r),controller=new AbortController();
+ const fetcher=async()=>new Response(new ReadableStream({start(c){c.enqueue(new TextEncoder().encode(JSON.stringify({type:'progress',value:{phase:'nearby',text:'300m'}})+'\n'));release();},cancel(){closed=true;}}),{headers:{'content-type':'application/x-ndjson'}});
+ const remote=createRemoteCalculation('https://fixture.test',fetcher),result=remote({...req,elements:[]},controller.signal,false);
+ await opened;await new Promise(r=>setTimeout(r,0));controller.abort();await assert.rejects(result,/취소/);assert.equal(closed,true);
 });

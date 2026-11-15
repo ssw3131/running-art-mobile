@@ -39,6 +39,8 @@ export function createRemoteCalculation(base: string, fetcher: typeof fetch = fe
         if (declared && (!/^\d+$/.test(declared) || Number(declared) > MAX_RESPONSE_BYTES)) throw new Error('서버 응답이 너무 커요.');
         if (!response.body) throw new Error('서버 응답이 비어 있어요.');
         const reader = response.body.getReader(), decoder = new TextDecoder();
+        const cancelRead=()=>{void reader.cancel().catch(()=>{});};
+        controller.signal.addEventListener('abort',cancelRead,{once:true});
         let size = 0, text = '';
         let finalValue: unknown;
         const event=(line:string)=>{
@@ -60,7 +62,7 @@ export function createRemoteCalculation(base: string, fetcher: typeof fetch = fe
             if(streaming){let newline;while((newline=text.indexOf('\n'))>=0){event(text.slice(0,newline));text=text.slice(newline+1);}}
           }
           text += decoder.decode();
-        } finally { await reader.cancel().catch(() => {}); reader.releaseLock(); }
+        } finally { controller.signal.removeEventListener('abort',cancelRead);await reader.cancel().catch(() => {}); reader.releaseLock(); }
         if(streaming&&text.trim())event(text);
         if(streaming&&finalValue===undefined)throw new Error('서버 결과 수신이 중단됐어요. 다시 복원해 주세요.');
         const value = streaming ? finalValue as ComputeResponse : JSON.parse(text);

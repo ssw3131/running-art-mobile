@@ -63,6 +63,9 @@ def generation_flow(q):
         time.sleep(1)
     else: raise RuntimeError('Generation did not finish')
     tree = q.capture('s2a-result-map')
+    q.seek('nearby-explanation'); q.capture('s2a-nearby-policy')
+    assert q.find(q.capture('s2a-nearby-explanation'), 'nearby-explanation') is not None
+    tree = q.capture('s2a-result-map')
     # The eye belongs to the fixed map, outside the list's scroll viewport.
     fixed = q.find(tree, 'recommendation-fixed-map')
     eye = q.find(tree, 'generation-target-toggle')
