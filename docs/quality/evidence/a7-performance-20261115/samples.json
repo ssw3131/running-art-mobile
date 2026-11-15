@@ -1,0 +1,4398 @@
+[
+  {
+    "iteration": 0,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10020.68680100143,
+    "roadMs": 10020.40383899957,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 10020,
+        "outcome": "failed",
+        "requests": 9
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 0,
+    "version": "baseline",
+    "condition": "file",
+    "ok": false,
+    "elapsedMs": 10930.26076200232,
+    "roadMs": 10930.138414997607,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 10930,
+        "outcome": "failed",
+        "requests": 12
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 0,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": false,
+    "elapsedMs": 10011.19203099981,
+    "roadMs": 9657.747763000429,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9658,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 0,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8949.213686000556,
+    "roadMs": 8470.064648002386,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8470,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 0,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4703.914765998721,
+    "roadMs": 4134.437651000917,
+    "timing": {
+      "roadMs": 4134.485842999071,
+      "graphMs": 386.39880799874663,
+      "searchMs": 100.05750000104308,
+      "totalMs": 4639.308419998735,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4134,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 0,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3531.155843000859,
+    "roadMs": 3302.9148049987853,
+    "timing": {
+      "roadMs": 3302.951498001814,
+      "graphMs": 149.0438069999218,
+      "searchMs": 33.7099229991436,
+      "totalMs": 3508.923613000661,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3303,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 0,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.58576999977231,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.6091150008141994,
+      "totalMs": 22.1571930013597,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 0,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.29415399953723,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.995769999921322,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 1,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4711.7398429997265,
+    "roadMs": 4377.298611998558,
+    "timing": {
+      "roadMs": 4377.344305001199,
+      "graphMs": 246.18819199874997,
+      "searchMs": 34.15496100112796,
+      "totalMs": 4681.614727001637,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4377,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 1,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3618.9502670019865,
+    "roadMs": 3363.144306000322,
+    "timing": {
+      "roadMs": 3363.1852280013263,
+      "graphMs": 187.55915300175548,
+      "searchMs": 35.383960999548435,
+      "totalMs": 3602.5093440003693,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3363,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 1,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.14257699996233,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.6881159991025925,
+      "totalMs": 21.79042299836874,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 1,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.2820769995451,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.864884998649359,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 1,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10006.939723998308,
+    "roadMs": 10006.52276200056,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 10006,
+        "outcome": "failed",
+        "requests": 12
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 1,
+    "version": "baseline",
+    "condition": "file",
+    "ok": false,
+    "elapsedMs": 10013.384185999632,
+    "roadMs": 9696.088263001293,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9696,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 1,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 9171.739032000303,
+    "roadMs": 8666.891648001969,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8667,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 1,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8513.826570998877,
+    "roadMs": 8100.4184180013835,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8100,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 2,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10031.334916003048,
+    "roadMs": 9729.523492999375,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9729,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 2,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8819.870954997838,
+    "roadMs": 8239.980264000595,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8240,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 2,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8576.901725001633,
+    "roadMs": 8032.2570709995925,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8032,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 2,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8375.759147997946,
+    "roadMs": 7969.804956000298,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7970,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 2,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5737.140726000071,
+    "roadMs": 5482.102226998657,
+    "timing": {
+      "roadMs": 5482.1475729979575,
+      "graphMs": 185.0268840007484,
+      "searchMs": 34.875808000564575,
+      "totalMs": 5720.47126499936,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 5482,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 2,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3626.638075001538,
+    "roadMs": 3401.616574000567,
+    "timing": {
+      "roadMs": 3401.6496130004525,
+      "graphMs": 140.4979229979217,
+      "searchMs": 34.889730002731085,
+      "totalMs": 3600.593650996685,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3401,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 2,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.509307999163866,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.771115999668837,
+      "totalMs": 22.150770001113415,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 2,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.29426899924874,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.912076998502016,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 3,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4720.773342002183,
+    "roadMs": 4409.124688997865,
+    "timing": {
+      "roadMs": 4409.152881000191,
+      "graphMs": 222.00365299731493,
+      "searchMs": 34.33984600007534,
+      "totalMs": 4688.9904970005155,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4409,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 3,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3557.235420998186,
+    "roadMs": 3266.291804999113,
+    "timing": {
+      "roadMs": 3266.310651000589,
+      "graphMs": 220.94865399971604,
+      "searchMs": 36.47642299905419,
+      "totalMs": 3540.5096129998565,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3266,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 3,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.23496200144291,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.533077001571655,
+      "totalMs": 21.84503899887204,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 3,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.28430699929595,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.141270000487566,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 3,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10011.535838998854,
+    "roadMs": 9613.62199300155,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9613,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 3,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8681.294146999717,
+    "roadMs": 8256.989148002118,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8257,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 3,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8797.367148000747,
+    "roadMs": 8232.297724999487,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8232,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 3,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8775.455071002245,
+    "roadMs": 8358.675264000893,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8359,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 4,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10007.443185001612,
+    "roadMs": 9629.63268500194,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9629,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 4,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8631.605454999954,
+    "roadMs": 8219.34430200234,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8219,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 4,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8518.269147999585,
+    "roadMs": 8101.36214800179,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8101,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 4,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8493.51384100318,
+    "roadMs": 8034.166533000767,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8034,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 4,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5794.198149997741,
+    "roadMs": 5257.6448040008545,
+    "timing": {
+      "roadMs": 5257.686687998474,
+      "graphMs": 356.7421150021255,
+      "searchMs": 92.97303900122643,
+      "totalMs": 5725.470495998859,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 5257,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 4,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3537.6834979988635,
+    "roadMs": 3299.841497000307,
+    "timing": {
+      "roadMs": 3299.8734599985182,
+      "graphMs": 150.10773100331426,
+      "searchMs": 33.19853800162673,
+      "totalMs": 3508.2212669998407,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3300,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 4,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.92876899987459,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 6.115192998200655,
+      "totalMs": 22.51742300018668,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 4,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.589807000011206,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.121385000646114,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 5,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4523.442765999585,
+    "roadMs": 4247.01918900013,
+    "timing": {
+      "roadMs": 4247.053767003119,
+      "graphMs": 182.88250000029802,
+      "searchMs": 34.7700389996171,
+      "totalMs": 4488.978457998484,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4247,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 5,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3667.753113001585,
+    "roadMs": 3460.0744199976325,
+    "timing": {
+      "roadMs": 3460.093612998724,
+      "graphMs": 139.03853800147772,
+      "searchMs": 34.62865399941802,
+      "totalMs": 3651.2505359984934,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3460,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 5,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.72657700255513,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 6.02938399836421,
+      "totalMs": 22.351346999406815,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 5,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.40623100101948,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.91296100243926,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 5,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10007.398184999824,
+    "roadMs": 9669.98899300024,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9670,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 5,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8731.1485699974,
+    "roadMs": 8019.2497630007565,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8019,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 5,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8833.68056999892,
+    "roadMs": 8280.032301999629,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8280,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 5,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8592.789109002799,
+    "roadMs": 8137.138532999903,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8137,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 9817.188069999218,
+    "roadMs": 9300.404532000422,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9300,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8725.818723998964,
+    "roadMs": 8153.526147998869,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8153,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8633.931071002036,
+    "roadMs": 8019.519956000149,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8019,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8549.856185998768,
+    "roadMs": 7975.83495600149,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7976,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5375.180188000202,
+    "roadMs": 5112.753304000944,
+    "timing": {
+      "roadMs": 5112.789034999907,
+      "graphMs": 194.50865299999714,
+      "searchMs": 33.533999998122454,
+      "totalMs": 5358.542957998812,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 5112,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3532.460613001138,
+    "roadMs": 3260.2287289984524,
+    "timing": {
+      "roadMs": 3260.248805001378,
+      "graphMs": 201.18507699668407,
+      "searchMs": 36.18265399709344,
+      "totalMs": 3515.756806001067,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3260,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.306768998503685,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.726077001541853,
+      "totalMs": 21.920884002000093,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 6,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.537230998277664,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.14903800189495,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 7,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4723.000151000917,
+    "roadMs": 4483.573843002319,
+    "timing": {
+      "roadMs": 4483.604343000799,
+      "graphMs": 147.08826899901032,
+      "searchMs": 34.49115400016308,
+      "totalMs": 4689.215458001941,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4483,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 7,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3732.3909970000386,
+    "roadMs": 3526.8276509977877,
+    "timing": {
+      "roadMs": 3526.852805003524,
+      "graphMs": 138.01000000163913,
+      "searchMs": 34.493500001728535,
+      "totalMs": 3715.9571509994566,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3527,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 7,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.078076999634504,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.448422998189926,
+      "totalMs": 21.757768999785185,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 7,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.489769000560045,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.09484600275755,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 7,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 9929.192146997899,
+    "roadMs": 9466.427186001092,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9466,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 7,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 9010.960840001702,
+    "roadMs": 8327.900417000055,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8328,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 7,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8807.540647000074,
+    "roadMs": 8390.768608998507,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8391,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 7,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8586.959916997701,
+    "roadMs": 8192.802763998508,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8193,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 8,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10018.105069000274,
+    "roadMs": 9750.979646999389,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9751,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 8,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8805.663070999086,
+    "roadMs": 8213.17003300041,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8213,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 8,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8456.659109000117,
+    "roadMs": 8017.55295599997,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8017,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 8,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8447.589609000832,
+    "roadMs": 8019.841149002314,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8020,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 8,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5825.2907259985805,
+    "roadMs": 5517.857843000442,
+    "timing": {
+      "roadMs": 5517.90168800205,
+      "graphMs": 183.27496100217104,
+      "searchMs": 35.34365399926901,
+      "totalMs": 5754.617150001228,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 5517,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 8,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3659.3523049987853,
+    "roadMs": 3422.490344002843,
+    "timing": {
+      "roadMs": 3422.5248819999397,
+      "graphMs": 147.12515299767256,
+      "searchMs": 34.25950000062585,
+      "totalMs": 3630.2743820026517,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3422,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 8,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.102038998156786,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.475961998105049,
+      "totalMs": 21.585808001458645,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 8,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.28142300248146,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.079539000988007,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 9,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4575.119265999645,
+    "roadMs": 4342.178573999554,
+    "timing": {
+      "roadMs": 4342.2043039985,
+      "graphMs": 101.35284600034356,
+      "searchMs": 34.07627000287175,
+      "totalMs": 4506.499534998089,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4342,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 9,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3748.1387659981847,
+    "roadMs": 3532.9866899996996,
+    "timing": {
+      "roadMs": 3533.0147660002112,
+      "graphMs": 147.35853799805045,
+      "searchMs": 34.53500000014901,
+      "totalMs": 3731.6448439992964,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3533,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 9,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 37.93811500072479,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.553383998572826,
+      "totalMs": 21.581884998828173,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 9,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.12361500039697,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.841922998428345,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 9,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10015.645955000073,
+    "roadMs": 9827.17849200219,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9827,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 9,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8606.148494001478,
+    "roadMs": 8058.389109000564,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8058,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 9,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8869.350570999086,
+    "roadMs": 8407.849185999483,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8408,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 9,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8417.027301996946,
+    "roadMs": 8007.00260899961,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8007,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 10,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10008.26557000354,
+    "roadMs": 9817.019915997982,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9817,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 10,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8586.107379000634,
+    "roadMs": 8113.5288400016725,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8113,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 10,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8531.257456000894,
+    "roadMs": 8051.3745709992945,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8051,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 10,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8470.480570998043,
+    "roadMs": 8058.27314800024,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8058,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 10,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5901.881187997758,
+    "roadMs": 5595.475150000304,
+    "timing": {
+      "roadMs": 5595.517149999738,
+      "graphMs": 185.5096540004015,
+      "searchMs": 35.2693069986999,
+      "totalMs": 5834.23541900143,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 5595,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 10,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3636.5368820019066,
+    "roadMs": 3414.0346129983664,
+    "timing": {
+      "roadMs": 3414.0569210015237,
+      "graphMs": 139.30727000162005,
+      "searchMs": 34.73876900225878,
+      "totalMs": 3610.0950360000134,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3414,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 10,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.51315400004387,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.865499999374151,
+      "totalMs": 22.207153998315334,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 10,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.436345998197794,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.113307997584343,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 11,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4428.432649999857,
+    "roadMs": 4236.277920000255,
+    "timing": {
+      "roadMs": 4236.301957998425,
+      "graphMs": 102.33130699768662,
+      "searchMs": 32.61792299896479,
+      "totalMs": 4394.869497001171,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4236,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 11,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3562.8604969978333,
+    "roadMs": 3352.0923439972103,
+    "timing": {
+      "roadMs": 3352.111997999251,
+      "graphMs": 142.7943460009992,
+      "searchMs": 34.43942300230265,
+      "totalMs": 3546.316073998809,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3352,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 11,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.577229999005795,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.874115999788046,
+      "totalMs": 22.249191999435425,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 11,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.00169200077653,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.837115000933409,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 11,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10007.245608001947,
+    "roadMs": 9586.081376999617,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9586,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 11,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8730.524993002415,
+    "roadMs": 8018.594032999128,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8018,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 11,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8656.4324939996,
+    "roadMs": 8173.574186999351,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8173,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 11,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8514.124147001654,
+    "roadMs": 8102.2960720025,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8102,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 12,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10015.599300000817,
+    "roadMs": 9898.30026299879,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9898,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 12,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8671.736917000264,
+    "roadMs": 8215.444648001343,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8215,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 12,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8695.277456000447,
+    "roadMs": 8216.615454997867,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8216,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 12,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8535.903071001172,
+    "roadMs": 7943.080608997494,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7943,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 12,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5040.555305000395,
+    "roadMs": 4686.253996998072,
+    "timing": {
+      "roadMs": 4686.285728000104,
+      "graphMs": 226.20315299928188,
+      "searchMs": 38.1846919991076,
+      "totalMs": 4968.359149999917,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4686,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 12,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3594.947227999568,
+    "roadMs": 3294.81238200143,
+    "timing": {
+      "roadMs": 3294.844920001924,
+      "graphMs": 209.5577310025692,
+      "searchMs": 35.94573100283742,
+      "totalMs": 3564.75361199677,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3295,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 12,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.691115997731686,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 6.130731001496315,
+      "totalMs": 22.30026900023222,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 12,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.244769997894764,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.756691999733448,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 13,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4344.225765999407,
+    "roadMs": 4068.147920001298,
+    "timing": {
+      "roadMs": 4068.181035000831,
+      "graphMs": 147.34346099942923,
+      "searchMs": 34.16234600171447,
+      "totalMs": 4290.645651001483,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4068,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 13,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3669.857958998531,
+    "roadMs": 3462.7659980021417,
+    "timing": {
+      "roadMs": 3462.784343998879,
+      "graphMs": 139.39388500154018,
+      "searchMs": 34.988577000796795,
+      "totalMs": 3653.4853429980576,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3463,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 13,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.3218460008502,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.549731001257896,
+      "totalMs": 21.927269000560045,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 13,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.25184600055218,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.002731002867222,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 13,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 9859.362877000123,
+    "roadMs": 9409.435416001827,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9409,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 13,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 9033.92910899967,
+    "roadMs": 8324.908032000065,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8325,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 13,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8802.780531998724,
+    "roadMs": 8247.376993998885,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8247,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 13,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8522.416225001216,
+    "roadMs": 8102.907802000642,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8103,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 14,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10011.438032001257,
+    "roadMs": 9515.4768400006,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9515,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 14,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8666.184186000377,
+    "roadMs": 8080.771224997938,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8081,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 14,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8682.121456000954,
+    "roadMs": 8054.974762998521,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8055,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 14,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8550.277916997671,
+    "roadMs": 8105.913224998862,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8106,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 14,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 6144.084842000157,
+    "roadMs": 5839.207380000502,
+    "timing": {
+      "roadMs": 5839.241727001965,
+      "graphMs": 183.6203460022807,
+      "searchMs": 34.865269001573324,
+      "totalMs": 6075.480264998972,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 5839,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 14,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3650.2828429974616,
+    "roadMs": 3423.1255360022187,
+    "timing": {
+      "roadMs": 3423.147958997637,
+      "graphMs": 137.0896150022745,
+      "searchMs": 35.17796099931002,
+      "totalMs": 3619.986804999411,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3423,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 14,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.63969200104475,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 6.071114998310804,
+      "totalMs": 22.30911500006914,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 14,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.46984599903226,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.19480799883604,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 15,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4659.911265999079,
+    "roadMs": 4461.6058810018,
+    "timing": {
+      "roadMs": 4461.629151001573,
+      "graphMs": 102.59403800219297,
+      "searchMs": 39.464500002563,
+      "totalMs": 4627.683419000357,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4461,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 15,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3576.111266002059,
+    "roadMs": 3367.570151001215,
+    "timing": {
+      "roadMs": 3367.5900360010564,
+      "graphMs": 139.89061599969864,
+      "searchMs": 35.175306998193264,
+      "totalMs": 3559.5058820024133,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3367,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 15,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.17903899773955,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.775537997484207,
+      "totalMs": 21.860883999615908,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 15,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.05799999833107,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.796923000365496,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 15,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10012.645993001759,
+    "roadMs": 9674.999608997256,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9675,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 15,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8848.399993002415,
+    "roadMs": 8360.800108999014,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8361,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 15,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8545.069224998355,
+    "roadMs": 7949.287533000112,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7949,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 15,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8562.127186000347,
+    "roadMs": 8007.098186999559,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8007,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 16,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 9931.490300998092,
+    "roadMs": 9481.690069999546,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9482,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 16,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8574.367110002786,
+    "roadMs": 8101.816609997302,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8102,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 16,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8760.835800997913,
+    "roadMs": 8288.983456000686,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8289,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 16,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8362.488839998841,
+    "roadMs": 7939.876878000796,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7940,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 16,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5114.544610999525,
+    "roadMs": 4817.839343000203,
+    "timing": {
+      "roadMs": 4817.872689001262,
+      "graphMs": 180.62173099815845,
+      "searchMs": 35.1330000013113,
+      "totalMs": 5058.25345800072,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4818,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 16,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3569.3737669996917,
+    "roadMs": 3353.5554590001702,
+    "timing": {
+      "roadMs": 3353.584690000862,
+      "graphMs": 147.67623100057244,
+      "searchMs": 35.111538000404835,
+      "totalMs": 3553.0469199977815,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3353,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 16,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.361039001494646,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.7697310000658035,
+      "totalMs": 22.072308000177145,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 16,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.41823100298643,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.097192000597715,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 17,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4454.093150001019,
+    "roadMs": 4221.047842998058,
+    "timing": {
+      "roadMs": 4221.074613001198,
+      "graphMs": 103.11776999756694,
+      "searchMs": 34.06765400245786,
+      "totalMs": 4398.064305000007,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4221,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 17,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3638.2843820005655,
+    "roadMs": 3427.829651001841,
+    "timing": {
+      "roadMs": 3427.8551890030503,
+      "graphMs": 142.04315400123596,
+      "searchMs": 34.32450000196695,
+      "totalMs": 3621.74434299767,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3428,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 17,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.30869200080633,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.577345997095108,
+      "totalMs": 21.76519199833274,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 17,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.22138400003314,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.897577002644539,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 17,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": false,
+    "elapsedMs": 10025.04849300161,
+    "roadMs": 9544.175877999514,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9544,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ],
+    "error": "합류 경로 준비를 취소했어요."
+  },
+  {
+    "iteration": 17,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8758.37834000215,
+    "roadMs": 8264.537454999983,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8264,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 17,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8889.204916998744,
+    "roadMs": 8319.519378002733,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8319,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 17,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8520.533339999616,
+    "roadMs": 7962.933609999716,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7963,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 18,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 9880.161530997604,
+    "roadMs": 9430.503224000335,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9430,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 18,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8546.336110003293,
+    "roadMs": 8074.405840002,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8074,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 18,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8844.845915999264,
+    "roadMs": 8167.157379001379,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8167,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 18,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8396.138877999038,
+    "roadMs": 7935.092264000326,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7935,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 18,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 5620.447534002364,
+    "roadMs": 5372.07841899991,
+    "timing": {
+      "roadMs": 5372.106803998351,
+      "graphMs": 179.19003900140524,
+      "searchMs": 34.459538999944925,
+      "totalMs": 5603.692995999008,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 5372,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 18,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3659.975806001574,
+    "roadMs": 3436.473113000393,
+    "timing": {
+      "roadMs": 3436.4966509975493,
+      "graphMs": 139.12642300128937,
+      "searchMs": 35.23215399682522,
+      "totalMs": 3634.036343000829,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3436,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 18,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 37.96519200131297,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.489307001233101,
+      "totalMs": 21.642807997763157,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 18,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.34800000116229,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 16.09349999949336,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 19,
+    "version": "current",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 4600.504689000547,
+    "roadMs": 4289.878766000271,
+    "timing": {
+      "roadMs": 4289.927651003003,
+      "graphMs": 183.1649609990418,
+      "searchMs": 33.35673099756241,
+      "totalMs": 4546.640535000712,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 4290,
+        "outcome": "success",
+        "requests": 5,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 0,
+          "downloaded": 2,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 19,
+    "version": "current",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 3604.641573999077,
+    "roadMs": 3382.2628819979727,
+    "timing": {
+      "roadMs": 3382.285420998931,
+      "graphMs": 134.47534600272775,
+      "searchMs": 32.16542300209403,
+      "totalMs": 3573.7607659995556,
+      "cache": "none",
+      "radius": 1000
+    },
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 3382,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 2,
+          "reused": 2,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 19,
+    "version": "current",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 38.234768997877836,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 5.38561500236392,
+      "totalMs": 21.91161499917507,
+      "cache": "graph",
+      "radius": 1000
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 19,
+    "version": "current",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 32.368769001215696,
+    "roadMs": 0,
+    "timing": {
+      "roadMs": 0,
+      "graphMs": 0,
+      "searchMs": 0,
+      "totalMs": 15.992653999477625,
+      "cache": "plan",
+      "radius": 0
+    },
+    "distanceM": 480.38966234134205,
+    "targetM": 901.7599870968094,
+    "attempts": []
+  },
+  {
+    "iteration": 19,
+    "version": "baseline",
+    "condition": "cold",
+    "ok": true,
+    "elapsedMs": 9981.202608998865,
+    "roadMs": 9536.843415997922,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 9537,
+        "outcome": "success",
+        "requests": 12,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 0,
+          "downloaded": 9,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 19,
+    "version": "baseline",
+    "condition": "file",
+    "ok": true,
+    "elapsedMs": 8516.837648000568,
+    "roadMs": 8014.621032997966,
+    "distanceM": 549.3330103037774,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 8014,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 19,
+    "version": "baseline",
+    "condition": "graph",
+    "ok": true,
+    "elapsedMs": 8609.799993000925,
+    "roadMs": 7994.87857099995,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7995,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  },
+  {
+    "iteration": 19,
+    "version": "baseline",
+    "condition": "plan",
+    "ok": true,
+    "elapsedMs": 8518.043033000082,
+    "roadMs": 7949.646956000477,
+    "distanceM": 480.39074756698415,
+    "targetM": 901.7599870968094,
+    "attempts": [
+      {
+        "provider": "https://runpen.alohalab.co.kr",
+        "mode": "prefer-cache",
+        "elapsedMs": 7950,
+        "outcome": "success",
+        "requests": 0,
+        "cache": {
+          "release": "kr-20260930-c8cb96030306-roads-v1",
+          "manifestHash": "484c83a6876d993b6a4ac977775c5402a816e929f0c8cf0b73f6d69177a9322c",
+          "files": 9,
+          "reused": 9,
+          "downloaded": 0,
+          "stale": false,
+          "updateFailed": false
+        }
+      }
+    ]
+  }
+]
