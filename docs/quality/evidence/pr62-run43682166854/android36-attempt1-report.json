@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "source": "0f3b192581fb087793d873e92b5336d1f6bb1b0a",
+  "dirty": false,
+  "startedAt": "2026-11-15T05:57:30.689884+00:00",
+  "ciRun": "43682166854",
+  "apkSha256": "ae34b900eaefd52a65b3016bfc08469be28f25e5588e712e4ee09c5c47eab434",
+  "environment": {
+    "host": "Linux",
+    "api": "36",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1",
+    "displayProfile": "pixel_5-overlays-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "full",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-15T05:57:30.861487+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S1-membership-explicit-consent",
+          "status": "passed"
+        },
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:00:41.892272+00:00",
+          "durationSeconds": 50.06,
+          "finishedAt": "2026-11-15T06:01:31.952926+00:00"
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:01:31.953160+00:00",
+          "durationSeconds": 173.476,
+          "finishedAt": "2026-11-15T06:04:25.429599+00:00"
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:04:25.433161+00:00",
+          "durationSeconds": 113.416,
+          "finishedAt": "2026-11-15T06:06:18.849461+00:00"
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "startedAt": "2026-11-15T06:06:18.849849+00:00",
+          "durationSeconds": 20.229,
+          "finishedAt": "2026-11-15T06:06:39.079483+00:00"
+        },
+        {
+          "id": "S0-04-save",
+          "status": "failed",
+          "startedAt": "2026-11-15T06:06:39.079897+00:00",
+          "error": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=20\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nError in testDump:\njava.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: stack=java.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: -1\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.E\nTime: 5.519\n\nFAILURES!!!\nTests run: 1,  Failures: 0,  Errors: 1\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n",
+          "captureError": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=20\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nError in testDump:\njava.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: stack=java.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: -1\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.E\nTime: 5.529\n\nFAILURES!!!\nTests run: 1,  Failures: 0,  Errors: 1\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n",
+          "durationSeconds": 188.756,
+          "finishedAt": "2026-11-15T06:09:47.836429+00:00"
+        }
+      ],
+      "status": "failed"
+    }
+  ],
+  "retries": 0,
+  "radioSignalProfile": {
+    "profile": 4,
+    "response": "OK"
+  },
+  "displayGeometry": {
+    "statusBar": [
+      0,
+      0,
+      1080,
+      136
+    ],
+    "navigationBar": [
+      0,
+      2277,
+      1080,
+      2340
+    ],
+    "cutoutInsets": [
+      0,
+      136,
+      0,
+      0
+    ]
+  },
+  "error": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=20\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nError in testDump:\njava.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: stack=java.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: -1\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.E\nTime: 5.519\n\nFAILURES!!!\nTests run: 1,  Failures: 0,  Errors: 1\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n",
+  "failureDiagnostics": [
+    {
+      "file": "failure-raw.png",
+      "status": "saved"
+    },
+    {
+      "file": "failure-window.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-activity.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-logcat.txt",
+      "status": "saved"
+    }
+  ],
+  "captureError": "Warning: This version of UI Automator is deprecated. New tests should be written using\nUI Automator 2.0 which is available as part of the Android Testing Support Library.\nSee https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html\nfor more details.\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nRunningUiDump:\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: 1\nRUNPEN_DUMP_ATTEMPTS=20\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\nError in testDump:\njava.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: id=UiAutomatorTestRunner\nINSTRUMENTATION_STATUS: test=testDump\nINSTRUMENTATION_STATUS: class=RunningUiDump\nINSTRUMENTATION_STATUS: stack=java.lang.Exception: No fresh UI hierarchy\n\tat RunningUiDump.testDump(RunningUiDump.java:41)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.start(UiAutomatorTestRunner.java:160)\n\tat com.android.uiautomator.testrunner.UiAutomatorTestRunner.run(UiAutomatorTestRunner.java:96)\n\tat com.android.commands.uiautomator.RunTestCommand.run(RunTestCommand.java:91)\n\tat com.android.commands.uiautomator.Launcher.main(Launcher.java:83)\n\tat com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)\n\tat com.android.internal.os.RuntimeInit.main(RuntimeInit.java:371)\n\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS_CODE: -1\nINSTRUMENTATION_STATUS: stream=\nTest results for WatcherResultPrinter=.E\nTime: 5.535\n\nFAILURES!!!\nTests run: 1,  Failures: 0,  Errors: 1\n\n\nINSTRUMENTATION_STATUS_CODE: -1\n",
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-15T06:10:11.907077+00:00",
+  "uiDumpReadinessWaits": 13,
+  "uiDumpTransportWarnings": 0,
+  "status": "failed"
+}

@@ -526,7 +526,10 @@ except Exception as error:
         ('failure-raw.png', ('exec-out', 'screencap', '-p')),
         ('failure-window.txt', ('shell', 'dumpsys', 'window')),
         ('failure-activity.txt', ('shell', 'dumpsys', 'activity', 'activities')),
-        ('failure-logcat.txt', ('logcat', '-d', '-t', '800', '-v', 'threadtime')),
+        ('failure-accessibility.txt', ('shell', 'dumpsys', 'accessibility')),
+        # Keep the transition before bounded hierarchy retries; 800 noisy OS
+        # lines can cover less than the failed capture's own readiness window.
+        ('failure-logcat.txt', ('logcat', '-d', '-t', '4000', '-v', 'threadtime')),
     ]:
         try:
             (q.OUT / filename).write_bytes(q.adb(*command))
