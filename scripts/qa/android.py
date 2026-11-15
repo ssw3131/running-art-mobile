@@ -245,6 +245,29 @@ def demo(command, *, timeout=120, **values):
     for key, value in values.items(): extras += ['-e', key, value]
     q.adb('shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', *extras, timeout=timeout)
 
+def demo_mobile(*, timeout=120):
+    # Android16 caches MobileIconInteractors by subscription ID, including the
+    # repository chosen at construction. Its demo default (1) can reuse the real
+    # SIM's interactor. A separate synthetic ID forces a demo-backed interactor.
+    # In the new pipeline `slot` means subscription ID, not a physical SIM slot.
+    subscription = {'slot': '999'} if int(environment['api']) >= 36 else {}
+    demo('network', mobile='show', datatype='3g', level='4', fully='true',
+         **subscription, timeout=timeout)
+
+def capture_signal_diagnostics(label):
+    # Observe the OS outside the screenshot deadline, before demo teardown.
+    # Only the dedicated QA emulator is accepted by this script.
+    for service, command in [
+        ('systemui', ('dumpsys', 'activity', 'service', 'com.android.systemui/.SystemUIService')),
+        ('telephony', ('dumpsys', 'telephony.registry')),
+    ]:
+        filename = f'{label}-{service}.txt'
+        try:
+            (q.OUT / filename).write_bytes(q.adb('shell', *command, timeout=10))
+            report.setdefault('signalDiagnostics', []).append({'file': filename, 'status': 'saved'})
+        except Exception as error:
+            report.setdefault('signalDiagnostics', []).append({'file': filename, 'error': str(error)})
+
 def visual_frame(remaining, name):
     if int(environment['api']) < 36:
         return q.adb('exec-out', 'screencap', '-p', timeout=remaining)
@@ -253,17 +276,20 @@ def visual_frame(remaining, name):
                                 input=png, capture_output=True, timeout=left, check=True)
         return json.loads(result.stdout)['ready']
     return wait_system_bar(
-        lambda left: demo('network', mobile='show', datatype='3g', level='4', fully='true', timeout=left),
+        lambda left: demo_mobile(timeout=left),
         lambda left: q.adb('exec-out', 'screencap', '-p', timeout=left),
         ready, q.OUT, name, remaining)
 
 
 def capture_visuals():
+    if int(environment['api']) >= 36:
+        report['demoMobileSubscriptionId'] = 999
+        capture_signal_diagnostics('before-demo')
     q.shell('settings', 'put', 'global', 'sysui_demo_allowed', '1')
     demo('enter'); demo('clock', hhmm='1200')
     demo('battery', level='100', plugged='false')
     demo('network', wifi='show', level='4', fully='true')
-    demo('network', mobile='show', datatype='3g', level='4', fully='true')
+    demo_mobile()
     demo('notifications', visible='false')
     screens = []
     try:
@@ -286,6 +312,8 @@ def capture_visuals():
             screens.append({'id': tab, 'file': 'visual-' + tab + '.png'})
         (q.OUT / 'screens.json').write_text(json.dumps({**report, 'screens': screens}, indent=2), encoding='utf8')
     finally:
+        if int(environment['api']) >= 36:
+            capture_signal_diagnostics('after-demo-frames')
         demo('exit'); q.shell('settings', 'put', 'global', 'sysui_demo_allowed', '0')
 
 def launch(route=''):

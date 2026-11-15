@@ -2,7 +2,7 @@
 
 - 기록 생성: 2026-11-15T12:12:09+09:00 (Asia/Seoul)
 - 실행 시작: 2026-11-15T12:12:09+09:00
-- 상태: 부분 완료
+- 상태: 진행 중
 - 기록 유형: 실행 시작 시 계획 작성
 - 요청·계획 출처: 최신 코드 검토 후 사용자의 “그렇게 수정하자”. 기본 자동 추적을 유지하면서 러닝 중 이동·확대, 현재 위치 버튼 복귀, 회전·기울이기 제한과 터치 잠금 유지를 승인했다.
 
@@ -36,3 +36,20 @@ GuidanceMap의 navigationMode와 gesturesEnabled를 분리하고 LiveGuidancePan
 [원본 근거와 보고서](../../quality/evidence/pr62-run43672071317/README.md)를 보존했다. SystemUI 준비 실패는 확인됐지만 근본 원인은 미확정이다. 코드·기준·마스크·허용오차·제한 시간을 변경하지 않았고 세 번째 전체 재실행은 하지 않았다. PR을 draft로 되돌리고 결과 문서를 보완한다. 다음 작업은 독립 visual 진단으로 준비 문제를 해결한 후 ready 전체 게이트와 main 반영 확인이다. 임시 worktree 없음, 미병합 브랜치는 보존한다.
 
 마지막 갱신: 2026-11-15T13:45:35+09:00. 전체 완료가 아닌 부분 완료다.
+
+
+## 2026-11-15T13:52:41+09:00 사용자 승인 후속 재개 계획
+
+사용자가 “해라”로 화면 검사 단독 진단·원인 수정·최종 전체 검증·PR62 main 병합을 승인했다. 현재 소스로 visual 단독 진단을 실행하며 Android16 SystemUI demo 신호 입력과 준비 관측을 대조한다. 원본 실패 근거·화면 기준·마스크·허용오차를 유지하고 원인이 뒷받침되는 수정과 회귀 검사를 적용한다. 단독 검사가 통과한 후 최종 전체 검사를 실행하고 main 반영을 확인한다. 휴대폰 설치는 포함하지 않는다.
+
+
+### Android16 소스 대조와 수정 후보
+
+수정 전 visual 단독43678651486을 기존 c92ad2b로 시작했다. Android16 AOSP의 DemoMobileConnectionsRepository는 slot이 없으면 subId1을 사용한다. MobileIconsInteractor는 subId별 WeakReference 캐시를 재사용하고, 생성 시 MobileRepositorySwitcher.getRepoForSubId로 선택한 실제/데모 repository를 MobileIconInteractorImpl에 고정한다. 따라서 실제 SIM과 데모의 ID가 같으면 기존 실제 신호를 읽는 객체가 재사용될 수 있다. 실제 표시 객체가 얼마나 오래 유지되는지에 따라 간헐적 통과와 실패가 생길 수 있다는 가설이며 원본 덤프가 없어 이전 두 실행의 내부 객체까지 입증한 것은 아니다.
+
+Android36에 한해 데모 slot(새 pipeline에서는 subscription ID)999를 명시하고 API29 명령은 유지한다. 초기 명령과 모든 준비 관측 명령에 동일 ID를 사용하며 실제 모뎀 profile4도 유지한다. 전후 SystemUI/telephony 덤프를12초 준비 구간 밖에서 수집한다. 화면 기준·마스크·8픽셀 판정·준비12초·정착12초를 변경하지 않는다. Python 준비 회귀4개·Node 실제 실패PNG 포함4개·py_compile·diff 검사 통과. 수정 후보의 단독 native 검증은 후속이다.
+
+AOSP 근거(android16-release):
+- [MobileIconsInteractor](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/mobile/domain/interactor/MobileIconsInteractor.kt): getMobileConnectionInteractorForSubId/reuseCache, 생성 시 repository 주입.
+- [MobileRepositorySwitcher](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/mobile/data/repository/MobileRepositorySwitcher.kt): getRepoForSubId는 현재 isDemoMode에 따라 실제/데모 선택.
+- [DemoMobileConnectionsRepository](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/packages/SystemUI/src/com/android/systemui/statusbar/pipeline/mobile/data/repository/demo/DemoMobileConnectionsRepository.kt): DEFAULT_SUB_ID=1, event.subId로 데모 repository 생성.

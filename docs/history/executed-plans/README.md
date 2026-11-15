@@ -1,6 +1,6 @@
 # 실제 실행한 계획 모음
 
-- [2026-11-15 러닝 지도 둘러보기와 자동 추적 복귀](2026-11-15-1212-running-map-explore.md) — 부분 완료, 지도 이동·확대/복귀 구현·로직581/UI241·API/Android29 통과; Android36 두 회차 기능15·보존/정리 통과 뒤 SystemUI 촬영 준비 실패, PR62 draft·main 미병합
+- [2026-11-15 러닝 지도 둘러보기와 자동 추적 복귀](2026-11-15-1212-running-map-explore.md) — 진행 중, 지도 구현·로직581/UI241·API/Android29 통과; Android36 촬영 준비 실패 후 사용자 승인으로 독립 visual 진단·데모 subscription 분리 수정 검증 중, PR62 draft·main 미병합
 
 - [2026-11-14 남은 PR 전체 반영 확인과 중복 PR 정리](2026-11-14-0813-remaining-pr-audit.md) — 완료, PR24는 PR27·PR46/48은 PR50의 기존 통합 확인, 중복 PR3개 종료·원본 브랜치 보존
 
