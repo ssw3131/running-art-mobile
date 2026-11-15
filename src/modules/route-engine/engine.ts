@@ -724,7 +724,7 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
   const selected=nearby?.selected??uniqueCandidates(candidates);
   return {...(nearby?{proximity:nearby.proximity}:{}),...(free?{mode:'free-loop' as const}:{}),version,baseline:{candidates:baseline,valid:baselineValid,routed:baselineRouted},candidates:selected.map(c=>({...c,...(free?{roadSegments:routeReferences(graph,c.ids)}:{}),scaleRatio:c.scale/scale,templatePerimeter:pathLength(c.target),roadInfo:roadInfo(graph,c.ids),route:c.route.map(({x,y})=>point(x,y)),loop:c.loop.map(({x,y})=>point(x,y)),
     access:c.access.map(path=>path.map(({x,y})=>point(x,y))),ids:undefined,usage:undefined})),
-    stats:{placements:checked,routed,extraRouted:routed-baselineRouted,valid:candidates.length,roads:graph.edges.length},
+    stats:{placements:checked,routed,extraRouted:routed-baselineRouted,valid:nearby?new Set([...candidates,...nearbyCandidates]).size:candidates.length,roads:graph.edges.length},
     start:point(start.x,start.y),snapMeters:dist(start,point(0,0)),
     template:{width:Math.max(...fixed.map(p=>p.x))-Math.min(...fixed.map(p=>p.x)),height:Math.max(...fixed.map(p=>p.y))-Math.min(...fixed.map(p=>p.y)),perimeter:targetMeters}};
 }

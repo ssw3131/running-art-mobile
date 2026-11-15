@@ -13,6 +13,10 @@ type GraphEntry={graph:Graph;origin:Origin;radius:number;version:string;at:numbe
 type PlanEntry={key:string;plan:ApproachPlan;position:Coordinate;source:RoadSegmentRef;version:string;at:number;graph?:Graph};
 export type ApproachTiming={roadMs:number;graphMs:number;searchMs:number;totalMs:number;cache:'plan'|'graph'|'none';radius:number};
 const TTL=300000,MAX_SIZE=100000;
+// React Native's AbortController ignores abort(reason). Keep navigation intent
+// outside the signal so handoff behaves identically in Hermes and Node.
+const handoffs=new WeakSet<AbortSignal>();
+export function handoffApproach(controller:AbortController){handoffs.add(controller.signal);controller.abort();}
 const courseKey=(r:ApproachRequest)=>bytesToHex(sha256(utf8ToBytes(JSON.stringify([r.course.route,r.course.roadSegments,r.targetM??null]))));
 const sameRoad=(a:RoadSegmentRef,b:RoadSegmentRef)=>a.way===b.way&&a.from===b.from&&a.to===b.to;
 export function createApproachCache(load:RoadLoader,op:Operations,yieldToHost:()=>Promise<void>,now=()=>Date.now()){
@@ -82,7 +86,7 @@ export function createApproachCache(load:RoadLoader,op:Operations,yieldToHost:()
         const release=()=>{if(!current.users&&pending.get(id)===current){current.controller.abort();pending.delete(id);}};
         // Screen navigation gets one second to attach the next subscriber.
         // Explicit cancellation and timeouts still abort immediately.
-        if(signal.reason==='handoff')current.release=setTimeout(release,1000);else release();
+        if(handoffs.has(signal))current.release=setTimeout(release,1000);else release();
       }if(error)reject(error);else resolve(value!);};
       const abort=()=>finish(new Error('합류 경로 준비를 취소했어요.'));signal.addEventListener('abort',abort,{once:true});
       current.promise.then(value=>ticket===generation?finish(null,value):abort(),error=>finish(error));

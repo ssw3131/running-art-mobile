@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { planApproach } from '@/modules/running/navigation';
+import { handoffApproach } from '@/modules/running/approach-cache';
 import { validApproach, type ApproachPlan } from '@/modules/running/approach';
 import { courseProjection } from '@/modules/guidance/loop-engine';
 import { distance, type Coordinate } from '@/modules/guidance/geometry';
@@ -20,9 +21,9 @@ export function usePreparationApproach(course:RunCourse|null,fix:Fix|null,observ
   const courseId=course?.id;
   const latestPlan=useRef<ApproachPlan|null>(null);
   const readPlan=useCallback(()=>latestPlan.current,[]);
-  useFocusEffect(useCallback(()=>{if(!courseId)return;active.current=true;generation.current++;failureAt.current=0;latestPlan.current=null;setPlan(null);setVerified(null);setError('');return()=>{active.current=false;generation.current++;pending.current?.cancel.abort('handoff');pending.current=null;latestPlan.current=null;};},[courseId]));
+  useFocusEffect(useCallback(()=>{if(!courseId)return;active.current=true;generation.current++;failureAt.current=0;latestPlan.current=null;setPlan(null);setVerified(null);setError('');return()=>{active.current=false;generation.current++;if(pending.current)handoffApproach(pending.current.cancel);pending.current=null;latestPlan.current=null;};},[courseId]));
   useEffect(()=>{
-    if(!enabled){pending.current?.cancel.abort('handoff');pending.current=null;return;}
+    if(!enabled){if(pending.current)handoffApproach(pending.current.cancel);pending.current=null;return;}
     if(!active.current||!course||!isStartFix(fix,Date.now())||fix.accuracy===null)return;
     const position:Coordinate=[fix.longitude,fix.latitude];latest.current=position;
     if(courseProjection(course.snapshot.route,position).separation<=12){pending.current?.cancel.abort();pending.current=null;latestPlan.current=null;return;}

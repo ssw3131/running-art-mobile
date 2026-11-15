@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {AbortController as NativeAbortController} from 'abort-controller';
 import {buildGraph,buildGraphSteps,search,toLatLng,toPoint} from '../src/modules/route-engine/engine.ts';
 import {walkingFieldSteps,joinFromField,snapWalkingSourceSteps} from '../src/modules/route-engine/walking.ts';
 import {createApproachPlanner,approachSteps,validApproach} from '../src/modules/running/approach.ts';
-import {createApproachCache} from '../src/modules/running/approach-cache.ts';
+import {createApproachCache,handoffApproach} from '../src/modules/running/approach-cache.ts';
 import {parseComputeRequest,parseComputeResponse} from '../src/modules/route-compute/contract.ts';
 const finish=g=>{let r;do{r=g.next();}while(!r.done);return r.value;};
 const origin={lat:37,lng:127},coord=([x,y])=>{const [lat,lng]=toLatLng({x,y},origin);return [lng,lat];};
@@ -78,7 +79,7 @@ test('distance and raw-score boundaries control selection; far and unknown candi
 
 test('screen handoff inherits an unfinished request; changed road data invalidates completed plans',async()=>{
  let release,loads=0;const planner=createApproachPlanner(async()=>{loads++;await new Promise(r=>release=r);return {elements:roads,source:'test',cached:true};},async()=>{});
- const screen=new AbortController(),first=planner(request,screen.signal);screen.abort('handoff');await assert.rejects(first,/취소/);
+ const screen=new NativeAbortController(),first=planner(request,screen.signal);handoffApproach(screen);await assert.rejects(first,/취소/);
  const next=planner(request,signal());release();await next;assert.equal(loads,1);
  planner.roadsChanged();assert.equal(planner.stats().plans,0);
  const updated=planner(request,signal());release();await updated;assert.equal(loads,2);

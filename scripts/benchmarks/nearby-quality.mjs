@@ -20,6 +20,7 @@ for(const fixture of ['grid','seoul'])for(const targetKm of [1,2,3,5,10,20])for(
  const oldAccess=previous.candidates.map(c=>field?joinFromField(field,c.route.map(p=>nodes.get(`${p.x},${p.y}`)))?.distanceM??null:null);
  const best=c=>c.length?Math.max(...c.map(c=>c.score.raw)):null;
  const row={fixture,targetKm,shape,oldMs,newMs,oldCount:previous.candidates.length,newCount:current.candidates.length,oldBest:best(previous.candidates),newBest:best(current.candidates),nearScore:current.candidates[0]?.score.raw??null,scoreGap:current.candidates.length?best(current.candidates)-current.candidates[0].score.raw:null,oldAccess,newAccess:current.candidates.map(c=>c.approach?.distanceM??null),stages:current.proximity.stages,comparison:current.proximity.comparisonRequired,defaultIndex:current.proximity.defaultIndex};
+ if(current.stats.valid<current.candidates.length)throw new Error('Valid count omits nearby candidates');
  if(row.oldBest!==null&&(row.newBest===null||row.newBest<row.oldBest-1e-9))throw new Error(`Global quality regressed: ${JSON.stringify(row)}`);
  if(row.defaultIndex!==null&&!(row.newAccess[row.defaultIndex]!==null&&row.newAccess[row.defaultIndex]<=1000))throw new Error('Invalid nearby default');
  records.push(row);console.log(JSON.stringify(row));

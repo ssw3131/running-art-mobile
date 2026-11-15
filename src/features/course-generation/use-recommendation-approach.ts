@@ -4,6 +4,7 @@ import { useFocusEffect } from 'expo-router';
 import { courseFromCalculation } from '@/features/route-lab/saved-course';
 import type { LabCalculation } from '@/features/route-lab/session';
 import { planApproach } from '@/modules/running/navigation';
+import { handoffApproach } from '@/modules/running/approach-cache';
 import { toLatLng } from '@/modules/route-engine/engine';
 import { prepareRoute, type Coordinate } from '@/modules/guidance/geometry';
 export type WalkingDistance={kind:'loading'|'error'|'ready';distanceM?:number};
@@ -13,7 +14,7 @@ export function useRecommendationApproach(result:LabCalculation|null,enabled:boo
     if(!enabled||!result?.liveRoads||selected<0||!current||current.accuracy===null||current.accuracy>30||Date.now()-current.timestamp>5000)return;
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
     void planApproach({course:courseFromCalculation(result,selected),position:[current.longitude,current.latitude],accuracy:current.accuracy},controller.signal).catch(()=>{}).finally(()=>clearTimeout(timer));
-    return()=>{controller.abort('handoff');clearTimeout(timer);};
+    return()=>{handoffApproach(controller);clearTimeout(timer);};
   },[result,selected,enabled,current]));
   const [data,setData]=useState<{result:LabCalculation;states:WalkingDistance[]}>();
   useFocusEffect(useCallback(()=>{
@@ -43,7 +44,7 @@ export function useRecommendationApproach(result:LabCalculation|null,enabled:boo
         publish();
       }
     })();
-    return()=>{closed=true;controller.abort('handoff');};
+    return()=>{closed=true;handoffApproach(controller);};
   },[result,enabled,selected]));
   return data?.result===result?data.states:[];
 }
