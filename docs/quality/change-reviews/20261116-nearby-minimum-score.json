@@ -43,7 +43,8 @@
     "status": "changed",
     "reason": "추천 설명과 빈 결과 문구만 바뀌며 배치·색상·정적4화면 기준은 유지한다.",
     "evidence": [
-      "tests/components/course-generation.test.tsx의 실제 렌더된 안내/선택/버튼 검사. 네이티브 화면 대조는 ready PR 필수 검사 대상이며 아직 미실행."
+      "tests/components/course-generation.test.tsx의 먼 대안/빈 결과/연결 실패 렌더 검증 통과.",
+      "docs/quality/evidence/pr70-minimum-score/README.md: 전체43878480608 Android36 기능15단계·네 화면 차이0 및 recommendation.png 직접 검토. 최초 API29 포트 충돌/동일 소스 재실행 결과 보존."
     ]
   },
   "native": "ready PR Android29/36 전체 기능·정적4화면·자료 보존/정리 필수 검사를 유지한다. 운영 배포/휴대폰 설치는 별도 범위."

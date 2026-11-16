@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "source": "7f8b05829001fce7514b28a2b66d00e8e854a74e",
+  "dirty": false,
+  "startedAt": "2026-11-16T14:42:05.926340+00:00",
+  "ciRun": "43878480608",
+  "apkSha256": "d63c5f7524a5b993ce90afe8dde268f71f34222b2308f0a248baae48e3643f40",
+  "environment": {
+    "host": "Linux",
+    "api": "29",
+    "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64:10/QSR1.211112.011/13135432:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "smoke",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-16T14:42:06.046906+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S1-membership-explicit-consent",
+          "status": "passed"
+        },
+        {
+          "id": "S0-01-maestro",
+          "status": "passed",
+          "startedAt": "2026-11-16T14:44:29.499948+00:00",
+          "screenshots": [
+            "after-maestro-display.png"
+          ],
+          "durationSeconds": 38.566,
+          "finishedAt": "2026-11-16T14:45:08.066346+00:00"
+        },
+        {
+          "id": "S1-02-home-states",
+          "status": "passed",
+          "startedAt": "2026-11-16T14:45:08.066531+00:00",
+          "screenshots": [
+            "home-after-scroll.png",
+            "home-all-shapes-target.png",
+            "home-history-dark.png",
+            "home-history-large-font-archive.png",
+            "home-history-large-font.png",
+            "home-history-offline.png",
+            "home-history-top.png",
+            "home-history.png",
+            "home-initial-dark.png",
+            "home-initial-top.png",
+            "home-interrupted-badge.png",
+            "home-interrupted-not-completed.png",
+            "home-interrupted-return.png",
+            "home-interrupted.png",
+            "home-paused-badge.png",
+            "home-paused-not-completed.png",
+            "home-paused-return.png",
+            "home-paused.png",
+            "home-record-detail.png",
+            "home-saved-detail.png",
+            "home-saved-only.png",
+            "home-shape-applied.png",
+            "home-tab-keeps-edited-shape.png"
+          ],
+          "durationSeconds": 156.652,
+          "finishedAt": "2026-11-16T14:47:44.718902+00:00"
+        },
+        {
+          "id": "S0-02-draft",
+          "status": "passed",
+          "startedAt": "2026-11-16T14:47:44.719190+00:00",
+          "screenshots": [
+            "archive-completed-from-home.png",
+            "archive-more-back-home.png",
+            "archive-saved-from-home.png",
+            "archive-view-after-tab.png",
+            "center-after-tab.png",
+            "center-before-tab.png",
+            "course-detail.png",
+            "draft-after-detail-distance.png",
+            "draft-after-detail.png",
+            "draft-after-menu-back-distance.png",
+            "draft-after-menu-back.png",
+            "draft-after-menu-link-distance.png",
+            "draft-after-menu-link.png",
+            "draft-after-system-back-distance.png",
+            "draft-after-system-back.png",
+            "draft-before-distance.png",
+            "draft-before.png",
+            "system-back-previous-archive.png"
+          ],
+          "durationSeconds": 93.126,
+          "finishedAt": "2026-11-16T14:49:17.845469+00:00"
+        },
+        {
+          "id": "S0-03-oauth-cancel",
+          "status": "passed",
+          "startedAt": "2026-11-16T14:49:17.845760+00:00",
+          "screenshots": [
+            "auth-cancel-callback.png",
+            "draft-after-callback-distance.png",
+            "draft-after-callback.png"
+          ],
+          "durationSeconds": 17.928,
+          "finishedAt": "2026-11-16T14:49:35.773812+00:00"
+        },
+        {
+          "id": "S56-01-achievements-support",
+          "status": "passed",
+          "startedAt": "2026-11-16T14:49:35.774139+00:00",
+          "screenshots": [
+            "s5-account-badge.png",
+            "s5-badge-detail.png",
+            "s5-badge-record.png",
+            "s5-card-options.png",
+            "s5-card-record.png",
+            "s5-card-saved-story.png",
+            "s5-card-story.png",
+            "s5-file-saved.png",
+            "s5-instagram-selected.png",
+            "s5-result-large-font-ready.png",
+            "s5-result-large-font.png",
+            "s5-result.png",
+            "s5-save-cancel-return.png",
+            "s5-save-destination.png",
+            "s5-square-system-share.png",
+            "s5-system-save.png",
+            "s5-system-share.png",
+            "s6-about.png",
+            "s6-faq.png",
+            "s6-guide.png",
+            "s6-inquiry-member.png",
+            "s6-menu-large-font.png",
+            "s6-menu.png",
+            "s6-notice-back.png",
+            "s6-notice-detail-wait-01.png",
+            "s6-notice-detail.png",
+            "s6-notices.png",
+            "s6-theme-dark.png",
+            "s6-theme-restarted.png"
+          ],
+          "durationSeconds": 164.407,
+          "finishedAt": "2026-11-16T14:52:20.181817+00:00"
+        }
+      ],
+      "status": "passed",
+      "preservation": {
+        "status": "passed",
+        "sha256": "298d99a462dddcffd89fb1e38d082dfffd3751c8f5b6df14734938d04485a607"
+      },
+      "finishedAt": "2026-11-16T14:53:07.735095+00:00"
+    }
+  ],
+  "retries": 0,
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-16T14:53:09.931410+00:00",
+  "uiDumpReadinessWaits": 3,
+  "uiDumpTransportWarnings": 0,
+  "status": "passed"
+}
