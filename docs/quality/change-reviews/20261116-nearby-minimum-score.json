@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/modules/route-engine/nearby-policy.ts",
+    "src/modules/route-engine/nearby.ts",
+    "src/modules/route-engine/engine.ts",
+    "src/features/course-generation/recommendation-metrics.ts",
+    "src/features/course-generation/RecommendationResults.tsx",
+    "tests/nearby-minimum-score.test.mjs",
+    "tests/nearby-stream.test.mjs",
+    "tests/components/course-generation.test.tsx",
+    "scripts/server-compute/package.mjs",
+    "scripts/route-compute/package.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-16 사용자 확정: 최소 원점수 50점 조건을 근거리 중단과 최종 후보 선정에만 추가한다. 거리 단계·광역 탐색·점수식/% 표시·5점 비교·API 형식은 유지한다.",
+  "before": "300m 안에 30~40점 유효 후보만 있어도 확장을 멈추고 낮은 점수를 최종 목록에 포함할 수 있었다.",
+  "after": "해당 단계에 50점 이상 유효 후보가 있어야 확장을 멈추며, 최종 목록의 가까운 후보·먼 대안 모두 50점 이상만 표시한다. 전부 미달이면 빈 결과/조건 변경 안내와 미차감을 유지한다.",
+  "invariants": [
+    "300/500/1000m 단계, 각40개 평가, 광역420개/정제·중복80%·최대5개와 5점 비교 유지",
+    "점수 계산식/반올림 표시/v1-v3 계약/저장 코스·이용 횟수 정책 유지",
+    "1km 초과/합류 불명확 후보는 자동 선택하지 않음"
+  ],
+  "tests": [
+    {
+      "path": "tests/nearby-minimum-score.test.mjs",
+      "reason": "49.99/50 경계, 실제 1km 격자에서 미달 후보만 있을 때 300/500/1000 확장과 빈 결과, 5점 비교·중복·상한 유지"
+    },
+    {
+      "path": "tests/nearby-stream.test.mjs",
+      "reason": "실제 서버 HTTP/기기 계산 일치 및 빈 결과 reserve→cancel, ready/commit 없음, 진행 전송과 취소"
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "먼 대안 설명·빈 결과 50% 안내와 시작 버튼 부재·도로 연결 실패 구분"
+    },
+    {
+      "path": "tests/route-compute-package.test.mjs",
+      "reason": "새 공통 상수가 배포 번들에 포함되어 저장소 외부에서도 엔진/worker가 기동하는지 기존 격리 검사를 실행한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "추천 설명과 빈 결과 문구만 바뀌며 배치·색상·정적4화면 기준은 유지한다.",
+    "evidence": [
+      "tests/components/course-generation.test.tsx의 실제 렌더된 안내/선택/버튼 검사. 네이티브 화면 대조는 ready PR 필수 검사 대상이며 아직 미실행."
+    ]
+  },
+  "native": "ready PR Android29/36 전체 기능·정적4화면·자료 보존/정리 필수 검사를 유지한다. 운영 배포/휴대폰 설치는 별도 범위."
+}

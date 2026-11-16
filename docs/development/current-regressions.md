@@ -81,3 +81,7 @@ loop/legacy 엔진의 공개 trace는 copy-on-write로 갱신한다. 같은 배�
 ## 2026-11-15 가까운 코스·합류 준비
 
 [새 계약](nearby-approach.md)이 추천의 출발지 거리, 기본 선택, 준비의 시간 초과 후 시작 동작을 대체한다. `tests/nearby-approach.test.mjs`, `tests/nearby-stream.test.mjs`, `tests/components/recommendation-approach.test.tsx`, `tests/components/preparation-approach.test.tsx`, `tests/components/run-preparation.test.tsx`를 연결한다. 기존 엔진 점수/저장·실제 위치 품질/보행 연결성은 유지한다.
+
+## 2026-11-16 추천 최소 50점
+
+기존 300/500/1000m 단계와 5점 비교를 유지하고, 탐색 중단·최종 후보 선정에 원점수 50점 이상 조건을 추가한다. 점수식/표시/API 형식은 그대로다. `tests/nearby-minimum-score.test.mjs`의 원점수 경계·실제 격자 확장/빈 결과, `tests/nearby-stream.test.mjs`의 서버/기기 일치·빈 결과 예약 취소, `tests/components/course-generation.test.tsx`의 먼 대안/빈 결과/연결 실패 안내를 확인한다.
