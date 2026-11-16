@@ -21,3 +21,9 @@
 - 관련 UI `course-generation`/`recommendation-approach`: 23개 통과. 처음 UI-GEN-01 시간 초과는 같은 제품 코드로 지원 Node/네트워크 권한에서 재검증해 통과했으며 원인은 확정하지 않는다.
 - TypeScript `tsc --noEmit` 통과. 전체 UI/Expo lint·PR CI는 진행 중.
 - 직접 `eslint .`는 Expo의 기존 검사 범위를 벗어난 scripts/tests까지 검사해 기존 no-undef 등을 보고했다. 제품 변경으로 해결하지 않고 프로젝트 명령인 `expo lint`를 실행한다.
+
+### 22:39 KST 후속
+
+전체 UI44 suites/250개·프로젝트 `expo lint` 통과. 서버 번들은 파일 목록을 명시하므로 새 공통 상수를 두 패키저에 추가했다. 이는 배포 파일 누락 방지이며 API/운영 배포 변경은 아니다. 기존 격리 패키지 검사를 추가 실행한다. [PR70](https://github.com/ssw3131/running-art-mobile/pull/70) draft/빠른 검사 진행 중.
+
+격리 서버 번들 검사1개 통과(저장소 밖 복사본의 기동·확장 입력 계산). `/tmp/nearby-package.log`. 이 검사에서 실제 운영 서버를 호출하거나 배포하지 않았다.

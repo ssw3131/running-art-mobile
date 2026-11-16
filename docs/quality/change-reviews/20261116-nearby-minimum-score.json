@@ -8,7 +8,9 @@
     "src/features/course-generation/RecommendationResults.tsx",
     "tests/nearby-minimum-score.test.mjs",
     "tests/nearby-stream.test.mjs",
-    "tests/components/course-generation.test.tsx"
+    "tests/components/course-generation.test.tsx",
+    "scripts/server-compute/package.mjs",
+    "scripts/route-compute/package.mjs"
   ],
   "behavior": "changed",
   "decision": "2026-11-16 사용자 확정: 최소 원점수 50점 조건을 근거리 중단과 최종 후보 선정에만 추가한다. 거리 단계·광역 탐색·점수식/% 표시·5점 비교·API 형식은 유지한다.",
@@ -31,6 +33,10 @@
     {
       "path": "tests/components/course-generation.test.tsx",
       "reason": "먼 대안 설명·빈 결과 50% 안내와 시작 버튼 부재·도로 연결 실패 구분"
+    },
+    {
+      "path": "tests/route-compute-package.test.mjs",
+      "reason": "새 공통 상수가 배포 번들에 포함되어 저장소 외부에서도 엔진/worker가 기동하는지 기존 격리 검사를 실행한다."
     }
   ],
   "visual": {
