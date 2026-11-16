@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "source": "7f8b05829001fce7514b28a2b66d00e8e854a74e",
+  "dirty": false,
+  "startedAt": "2026-11-16T13:55:46.291967+00:00",
+  "ciRun": "43878480608",
+  "apkSha256": "05cb49e844170d722d00aa1c6f38698422ddfce72421e5f685a5c5c0be091a68",
+  "environment": {
+    "host": "Linux",
+    "api": "29",
+    "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64:10/QSR1.211112.011/13135432:userdebug/dev-keys",
+    "size": "1080x2340",
+    "density": 420,
+    "fontScale": 1,
+    "locale": "en-US",
+    "timezone": "UTC",
+    "systemBar": "demo-1200-full-signal-battery100-v1"
+  },
+  "fixtureSha256": "46df773304bf68fa9917fc9e688a9c8c493295df253f094246feb3825621e527",
+  "mode": "smoke",
+  "attempts": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-11-16T13:55:46.415031+00:00",
+      "steps": [
+        {
+          "id": "AUTH-guest-gate",
+          "status": "passed"
+        },
+        {
+          "id": "S1-membership-explicit-consent",
+          "status": "passed"
+        },
+        {
+          "id": "S0-01-maestro",
+          "status": "failed",
+          "startedAt": "2026-11-16T13:58:06.733966+00:00",
+          "error": "Command '['/home/runner/work/running-art-mobile/running-art-mobile/.tools/maestro-2.11.0/maestro/bin/maestro', '--device', 'emulator-5554', 'test', '--format', 'junit', '--output', 'test-results/android-29/attempt-01/maestro.xml', '--test-output-dir', 'test-results/android-29/attempt-01/maestro', '/home/runner/work/running-art-mobile/running-art-mobile/.maestro/s0-navigation.yaml']' returned non-zero exit status 1.",
+          "screenshots": [
+            "failure.png"
+          ],
+          "durationSeconds": 9.216,
+          "finishedAt": "2026-11-16T13:58:15.950152+00:00"
+        }
+      ],
+      "status": "failed"
+    }
+  ],
+  "retries": 0,
+  "error": "Command '['/home/runner/work/running-art-mobile/running-art-mobile/.tools/maestro-2.11.0/maestro/bin/maestro', '--device', 'emulator-5554', 'test', '--format', 'junit', '--output', 'test-results/android-29/attempt-01/maestro.xml', '--test-output-dir', 'test-results/android-29/attempt-01/maestro', '/home/runner/work/running-art-mobile/running-art-mobile/.maestro/s0-navigation.yaml']' returned non-zero exit status 1.",
+  "failureDiagnostics": [
+    {
+      "file": "failure-raw.png",
+      "status": "saved"
+    },
+    {
+      "file": "failure-window.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-activity.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-accessibility.txt",
+      "status": "saved"
+    },
+    {
+      "file": "failure-logcat.txt",
+      "status": "saved"
+    }
+  ],
+  "cleanup": {
+    "status": "passed",
+    "errors": []
+  },
+  "finishedAt": "2026-11-16T13:58:19.943684+00:00",
+  "uiDumpReadinessWaits": 0,
+  "uiDumpTransportWarnings": 0,
+  "status": "failed"
+}

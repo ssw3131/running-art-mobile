@@ -27,3 +27,11 @@
 전체 UI44 suites/250개·프로젝트 `expo lint` 통과. 서버 번들은 파일 목록을 명시하므로 새 공통 상수를 두 패키저에 추가했다. 이는 배포 파일 누락 방지이며 API/운영 배포 변경은 아니다. 기존 격리 패키지 검사를 추가 실행한다. [PR70](https://github.com/ssw3131/running-art-mobile/pull/70) draft/빠른 검사 진행 중.
 
 격리 서버 번들 검사1개 통과(저장소 밖 복사본의 기동·확장 입력 계산). `/tmp/nearby-package.log`. 이 검사에서 실제 운영 서버를 호출하거나 배포하지 않았다.
+
+## 2026-11-16T23:57:03+09:00 최종 결과
+
+[PR70](https://github.com/ssw3131/running-art-mobile/pull/70)을 main9dcd638에 squash 반영했다. [최종 전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/43878480608)는 fast/API·Android36 기능15단계/정적4화면 차이0·Android29 호환7단계·자료 보존/정리·verification-gate가 통과했다. 원격 로직609개/기존skip1·UI250개다. [main 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/43890837738)도 같은 tree의 PR 증거 재사용으로 통과했다.
+
+최초 Android29는 Maestro 서버의 포트46251 bind 충돌(Address already in use)로 첫 흐름 실행 전 실패했다. 기기 로그/실패 보고서/정리 결과를 보존하고 해당 job만 같은 소스로1회 재실행해 통과했다. Android36은 첫 회차 통과다. draft 중단 이력과 최초 재실행 요청의 실행중403도 [원본 근거](evidence/pr70-minimum-score/README.md)에 구분했다. 코드·검사 기한·화면 기준을 완화하지 않았다.
+
+새 회귀4개를 수정 전 엔진에도 적용해 최소 점수·빈 결과·중복/상한·단계 확장의4개 모두 실패하고, 수정 후4개 모두 통과함을 확인했다. 실제 도로3표본/격자1표본 비교와 로컬55개·번들1개 결과는 위와 같다. 운영 배포·휴대폰 설치·야외 시험은 이번 범위 밖이며 미실행이다.
