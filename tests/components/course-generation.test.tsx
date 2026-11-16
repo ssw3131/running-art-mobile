@@ -267,3 +267,26 @@ test('unconfirmed source connection is explained instead of suggesting a nearby 
  await render(<CourseGenerationScreen/>);expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/보행 도로 연결을 확인하지 못/);
  expect(screen.getByText('접근 거리 확인 불가')).toBeVisible();expect(screen.queryByText('가까운 코스')).toBeNull();
 });
+
+test('qualified far-only results explain the threshold and require manual selection',async()=>{
+ mockG.tab='results';mockG.completed=completed(1);mockG.selected=-1;mockG.state={kind:'done'};
+ mockG.completed.result.proximity={defaultIndex:null,comparisonRequired:false,sourceKnown:true,stages:[300,500,1000]};
+ mockG.completed.result.candidates[0]={...mockG.completed.result.candidates[0],recommendation:'far',approach:{distanceM:1500}};
+ await render(<CourseGenerationScreen/>);
+ expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/합류 1km 이내에 유사도 기준을 만족하는 코스가 없어 더 먼 대안/);
+ expect(screen.getByTestId('candidate-0').props.accessibilityState.selected).toBe(false);
+ expect(screen.queryByTestId('recommendation-map-open')).toBeNull();
+});
+
+test('empty qualified results explain the minimum without offering nonexistent alternatives',async()=>{
+ mockG.tab='results';mockG.completed=completed(0);mockG.completed.liveRoads=true;mockG.selected=-1;mockG.state={kind:'done'};
+ mockG.completed.result.proximity={defaultIndex:null,comparisonRequired:false,sourceKnown:true,stages:[300,500,1000]};
+ await render(<CourseGenerationScreen/>);
+ expect(screen.getByTestId('generation-empty')).toHaveTextContent(/유사도 50% 이상인 코스를 찾지 못했어요\./);
+ expect(screen.queryByTestId('nearby-explanation')).toBeNull();
+ expect(screen.queryByTestId('generation-run')).toBeNull();
+ mockG.completed.result.proximity.sourceKnown=false;
+ await screen.rerender(<CourseGenerationScreen/>);
+ expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/보행 도로 연결을 확인하지 못/);
+ expect(screen.getByTestId('generation-empty')).not.toHaveTextContent(/50%/);
+});

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {once} from 'node:events';
 import {readFileSync} from 'node:fs';
 import {calculateRoute} from '../src/modules/route-engine/runner.ts';
+import {buildGraph,search} from '../src/modules/route-engine/engine.ts';
 const grid=JSON.parse(readFileSync('assets/route-lab/grid.json'));
 import {createComputeServer} from '../server/route-compute/server.mjs';
 import {createRemoteCalculation} from '../src/modules/route-compute/client.ts';
@@ -34,4 +35,26 @@ test('cancel interrupts an open progress stream and releases its reader',async()
  const fetcher=async()=>new Response(new ReadableStream({start(c){c.enqueue(new TextEncoder().encode(JSON.stringify({type:'progress',value:{phase:'nearby',text:'300m'}})+'\n'));release();},cancel(){closed=true;}}),{headers:{'content-type':'application/x-ndjson'}});
  const remote=createRemoteCalculation('https://fixture.test',fetcher),result=remote({...req,elements:[]},controller.signal,false);
  await opened;await new Promise(r=>setTimeout(r,0));controller.abort();await assert.rejects(result,/취소/);assert.equal(closed,true);
+});
+
+test('below-minimum search streams the same empty result as the device and cancels the usage reservation',async t=>{
+ const low=parseComputeRequest({...req,options:{...req.options,shape:'heart',targetKm:1}});
+ const input={...low,origin:grid.origin,elements:grid.elements};
+ const device=search(buildGraph(grid.elements,grid.origin,2000),low.options);
+ assert.deepEqual(device.candidates,[]);
+ const usage=usageFixture(),actions=[],command=usage.command.bind(usage);
+ usage.command=async(...args)=>{actions.push(args[1]);return command(...args);};
+ const server=createComputeServer({run:async(_request,signal,onProgress)=>({...value(),contract:low.contract,request:low,...await calculateRoute(input,{signal,onProgress})}),close:async()=>{}},{usage});
+ server.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>server.close());
+ const headers={'content-type':'application/json',accept:'application/x-ndjson',...usageHeaders()};
+ const response=await fetch(`http://127.0.0.1:${server.address().port}/v1/routes`,{method:'POST',headers,body:JSON.stringify(low)});
+ assert.equal(response.status,200);
+ const events=(await response.text()).trim().split('\n').map(JSON.parse),result=events.at(-1);
+ assert.equal(result.type,'result');assert.deepEqual(result.value.result,device);
+ // HTTP progress is throttled; the final result, not every intermediate event,
+ // guarantees all three stages ran.
+ assert.ok(events.some(e=>e.type==='progress'&&e.value.phase==='nearby'));
+ assert.deepEqual(result.value.result.proximity.stages,[300,500,1000]);
+ assert.equal(usage.operations.get(headers['x-operation-id']).state,'cancelled');
+ assert.ok(!actions.includes('ready'));assert.ok(!actions.includes('commit'));
 });

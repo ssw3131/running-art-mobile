@@ -5,6 +5,7 @@ import type { Point, Origin, Tags, OsmElement, GraphNode, GraphEdge, Graph, Sear
 
 import { walkingFieldSteps, joinFromField, WalkingError, type WalkingField } from './walking.ts';
 import { selectNearby } from './nearby.ts';
+import { MIN_RECOMMENDATION_SCORE } from './nearby-policy.ts';
 import { SERVICE_SHAPES, serviceTemplate } from './service-shapes.ts';
 import { FIGMA_SHAPE_VERSION, figmaTemplate } from './figma-contours.ts';
 
@@ -659,7 +660,7 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
     const localKeys=new Set<string>();
     for(const limit of [300,500,1000]){
       const previous=stages.at(-1);stages.push(limit);
-      progress({phase:'nearby',accessLimitM:limit,text:previous?`${previous}m 이내에서 조건에 맞는 코스를 찾지 못해 ${limit}m까지 넓히고 있어요.`:`출발지에서 합류 ${limit}m 이내인 코스를 찾고 있어요.`});
+      progress({phase:'nearby',accessLimitM:limit,text:previous?`${previous}m 이내에서 유사도 기준을 만족하는 코스를 찾지 못해 ${limit}m까지 넓히고 있어요.`:`출발지에서 합류 ${limit}m 이내인 코스를 찾고 있어요.`});
       const local:Placement[]=[],stageKeys=new Set<string>();
       const originPoints=[walking.source.point,...walking.graph.nodes.filter(n=>walking!.costs[n.id]<=limit&&n.turn).filter((_,i)=>i%Math.max(1,Math.floor(walking!.graph.nodes.length/100))===0).slice(0,24)];
       for(const anchor of originPoints)for(let deg=0;deg<360;deg+=15){
@@ -674,7 +675,7 @@ function *searchSteps(graph: Graph,options: SearchOptions,progress: ProgressCall
       }
       local.sort((a,b)=>a.error-b.error);
       for(const p of local.slice(0,40)){yield;localKeys.add(placementKey(p));routed++;const c=yield* evaluate(p);localResults.set(placementKey(p),c);if(c)nearbyCandidates.push(c);}
-      if(nearbyCandidates.some(c=>(joinFromField(walking!,c.ids)?.distanceM??Infinity)<=limit))break;
+      if(nearbyCandidates.some(c=>c.score.raw>=MIN_RECOMMENDATION_SCORE&&(joinFromField(walking!,c.ids)?.distanceM??Infinity)<=limit))break;
     }
   }
   if(options.proximity==='nearby-v1')progress({phase:'comparison',text:'가까운 후보와 모양이 더 닮은 후보를 비교하고 있어요.'});

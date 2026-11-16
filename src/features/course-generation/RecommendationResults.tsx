@@ -7,7 +7,7 @@ import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import type { useCourseGeneration } from './use-course-generation';
 import type { useRecommendationTerrain } from './use-recommendation-terrain';
-import { estimatedRunningMinutes, similarityPercent } from './recommendation-metrics';
+import { estimatedRunningMinutes, similarityPercent, nearbyExplanation, noQualifiedCourseMessage } from './recommendation-metrics';
 import { DifficultyTag } from './DifficultyTag';
 import { TargetVisibilityButton } from './TargetVisibilityButton';
 import { GenerationIcon } from './GenerationIcon';
@@ -19,6 +19,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
 }) {
   const c = useThemeColors(), { height, fontScale } = useWindowDimensions();
   const result = g.completed, busy = g.state.kind === 'running', candidates = result?.result.candidates ?? [];
+  const explanation = result ? nearbyExplanation(result.result) : '';
   const walking=useRecommendationApproach(result??null,!busy,g.selected,g.centerState.position);
   return <View testID="recommendation-results" style={{ flex: 1 }}>
     <View testID="recommendation-fixed-map" style={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 16, borderBottomWidth: 1, borderColor: c.divider }}>
@@ -38,7 +39,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
       {(busy || g.state.kind === 'error' || g.state.kind === 'cancelled') && status}
       <View testID={g.state.kind === 'done' ? 'calculation-done' : undefined} style={[styles.list, { backgroundColor: c.background }]}>
         <AppText weight="bold" style={{ fontSize: 18, lineHeight: 26 }}>{result?.result.proximity ? '거리와 모양을 비교할 코스' : '유사도가 높은 추천 코스'} {candidates.length}개</AppText>
-        {result?.result.proximity && <AppText testID="nearby-explanation" variant="caption">{!result.result.proximity.sourceKnown?'출발지의 보행 도로 연결을 확인하지 못했어요. 접근 거리는 확인 불가로 표시하며 코스를 자동 선택하지 않아요.':result.result.proximity.comparisonRequired?'가까운 코스와 모양이 더 닮은 코스의 유사도 차이가 5점을 넘어요. 이동 거리와 모양을 비교해 선택해 주세요.':result.result.proximity.defaultIndex===null?'합류 1km 이내에서 추천할 코스를 확인하지 못했어요. 이동 거리를 확인하고 대안을 선택해 주세요.':'접근 거리와 모양을 함께 고려한 가까운 코스를 추천해요.'}{result.result.proximity.stages.length>1?` 가까운 범위에서 후보를 찾지 못해 ${result.result.proximity.stages.join('m → ')}m 순으로 넓혀 찾았어요.`:''}</AppText>}
+        {!!explanation && <AppText testID="nearby-explanation" variant="caption">{explanation}</AppText>}
         {candidates.map((candidate, index) => <View key={index} style={[styles.card, { borderColor: g.selected === index ? c.action : c.divider, backgroundColor: c.surface }]}>
           <Pressable testID={`candidate-${index}`} accessibilityRole="button" accessibilityLabel={`유사도 ${similarityPercent(candidate.score.raw)}% · ${candidate.score.lengthKm.toFixed(2)} km · 예상 러닝 시간 약 ${estimatedRunningMinutes(candidate.score.lengthKm)}분`}
             accessibilityState={{ selected: g.selected === index }} onPress={() => g.setSelected(index)} style={[styles.selection, { flexWrap: fontScale >= 1.4 ? 'wrap' : 'nowrap' }]}>
@@ -57,7 +58,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
             <Image source={require('../../../assets/generation/figma-20261107/chevron.svg')} style={{ width: 20, height: 20 }} contentFit="contain" accessible={false} />
           </Pressable>
         </View>)}
-        {!candidates.length && <AppText testID={result ? 'generation-empty' : 'generation-no-result'}>{busy ? '주변 길을 살펴보고 있어요.' : '조건에 맞는 코스가 없어요. 위치·거리·도형을 바꿔 다시 생성해 보세요.'}</AppText>}
+        {!candidates.length && <AppText testID={result ? 'generation-empty' : 'generation-no-result'}>{busy ? '주변 길을 살펴보고 있어요.' : result?.result.proximity?.sourceKnown ? noQualifiedCourseMessage : '조건에 맞는 코스가 없어요. 위치·거리·도형을 바꿔 다시 생성해 보세요.'}</AppText>}
       </View>
       {terrain.states.some(state => state.kind === 'error') && <Button compact variant="outline" label="난이도 다시 조회" onPress={terrain.retry} />}
     <View testID="recommendation-actions" style={{ paddingHorizontal: 10, paddingVertical: 28, gap: 20, backgroundColor: c.surface }}>
