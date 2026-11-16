@@ -1,0 +1,99 @@
+{
+  "at": "2026-11-16T15:19:23.427528+00:00",
+  "deploymentPerformed": false,
+  "checks": [
+    {
+      "base": "https://runpen-route-compute-125644906792.asia-northeast3.run.app",
+      "case": "health",
+      "status": 200,
+      "body": {
+        "contract": "runpen-routes-v1",
+        "ok": true
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen-route-compute-125644906792.asia-northeast3.run.app",
+      "case": "invalid",
+      "status": 400,
+      "body": {
+        "error": "invalid_request"
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen-route-compute-125644906792.asia-northeast3.run.app",
+      "case": "v1",
+      "status": 400,
+      "body": {
+        "error": "operation_required"
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen-route-compute-125644906792.asia-northeast3.run.app",
+      "case": "v2",
+      "status": 400,
+      "body": {
+        "error": "operation_required"
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen-route-compute-125644906792.asia-northeast3.run.app",
+      "case": "v3",
+      "status": 400,
+      "body": {
+        "error": "operation_required"
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen.alohalab.co.kr/api",
+      "case": "health",
+      "status": 200,
+      "body": {
+        "contract": "runpen-routes-v1",
+        "ok": true
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen.alohalab.co.kr/api",
+      "case": "invalid",
+      "status": 400,
+      "body": {
+        "error": "invalid_request"
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen.alohalab.co.kr/api",
+      "case": "v1",
+      "status": 400,
+      "body": {
+        "error": "operation_required"
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen.alohalab.co.kr/api",
+      "case": "v2",
+      "status": 400,
+      "body": {
+        "error": "operation_required"
+      },
+      "passed": true
+    },
+    {
+      "base": "https://runpen.alohalab.co.kr/api",
+      "case": "v3",
+      "status": 400,
+      "body": {
+        "error": "operation_required"
+      },
+      "passed": true
+    }
+  ],
+  "allPassed": true
+}
