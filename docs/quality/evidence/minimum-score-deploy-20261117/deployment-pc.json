@@ -1,0 +1,186 @@
+{
+  "at": "2026-11-17T21:13:41.8521480+09:00",
+  "source": "5aae28baf3f4b97aa9a1366e91917ff180622ba5",
+  "sourceFiles": 23,
+  "uploadedSourceMatches": true,
+  "buildId": "3caf23a0-e7c6-4e84-a334-92c76061a581",
+  "image": "asia-northeast3-docker.pkg.dev/running-art-mobile/cloud-run-source-deploy/runpen-route-compute@sha256:9ac863d5ece0d4fee563c1eb552499f04c575a730fdf648f030e3b1389a2c757",
+  "uploadedArchiveSha256": "a2075885bf59ee09064b2c893165f9950f3a05d02af68539c3b2920170ed45e5",
+  "previousRevision": "runpen-route-compute-nearby1115-230484d",
+  "revision": "runpen-route-compute-minscore1117-5aae28b",
+  "traffic": [
+    {
+      "percent": 100,
+      "revisionName": "runpen-route-compute-minscore1117-5aae28b"
+    },
+    {
+      "revisionName": "runpen-route-compute-usage1024",
+      "tag": "usage-validation",
+      "url": "https://usage-validation---runpen-route-compute-zehaomtsoq-du.a.run.app"
+    }
+  ],
+  "configurationAndIamPreserved": true,
+  "resources": {
+    "limits": {
+      "cpu": "1",
+      "memory": "1Gi"
+    }
+  },
+  "concurrency": 8,
+  "timeout": 70,
+  "serviceScaling": {
+    "ingress": "all",
+    "min": null,
+    "max": "2"
+  },
+  "revisionScaling": {
+    "throttling": "true",
+    "boost": "false",
+    "min": null,
+    "max": "2"
+  },
+  "iamSha256": "3544686bdb70cd744f710008f11853708ffff018cb1b352956bea6fda6aff15e",
+  "temporaryTagRemoved": true,
+  "previousRevisionPreserved": true,
+  "tests": {
+    "node": "24.21.0",
+    "passed": 9,
+    "failed": 0,
+    "initialSandboxFailure": "6 pass, 3 fail: loopback connect EACCES; same-source network-enabled rerun 9 pass"
+  },
+  "publicChecks": [
+    {
+      "checkedAt": "2026-11-17T12:12:06.346Z",
+      "base": "https://qa-minscore1117---runpen-route-compute-zehaomtsoq-du.a.run.app",
+      "scope": "public fixture; no authorization or operation ID; no quota or calculation",
+      "results": [
+        {
+          "name": "health",
+          "status": 200,
+          "payload": {
+            "contract": "runpen-routes-v1",
+            "ok": true
+          }
+        },
+        {
+          "name": "contract-v1",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "contract-v2",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "contract-v3",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "invalid-contract",
+          "status": 400,
+          "payload": {
+            "error": "invalid_request"
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-11-17T12:13:15.153Z",
+      "base": "https://runpen-route-compute-zehaomtsoq-du.a.run.app",
+      "scope": "public fixture; no authorization or operation ID; no quota or calculation",
+      "results": [
+        {
+          "name": "health",
+          "status": 200,
+          "payload": {
+            "contract": "runpen-routes-v1",
+            "ok": true
+          }
+        },
+        {
+          "name": "contract-v1",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "contract-v2",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "contract-v3",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "invalid-contract",
+          "status": 400,
+          "payload": {
+            "error": "invalid_request"
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-11-17T12:13:16.535Z",
+      "base": "https://runpen.alohalab.co.kr/api",
+      "scope": "public fixture; no authorization or operation ID; no quota or calculation",
+      "results": [
+        {
+          "name": "health",
+          "status": 200,
+          "payload": {
+            "contract": "runpen-routes-v1",
+            "ok": true
+          }
+        },
+        {
+          "name": "contract-v1",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "contract-v2",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "contract-v3",
+          "status": 400,
+          "payload": {
+            "error": "operation_required"
+          }
+        },
+        {
+          "name": "invalid-contract",
+          "status": 400,
+          "payload": {
+            "error": "invalid_request"
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "No authenticated production route generation or quota reservation",
+    "No APK installation, Worker deployment or database changes"
+  ]
+}
