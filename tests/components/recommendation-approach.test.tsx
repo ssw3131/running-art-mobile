@@ -22,3 +22,11 @@ test('missing pedestrian connection remains explicit',async()=>{
  mockPlan.mockRejectedValue(new Error('disconnected'));await render(<Probe/>);
  await waitFor(()=>expect(screen.getByTestId('walking')).toHaveTextContent(/error/));
 });
+
+test('server approach distances do not launch any current-GPS warmup',async()=>{
+ const serverResult={...result,result:{...result.result,proximity:{},candidates:result.result.candidates.map((c:any)=>({...c,approach:{distanceM:123,targetM:0,path:[c.route[0],c.route[0]],source:{}}}))}};
+ function ServerProbe(){const states=useRecommendationApproach(serverResult,true,0);return <Text testID="walking">{JSON.stringify(states)}</Text>;}
+ await render(<ServerProbe/>);
+ await waitFor(()=>expect(screen.getByTestId('walking')).toHaveTextContent(/123/));
+ expect(mockPlan).not.toHaveBeenCalled();expect(mockPermission).not.toHaveBeenCalled();expect(mockFix).not.toHaveBeenCalled();
+});

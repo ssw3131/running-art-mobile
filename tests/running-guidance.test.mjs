@@ -34,10 +34,9 @@ async function complete(f) {
   }
   assert.fail('arrival not detected');
 }
-test('departure requires owned closed OSM geometry, fresh GPS and on-course or prepared access', async t => {
+test('departure requires owned closed OSM geometry and fresh GPS, including outside the course', async t => {
   const f = await fixture(t);
   await assert.rejects(f.runs.start(f.course.id));
-  await assert.rejects(f.runs.start(f.course.id, gps(0, offset(route[0], -100, 0))));
   await assert.rejects(f.runs.start(f.course.id, gps(-6000)));
   await assert.rejects(f.runs.start(f.course.id, gps(0, route[0], 31)));
   assert.equal(await f.runs.active(), null);
@@ -46,6 +45,12 @@ test('departure requires owned closed OSM geometry, fresh GPS and on-course or p
   const other = createRunRepository(f.db, () => BASE, () => 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');
   await assert.rejects(other.start(f.course.id, gps(0)), /계정/);
   assert.equal(startReadiness({ id: f.course.id, name: '코스', snapshot: snap }, gps(0), BASE).ready, true);
+  const run = await f.runs.start(f.course.id, gps(0, offset(route[0], -100, 0)));
+  assert.equal(run.status, 'running');
+  const guide = await f.runs.guidance(run.id);
+  assert.equal(guide.checkpoint.phase, 'approach');
+  assert.equal(guide.state.progressM, 0);
+  assert.deepEqual(guide.state.returnPath, []);
 });
 test('real GPS follows the stored course, pauses on stationary arrival, and saves only after confirmation', async t => {
   const f = await fixture(t), { run, result } = await complete(f);

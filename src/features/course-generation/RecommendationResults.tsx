@@ -20,7 +20,7 @@ export function RecommendationResults({ g, terrain, location, showTarget, onTarg
   const c = useThemeColors(), { height, fontScale } = useWindowDimensions();
   const result = g.completed, busy = g.state.kind === 'running', candidates = result?.result.candidates ?? [];
   const explanation = result ? nearbyExplanation(result.result) : '';
-  const walking=useRecommendationApproach(result??null,!busy,g.selected,g.centerState.position);
+  const walking=useRecommendationApproach(result??null,!busy,g.selected);
   return <View testID="recommendation-results" style={{ flex: 1 }}>
     <View testID="recommendation-fixed-map" style={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 16, borderBottomWidth: 1, borderColor: c.divider }}>
       <View style={styles.heading}><AppText variant="caption" style={{ flex: 1 }} numberOfLines={2}>출발지 : {location}</AppText>

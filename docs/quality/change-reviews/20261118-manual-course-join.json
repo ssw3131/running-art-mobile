@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "scripts/qa/preparation_readiness.py",
+    "scripts/qa/service_s234.py",
+    "scripts/qa/test_preparation_readiness.py",
+    "src/features/course-generation/RecommendationResults.tsx",
+    "src/features/course-generation/use-recommendation-approach.ts",
+    "src/features/running/CourseRunPreparation.tsx",
+    "src/features/running/LiveGuidancePanel.tsx",
+    "src/features/running/RunScreen.tsx",
+    "src/features/running/use-preparation-approach.ts",
+    "src/modules/guidance/loop-engine.ts",
+    "src/modules/running/controller.ts",
+    "src/modules/running/guidance.ts",
+    "src/modules/running/repository.ts",
+    "tests/components/live-running.test.tsx",
+    "tests/components/navigation-bearing.test.tsx",
+    "tests/components/preparation-approach.test.tsx",
+    "tests/components/recommendation-approach.test.tsx",
+    "tests/components/run-preparation.test.tsx",
+    "tests/components/running-preparation.test.tsx",
+    "tests/free-loop-guidance.test.mjs",
+    "tests/run-preparation.test.mjs",
+    "tests/running-guidance.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-18 사용자가 최초 합류 경로 대기 없이 유효 GPS로 기록을 시작하고 자유 이동 후 자동 합류하는 계획의 구현·PR·Android29/36·main 검증을 승인했다.",
+  "before": "추천 화면의 실제 GPS 선계산과 준비 화면의 경로 준비가 시작을 지연시켰고, 코스 밖에서 시작하려면 유효한 합류 경로가 필요했다.",
+  "after": "코스 로드 후 시작 버튼을 허용하고 권한 및 5초/30m GPS만 확인해 기록한다. 최초 approach는 경로를 요청하지 않고 어느 코스 구간이든 12m 안에서 3초 유지 후 기존 방향 판정을 거쳐 안내한다. 합류 전 거리·시간·궤적은 기록하고 완주 진행률은 0으로 유지한다. v2 최초 합류의 기존 경로·오류를 복원 시 무시하며 늦은 응답도 반영하지 않는다. 추천의 선택 출발지 접근 거리는 보존한다.",
+  "invariants": [
+    "GPS 확보 최대 15초·취소·권한 거부·중복 시작 차단과 정확도/신선도 검사를 유지한다.",
+    "합류 후 이탈 및 미완주 이어달리기는 마지막 진행 지점까지의 복귀 경로를 유지한다.",
+    "DB·서버 API·저장 코스 형식·기존 v1 복원을 유지하고 이전 종료 기록을 변경하지 않는다.",
+    "현재 위치·이동 궤적 우선/기기 방향 보조·합류 후 코스 방향·지도 둘러보기/복귀/잠금 동작을 유지한다."
+  ],
+  "tests": [
+    {
+      "path": "tests/run-preparation.test.mjs",
+      "reason": "실제 SQLite·컨트롤러로 외부/오프라인 시작, 최초 합류까지 planner 0회, GPS 만료/정확도/권한/취소/중복, 합류 전 집계 및 v2 복원과 늦은 응답 차단을 검사한다."
+    },
+    {
+      "path": "tests/free-loop-guidance.test.mjs",
+      "reason": "중간 합류·양방향·3초 근접 유지·GPS 흔들림/공백·교차 방향·순차 완주·이탈 복귀·느린 응답과 저장 비차단을 검사한다."
+    },
+    {
+      "path": "tests/running-guidance.test.mjs",
+      "reason": "이전 코스 밖 거부 기대를 새 정책으로 변경하며 소유권·OSM·GPS 검증, v1 복원 및 완료/재개 회귀는 유지한다."
+    },
+    {
+      "path": "tests/components/run-preparation.test.tsx",
+      "reason": "준비 ready 모의 값을 제거하고 실제 코스 검증으로 미수신/만료/부정확/권한거부 시에도 시작 버튼·즉시 확인, 잘못된 코스 차단을 검사한다."
+    },
+    {
+      "path": "tests/components/live-running.test.tsx",
+      "reason": "합류 전 지도/집중 문구·현재 위치·화살표/거리/재시도 없음, 기존 복귀 카드와 잠금·조작을 검사한다."
+    },
+    {
+      "path": "tests/components/navigation-bearing.test.tsx",
+      "reason": "합류 전 궤적 방향 우선 및 기기 방향 보조, 합류 후 코스 방향을 유지한다."
+    },
+    {
+      "path": "tests/components/recommendation-approach.test.tsx",
+      "reason": "실제 GPS 러닝 선계산이 없고 선택 출발지 거리 계산과 서버 결과 표시는 유지됨을 검사한다."
+    },
+    {
+      "path": "scripts/qa/test_preparation_readiness.py",
+      "reason": "첫 관측에 확인 허용, GPS 지속 주입·정리·실패 보존 및 물리 기기 거부를 검사한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "준비 안내 문구와 활성 조건, 합류 전 카드의 안내/거리/회전 표시를 변경했다. 정적 네 화면은 변경 대상이 아니며 기준·마스크·허용오차를 유지한다.",
+    "evidence": [
+      "변경 전후 CourseRunPreparation/LiveGuidancePanel 소스와 실제 엔진을 사용하는 UI 회귀를 대조했다. 전체 UI 43묶음 248개 통과.",
+      "원본 Android s4-preparation-ready/s4-manual-approach/s4-map 캡처와 독립 네 화면 비교는 ready CI에서 수집·검토하며 아직 실행 완료로 기록하지 않는다."
+    ]
+  },
+  "native": "권한·네이티브 모듈·의존성 변경 없음. 준비 확인 도구는 정보성 안내의 즉시 확인으로 수정했다. service_s234는 코스 경계 밖에서 실제 에뮬레이터 GPS로 시작한 뒤 합류 전 기록/진행률0/경로없음/문구를 검증하고 기존 합류·조작·중단복원을 이어 검사한다. Python 관련9개·문법검사 통과, Android29/36 전체 CI는 대기다. 실제 휴대폰 설치·야외 검증은 별도 후속이다."
+}

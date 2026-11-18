@@ -14,12 +14,18 @@ class PreparationReadinessTest(unittest.TestCase):
         q.tap = lambda key: calls.append(('tap', key))
         return q, calls, lambda: now[0], lambda seconds: now.__setitem__(0, now[0]+seconds)
 
-    def test_disabled_control_requires_fresh_fixes_and_an_enabled_observation(self):
+    def test_busy_control_waits_for_enabled_observation_without_implying_route_readiness(self):
         q, calls, clock, sleep = self.harness([{'enabled':'false'},{'enabled':'true'}])
         confirm_preparation(q,(127,37),'ready',clock=clock,sleep=sleep)
         self.assertTrue(any(call[0]=='gps' for call in calls))
         self.assertEqual(sum(call[0]=='tap' for call in calls), 1)
         self.assertEqual(calls[-1], ('tap','run-preparation-confirm'))
+
+    def test_informational_notice_can_be_confirmed_on_the_first_observation(self):
+        q, calls, clock, sleep = self.harness([{'enabled':'true'}])
+        confirm_preparation(q,(127,37),'ready',clock=clock,sleep=sleep)
+        self.assertEqual(clock(), 0)
+        self.assertEqual(sum(call[0]=='tap' for call in calls), 1)
 
     def test_timeout_dismissal_is_not_a_successful_confirmation(self):
         q, calls, clock, sleep = self.harness([None])

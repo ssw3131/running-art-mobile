@@ -1,4 +1,4 @@
-"""Keep emulator GPS fresh while observing the product's preparation gate."""
+"""Confirm the informational notice while keeping GPS fresh for the later start."""
 import time
 import json
 import threading
@@ -68,9 +68,9 @@ def confirm_preparation(q, position, name, *, timeout=20, clock=time.monotonic, 
             tree = q.capture(name)
             button = q.find(tree, 'run-preparation-confirm')
             if button is None:
-                raise AssertionError('Preparation notice disappeared before a ready confirmation')
+                raise AssertionError('Preparation notice disappeared before confirmation')
             if button.get('enabled') == 'true':
                 q.tap('run-preparation-confirm')
                 return
             sleep(.5)
-    raise AssertionError('Preparation confirmation did not become enabled with fresh course GPS')
+    raise AssertionError('Preparation confirmation did not become enabled')

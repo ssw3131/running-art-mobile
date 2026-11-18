@@ -155,23 +155,21 @@ test('version 2 road identities survive course sync and reject malformed directi
   assert.throws(()=>encodeSnapshot({...value,roadSegments:value.roadSegments.slice(1)}));
   assert.throws(()=>encodeSnapshot({...value,roadSegments:value.roadSegments.map(r=>({...r,bidirectional:false}))}));
 });
-test('approach GPS is recorded but contributes zero lap progress; stale plans cannot start a session',async t=>{
+test('approach GPS is recorded without a route and contributes zero lap progress',async t=>{
   const db=openSqlite();t.after(()=>db.closeAsync());await migrateDatabase(db);let now=100000;
   const courses=createCourseRepository(db,()=>now),runs=createRunRepository(db,()=>now),course=await courses.save(snapshot(square),'loop');
   const pos=coord([-60,0]),gps=p=>({timestamp:now,longitude:p[0],latitude:p[1],accuracy:5});
-  const plan={path:[pos,square[0]],targetM:0,distanceM:60};
-  await assert.rejects(runs.start(course.id,gps(coord([-150,0])),plan));assert.equal(await runs.active(),null);
-  const run=await runs.start(course.id,gps(pos),plan);
+  const run=await runs.start(course.id,gps(pos));
   for(let i=0;i<10;i++){now+=1000;await runs.append([gps(coord([-60+i*3,0]))]);}
   assert.ok((await runs.get(run.id)).distanceM>20);assert.equal((await runs.guidance(run.id)).state.progressM,0);
   assert.equal((await runs.guidance(run.id)).state.phase,'approach');
 });
-test('canceling slow preparation creates no run or GPS service',async t=>{
+test('canceling slow GPS acquisition creates no run or GPS service',async t=>{
   const db=openSqlite();t.after(()=>db.closeAsync());await migrateDatabase(db);
   const courses=createCourseRepository(db),runs=createRunRepository(db),course=await courses.save(snapshot(square),'loop');
   let release,entered;const gate=new Promise(r=>release=r),ready=new Promise(r=>entered=r);let starts=0;
-  const pos=coord([-60,0]),driver={prepare:async()=>{},locate:async()=>({timestamp:Date.now(),longitude:pos[0],latitude:pos[1],accuracy:5}),start:async()=>starts++,stop:async()=>{},healthy:async()=>true};
-  const controller=createRunController(async()=>runs,driver,async()=>{entered();await gate;return {path:[pos,square[0]],targetM:0,distanceM:60};});
+  const pos=coord([-60,0]),driver={prepare:async()=>{},locate:async()=>{entered();await gate;return {timestamp:Date.now(),longitude:pos[0],latitude:pos[1],accuracy:5};},start:async()=>starts++,stop:async()=>{},healthy:async()=>true};
+  const controller=createRunController(async()=>runs,driver,async()=>{assert.fail('initial approach must never route');});
   const starting=controller.start(course.id);await ready;controller.cancelPreparation();release();
   await assert.rejects(starting,/취소/);assert.equal(await runs.active(),null);assert.equal(starts,0);
 });
@@ -205,4 +203,39 @@ test('a slow return-path request never blocks GPS writes, and a late result cann
 test('direction speech is one 30m cue per turn and survives checkpoint restoration without repetition',()=>{
  const s=stream(square),events=[];for(let m=3;m<=s.lap.totalMeters;m+=3){events.push(...s.at(m).events.filter(e=>e.kind==='turn'));}
  assert.ok(events.length>=3);assert.equal(new Set(events.map(e=>e.id)).size,events.length);assert.ok(events.every(e=>e.id.endsWith('-30')));assert.ok(events.every(e=>/좌회전|우회전|유턴/.test(e.text)));
+});
+
+for(const direction of [1,-1])test(`manual approach joins a course interior and follows direction ${direction} without navigation`,()=>{
+ const join=positionAt(prepareRoute(square),83),lap=loopAt(prepareRoute(square),83,direction);
+ const engine=createLoopGuidance(square);let time=0;
+ const fix=p=>{const state=engine.ingest({position:p,accuracy:5,timestamp:time+=1000});assert.equal(engine.navigationRequest(),null);return state;};
+ for(let y=-60;y<=0;y+=5){fix(offset(join,0,y));assert.equal(engine.snapshot().progressM,0);}
+ for(let i=0;i<4;i++)fix(join);
+ assert.equal(engine.snapshot().phase,'direction');
+ for(let m=3;m<=45;m+=3)fix(positionAt(lap,m));
+ assert.equal(engine.snapshot().phase,'lap');assert.equal(engine.checkpoint().direction,direction);
+ assert.ok(distance(engine.snapshot().lapStart,join)<1);assert.deepEqual(engine.snapshot().returnPath,[]);
+});
+
+test('manual joining needs three continuous seconds near the course; bad accuracy and gaps reset the dwell',()=>{
+ const engine=createLoopGuidance(square),join=positionAt(prepareRoute(square),83);let time=0;
+ const fix=(y,accuracy=5,dt=1000)=>engine.ingest({position:offset(join,0,y),accuracy,timestamp:time+=dt});
+ fix(-20);fix(-11);fix(-11);fix(-20);assert.equal(engine.snapshot().phase,'approach');
+ fix(-11);fix(-11);fix(-11,50);fix(-11);fix(-11);assert.equal(engine.snapshot().phase,'approach');
+ fix(-11,5,6000);fix(-11);fix(-11);assert.equal(engine.snapshot().phase,'approach');
+ fix(-11);assert.equal(engine.snapshot().phase,'direction');assert.equal(engine.snapshot().progressM,0);
+});
+
+test('legacy approach restoration discards only its navigation and accepts a different join point',()=>{
+ const old=createLoopGuidance(square);old.ingest({position:coord([-60,0]),accuracy:5,timestamp:1000});
+ const original={...old.checkpoint(),navigation:{path:[coord([-60,0]),square[0]],distanceM:60,targetM:0},navigationProgress:10,navigationError:'old routing error',joinSince:1000};
+ const bytes=JSON.stringify(original),engine=createLoopGuidance(square,original);
+ assert.equal(engine.checkpoint().navigation,null);assert.equal(engine.checkpoint().joinSince,null);
+ engine.setNavigation(original.navigation);assert.equal(engine.checkpoint().navigation,null);
+ const join=positionAt(prepareRoute(square),511);
+ for(let timestamp=10000;timestamp<=14000;timestamp+=1000)engine.ingest({position:join,accuracy:5,timestamp});
+ assert.equal(engine.snapshot().phase,'direction');assert.equal(JSON.stringify(original),bytes);
+ const returning={...original,phase:'return',origin:0,direction:1,cursor:50,progress:50,targetM:50};
+ const restored=createLoopGuidance(square,returning).checkpoint();
+ assert.deepEqual(restored.navigation,returning.navigation);assert.equal(restored.navigationError,returning.navigationError);assert.equal(restored.progress,50);
 });

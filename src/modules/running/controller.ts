@@ -1,9 +1,8 @@
-import { distance } from '../guidance/geometry.ts';
 import { RunError, type Fix } from './model.ts';
 import type { RunRepository } from './repository.ts';
 import type { GuidanceEvent } from '../guidance/engine.ts';
-import { createRunGuidance, isStartFix, startReadiness, type RunPreparation } from './guidance.ts';
-import type { ApproachPlan, ApproachPlanner } from './approach.ts';
+import { createRunGuidance, isStartFix, type RunPreparation } from './guidance.ts';
+import type { ApproachPlanner } from './approach.ts';
 
 export interface TrackingDriver {
   prepare(): Promise<void>;
@@ -78,46 +77,10 @@ export function createRunController(repository: () => Promise<RunRepository>, dr
         if (!isStartFix(value, Date.now())) throw new RunError('정확도 30m 이내의 최신 위치를 기다리고 있어요. 하늘이 열린 곳에서 다시 시작해 주세요.');
         return value;
       };
-      let fix = courseId ? await locate() : undefined;
-      let approach: ApproachPlan | undefined;
-      if(courseId&&fix){
-        const course=await repo.course(courseId);
-        approach = readPrepared()?.plan ?? undefined;
-        const ready=startReadiness(course,fix,Date.now(),approach);
-        // An on-course start needs no approach; never pass an obsolete plan to storage.
-        if (ready.ready && ready.distanceM !== null && ready.distanceM <= 12) approach = undefined;
-        if(ready.distanceM!==null && ready.distanceM>12 && planner){
-          let interrupt!: (error:Error)=>void;
-          const interrupted=new Promise<never>((_,reject)=>{interrupt=reject;});
-          const abort=()=>interrupt(new RunError('합류 경로 준비를 취소했어요.'));
-          cancel.signal.addEventListener('abort',abort,{once:true});
-          const timeout=setTimeout(()=>{interrupt(new RunError('코스 이동 경로 준비 시간이 초과됐어요. 다시 확인해 주세요.'));cancel.abort();},10000);
-          try {
-            progress?.('코스까지의 보행 경로를 준비하고 있어요.');
-            // The planner verifies the source road even for a ready preview.
-            // Its memory cache makes this a source check, not a second search.
-            const initial=fix;
-            const confirmed=await Promise.race([interrupted,(async()=>{
-              let current=initial;
-              for(let attempt=0;attempt<2;attempt++){
-                const plan=await planner({course:course.snapshot,position:[current.longitude,current.latitude],accuracy:current.accuracy??30},cancel.signal);
-                check();const latest=await locate(current);check();
-                if(distance([current.longitude,current.latitude],[latest.longitude,latest.latitude])<0.01&&current.accuracy===latest.accuracy)return {plan,fix:latest};
-                current=latest;
-              }
-              throw new RunError('현재 위치가 바뀌었어요. 합류 경로를 다시 확인해 주세요.');
-            })()]);
-            approach=confirmed.plan;fix=confirmed.fix;
-          }catch(error){throw new RunError(error instanceof Error?error.message:'합류 경로를 확인하지 못했어요.');}
-          finally{clearTimeout(timeout);cancel.signal.removeEventListener('abort',abort);}
-        }
-        const finalReady = startReadiness(course, fix, Date.now(), approach);
-        if (!finalReady.ready) throw new RunError(finalReady.message);
-        if (finalReady.distanceM !== null && finalReady.distanceM <= 12) approach = undefined;
-      }
+      const fix = courseId ? await locate() : undefined;
       check();
       progress?.('GPS 기록을 시작하고 있어요.');
-      const run = await repo.start(courseId, fix, approach);
+      const run = await repo.start(courseId, fix);
       try { await driver.start(); failure = null; }
       catch { await fail(repo, 'GPS 추적을 시작하지 못했어요. 위치 권한을 확인하고 재개해 주세요.'); throw new RunError(failure!); }
       return run;
