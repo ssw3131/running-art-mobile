@@ -14,3 +14,10 @@ test('a return route rotates upward independently of the original course tangent
  const state={...engine.snapshot(),returnPath:[route[2],route[3]]};
  expect(navigationBearing(route,state,checkpoint)).toBeCloseTo(180,1);
 });
+
+test('before joining, the latest recorded movement supplies bearing and no movement defers to the device heading',()=>{
+ const engine=createLoopGuidance(route),state=engine.snapshot(),checkpoint=engine.checkpoint();
+ expect(navigationBearing(route,state,checkpoint)).toBeUndefined();
+ const moving={...state,trace:[[route[2],route[3]]]};
+ expect(navigationBearing(route,moving,checkpoint)).toBeCloseTo(180,1);
+});

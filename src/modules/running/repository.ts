@@ -108,7 +108,7 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isSafeInteger(offset) || offset < 0) throw new RunError('목록 범위가 올바르지 않아요.');
       return db.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? ORDER BY started_at DESC,id DESC LIMIT ? OFFSET ?`, scope(), limit, offset);
     }),
-    start: (courseId?: string, initialFix?: Fix, approach?: ApproachPlan) => transaction(async tx => {
+    start: (courseId?: string, initialFix?: Fix) => transaction(async tx => {
       if (await tx.getFirstAsync("SELECT id FROM running_sessions WHERE status!='completed'")) throw new RunError('진행 중인 러닝을 먼저 재개하거나 종료해 주세요.');
       const at = now();
       const row = await tx.getFirstAsync<{ id: string }>('SELECT lower(hex(randomblob(16))) AS id');
@@ -120,9 +120,8 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
         if (!course) throw new RunError('내 계정의 저장 코스를 찾을 수 없어요.');
         const snapshot = decodeSnapshot(course.snapshot_json, course.snapshot_hash);
         if (snapshot.source !== 'osm') throw new RunError('가상 테스트 코스는 실제 GPS 러닝에 사용할 수 없어요.');
-        const readiness = startReadiness({ id: courseId, name: course.name, snapshot }, initialFix ?? null, at, approach);
+        const readiness = startReadiness({ id: courseId, name: course.name, snapshot }, initialFix ?? null, at);
         if (!readiness.ready) throw new RunError(readiness.message);
-        if(approach)validApproach(approach,snapshot,[initialFix!.longitude,initialFix!.latitude]);
         // Start a new attempt with the last real, unfinished attempt's committed
         // progress. Keep the old completed row immutable for sync/shared links.
         const previous = await tx.getFirstAsync<Run & GuidanceRow>(`SELECT ${columns},${guidanceColumns} FROM running_sessions
@@ -131,7 +130,7 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
           ORDER BY coalesce(ended_at,started_at) DESC,started_at DESC,id DESC LIMIT 1`,owner,row.id,courseId,course.snapshot_hash);
         const continuation=previous?.status==='completed'&&previous.courseOutcome==='stopped'&&previous.course_snapshot_hash===course.snapshot_hash?previous:null;
         const priorPoints=continuation?await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,continuation.id):[];
-        const engine = createRunGuidance(snapshot.route, continuation ? restoreRunCheckpoint({id:courseId,name:course.name,snapshot},continuation,priorPoints,continuation.guidance_json) : undefined, continuation ? undefined : approach);
+        const engine = createRunGuidance(snapshot.route, continuation ? restoreRunCheckpoint({id:courseId,name:course.name,snapshot},continuation,priorPoints,continuation.guidance_json) : undefined);
         if(continuation){
           engine.resume();
           await tx.runAsync(`UPDATE running_sessions SET started_at=?,active_ms=?,distance_m=?,point_count=?,rejected_count=?,last_timestamp=?,segment=?,break_pending=1 WHERE id=?`,

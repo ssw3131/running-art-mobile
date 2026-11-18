@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import type { Position } from '@/modules/location/locate';
 import { useFocusEffect } from 'expo-router';
 import { courseFromCalculation } from '@/features/route-lab/saved-course';
 import type { LabCalculation } from '@/features/route-lab/session';
@@ -9,13 +8,7 @@ import { toLatLng } from '@/modules/route-engine/engine';
 import { prepareRoute, type Coordinate } from '@/modules/guidance/geometry';
 export type WalkingDistance={kind:'loading'|'error'|'ready';distanceM?:number};
 /** Display distances from the selected origin; GPS belongs to running preparation. */
-export function useRecommendationApproach(result:LabCalculation|null,enabled:boolean,selected=0,current:Position|null=null){
-  useFocusEffect(useCallback(()=>{
-    if(!enabled||!result?.liveRoads||selected<0||!current||current.accuracy===null||current.accuracy>30||Date.now()-current.timestamp>5000)return;
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
-    void planApproach({course:courseFromCalculation(result,selected),position:[current.longitude,current.latitude],accuracy:current.accuracy},controller.signal).catch(()=>{}).finally(()=>clearTimeout(timer));
-    return()=>{handoffApproach(controller);clearTimeout(timer);};
-  },[result,selected,enabled,current]));
+export function useRecommendationApproach(result:LabCalculation|null,enabled:boolean,selected=0){
   const [data,setData]=useState<{result:LabCalculation;states:WalkingDistance[]}>();
   useFocusEffect(useCallback(()=>{
     if(!result?.liveRoads||!enabled)return;
@@ -34,7 +27,7 @@ export function useRecommendationApproach(result:LabCalculation|null,enabled:boo
           const route=prepareRoute(course.route);let m=0,targetM=route.totalMeters;
           for(let i=1;i<candidate.route.length;i++){const x=candidate.route[i-1],y=candidate.route[i],length=Math.hypot(y.x-x.x,y.y-x.y);if(m+length>=a.targetM){targetM=route.cumulative[i-1]+(length?(a.targetM-m)/length:0)*(route.cumulative[i]-route.cumulative[i-1]);break;}m+=length;}
           const path=a.path.map(p=>{const [lat,lng]=toLatLng(p,result.origin);return [lng,lat] as Coordinate;});
-          try{planApproach.seed?.({course,position,accuracy:30},{path,targetM,distanceM:a.distanceM},a.source,result.roadVersion??result.roadCache?.manifestHash??'unversioned');}catch{/* Never trust an unusable seed for a running start. */}
+          try{planApproach.seed?.({course,position,accuracy:30},{path,targetM,distanceM:a.distanceM},a.source,result.roadVersion??result.roadCache?.manifestHash??'unversioned');}catch{/* Ignore unusable recommendation cache entries. */}
           continue;
         }
         if(result.result.proximity)continue;

@@ -2,18 +2,17 @@ import { courseId, courseName, decodeSnapshot, encodeSnapshot, type CourseSnapsh
 import { createGuidance, GUIDANCE_LIMITS, type GuidanceCheckpoint, type GuidanceState } from '../guidance/engine.ts';
 import { RunError, type Fix } from './model.ts';
 import { assertClosed, courseProjection, createLoopGuidance, type LoopCheckpoint } from '../guidance/loop-engine.ts';
-import { validApproach, type ApproachPlan } from './approach.ts';
 
 export type CourseOutcome = 'active' | 'arrival-pending' | 'finished' | 'stopped';
 export type RunCourse = { id: string; name: string; snapshot: CourseSnapshot };
-export type RunPreparation = { courseId: string; read(): { fix: Fix | null; plan: ApproachPlan | null } };
+export type RunPreparation = { courseId: string; read(): { fix: Fix | null } };
 // Keep background for stored-option compatibility; live runs always track in the background.
 export type GuidanceOptions = { voice: boolean; background: boolean; mode: 'map' | 'focus'; touchLock?: boolean };
 export const defaultGuidanceOptions: GuidanceOptions = { voice: true, background: true, mode: 'map' };
 export type RunGuidanceCheckpoint = GuidanceCheckpoint | LoopCheckpoint;
 export type RunGuidance = { course: RunCourse; checkpoint: RunGuidanceCheckpoint; options: GuidanceOptions; state: GuidanceState };
-export function createRunGuidance(coordinates: RunCourse['snapshot']['route'], saved?: RunGuidanceCheckpoint, plan?: ApproachPlan) {
-  return saved?.version === 1 ? createGuidance(coordinates, saved) : createLoopGuidance(coordinates, saved, plan);
+export function createRunGuidance(coordinates: RunCourse['snapshot']['route'], saved?: RunGuidanceCheckpoint) {
+  return saved?.version === 1 ? createGuidance(coordinates, saved) : createLoopGuidance(coordinates, saved);
 }
 export type GuidanceRow = { course_id: string | null; course_name: string | null; course_snapshot_json: string | null;
   course_snapshot_hash: string | null; guidance_json: string | null; guidance_options_json: string | null };
@@ -43,16 +42,12 @@ export function isStartFix(fix: Fix | null | undefined, now: number): fix is Fix
     Number.isFinite(fix.latitude) && Number.isFinite(fix.longitude) && Math.abs(fix.latitude) <= 85 && Math.abs(fix.longitude) <= 180 &&
     fix.accuracy !== null && Number.isFinite(fix.accuracy) && fix.accuracy >= 0 && fix.accuracy <= GUIDANCE_LIMITS.accuracy;
 }
-export function startReadiness(course: RunCourse, fix: Fix | null, now: number, plan?: ApproachPlan | null) {
+export function startReadiness(course: RunCourse, fix: Fix | null, now: number) {
   if (!isStartFix(fix, now)) {
     return { ready: false, distanceM: null, message: '정확한 현재 위치를 확인해 주세요. 정확도 30m 이내의 최신 위치가 필요해요.' };
   }
   try { assertClosed(course.snapshot.route); } catch (error) { return { ready: false, distanceM: null, message: (error as Error).message }; }
   const distanceM = courseProjection(course.snapshot.route, [fix.longitude, fix.latitude]).separation;
   if (distanceM <= GUIDANCE_LIMITS.returnMeters) return { ready: true, distanceM, message: '코스 위에 있어요. 원하는 방향으로 출발해 주세요.' };
-  if (plan) {
-    try { validApproach(plan, course.snapshot, [fix.longitude, fix.latitude]); return { ready: true, distanceM, message: `보행 도로로 약 ${Math.round(plan.distanceM)}m 이동하면 코스에 합류해요.` }; }
-    catch { /* A fresh position needs a fresh path. */ }
-  }
-  return { ready: false, distanceM, message: `코스까지 직선으로 약 ${Math.round(distanceM)}m예요. 보행 도로 합류 경로를 준비해 주세요.` };
+  return { ready: true, distanceM, message: '코스에 합류하면 안내를 시작해요.' };
 }

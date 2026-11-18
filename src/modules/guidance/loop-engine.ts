@@ -36,13 +36,19 @@ export function assertClosed(coordinates:readonly Coordinate[]) {
   if(distance(route.points[0],route.points.at(-1)!)>0.1)throw new Error('닫힌 순환 코스에서 사용할 수 있어요. 새 코스를 만들어 주세요.');
   return route;
 }
-export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:LoopCheckpoint,plan?:ApproachPlan) {
+export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:LoopCheckpoint) {
   const original=assertClosed(coordinates);
-  const s:LoopCheckpoint=saved?copy(saved):{version:2,phase:'approach',origin:null,direction:null,progress:0,cursor:0,traveled:0,now:0,lastInput:-1,last:null,current:[...coordinates[0]],weak:true,separation:0,offSince:null,joinSince:null,finishSince:null,targetM:plan?.targetM??0,navigation:plan?copy(plan):null,navigationError:null,navigationProgress:0,episode:0,finished:false,hypotheses:[],emitted:[]};
+  const s:LoopCheckpoint=saved?copy(saved):{version:2,phase:'approach',origin:null,direction:null,progress:0,cursor:0,traveled:0,now:0,lastInput:-1,last:null,current:[...coordinates[0]],weak:true,separation:0,offSince:null,joinSince:null,finishSince:null,targetM:0,navigation:null,navigationError:null,navigationProgress:0,episode:0,finished:false,hypotheses:[],emitted:[]};
   if(s.version!==2||!['approach','direction','lap','return','arrived','continued'].includes(s.phase)||
     ![s.progress,s.cursor,s.traveled,s.now,s.targetM,s.navigationProgress,s.episode].every(n=>Number.isFinite(n)&&n>=0)||s.progress>original.totalMeters+0.1||s.cursor>original.totalMeters+0.1||s.targetM>original.totalMeters+0.1||
     (s.origin!==null&&(!Number.isFinite(s.origin)||s.origin<0||s.origin>original.totalMeters))||![null,1,-1].includes(s.direction)||
     !Array.isArray(s.current)||s.current.length!==2||!s.current.every(Number.isFinite)||!Array.isArray(s.hypotheses)||!Array.isArray(s.emitted))throw new Error('안내 복원 상태를 확인할 수 없어요.');
+  // Old v2 checkpoints may contain an initial approach route. Discard it on
+  // the cloned execution state; return routes and persisted records stay intact.
+  if(s.phase==='approach'){
+    if(s.navigation||s.navigationError)s.joinSince=null;
+    s.navigation=null;s.navigationError=null;s.navigationProgress=0;s.targetM=0;
+  }
   let lap=s.origin!==null&&s.direction?loopAt(original,s.origin,s.direction):null;
   let events:GuidanceEvent[]=[];
   let trace:Coordinate[][]=[[]];
@@ -50,11 +56,10 @@ export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:Loop
   function emit(kind:GuidanceEvent['kind'],id:string,text:string){if(s.emitted.includes(id))return;s.emitted.push(id);events.push({id,kind,text,timestamp:s.now,vibrate:kind==='off-route'});events=events.slice(-100);}
   function returnTarget(){return lap&&s.origin!==null&&s.direction?mod(s.origin+s.direction*s.cursor,original.totalMeters):s.targetM;}
   function navigationRequest(){
-    if(s.phase==='approach'&&courseProjection(coordinates,s.current).separation<=L.returnMeters)return null;
     if(s.phase==='return'&&distance(s.current,positionAt(original,s.targetM))<=L.returnMeters)return null;
-    return ['approach','return'].includes(s.phase)&&!s.navigation?{key:`${s.phase}:${s.episode}:${s.targetM}`,targetM:s.phase==='return'?s.targetM:undefined,position:[...s.current] as Coordinate}:null;
+    return s.phase==='return'&&!s.navigation?{key:`${s.phase}:${s.episode}:${s.targetM}`,targetM:s.targetM,position:[...s.current] as Coordinate}:null;
   }
-  function setNavigation(plan:ApproachPlan|null,error:string|null=null){s.navigation=plan?copy(plan):null;s.navigationProgress=0;s.navigationError=error;if(plan)s.targetM=plan.targetM;}
+  function setNavigation(plan:ApproachPlan|null,error:string|null=null){if(s.phase!=='return')return;s.navigation=plan?copy(plan):null;s.navigationProgress=0;s.navigationError=error;if(plan)s.targetM=plan.targetM;}
   function beginReturn(){s.phase='return';s.targetM=returnTarget();s.navigation=null;s.navigationProgress=0;s.navigationError=null;s.episode++;s.joinSince=null;s.offSince=null;s.finishSince=null;emit('off-route',`off-${s.episode}`,'코스를 벗어났어요. 마지막 진행 지점으로 돌아가는 경로를 확인할게요.');}
   function directionCandidates(position:Coordinate){
     const matches:{meters:number;separation:number}[]=[];
@@ -73,11 +78,12 @@ export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:Loop
     if(s.phase==='continued')return {direction:'straight' as const,instruction:'완주 기록을 유지하며 계속 달리고 있어요.',instructionM:0};
     if(s.weak)return {direction:'unknown' as const,instruction:'위치 확인 중',instructionM:0};
     if(s.phase==='direction')return {direction:'unknown' as const,instruction:'원하는 방향으로 달리세요. 진행 방향을 확인하고 있어요.',instructionM:0};
-    if(s.phase==='approach'||s.phase==='return'){
+    if(s.phase==='approach')return {direction:'unknown' as const,instruction:'코스에 합류하면 안내를 시작해요.',instructionM:0};
+    if(s.phase==='return'){
       if(!s.navigation)return {direction:'unknown' as const,instruction:s.navigationError??'보행 도로 경로를 확인하고 있어요.',instructionM:0};
       if(s.navigation.distanceM<0.01)return {direction:'straight' as const,instruction:'코스 위치를 확인하고 있어요.',instructionM:0};
       const r=prepareRoute(s.navigation.path),next=turnsFor(r).find(t=>t.meters>s.navigationProgress+3);
-      return next?{direction:next.kind,instruction:next.label,instructionM:next.meters-s.navigationProgress}:{direction:'straight' as const,instruction:s.phase==='approach'?'코스 합류 지점으로 이동하세요.':'마지막 진행 지점으로 돌아가세요.',instructionM:Math.max(0,r.totalMeters-s.navigationProgress)};
+      return next?{direction:next.kind,instruction:next.label,instructionM:next.meters-s.navigationProgress}:{direction:'straight' as const,instruction:'마지막 진행 지점으로 돌아가세요.',instructionM:Math.max(0,r.totalMeters-s.navigationProgress)};
     }
     if(s.cursor<s.progress-12)return {direction:'uturn' as const,instruction:'처음 달리던 방향으로 코스를 이어가세요.',instructionM:s.progress-s.cursor};
     const next=lap&&turnsFor(lap).find(t=>t.meters>s.cursor+3);
@@ -112,7 +118,7 @@ export function createLoopGuidance(coordinates:readonly Coordinate[],saved?:Loop
     if(s.phase==='continued')return snapshot();
     if(s.phase==='approach'||s.phase==='return'){
       const initial=s.phase==='approach';
-      const matched=initial&&!s.navigation?courseProjection(coordinates,s.current):{separation:distance(s.current,positionAt(original,s.targetM)),meters:s.targetM};
+      const matched=initial?courseProjection(coordinates,s.current):{separation:distance(s.current,positionAt(original,s.targetM)),meters:s.targetM};
       s.separation=matched.separation;
       if(matched.separation<=L.returnMeters){s.joinSince??=s.now;if(s.now-s.joinSince>=L.returnMs){
         if(initial)directionCandidates(s.current);else {s.phase='lap';s.navigation=null;s.navigationError=null;s.joinSince=null;emit('returned',`returned-${s.episode}`,'코스로 돌아왔어요. 남은 코스를 이어가세요.');}

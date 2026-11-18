@@ -65,9 +65,9 @@ test.each(['running','paused','simulation'])('%s map permits exploration and onl
  expect(p.onPauseResume).not.toHaveBeenCalled();expect(p.onFinish).not.toHaveBeenCalled();
 });
 
-test('the recenter button stays above a growing approach card through accessory and viewport changes',async()=>{
+test('the recenter button stays above a growing return card through accessory and viewport changes',async()=>{
  const p=props();
- const approach={...mockState,phase:'approach',returnPath:[[127,37],[127.001,37]],returnM:730} as any;
+ const approach={...mockState,phase:'return',returnPath:[[127,37],[127.001,37]],returnM:730} as any;
  await render(<LiveGuidancePanel {...p} run={{...run,status:'paused'}} guide={{...guide,options:{...guide.options,mode:'map'}}} simulationState={approach}/>);
  expect(screen.getByTestId('run-turn-distance')).toBeVisible();
  expect(screen.getByTestId('run-return-distance')).toHaveTextContent(/730m/);
@@ -118,4 +118,16 @@ test('real recorded GPS points, not checkpoint trace, reach the live map with pa
  expect(screen.getByTestId('live-map').props.state.trace).toEqual([[[127,37],[127.001,37]],[[127.002,37]]]);
  await view.rerender(<LiveGuidancePanel {...p} guide={{...guide,options:{...guide.options,mode:'map'}}} points={[...points,{...points[2],sequence:4,longitude:127.003,timestamp:26000}]}/>);
  expect(screen.getByTestId('live-map').props.state.trace[1]).toEqual([[127.002,37],[127.003,37]]);
+});
+
+test.each(['map','focus'])('%s approach displays free joining without path, turn instructions or routing retry',async mode=>{
+ const p=props(),route=[[127,37],[127.002,37],[127.002,37.002],[127,37]] as [number,number][];
+ const {createLoopGuidance}=require('../../src/modules/guidance/loop-engine');
+ const engine=createLoopGuidance(route);engine.ingest({position:[126.999,37],timestamp:1000,accuracy:5});
+ const state=engine.snapshot();
+ await render(<LiveGuidancePanel {...p} guide={{...guide,course:{...guide.course,snapshot:{route}},checkpoint:engine.checkpoint(),options:{...guide.options,mode}}} simulationState={state}/>);
+ expect(screen.getByTestId('run-instruction')).toHaveTextContent('코스에 합류하면 안내를 시작해요.');
+ expect(screen.queryByTestId('run-direction-arrow')).toBeNull();expect(screen.queryByTestId('run-turn-distance')).toBeNull();
+ expect(screen.queryByTestId('run-return-distance')).toBeNull();expect(screen.queryByTestId('run-navigation-retry')).toBeNull();
+ if(mode==='map')expect(screen.getByTestId('live-map').props.state.position).toEqual([126.999,37]);
 });

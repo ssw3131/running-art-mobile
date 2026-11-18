@@ -36,15 +36,31 @@ def service_s234(q, launch):
     q.tap('tab-run')
     entry=json.loads((q.ROOT/'.cache/free-loop-qa/fixture.json').read_text(encoding='utf8'))
     lng,lat=entry['snapshot']['route'][0]
-    def fix(n=3):
-        for _ in range(n):q.adb('emu','geo','fix',str(lng),str(lat),'0','10');time.sleep(1)
+    def fix(n=3, position=None):
+        x,y=position or (lng,lat)
+        for _ in range(n):q.adb('emu','geo','fix',str(x),str(y),'0','10');time.sleep(1)
     q.seek('run-saved-course-'+entry['id']);q.tap('run-saved-course-'+entry['id'])
     assert q.find(q.capture('s4-selected-course'),'run-saved-course-'+entry['id']).get('selected')=='true'
     wait_fixed_control('run-selected-start','s4-selected-start')
-    q.tap('run-selected-start');confirm_preparation(q,(lng,lat),'s4-preparation-ready')
-    fix();wait_fixed_control('run-course-start','s4-start-ready');q.tap('run-course-start');q.tap('계속');fix(5)
+    # Start beyond the course bounds, independently of an approach road/path.
+    outside=(min(p[0] for p in entry['snapshot']['route'])-.0005,
+             min(p[1] for p in entry['snapshot']['route'])-.0005)
+    q.tap('run-selected-start');confirm_preparation(q,outside,'s4-preparation-ready')
+    fix(position=outside);wait_fixed_control('run-course-start','s4-start-ready');q.tap('run-course-start');q.tap('계속');fix(5,outside)
     row=q.query("SELECT id,status,guidance_options_json FROM running_sessions WHERE status <> 'completed'")[0]
-    run_id=row['id'];assert row['status']=='running';q.capture('s4-map')
+    run_id=row['id'];assert row['status']=='running'
+    for i in range(1,4):fix(2,(outside[0]-i*.00007,outside[1]))
+    approach=q.query(f"SELECT guidance_json,distance_m,active_ms,point_count FROM running_sessions WHERE id='{run_id}'")[0]
+    checkpoint=json.loads(approach['guidance_json'])
+    assert checkpoint['phase']=='approach' and checkpoint['progress']==0
+    assert checkpoint['navigation'] is None and checkpoint['navigationError'] is None
+    assert approach['distance_m']>5 and approach['active_ms']>0 and approach['point_count']>=3
+    tree=q.capture('s4-manual-approach')
+    assert q.find(tree,'코스에 합류하면 안내를 시작해요.') is not None
+    assert q.find(tree,'run-return-distance') is None and q.find(tree,'run-navigation-retry') is None
+    # A simulator relocation is a GPS discontinuity; settle on-course before
+    # continuing the existing accepted-sample, controls and recovery checks.
+    fix(6);q.capture('s4-map')
     # Real accepted GPS samples, not the simulation screen or checkpoint path.
     # Move only the dedicated emulator; never any attached physical handset.
     for i in range(1,7):

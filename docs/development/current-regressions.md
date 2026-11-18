@@ -68,7 +68,7 @@ loop/legacy 엔진의 공개 trace는 copy-on-write로 갱신한다. 같은 배�
 
 ## 2026-11-13 준비·미완주 이어달리기·공유
 
-준비 안내의 확인은 최신 정확한 위치와 유효한 도보 합류 경로(코스 위는 경로 불필요)가 준비된 뒤 활성화한다. 준비 중/오류·재시도를 표시한다. 미완주 코스의 다음 시도는 같은 소유자/동일 snapshot의 이전 진행·주황 궤적·활동 시간을 복사해 이어 달리며 이전 종료 기록은 수정하지 않는다. 중단 구간은 새 segment로 분리한다. 실제 GPS와 시뮬레이션은 서로의 기록을 이어받지 않고, 이미 완주한 코스는 새 도전이다. 이는 과거 ‘종료 후 항상 처음부터’ 계약보다 우선하는 사용자 변경이다. 시뮬레이션 저장 판정은 소유권/코스 해시를 확인한 DB checkpoint를 이어받고 새 위치를 재검증한다. 호출자가 제공한 완주 플래그는 받지 않는다. 음성은 옵션이 켜진 경우 회전30m 전 방향당1회, 거리 갱신/일반 상태 문구로 반복 발화하지 않는다.
+준비 안내/합류 경로 대기는 2026-11-18 자율 합류 계약으로 대체됐다. 미완주 코스의 다음 시도는 같은 소유자/동일 snapshot의 이전 진행·주황 궤적·활동 시간을 복사해 이어 달리며 이전 종료 기록은 수정하지 않는다. 중단 구간은 새 segment로 분리한다. 실제 GPS와 시뮬레이션은 서로의 기록을 이어받지 않고, 이미 완주한 코스는 새 도전이다. 이는 과거 ‘종료 후 항상 처음부터’ 계약보다 우선하는 사용자 변경이다. 시뮬레이션 저장 판정은 소유권/코스 해시를 확인한 DB checkpoint를 이어받고 새 위치를 재검증한다. 호출자가 제공한 완주 플래그는 받지 않는다. 음성은 옵션이 켜진 경우 회전30m 전 방향당1회, 거리 갱신/일반 상태 문구로 반복 발화하지 않는다.
 
 스토리/세로 저장 카드는 중앙 타이틀과 주소/원본 브랜드 이미지가 동일하다. 공유 링크는 서버의 실제 URL 전체를 줄바꿈해 표시하며 웹페이지 버튼은 해당 URL을 브라우저로 연다. 링크가 없을 때는 기존 공개 확인 후 생성하므로 보기만 해도 경로를 공개하지 않는다. 추천 재설정은 삭제 안내 후 설정으로 이동하며 즉시 계산/횟수 차감하지 않는다.
 
@@ -80,8 +80,16 @@ loop/legacy 엔진의 공개 trace는 copy-on-write로 갱신한다. 같은 배�
 
 ## 2026-11-15 가까운 코스·합류 준비
 
-[새 계약](nearby-approach.md)이 추천의 출발지 거리, 기본 선택, 준비의 시간 초과 후 시작 동작을 대체한다. `tests/nearby-approach.test.mjs`, `tests/nearby-stream.test.mjs`, `tests/components/recommendation-approach.test.tsx`, `tests/components/preparation-approach.test.tsx`, `tests/components/run-preparation.test.tsx`를 연결한다. 기존 엔진 점수/저장·실제 위치 품질/보행 연결성은 유지한다.
+[새 계약](nearby-approach.md)이 추천의 출발지 거리, 기본 선택, 준비의 시간 초과 후 시작 동작을 대체한다. `tests/nearby-approach.test.mjs`, `tests/nearby-stream.test.mjs`, `tests/components/recommendation-approach.test.tsx`, `tests/components/run-preparation.test.tsx`를 연결한다. 기존 엔진 점수/저장·실제 위치 품질/보행 연결성은 유지한다.
 
 ## 2026-11-16 추천 최소 50점
 
 기존 300/500/1000m 단계와 5점 비교를 유지하고, 탐색 중단·최종 후보 선정에 원점수 50점 이상 조건을 추가한다. 점수식/표시/API 형식은 그대로다. `tests/nearby-minimum-score.test.mjs`의 원점수 경계·실제 격자 확장/빈 결과, `tests/nearby-stream.test.mjs`의 서버/기기 일치·빈 결과 예약 취소, `tests/components/course-generation.test.tsx`의 먼 대안/빈 결과/연결 실패 안내를 확인한다.
+
+## 2026-11-18 즉시 기록과 자율 코스 합류
+
+사용자 결정으로 최초 합류 경로 계산과 현재 GPS 선계산을 제거한다. 준비 안내는 즉시 닫히며 코스가 로드되면 GPS 미수신·만료와 무관하게 시작 버튼을 누를 수 있다. 실제 기록은 권한과 5초/30m GPS 확인 뒤 시작하며 추가 위치 대기15초·취소를 유지한다. 최초 합류 전 기록/모니터/재시도는 경로 planner를 호출하지 않는다. 12m/3초 합류 후 기존 방향 판정과 한 바퀴 진행률을 사용하며 접근 이동은 총 거리/시간/궤적에만 포함한다.
+
+`return`의 이탈·이어달리기 복귀 경로·마지막 진행 지점, 추천의 출발지 접근 거리·50점 정책은 유지한다. 기존 v2 `approach`의 경로/오류는 실행 사본에서 제거하고 늦은 응답을 무시한다. DB·코스·완료 기록 원본 및 v1 호환은 유지한다. 현재 위치·이동 궤적/기기 방향·지도 둘러보기/복귀·터치 잠금은 유지한다.
+
+`tests/run-preparation.test.mjs`, `tests/free-loop-guidance.test.mjs`, `tests/components/run-preparation.test.tsx`, `tests/components/live-running.test.tsx`, `tests/components/navigation-bearing.test.tsx`, `tests/components/recommendation-approach.test.tsx`와 Android service/generation 회귀를 연결한다. 제거한 준비 전용 훅의 ready 고정 mock 대신 실제 시작 조건·위치 만료·코스 오류·planner 0회/복귀 요청 보존을 검사한다.

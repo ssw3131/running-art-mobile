@@ -36,7 +36,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   const unlock=()=>{setLocked(false);onOptions({...guide.options,touchLock:false});};
   const [mapContentTop,setMapContentTop]=useState(0),[summaryBottom,setSummaryBottom]=useState(240);
   const [mapHeight,setMapHeight]=useState(0),[instructionTop,setInstructionTop]=useState<number|null>(null);
-  // Approach/return cards can add a third line below the turn instruction.
+  // Return cards can add a third line below the turn instruction.
   const recenterBottom=instructionTop===null||!mapHeight?240:Math.max(240,mapHeight-mapContentTop-instructionTop+12);
   const [lockPreference,setLockPreference]=useState(guide.options.touchLock??false);
   if(lockPreference!==(guide.options.touchLock??false)){setLockPreference(guide.options.touchLock??false);setLocked(guide.options.touchLock??false);}
@@ -52,7 +52,7 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
   const background=weak||paused?navy:off?'#FC5602':'#059C54';
   const elapsed=elapsedMs(run,now),distance=(run.distanceM/1000).toFixed(2),remaining=(state.remainingM/1000).toFixed(2);
 
-  const title=simulationState?.status==='arrived'?'시뮬레이션을 완주했어요':run.courseOutcome==='arrival-pending'?'한 바퀴를 완주했어요':paused?statusLabel[run.status]:weak?'GPS 신호를 기다리고 있어요':off?'코스를 벗어났어요':state.phase==='approach'?'코스로 합류하고 있어요':state.phase==='direction'?'달릴 방향을 확인하고 있어요':'코스를 따라 달리고 있어요';
+  const title=simulationState?.status==='arrived'?'시뮬레이션을 완주했어요':run.courseOutcome==='arrival-pending'?'한 바퀴를 완주했어요':paused?statusLabel[run.status]:weak?'GPS 신호를 기다리고 있어요':off?'코스를 벗어났어요':state.phase==='approach'?'코스로 자유롭게 이동하세요':state.phase==='direction'?'달릴 방향을 확인하고 있어요':'코스를 따라 달리고 있어요';
   const color=focus?'#FFFFFF':c.text;
   const metric=(text:string,size:number,testID?:string)=><AppText testID={testID} style={{color,fontFamily:fonts.roboto.black,fontSize:size,lineHeight:size*1.2,textAlign:'center'}}>{text}</AppText>;
   const controls=<RunningControls busy={busy} paused={paused} canStart={simulationState?.status!=='arrived'} onSettings={onSettings??(()=>router.push({pathname:'/run-settings',params:{runId:run.id}}))} onStartPause={onPauseResume} onFinish={onFinish}/>;
@@ -63,8 +63,8 @@ export default function LiveGuidancePanel({ run, guide, points, now, busy, onOpt
     </View>
     <View style={{flex:focus?undefined:1,gap:8}}><AppText testID="run-instruction" weight="bold" style={{color,fontSize:focus?(dense?20:compact?24:36):20,lineHeight:focus?(dense?26:compact?32:48):29,textAlign:focus?'center':'left'}}>{state.instruction}</AppText>
     {state.status==='normal'&&['left','right','uturn'].includes(state.direction)&&<AppText testID="run-turn-distance" weight="bold" style={{color,fontSize:14,lineHeight:20,textAlign:'center'}}>약 {Math.max(5,Math.round(state.instructionM/5)*5)}m 앞에서</AppText>}
-    {(state.phase==='approach'||state.phase==='return'||off)&&state.returnPath.length>0&&<AppText testID="run-return-distance" style={{color}}>{state.phase==='approach'?'코스 합류까지':'복귀 지점까지'} 약 {Math.round(state.returnM)}m</AppText>}
-    {state.navigationError&&<Button compact variant="secondary" testID="run-navigation-retry" label="보행 경로 다시 확인" disabled={busy} onPress={()=>onRetryNavigation?onRetryNavigation():void running.retryNavigation()}/>}
+    {(state.phase==='return'||off)&&state.returnPath.length>0&&<AppText testID="run-return-distance" style={{color}}>복귀 지점까지 약 {Math.round(state.returnM)}m</AppText>}
+    {off&&state.navigationError&&<Button compact variant="secondary" testID="run-navigation-retry" label="보행 경로 다시 확인" disabled={busy} onPress={()=>onRetryNavigation?onRetryNavigation():void running.retryNavigation()}/>}
 </View>
   </View>;
   const mapStats=<View style={{...card,paddingHorizontal:16,paddingVertical:6,gap:4}}>
