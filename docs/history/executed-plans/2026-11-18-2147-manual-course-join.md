@@ -1,7 +1,8 @@
 # 실시간 러닝을 즉시 시작하고, 코스 합류 후 안내 시작
 
 - 기록 생성·실행 시작: 2026-11-18T21:47:37+09:00 (Asia/Seoul)
-- 상태: 진행 중
+- 상태: 완료 (구현·로컬·PR/Android·main 검증)
+- 구현·검증 종료: 2026-11-18T23:50:27+09:00 (Asia/Seoul)
 - 기록 유형: 실행 전 원문 보존
 - 요청·계획 출처: 사용자가 이 대화에서 `PLEASE IMPLEMENT THIS PLAN`으로 전달한 아래 계획
 - 기준: main `580e61a7cf098dd07fe8919525060c82e1501268`
@@ -36,7 +37,7 @@
 
 ## 실행 결과·검증
 
-진행 중. 최초 합류 계산 제거와 기존 복귀 안내 보존을 함께 검증한다.
+최초 합류 계산을 제거하고 기존 복귀 안내를 보존했다. 아래 구현·로컬·원격 검증 및 main 반영을 완료했다. 최종 결과 문서는 별도 문서 PR로 반영한다.
 
 ### 구현 및 로컬 검증
 
@@ -45,3 +46,36 @@
 - 첫 UI 실행은 테스트 코스 ID가 저장 형식(32자리)을 따르지 않아 7개 실패했고 유효 fixture로 수정했다. 관련 Node 첫 실행은 이전 코스 밖 시작 거부 기대 1개가 실패해 승인된 정책으로 수정했다. 재검증 전체 결과는 위와 같다.
 - 초기 패키지 설치/Node 하위 프로세스/qa:plan 실행은 샌드박스 네트워크·프로세스 권한 제한을 만났고 해당 명령에만 추가 네트워크 권한을 적용했다. Expo telemetry의 홈 쓰기 오류는 EXPO_NO_TELEMETRY=1로 해소했다. 원본 로그는 로컬 검증 자료에 보존한다.
 - Android 시나리오에 코스 밖 시작·합류 전 이동 기록/진행률0·안내 문구 검사와 캡처를 추가했다. draft·ready CI·main 반영 및 Android 캡처 검토는 이어서 실행한다.
+
+### 변경 이력 대조
+
+- main 7b2f01b/PR50(11월9일): 코스 로드 시 시작 가능, 준비 안내 즉시 확인.
+- main 60db48f/PR59(11월14일): 안내 확인이 approach.ready에 묶였다.
+- main 6d4fd6d/PR63(11월15일): 시작 버튼도 approach.ready·GPS/error 상태로 차단했다. 최초 경로 자체는 이전부터 필수였으며 이번 변경은 준비 화면과 실제 시작 양쪽의 최초 경로 의존성을 제거한다.
+
+### 첫 원격 검증
+
+- draft44309997723, 되돌린 draft44317745301: 빠른 검사·Python39·development-feedback 통과.
+- ready44310620545/head1d5cde1/tree2a6b618: fast/API/Android29(7단계) 통과. Android29 자료 보존/정리 통과, 준비대기4·완료된 dump 전송경고3.
+- Android36 기능15단계(새 코스 밖 시작 포함)와 자료 보존/정리 통과. 마지막 prepare-visual-home에서 SystemUI full-signal 준비12초 초과.19개 PNG 모두 false, 데모999 primaryLevel/icon.level=0, isInService=false. 정적4화면 비교/verification-gate는 실패. 준비대기1·전송경고0. 근본 원인 미확정.
+- Android36 최초 ZIP SHA256:9d8f04918d9c34ae685ea5ed5eca98faa1f2fa56d69bc89fe1b128c24e26d54d, artifact14431299646. 모든 원본은 .cache/manual-course-join/android36-first/에 보존했다.
+- s4-preparation-ready와 s4-manual-approach 원본을 확인했다. 안내 즉시확인, 현재 GPS 파란점·주황 이동궤적·저장코스, 총거리0.02km/11초와 코스잔여0.91km, 새문구/합류경로·거리/회전 없음이 표시됐다. s4-map에서 합류 후 direction 상태로 전환됐다. 기존 집중모드의 긴 방향확인 문구 마지막 부분은 하단 영역에서 잘려 보이며 이번 변경의 문구/레이아웃 수정 대상은 아니다. 야외 방향센서 검증으로 해석하지 않는다.
+- AOSP Android16 DemoMobileConnectionsRepository/ConnectionRepository/MobileConnectionDataSource와 진단을 대조했다. 데모 구독999는 실제SIM1과 분리되어 있지만 관측된 초기값은 갱신되지 않았다. 캐시/전환 경합은 가설이며 소스를 추측으로 수정하지 않았다.
+- 동일 소스 visual44318265613을 실행했다. 앱/QA 코드·화면 기준·마스크·허용오차·기한 변경 없음. 결과는 후속 기록 대상이다.
+
+- visual44318265613/아티팩트14435645065: 동일 소스의 네 화면 차이0, 원본 보존/정리·manual-verification 통과.16개 신호 관측 모두 첫 표본에 준비됐으며 데모999 isInService=true/primaryLevel=4/icon.level=4로 실제 전환됐다. 첫 실패는 미재현·근본원인 미확정으로 유지한다. 최종 ready 전체 검증을 재개한다.
+
+### 최종 전체 검사와 main 반영
+
+- 최종 ready 전체 [44321040669](https://github.com/ssw3131/running-art-mobile/actions/runs/44321040669)가 통과했다. PR74의 head `1d5cde1819b1f1e6ed8391084f8abb7e73ab5fea` / tree `2a6b61849479b04e9f6c4653ce666a5e44baafdd`는 첫 실행과 같다. 실제 PR merge ref `26b322e7645ff807a28cfd775c738ae5053e47da`에서 fast/API·Android29/36·verification-gate를 확인했다.
+- Android29 7단계·Android36 15단계, 네 정적 화면 차이0, 원본 자료 보존/정리가 모두 통과했다. 두 Android 모두 시나리오 재시도0이며 UI 덤프 준비대기/완료된 전송경고는 Android29 3/1, Android36 1/0이다. 기존 Wi-Fi 래스터 영역 제외 기준을 유지했고 기준 PNG·마스크·허용오차·준비 기한을 변경하지 않았다.
+- 최종 Android36의 `s4-manual-approach.png`와 `s4-map.png` 원본을 다시 확인했다. 코스 밖 현재 위치·주황 궤적·저장 코스, 총거리0.02km/12초와 코스잔여0.91km, 새 안내 문구 및 합류 후 방향 확인 전환을 확인했다. 준비/엔진/컨트롤러 회귀의 최초 합류까지 경로 요청0회, GPS5초/30m·최대15초·취소/중복/실패 시 기록 없음, 중간/양방향/교차 합류·복원·이탈 복귀도 통과했다. 네이티브 합류 이동은 에뮬레이터 GPS 재배치이며 실제 야외 이동 검증이 아니다.
+- 최종 Android36 artifact `14438520854`, ZIP SHA256 `39c1c9d9a2a554101f78226726262d4223fe37f9ce5e7ccfc51e68b2ba7722aa`. 최종 Android29 `14434889776`, fast `14434139093`, API `14434986605`, 검증 트리 증거 `14437677417`을 보존했다. 다운로드 ZIP·원본 보고서/PNG/로그는 `.cache/manual-course-join/`에 있으며 최초 실패 자료도 삭제하지 않았다.
+- [PR #74](https://github.com/ssw3131/running-art-mobile/pull/74)를 main `64415aa196e3e3ea4a7c9d55560caaef78ff466d`에 squash 병합했다. [main44328501751](https://github.com/ssw3131/running-art-mobile/actions/runs/44328501751)의 scope·verification-gate가 통과했다. 동일 트리의 PR44321040669 성공 증거를 자동 확인·재사용했으며 main에서 Android를 다시 실행한 결과는 아니다. 재사용 근거 artifact `14437788052`도 로컬에 보존했다.
+
+### 남은 범위
+
+- 서버 배포·DB/API/저장 형식 변경은 없다. 휴대폰 설치, 실제 GPS·방향센서·야외 합류와 장시간 러닝은 별도 후속이다.
+- 첫 SystemUI 신호 준비 실패의 근본 원인은 미확정이다. 같은 소스의 독립 화면 진단과 최종 전체 검사는 통과했으며 처음 실패를 해결됐다고 단정하지 않는다.
+- 앞서 관측한 기존 집중모드의 긴 방향 확인 문구 하단 잘림은 별도 UI 후속이다. 이번 합류 전 문구와 자동 전환의 확인 결과로 기존 모든 화면의 완전성을 주장하지 않는다.
+- 문서 결과 반영 후 로컬 main을 동기화하고 이번 기능/문서 브랜치를 정리한다. 기존 `work` 브랜치와 `.cache/manual-course-join/` 검증 자료는 보존 대상이다.
