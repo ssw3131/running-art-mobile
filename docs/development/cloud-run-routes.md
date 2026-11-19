@@ -18,6 +18,23 @@
 - 취소/화면 이동/백그라운드: 앱 요청 취소와 오래된 결과 무시. 서버가 연결 종료를 받으면 계산 작업자를 종료한다. 프록시가 연결 종료를 즉시 전달하지 않는 경우에도 60초 작업 제한이 남는다.
 - 오프라인·합성 진단·‘기기 계산·도로 저장’은 기존 휴대폰 계산이다. **서버 성공은 휴대폰 도로 캐시를 채우지 않는다.** 오프라인 사용 전 ‘기기 계산·도로 저장’으로 해당 지역을 준비한다. 이미 저장한 코스는 기존대로 열고 달릴 수 있다.
 
+## 클라우드 작업 환경의 인증
+
+2026-11-19 현재 클라우드 작업 폴더에 공식 Google Cloud CLI594.0.0과 사용자 인증을 연결했다. 저장소 루트에서 전용 인증 저장소를 명시해 실행한다.
+
+```bash
+CLOUDSDK_CONFIG="$PWD/.cache/gcloud-cloud-auth" \
+  .tools/google-cloud-sdk/bin/gcloud run services describe runpen-route-compute \
+  --project=running-art-mobile --region=asia-northeast3 \
+  --format='json(status.latestReadyRevisionName,status.traffic)'
+```
+
+로컬 실행기 `.cache/cloud-gcp-auth/gcloud`도 같은 인증 저장소·프로젝트·리전을 선택한다. 기본 gcloud 설정이나 과거 PC의 `.cache/gcloud-server-compute`와 혼동하지 않는다. 실행기가 없더라도 먼저 위 경로의 CLI·인증 상태를 확인한다. SDK와 `.cache/gcloud-cloud-auth/`는 Git 제외 자료이며, 인증 캐시는 일반 임시 파일 정리에서 보존하고 토큰 출력·커밋·배포 묶음 포함을 하지 않는다.
+
+일회용 `RUNPEN_GCP_AUTH_CODE`는 로그인 교환 후 삭제했으며 삭제·환경 적용 뒤에도 인증된 조회가 성공했다. 같은 작업 폴더의 인증 캐시가 유지되면 다음 작업에서 재사용한다. 관리형 Identity 연결을 추가한 것은 아니므로 완전히 새 클라우드 환경에는 인증이 자동 전달되지 않는다. 설정 적용 시에는 환경 revision과 새 login 셸의 변수 존재만 확인하고 비밀 값을 출력하지 않는다.
+
+운영 리비전 `runpen-route-compute-minscore1117-5aae28b`의 트래픽100%·이미지 digest와 기존 Cloud Build SUCCESS를 확인했다. 읽기 전용 검사로 Cloud Run/Build/Artifact Registry/Service Usage의 선택 권한, 실제 소스 업로드 버킷의 Storage 권한, 런타임·빌드 서비스 계정 actAs도 확인했다. 이는 새 배포 실행 검증이 아니며 서버·트래픽·IAM을 변경하지 않았다. [인증 실행 기록과 검증 범위](../history/executed-plans/2026-11-19-1949-cloud-gcp-auth.md).
+
 ## 배포와 복구
 
 프로젝트 `running-art-mobile`, 서울 `asia-northeast3`, 서비스 `runpen-route-compute`. 1 CPU/1GiB, HTTP 동시성 8·계산 1, 최소 0, 서비스·리비전 최대 2, 요청 기반 CPU, 시작 CPU 부스트 OFF. 전용 `runpen-route-compute` 서비스 계정에 프로젝트 권한을 부여하지 않는다. 공통 계산량 기록 버킷의 객체 권한만 사용하며 Supabase/R2 비밀 키 없이 공개 HTTPS 도로를 읽는다.
