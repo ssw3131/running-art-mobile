@@ -1,5 +1,11 @@
 # 현재 상태와 인수인계
 
+## 2026-11-19 클라우드 Google Cloud 인증 연결 완료
+
+공식 CLI594.0.0과 사용자 로그인으로 현재 클라우드의 GCP 인증을 연결했다. 임시 인증코드 환경 변수 삭제·적용(revision4) 후에도 Cloud Run 서비스·리비전·빌드 조회가 성공한다. 활성 `minscore1117-5aae28b`의 트래픽100%와 이미지 digest가11월17일 PC 배포 근거와 일치하며 현재 main의 서버23개 파일도 같다. Cloud Run/Build/Artifact Registry/Service Usage의 선택 권한10개, 실제 업로드 버킷의 Storage4개, 런타임·빌드 서비스 계정 actAs를 확인했다. 새 서버 배포·트래픽/IAM 변경은 없다.
+
+같은 작업 폴더에서는 `.tools/google-cloud-sdk/bin/gcloud`와 `CLOUDSDK_CONFIG=.cache/gcloud-cloud-auth`를 사용한다. SDK·실제 인증 캐시는 Git 제외 로컬 자료로 보존하며 새 환경에 자동 공유되는 Identity 연결은 아니다. 초기 설정 적용 지연과 첫 invalid_grant 실패를 기록에 보존했다. [인증 사용법](../development/cloud-run-routes.md#클라우드-작업-환경의-인증)·[실행 기록](../history/executed-plans/2026-11-19-1949-cloud-gcp-auth.md). 문의 기능의 운영 SQL/실제 접수 문제는 별도 미해결이다. 문서4개의 로컬 검사를 통과했다. 최초 외부 반영의 자동 승인 거부 뒤 사용자가 “반영해”로 명시 승인했으며, 문서 PR/main 필수 검사·병합 결과는 해당 PR 본문에서 확인한다.
+
 ## 2026-11-18 즉시 러닝 시작·자율 코스 합류 main 검증 완료
 
 최초 합류 경로 계산/현재 GPS 선계산을 제거하고 유효 GPS 확인 후 기록한다. 코스12m/3초 합류 후 기존 방향/안내를 사용하며 이탈·이어달리기 복귀 경로는 유지한다. 기존 v2 접근 경로는 실행 사본에서 무시하고 초기 이동 거리/시간/궤적을 보존한다.
