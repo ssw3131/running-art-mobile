@@ -56,4 +56,8 @@ try {
   const supportReport = supportResults.flatMap(r => r.rows).find(r => r.service_support_verification)?.service_support_verification;
   assert.ok(supportReport?.startsWith('PASS:')); console.log(supportReport);
   assert.equal((await db.query('select count(*)::int as count from auth.users')).rows[0].count, 0, 'support fixtures rolled back');
+  await db.exec(await readFile(new URL('../../supabase/migrations/20261120234216_private_inquiry_board.sql', import.meta.url), 'utf8'));
+  const boardResults = await db.exec(await readFile(new URL('../../supabase/tests/inquiry_board.sql', import.meta.url), 'utf8'));
+  const boardReport = boardResults.flatMap(r => r.rows).find(r => r.inquiry_board_verification)?.inquiry_board_verification;
+  assert.ok(boardReport?.startsWith('PASS:')); console.log(boardReport);
 } finally { await db.close(); }

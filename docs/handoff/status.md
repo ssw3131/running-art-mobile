@@ -1,5 +1,7 @@
 # 현재 상태와 인수인계
 
+**2026-11-21 문의 게시판 진행 중:** 사용자 확정에 따라 이메일 없는 비공개 목록/상세·답변 전 수정/삭제·Supabase 운영팀 답변을 구현한다. 관련 로직10·문의 UI6·공지 회귀7·전체/부분 S6 DB 검사를 통과했으며 CI·운영·기기는 후속이다. [계약](../development/inquiry-board.md)·[검증](../quality/inquiry-board-20261121.md)·[실행 기록](../history/executed-plans/2026-11-21-0837-inquiry-board.md).
+
 ## 2026-11-19 클라우드 Google Cloud 인증 연결 완료
 
 공식 CLI594.0.0과 사용자 로그인으로 현재 클라우드의 GCP 인증을 연결했다. 임시 인증코드 환경 변수 삭제·적용(revision4) 후에도 Cloud Run 서비스·리비전·빌드 조회가 성공한다. 활성 `minscore1117-5aae28b`의 트래픽100%와 이미지 digest가11월17일 PC 배포 근거와 일치하며 현재 main의 서버23개 파일도 같다. Cloud Run/Build/Artifact Registry/Service Usage의 선택 권한10개, 실제 업로드 버킷의 Storage4개, 런타임·빌드 서비스 계정 actAs를 확인했다. 새 서버 배포·트래픽/IAM 변경은 없다.

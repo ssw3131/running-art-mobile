@@ -1,5 +1,5 @@
 import type { StringStorage } from '../auth/secure-storage.ts';
-import { InquiryValidationError, validateInquiry, type InquiryInput, type InquiryReceipt } from './model.ts';
+import { definiteInquiryRejection, inquiryError, validateInquiry, type InquiryInput, type InquiryReceipt } from './model.ts';
 
 type Request = { owner: string; id: string; input: InquiryInput };
 type State = { ready: boolean; busy: boolean; pending: Request | null; receipt: InquiryReceipt | null; message: string };
@@ -22,7 +22,12 @@ export function createInquiryController(deps: {
         if (!current()) return;
         const pending = raw ? JSON.parse(raw) as Request : null;
         if (pending && (pending.owner !== deps.owner || !/^[a-f0-9-]{36}$/i.test(pending.id))) throw new Error('Invalid pending inquiry');
-        if (pending) pending.input = validateInquiry(pending.input);
+        if (pending) {
+          pending.input = validateInquiry(pending.input);
+          // Rewrite legacy copies without contact email before any network request.
+          await deps.storage.setItem(key, JSON.stringify(pending));
+          if (!current()) return;
+        }
         set({ ready: true, pending });
       } catch { if (current()) set({ message: '이전에 보낸 문의를 확인하지 못했어요. 다시 불러와 주세요.' }); }
       finally { set({ busy: false }); }
@@ -42,7 +47,10 @@ export function createInquiryController(deps: {
         await deps.storage.removeItem(key);
         if (current()) set({ pending: null, receipt, message: '문의를 접수했어요.' });
       } catch (error) {
-        if (current()) set({ message: state.pending ? '접수 결과를 확인하지 못했어요. 다시 확인하면 같은 문의의 접수 여부를 확인합니다.' : error instanceof InquiryValidationError ? error.message : '문의 준비에 실패했어요. 다시 시도해 주세요.' });
+        if (current() && definiteInquiryRejection(error)) {
+          try { await deps.storage.removeItem(key); if (current()) set({ pending: null }); } catch { /* Keep the exact request if cleanup failed. */ }
+        }
+        if (current()) set({ message: state.pending ? `${inquiryError(error)} 접수 결과를 확인하지 못했어요. 같은 문의로 다시 확인해 주세요.` : inquiryError(error) });
       } finally { set({ busy: false }); }
     },
     newInquiry() { if (current() && !state.busy && !state.pending) set({ receipt: null, message: '' }); },

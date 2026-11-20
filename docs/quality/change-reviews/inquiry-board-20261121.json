@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "scripts/qa/inquiry_board.py",
+    "src/app/service-inquiry-detail.tsx",
+    "src/app/service-inquiry-write.tsx",
+    "src/features/support/InquiryForm.tsx",
+    "src/features/support/use-inquiry-resource.ts",
+    "supabase/migrations/20261120234216_private_inquiry_board.sql",
+    "supabase/tests/inquiry_board.sql",
+    "tests/components/inquiry-board.test.tsx",
+    "tests/inquiry-board-migration.test.mjs",
+    "scripts/qa/account-server.mjs",
+    "scripts/qa/service_s56.py",
+    "src/app/service-inquiry.tsx",
+    "src/features/auth/ServiceStack.tsx",
+    "src/features/support/SupportPage.tsx",
+    "src/modules/support/inquiry.ts",
+    "src/modules/support/model.ts",
+    "src/modules/support/remote.ts",
+    "tests/integration/support.test.mjs",
+    "tests/support-inquiry.test.mjs",
+    "tests/support.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-21 사용자 구현 지시: 이메일 수집/수동 메일 답변 대신 본인과 운영팀만 보는 게시판, 답변 전 수정·삭제, Supabase 직접 답변으로 확정. docs/development/inquiry-board.md",
+  "before": "운영 문의 테이블/함수가 없어 접수가 실패하고 앱은 이메일 입력과 접수 결과만 제공했다.",
+  "after": "개인 문의 목록·상세·답변 전 수정/삭제와 운영팀 답변을 앱에서 확인한다. 정상 빈 목록만 작성 화면을 열고 실패는 재시도한다.",
+  "invariants": [
+    "기존 공지·약관 및 계정/러닝 자료 보존",
+    "본인 RLS와 계정 전환 응답 격리",
+    "최초 요청 원장으로 중복 접수·삭제 후 복원·제한 우회 차단",
+    "서버 확인 전 가짜 접수 성공 없음"
+  ],
+  "tests": [
+    {
+      "path": "tests/support-inquiry.test.mjs",
+      "reason": "문의 게시판의 권한·전후 흐름·호환/실패 회귀 검사"
+    },
+    {
+      "path": "tests/components/inquiry-board.test.tsx",
+      "reason": "문의 게시판의 권한·전후 흐름·호환/실패 회귀 검사"
+    },
+    {
+      "path": "tests/inquiry-board-migration.test.mjs",
+      "reason": "문의 게시판의 권한·전후 흐름·호환/실패 회귀 검사"
+    },
+    {
+      "path": "tests/integration/support.test.mjs",
+      "reason": "문의 게시판의 권한·전후 흐름·호환/실패 회귀 검사"
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "evidence": [
+      "docs/quality/inquiry-board-20261121.md; scripts/qa/inquiry_board.py의 inquiry-empty-form/answered-list/answered-detail/large-font 캡처를 Android CI에서 생성·검토한다. 기존 공지 카드/상세와 문의 이미지를 사용하며 화면 기준 마스크는 변경하지 않는다."
+    ],
+    "reason": "공지 카드/상세 레이아웃과 기존 문의 이미지를 사용한 개인 문의 목록·작성·답변 상세 추가"
+  },
+  "native": "API29/36 S56에 실제 앱 접수·수정·삭제/운영팀 답변·다크/큰 글씨 시나리오 추가. CI 전체 검사와 실제 휴대폰 결과를 구분한다."
+}

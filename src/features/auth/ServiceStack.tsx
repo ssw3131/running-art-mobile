@@ -22,6 +22,7 @@ export const privateScreens = [
   ['approach-benchmark', '합류 경로 반복 측정'],
   ['ui-preview', 'UI 미리보기'], ['service-notices', '공지사항'], ['service-notice', '공지사항'],
   ['service-inquiry', '문의'], ['service-guide', '사용법'], ['service-faq', '자주 묻는 질문'],
+  ['service-inquiry-write', '문의 및 의견 보내기'], ['service-inquiry-detail', '문의 상세'],
   ['service-about', 'RunPen 소개'], ['run-simulation', '러닝 시뮬레이션'], ['run-settings', '러닝 설정'], ['run-result', '러닝 결과'], ['run-card', '공유하기'],
   ['+not-found', ''],
 ] as const;

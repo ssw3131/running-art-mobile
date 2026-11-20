@@ -30,6 +30,27 @@ test('DB-SUPPORT-01: real concurrent inquiry receipt, public notices, isolation 
  assert.ok(!(await anonymous.notices()).some(n=>n.id===noticeId));
  assert.equal((await admin.from('service_notices').update({published:true}).eq('id',noticeId)).error,null);
  assert.ok((await anonymous.notices()).some(n=>n.id===noticeId));
+ // Two independent HTTP transactions race to edit and publish a reply.
+ const [edit,reply]=await Promise.all([
+  clients[0].rpc('update_service_inquiry',{p_request_id:request,p_version:1,p_category:'기타',p_title:'수정 제목',p_body:'수정 내용'}),
+  admin.from('service_inquiries').update({reply_body:'운영팀 답변'}).eq('owner_id',owners[0]).eq('request_id',request),
+ ]);
+ assert.equal(reply.error,null);
+ if(edit.error)assert.equal(edit.error.code,'40001');
+ const answered=await remote.detail(request);
+ assert.equal(answered.reply,'운영팀 답변');assert.ok(answered.repliedAt);
+ assert.equal(answered.title,edit.error?input.title:'수정 제목');
+ await assert.rejects(remote.update(request,answered.version,input));
+ await assert.rejects(remote.remove(request,answered.version));
+ assert.deepEqual(await remote.submit(owners[0],request,input),receipts[0],'original receipt survives edits and replies');
+ assert.ok((await clients[0].from('service_inquiries').update({reply_body:'forged'}).eq('request_id',request)).error);
+ assert.ok((await admin.from('service_inquiries').update({reply_body:''}).eq('request_id',request)).error);
+ // Deletion keeps the request tombstone without retaining the message body.
+ const secondRemote=createSupportRemote(clients[1]),deletedRequest=randomUUID();
+ await secondRemote.submit(owners[1],deletedRequest,input);
+ await secondRemote.remove(deletedRequest,1);await secondRemote.remove(deletedRequest,1);
+ await assert.rejects(secondRemote.submit(owners[1],deletedRequest,input),e=>e.code==='P0002');
+ assert.equal((await secondRemote.list()).items.length,0);
  const owner=owners.shift();assert.equal((await admin.auth.admin.deleteUser(owner)).error,null);
  assert.equal((await admin.from('service_inquiries').select('*').eq('owner_id',owner)).data.length,0);
 });
