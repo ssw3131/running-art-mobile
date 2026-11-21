@@ -20,7 +20,8 @@
     "src/modules/support/remote.ts",
     "tests/integration/support.test.mjs",
     "tests/support-inquiry.test.mjs",
-    "tests/support.test.mjs"
+    "tests/support.test.mjs",
+    "src/app/service-notices.tsx"
   ],
   "behavior": "changed",
   "decision": "2026-11-21 사용자 구현 지시: 이메일 수집/수동 메일 답변 대신 본인과 운영팀만 보는 게시판, 답변 전 수정·삭제, Supabase 직접 답변으로 확정. docs/development/inquiry-board.md",
@@ -53,7 +54,8 @@
   "visual": {
     "status": "changed",
     "evidence": [
-      "docs/quality/inquiry-board-20261121.md; scripts/qa/inquiry_board.py의 inquiry-empty-form/answered-list/answered-detail/large-font 캡처를 Android CI에서 생성·검토한다. 기존 공지 카드/상세와 문의 이미지를 사용하며 화면 기준 마스크는 변경하지 않는다."
+      "docs/quality/inquiry-board-20261121.md; scripts/qa/inquiry_board.py의 inquiry-empty-form/answered-list/answered-detail/large-font 캡처를 Android CI에서 생성·검토한다. 기존 공지 카드/상세와 문의 이미지를 사용하며 화면 기준 마스크는 변경하지 않는다.",
+      "첫 ready44840341351의 Android29 PNG 육안 검토에서 밝은 테마 문의/공지 이동 화살표가 SVG 원본 흰색으로 묻히는 기존 문제를 발견. 두 목록에서 c.text를 명시하고 최종 Android 캡처로 확인한다."
     ],
     "reason": "공지 카드/상세 레이아웃과 기존 문의 이미지를 사용한 개인 문의 목록·작성·답변 상세 추가"
   },

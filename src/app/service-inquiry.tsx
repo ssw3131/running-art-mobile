@@ -31,7 +31,7 @@ function InquiryBoard({ owner }: { owner: string }) {
           <AppText variant="caption" weight="bold" style={{ color: item.answered ? c.onAction : c.text, backgroundColor: item.answered ? c.action : c.secondary, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 3 }}>{item.answered ? '답변 완료' : '미확인'}</AppText>
           <AppText variant="label" style={{ color: c.muted }}>{new Date(item.receivedAt).toLocaleDateString()}</AppText>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppText weight="bold" style={{ flex: 1 }}>{item.title}</AppText><Icon name="chevronRight" /></View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppText weight="bold" style={{ flex: 1 }}>{item.title}</AppText><Icon name="chevronRight" color={c.text} /></View>
       </Pressable>)}
       {data?.next && <Button label="더 보기" testID="inquiry-more" variant="outline" loading={busy} onPress={() => { void more(() => inquiryRemote().list(data.next), (previous, incoming) => ({ ...incoming, items: [...previous.items, ...incoming.items.filter(item => !previous.items.some(old => old.id === item.id))] })); }} />}
       <Button label="문의 다시 확인" testID="inquiry-refresh" variant="outline" disabled={busy} onPress={reload} />
