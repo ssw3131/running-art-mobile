@@ -1,0 +1,136 @@
+{
+  "run": "https://github.com/ssw3131/running-art-mobile/actions/runs/44864466016",
+  "source": "58270157f2063b167dad5152e4782d98742db19b",
+  "mode": "achievements-only",
+  "status": "passed",
+  "bounds": {
+    "inquiry-keyboard-large-long-body-bounds": {
+      "input": "inquiry-body",
+      "bounds": [
+        72,
+        843,
+        1008,
+        1383
+      ],
+      "viewport": [
+        0,
+        425,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1431
+    },
+    "inquiry-keyboard-edit-long-body-bounds": {
+      "input": "inquiry-body",
+      "bounds": [
+        63,
+        942,
+        1017,
+        1415
+      ],
+      "viewport": [
+        0,
+        346,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1457
+    },
+    "inquiry-keyboard-new-title-bounds": {
+      "input": "inquiry-title",
+      "bounds": [
+        63,
+        1283,
+        1017,
+        1415
+      ],
+      "viewport": [
+        0,
+        346,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1457
+    },
+    "inquiry-keyboard-new-body-bounds": {
+      "input": "inquiry-body",
+      "bounds": [
+        63,
+        942,
+        1017,
+        1415
+      ],
+      "viewport": [
+        0,
+        346,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1457
+    },
+    "inquiry-keyboard-edit-title-bounds": {
+      "input": "inquiry-title",
+      "bounds": [
+        63,
+        1283,
+        1017,
+        1415
+      ],
+      "viewport": [
+        0,
+        346,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1457
+    },
+    "inquiry-keyboard-create-title-bounds": {
+      "input": "inquiry-title",
+      "bounds": [
+        63,
+        1283,
+        1017,
+        1415
+      ],
+      "viewport": [
+        0,
+        346,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1457
+    },
+    "inquiry-keyboard-create-body-bounds": {
+      "input": "inquiry-body",
+      "bounds": [
+        63,
+        942,
+        1017,
+        1415
+      ],
+      "viewport": [
+        0,
+        346,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1457
+    },
+    "inquiry-keyboard-large-title-bounds": {
+      "input": "inquiry-title",
+      "bounds": [
+        72,
+        1200,
+        1008,
+        1383
+      ],
+      "viewport": [
+        0,
+        425,
+        1080,
+        2340
+      ],
+      "keyboardTop": 1431
+    }
+  }
+}
