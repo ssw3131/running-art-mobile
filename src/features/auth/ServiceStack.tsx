@@ -1,6 +1,6 @@
 import { Stack, useNavigationContainerRef } from 'expo-router';
 import { useEffect, useRef, useSyncExternalStore } from 'react';
-import { ActivityIndicator, Platform, View } from 'react-native';
+import { ActivityIndicator, Platform, ToastAndroid, View } from 'react-native';
 import { AppText } from '@/components/ui';
 import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { useThemeColors } from '@/theme/ThemeProvider';
@@ -31,11 +31,11 @@ export const privateScreens = [
 const guestScreens = new Set<string>(['(tabs)', 'course-location-picker', 'map', 'service-info', 'service-about', 'service-guide', 'service-faq', 'service-notices', 'service-notice']);
 
 type RouteState = { routeNames?: readonly string[]; routes: readonly { name: string; state?: RouteState }[] };
-type ResetState = { index: number; routes: { name: string; state?: ResetState }[] };
-function resetServiceState(state: RouteState, destination: string): ResetState | undefined {
-  if (state.routeNames?.includes('service-policy')) return { index: 0, routes: [{ name: destination }] };
+type ResetState = { index: number; routes: { name: string; params?: { mode: string }; state?: ResetState }[] };
+function resetServiceState(state: RouteState, destination: string, params?: {mode:string}): ResetState | undefined {
+  if (state.routeNames?.includes('service-policy')) return { index: 0, routes: [{ name: destination, ...(params?{params}:{}) }] };
   for (const route of state.routes) {
-    const nested = route.state && resetServiceState(route.state, destination);
+    const nested = route.state && resetServiceState(route.state, destination, params);
     if (nested) return { index: 0, routes: [{ name: route.name, state: nested }] };
   }
 }
@@ -52,15 +52,23 @@ export function ServiceStack() {
   const restoringMembership = !!identity && (registration.owner !== identity || registration.status === 'idle' ||
     (registration.status === 'loading' && registration.policyStatus === 'loading' && !registration.offlineAvailable));
   const destination = (access === 'service' || access === 'browsing') ? '(tabs)' : access === 'signup' ? 'account-signup' : 'account-entry';
+  const logoutNotice = auth.logoutNotice ?? 0;
+  const shownLogout = useRef(logoutNotice);
+  useEffect(() => {
+    if (shownLogout.current === logoutNotice) return;
+    shownLogout.current = logoutNotice;
+    if (!identity && Platform.OS === 'android') ToastAndroid.show('로그아웃이 되었습니다.', ToastAndroid.SHORT);
+  }, [logoutNotice, identity]);
   const previous = useRef({ ready: false, identity, access });
   useEffect(() => {
     if (!auth.ready || restoringMembership) return;
+    const wasSignedIn = !!previous.current.identity;
     const changed = previous.current.ready && (previous.current.identity !== identity || previous.current.access !== access);
     previous.current = { ready: true, identity, access };
     // A navigator key alone remounts views but preserves the container's route
     // state. Clear that state too, including shared policy/callback history.
     if (changed && navigation.isReady()) {
-      const next = resetServiceState(navigation.getRootState(), destination);
+      const next = resetServiceState(navigation.getRootState(), destination, wasSignedIn && destination === 'account-entry' ? {mode:'login'} : undefined);
       if (next) navigation.resetRoot(next);
     }
   }, [auth.ready, restoringMembership, identity, access, destination, navigation]);
@@ -83,7 +91,7 @@ export function ServiceStack() {
       <Stack.Screen name="account-signup" options={{ headerShown: false, gestureEnabled: false }} />
     </Stack.Protected>
     <Stack.Protected guard={!auth.account}>
-      <Stack.Screen name="account-entry" options={{ headerShown: false }} />
+      <Stack.Screen name="account-entry" initialParams={{mode:'login'}} options={{ headerShown: false }} />
     </Stack.Protected>
     <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
     <Stack.Screen name="service-policy" options={{ title: '약관 및 정책', header: () => <ServiceHeader title="약관 및 정책" back menu={false} /> }} />
