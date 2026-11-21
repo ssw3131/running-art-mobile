@@ -87,7 +87,7 @@ def inquiry_board(q, launch):
             time.sleep(.25)
     try:
         launch('service-inquiry')
-        wait_key('inquiry-title')
+        wait_key('inquiry-category')
         assert q.find(q.capture('inquiry-empty-form'), 'inquiry-email') is None
         keyboard_input(q, 'inquiry-title', 'INQUIRY_QA', 'inquiry-keyboard-create-title')
         keyboard_input(q, 'inquiry-body', 'Private inquiry body', 'inquiry-keyboard-create-body')
@@ -112,7 +112,7 @@ def inquiry_board(q, launch):
         q.seek('목록으로 돌아가기'); q.tap('목록으로 돌아가기')
         wait_key('inquiry-write')
         q.seek('inquiry-' + row['request_id']); q.capture('inquiry-answered-list')
-        q.tap('inquiry-write'); wait_key('inquiry-title')
+        q.tap('inquiry-write'); wait_key('inquiry-category')
         keyboard_input(q, 'inquiry-title', 'INQUIRY_DELETE', 'inquiry-keyboard-new-title')
         keyboard_input(q, 'inquiry-body', 'Delete before reply', 'inquiry-keyboard-new-body')
         q.shell('input', 'keyevent', '4')
@@ -128,7 +128,7 @@ def inquiry_board(q, launch):
         q.capture('inquiry-large-font-list')
         q.tap('inquiry-' + row['request_id']); q.seek('inquiry-reply'); q.capture('inquiry-large-font-reply')
         q.seek('목록으로 돌아가기'); q.tap('목록으로 돌아가기'); wait_key('inquiry-write')
-        q.tap('inquiry-write'); wait_key('inquiry-title')
+        q.tap('inquiry-write'); wait_key('inquiry-category')
         keyboard_input(q, 'inquiry-title', 'UNSENT_LARGE_FONT', 'inquiry-keyboard-large-title')
         keyboard_input(q, 'inquiry-body', 'Large font inquiry body\n' * 30, 'inquiry-keyboard-large-long-body')
         q.shell('input', 'keyevent', '4')
