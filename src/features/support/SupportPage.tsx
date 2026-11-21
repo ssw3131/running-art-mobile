@@ -35,14 +35,16 @@ export function SupportPage({ title, children, footer }: PropsWithChildren<{ tit
     frame.current = requestAnimationFrame(() => {
       frame.current = null;
       const input = focused.current, top = keyboardTop.current ?? Keyboard.metrics()?.screenY;
-      if (!input?.isFocused() || top === undefined) return;
+      if (!input?.isFocused()) return;
       const current = () => focused.current === input && input.isFocused() && (keyboardTop.current ?? Keyboard.metrics()?.screenY) === top;
       // Measure after resize/layout. Padding covers only the part still hidden by
       // the IME; adjustResize devices already have a shorter scroll viewport.
       scroll.current?.getNativeScrollRef()?.measureInWindow((_x, y, _width, height) => {
         if (!current()) return;
-        const bottom = Math.min(y + height, top);
-        setBottomInset(Math.max(0, y + height - top));
+        // Older Android adjustResize configurations can omit keyboard events.
+        // Their resized viewport is still a valid visible boundary.
+        const bottom = top === undefined ? y + height : Math.min(y + height, top);
+        setBottomInset(top === undefined ? 0 : Math.max(0, y + height - top));
         setInputHeight(Math.min(180, Math.max(48, bottom - y - 32)));
         input.measureInWindow((_inputX, inputY, _inputWidth, inputSize) => {
           if (!current()) return;
@@ -53,7 +55,9 @@ export function SupportPage({ title, children, footer }: PropsWithChildren<{ tit
     });
   }, []);
   const focus = useCallback((input: TextInput | null) => { focused.current = input; revealInput(); }, [revealInput]);
-  const blur = useCallback((input: TextInput | null) => { if (focused.current === input) focused.current = null; }, []);
+  const blur = useCallback((input: TextInput | null) => {
+    if (focused.current === input) { focused.current = null; setBottomInset(0); setInputHeight(180); }
+  }, []);
   useEffect(() => {
     const shown = Keyboard.addListener('keyboardDidShow', event => { keyboardTop.current = event.endCoordinates.screenY; revealInput(); });
     const hidden = Keyboard.addListener('keyboardDidHide', () => { keyboardTop.current = null; setBottomInset(0); setInputHeight(180); });
