@@ -1,7 +1,7 @@
 # RunPen 배지 지급과 도전 중 화면 수정
 
 - 기록 생성·실행 시작 2026-11-21T13:26:24+09:00
-- 상태: 구현 및 로컬 검증 완료. Android 29·36과 병합 상태는 [PR #81](https://github.com/ssw3131/running-art-mobile/pull/81)에서 확인한다.
+- 상태: 완료. Android 29·36 검증, PR #81 병합 및 main 필수 검사 통과.
 - 출처: 사용자가 실행을 요청한 제안 계획. 다중 목표 카드는 목표 목록을 먼저 연다.
 
 ## 실행 전 계획
@@ -57,3 +57,9 @@
 - 같은 캡처에서 크기가 다른 텍스트를 중첩한 배너의 36sp 숫자가 높이 24dp로 잘렸다. 숫자와 단위를 별도 텍스트로 배치하고, 360dp 카드의 가로 여백과 탭 상단·배너 간격을 조정했다. Android 검사에 숫자 표시 높이를 추가했다.
 - 첫 Android 29는 가입 후 홈 전환에서 16MiB Java 힙 한도에 도달해 종료됐다. 원본 로그에 Glide의 이미지 디코딩 중 메모리 부족이 남았고 앱 대신 Android 런처가 캡처됐다. 직전 성공 실행과 비교한 에뮬레이터 버전 및 설정은 같았다. [첫 실패 산출물](https://github.com/ssw3131/running-art-mobile/actions/runs/44868633379/artifacts/14693735912)
 - 같은 커밋으로 Android 29 작업만 1회 재실행해 [가입·배지와 필수 검사 통과](https://github.com/ssw3131/running-art-mobile/actions/runs/44868633379/attempts/2)를 확인했다. 초기 메모리 부족은 이 재실행에서 재현되지 않았다. 배너 보완본에는 최신 main의 문의 키보드 수정과 검사를 함께 보존했다.
+
+## 최종 결과
+
+- 실행 종료 2026-11-21T15:50:50+09:00. [PR #81](https://github.com/ssw3131/running-art-mobile/pull/81)을 사용자 승인으로 main `69f65f2`에 병합했다. [최종 PR 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/44873885112)는 첫 회차에 통과했고, [main 필수 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/44877326498)는 동일 트리의 성공 증거를 확인해 통과했다.
+- 최종 Android 29의 7단계와 Android 36의 15단계에서 원본 자료 보존 및 정리를 확인했다. 360dp 배너의 숫자 행은 두 기기에서 모두 132px(44dp)였다. 변주 카드에서 목표 목록·개별 상세를 거쳐 두 번 돌아왔을 때 상하 좌표는 Android 29에서 1519–1849px, Android 36에서 1242–1572px로 진입 전과 같았다. Android 36 홈·러닝·보관함·계정의 기준 화면 차이는 각각 0픽셀이었다.
+- [도전 탭 원본](../../quality/evidence/badge-progress-20261121/challenges-360dp.png) · [변주 목표 목록 원본](../../quality/evidence/badge-progress-20261121/variation-goals-360dp.png) · [Android 29 산출물](https://github.com/ssw3131/running-art-mobile/actions/runs/44873885112/artifacts/14695258766) · [Android 36 산출물](https://github.com/ssw3131/running-art-mobile/actions/runs/44873885112/artifacts/14696491769)

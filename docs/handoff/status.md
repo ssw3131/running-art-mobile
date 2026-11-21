@@ -2,7 +2,7 @@
 
 ## 2026-11-21 배지 지급과 도전 중 화면 수정
 
-4.10km 중단 후 총 5.99km 완주 시 계정 누계는 5.99km이며, 독립 러닝으로 10km에 도달하면 배지를 지급한다. 도전 중 탭은 여섯 그룹과 진행 중인 그룹 수를 표시한다. 여러 목표가 있는 카드는 목표 목록을 먼저 열고 홈 추천은 해당 목표를 연다. 실제 러닝·시뮬레이션·역순 복원·삭제와 도전 화면 이동을 로컬에서 검증했다. 빠른 검사 7단계와 Android 번들 생성을 통과했다. 사용자 승인으로 공개 PR을 열었다. Android 29·36 검증과 360dp 캡처 결과는 [PR #81](https://github.com/ssw3131/running-art-mobile/pull/81)에 기록한다. [계약](../development/achievements-support.md) · [실행 기록과 검증 상태](../history/executed-plans/2026-11-21-1326-badge-progress.md)
+4.10km 중단 후 총 5.99km 완주 시 계정 누계는 5.99km이며, 독립 러닝으로 10km에 도달하면 배지를 지급한다. 도전 중 탭은 여섯 그룹과 진행 중인 그룹 수를 표시한다. 여러 목표가 있는 카드는 목표 목록을 먼저 열고 홈 추천은 해당 목표를 연다. 실제 러닝·시뮬레이션·역순 복원·삭제와 도전 화면 이동을 로컬에서 검증했다. 빠른 검사 7단계와 Android 번들 생성을 통과했다. Android 29·36에서 360dp 배너 글자와 스크롤 복귀를 확인했다. [PR #81](https://github.com/ssw3131/running-art-mobile/pull/81)을 main `69f65f2`에 병합했고 [main 필수 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/44877326498)가 통과했다. [계약](../development/achievements-support.md) · [실행 기록과 검증 상태](../history/executed-plans/2026-11-21-1326-badge-progress.md)
 
 **2026-11-21 문의 키보드 가림 수정·main 반영·APK 준비 완료:** 작성/수정에서 포커스 입력칸을 키보드 위로 이동하고 긴 본문은 입력칸 안에서 스크롤한다. PR80 → main b5acbc7, 최종 전체44866420129의 Android29 7단계/36 15단계·두 기기의 키보드8개 경계·기존 정적4화면 차이0·자료 보존/정리와 main44872163519 동일 tree 재사용 검사를 통과했다. 최초 QA 실패와 Android36 ADB 준비 실패/동일 소스 작업1회 재실행 이력은 보존했다. 기존 ID/서명의 preview217394294 [설치 ZIP](https://github.com/ssw3131/running-art-mobile/actions/runs/44860207683/artifacts/14689847376)을 업로드하고 파일 해시·제품 소스 일치를 확인했다. **실제 삼성 기기는 미연결로 수정본 설치·키보드 재검증이 남아 있다.** 아래 A7 결함 문단은 발견 당시 결과다. 운영 DB/서버 변경 없음. [검증](../quality/inquiry-keyboard-20261121.md)·[실행 기록](../history/executed-plans/2026-11-21-1201-inquiry-keyboard.md).
 
