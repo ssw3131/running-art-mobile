@@ -61,10 +61,11 @@ q.ADB, q.SERIAL = adb, args.serial
 q.MAP_PREVIEWS = args.map_previews
 
 def page_scroll_x(tree, viewport, start, end):
-    """Scroll the page gutter instead of panning an interactive map child."""
+    """Scroll the page gutter instead of panning a map or long text input."""
     left, _, right, _ = viewport
     maps = [list(map(int, re.findall(r'\d+', n.get('bounds')))) for n in tree.iter('node')
-            if n.get('resource-id') == 'native-map']
+            if n.get('resource-id') == 'native-map' or
+            ('EditText' in n.get('class', '') and n.get('scrollable') == 'true')]
     maps = [b for b in maps if b[2] > b[0] and b[3] > b[1]
             and max(min(start, end), b[1]) < min(max(start, end), b[3])]
     if maps:
@@ -81,7 +82,7 @@ def seek_visible(key, allow_disabled=False):
         tree = q.capture('current')
         node = q.find(tree, key)
         scrolls = [n for n in tree.iter('node') if n.get('scrollable') == 'true' and
-                   'Horizontal' not in n.get('class', '')]
+                   'Horizontal' not in n.get('class', '') and 'EditText' not in n.get('class', '')]
         bounds = [list(map(int, re.findall(r'\d+', n.get('bounds')))) for n in scrolls]
         bounds = [b for b in bounds if b[2]-b[0] > 300 and b[3]-b[1] > 220]
         if not bounds:
