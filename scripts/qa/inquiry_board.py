@@ -92,6 +92,10 @@ def inquiry_board(q, launch):
             assert time.monotonic() < deadline, 'Inquiry state did not appear: ' + key
             time.sleep(.25)
     def wait_enabled(key):
+        # Pending controls appear above the form, while the previous submit
+        # position remains scrolled down on API36. Readiness needs a visible
+        # target on both Android versions, even while it is still disabled.
+        q.seek(key, allow_disabled=True)
         deadline = time.monotonic() + 20
         while True:
             node = q.find(q.capture('inquiry-ready-' + key), key)
@@ -148,7 +152,6 @@ def inquiry_board(q, launch):
         q.shell('input', 'keyevent', '4'); q.seek('inquiry-submit'); q.tap('inquiry-submit')
         wait_enabled('inquiry-new')
         q.shell('am', 'force-stop', q.APP); launch('service-inquiry-write')
-        wait_key('inquiry-new'); q.seek('inquiry-new')
         wait_enabled('inquiry-new')
         q.tap('inquiry-new'); q.tap('취소')
         assert q.find(q.capture('inquiry-recovery-cancelled'), 'inquiry-pending') is not None
