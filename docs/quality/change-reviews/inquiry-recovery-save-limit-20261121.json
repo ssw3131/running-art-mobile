@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "paths": ["src/features/support/InquiryForm.tsx", "src/modules/support/inquiry.ts", "supabase/migrations/20261121075848_save_limit_ten.sql", "tests/components/inquiry-board.test.tsx", "tests/support-inquiry.test.mjs", "tests/usage-db.test.mjs", "tests/visual-usage.test.mjs", "scripts/qa/usage-postgres.mjs", "scripts/qa/visual-usage.mjs", "scripts/qa/android.py", "scripts/qa/inquiry_board.py"],
+  "behavior": "changed",
+  "decision": "2026-11-21 사용자 요청: 신형폰 문의 입력 불가 수정, 최대 저장 횟수10회. 실제 폰에서 복원된 pending 때문에 입력 잠금 재현.",
+  "before": "접수 확인 대기가 있으면 새 작성에서도 입력이 잠기고 하단 재시도만 표시. 저장 총량15회.",
+  "after": "접수된 요청은 읽기 조회로 잠금을 풀고, 미확인 요청은 상단 안내와 동일 ID 재시도 또는 확인 후 새 작성을 제공. 누적 저장10회.",
+  "invariants": ["자동 문의 전송/서버 문의 삭제 없음", "불확실한 재시도의 요청 ID/내용 유지", "기존 사용량/저장 코스와 생성5회 유지", "계정 전환/권한/동시 예약/정리 실패 보호", "정적 화면 마스크/허용오차 유지"],
+  "tests": [
+    {"path": "tests/support-inquiry.test.mjs", "reason": "읽기 복구·미확인 유지·명시적 정리·계정 전환"},
+    {"path": "tests/components/inquiry-board.test.tsx", "reason": "실제 폼 잠금 안내·확인 취소·새 입력 활성화·원문 재시도"},
+    {"path": "tests/usage-db.test.mjs", "reason": "10/11회 경계·기존12회 사용량/자료 보존·재적용·권한"},
+    {"path": "tests/visual-usage.test.mjs", "reason": "실제 화면용 격리 정책 분모10과 사용량 검증"}
+  ],
+  "visual": {"status": "changed", "reason": "문의 대기 시 상단 복구 안내, 상단/보관함 저장 분모15→10", "evidence": ["docs/quality/inquiry-recovery-save-limit-20261121.md: 실제 폰 원본 재현. 신규 정적 화면은 native visual 후보에서 원본/기준/차이를 검토 예정"]},
+  "native": "draft 빠른 검사 후 Android36 visual 후보와 문의 복구 진단, 최종 ready Android29/36 전체 검사 필요. 실기기 수정본 설치는 별도 범위."
+}

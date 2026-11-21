@@ -9,7 +9,7 @@ export async function prepareVisualUsage(command, result, prepared = false) {
     assert.equal(status.generation.used, used, 'Unexpected visual generation usage');
     assert.equal(status.save.used, used, 'Unexpected visual save usage');
     assert.equal(status.generation.total, 5, 'Unexpected visual generation limit');
-    assert.equal(status.save.total, 15, 'Unexpected visual save limit');
+    assert.equal(status.save.total, 10, 'Unexpected visual save limit');
   };
   check(before, prepared ? 1 : 0);
   if (!prepared) {

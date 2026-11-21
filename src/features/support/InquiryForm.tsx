@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Alert } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { AppText, Button, SelectField } from '@/components/ui';
 import { accountSecureStorage, authentication } from '@/modules/auth/runtime';
@@ -24,28 +24,35 @@ export function InquiryForm({ owner, onSubmitted }: { owner: string; onSubmitted
     currentOwner: () => authentication.getSnapshot().account?.id ?? null,
     storage: accountSecureStorage, uuid: Crypto.randomUUID,
     send: (...args) => inquiryRemote().submit(...args),
+    lookup: id => inquiryRemote().detail(id),
   }), [owner]);
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot);
   useEffect(() => {
-    const unsubscribe = controller.subscribe(() => {
-      const pending = controller.getSnapshot().pending;
-      if (pending) setInput(pending.input);
-    });
     void controller.load();
-    return unsubscribe;
   }, [controller]);
   useEffect(() => {
     if (state.receipt && delivered.current !== state.receipt.id) { delivered.current = state.receipt.id; onSubmitted(state.receipt.id); }
   }, [state.receipt, onSubmitted]);
+  function newInquiry() {
+    Alert.alert('새 문의를 작성할까요?', '이 기기의 재전송 대기 사본만 지웁니다. 이미 접수된 문의와 답변은 목록에 남아요. 같은 내용을 다시 보내면 중복 문의가 될 수 있어요.', [
+      { text: '취소', style: 'cancel' },
+      { text: '새 문의 작성', onPress: () => { void controller.discardPending().then(cleared => { if (cleared) setInput(empty); }); } },
+    ]);
+  }
   return <>
+    {!!state.pending && <>
+      <AppText testID="inquiry-pending" accessibilityRole="alert">이전 문의의 접수 확인을 기다리고 있어 입력이 잠겨 있어요.</AppText>
+      <Button testID="inquiry-retry" label="같은 문의 접수 확인 · 재시도" loading={state.busy} onPress={() => { const original = state.pending!.input; setInput(original); void controller.submit(original); }} />
+      <Button testID="inquiry-new" label="새 문의 작성" variant="outline" disabled={state.busy} onPress={newInquiry} />
+    </>}
+    {!!state.message && <AppText testID="inquiry-message" accessibilityRole="alert">{state.message}</AppText>}
     <SupportArt kind="inquiry" />
     <AppText variant="heading" weight="bold">궁금한 점이나{'\n'}제안하고 싶은 내용이 있으신가요?</AppText>
     <AppText>본인과 RunPen 운영팀만 볼 수 있어요. 답변은 문의 상세에서 확인해 주세요.</AppText>
     <Fields value={state.pending?.input ?? input} locked={state.busy || !!state.pending || !state.ready} onChange={setInput} />
     <AppText variant="caption">계정 식별값과 문의 내용을 문의 처리 목적으로 서버에 전송합니다. 이메일을 받지 않으며 GPS 경로나 사진은 첨부하지 않아요.</AppText>
-    {!!state.message && <AppText testID="inquiry-message" accessibilityRole="alert">{state.message}</AppText>}
     {state.busy && <ActivityIndicator accessibilityLabel="문의 접수 확인 중" />}
-    <Button testID={state.ready ? 'inquiry-submit' : 'inquiry-reload'} label={state.ready ? state.pending ? '같은 문의 접수 확인 · 재시도' : '문의 보내기' : '이전 문의 다시 불러오기'} disabled={state.busy} onPress={() => { if (state.ready) void controller.submit(input); else void controller.load(); }} />
+    {!state.pending && <Button testID={state.ready ? 'inquiry-submit' : 'inquiry-reload'} label={state.ready ? '문의 보내기' : '이전 문의 다시 불러오기'} disabled={state.busy} onPress={() => { if (state.ready) void controller.submit(input); else void controller.load(); }} />}
   </>;
 }
 

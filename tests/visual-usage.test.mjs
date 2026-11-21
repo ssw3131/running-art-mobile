@@ -6,7 +6,7 @@ function backend(generation = 0, save = 0) {
   const calls = [];
   return { calls, command: async (action, args) => {
     calls.push({ action, args });
-    if (action === 'status') return { generation: { used: generation, total: 5 }, save: { used: save, total: 15 } };
+    if (action === 'status') return { generation: { used: generation, total: 5 }, save: { used: save, total: 10 } };
     if (action === 'commit') { if (args.kind === 'generation') generation++; else save++; }
     return { state: { reserve: 'reserved', ready: 'ready', commit: 'committed' }[action] };
   } };

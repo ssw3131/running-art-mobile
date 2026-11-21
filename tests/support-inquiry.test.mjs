@@ -7,7 +7,7 @@ const input={category:'기타',title:'의견',body:'첫째 줄\n둘째 줄'};
 const receipt={id,receivedAt:'2026-10-14T00:00:00Z'};
 function fixture(send) {
  const values=new Map(); let current=owner;
- const deps={owner,currentOwner:()=>current,uuid:()=>id,send,storage:{getItem:async k=>values.get(k)??null,setItem:async(k,v)=>{values.set(k,v);},removeItem:async k=>{values.delete(k);}}};
+ const deps={owner,currentOwner:()=>current,uuid:()=>id,send,lookup:async()=>{throw Error('offline');},storage:{getItem:async k=>values.get(k)??null,setItem:async(k,v)=>{values.set(k,v);},removeItem:async k=>{values.delete(k);}}};
  return {deps,values,controller:createInquiryController(deps),switchOwner:()=>{current='other';}};
 }
 test('uncertain inquiry survives restart with exact content/request and clears only on verified receipt',async()=>{
@@ -58,4 +58,37 @@ test('replaying a deleted request reports deletion and clears pending without cr
  const remote=createSupportRemote({rpc:()=>({abortSignal:async()=>({data:{...receipt,deleted:true},error:null})})});
  const f=fixture((...args)=>remote.submit(...args));await f.controller.load();await f.controller.submit(input);
  assert.equal(f.controller.getSnapshot().pending,null);assert.equal(f.controller.getSnapshot().receipt,null);assert.match(f.controller.getSnapshot().message,/삭제/);
+});
+
+test('a restored acknowledgement is reconciled read-only and unlocks a new inquiry without sending',async()=>{
+ let sends=0;const f=fixture(async()=>{sends++;return receipt;});
+ f.values.set(`runpen.inquiry.${owner}`,JSON.stringify({owner,id,input}));
+ f.deps.lookup=async request=>{assert.equal(request,id);return receipt;};
+ await f.controller.load();
+ assert.equal(sends,0);assert.equal(f.values.size,0);
+ assert.equal(f.controller.getSnapshot().pending,null);assert.equal(f.controller.getSnapshot().receipt,null);
+ assert.match(f.controller.getSnapshot().message,/접수/);
+});
+test('missing, offline and mismatched lookup receipts preserve the exact pending request',async()=>{
+ for(const lookup of [async()=>{throw {code:'P0002'};},async()=>{throw Error('offline');},async()=>({...receipt,id:'wrong'})]) {
+  let sends=0;const f=fixture(async()=>{sends++;return receipt;});f.deps.lookup=lookup;
+  f.values.set(`runpen.inquiry.${owner}`,JSON.stringify({owner,id,input}));await f.controller.load();
+  assert.deepEqual(f.controller.getSnapshot().pending,{owner,id,input});assert.equal(sends,0);
+  assert.match(f.controller.getSnapshot().message,/이전 문의/);assert.equal(f.values.size,1);
+ }
+});
+test('explicitly discarding a pending copy never sends, and failed cleanup keeps it recoverable',async()=>{
+ let sends=0;const f=fixture(async()=>{sends++;return receipt;});
+ f.values.set(`runpen.inquiry.${owner}`,JSON.stringify({owner,id,input}));await f.controller.load();
+ const remove=f.deps.storage.removeItem;f.deps.storage.removeItem=async()=>{throw Error('private error');};
+ assert.equal(await f.controller.discardPending(),false);assert.equal(f.values.size,1);assert.equal(f.controller.getSnapshot().pending.id,id);
+ f.deps.storage.removeItem=remove;assert.equal(await f.controller.discardPending(),true);
+ assert.equal(f.values.size,0);assert.equal(f.controller.getSnapshot().pending,null);assert.equal(sends,0);
+});
+test('recovery cannot discard during lookup or clear storage after the account changes',async()=>{
+ let finish;const f=fixture(async()=>receipt);f.deps.lookup=()=>new Promise(resolve=>{finish=resolve;});
+ f.values.set(`runpen.inquiry.${owner}`,JSON.stringify({owner,id,input}));const loading=f.controller.load();
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(await f.controller.discardPending(),false);
+ f.switchOwner();finish(receipt);await loading;
+ assert.equal(f.values.size,1);assert.equal(await f.controller.discardPending(),false);
 });
