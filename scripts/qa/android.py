@@ -63,9 +63,10 @@ q.MAP_PREVIEWS = args.map_previews
 def page_scroll_x(tree, viewport, start, end):
     """Scroll the page gutter instead of panning a map or long text input."""
     left, _, right, _ = viewport
+    # EditText can scroll long content while reporting scrollable=false in XML.
     maps = [list(map(int, re.findall(r'\d+', n.get('bounds')))) for n in tree.iter('node')
             if n.get('resource-id') == 'native-map' or
-            ('EditText' in n.get('class', '') and n.get('scrollable') == 'true')]
+            'EditText' in n.get('class', '')]
     maps = [b for b in maps if b[2] > b[0] and b[3] > b[1]
             and max(min(start, end), b[1]) < min(max(start, end), b[3])]
     if maps:
