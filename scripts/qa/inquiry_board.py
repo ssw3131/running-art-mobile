@@ -1,12 +1,61 @@
 """Private inquiry acceptance against only the disposable local Supabase stack."""
 import json
 import os
+import re
 import subprocess
 import uuid
 import time
 import urllib.request
 from urllib.parse import urlparse
 from course_generation_figma import text
+
+
+def keyboard_top(q, name):
+    display = q.shell('dumpsys', 'window', 'displays').decode()
+    (q.OUT / (name + '-display.txt')).write_text(display, encoding='utf8')
+    keyboard_tops = [int(y) for y in re.findall(r'type=ime frame=\[\d+,(\d+)\]\[\d+,\d+\][^\r\n]*visible=true', display)]
+    if not keyboard_tops:
+        # API29 exposes the IME window's frame/insets instead of InsetsSource.
+        ime = q.shell('dumpsys', 'input_method').decode()
+        (q.OUT / (name + '-ime.txt')).write_text(ime, encoding='utf8')
+        if 'mInputShown=true' not in ime:
+            return None
+        windows = q.shell('dumpsys', 'window', 'windows').decode()
+        (q.OUT / (name + '-windows.txt')).write_text(windows, encoding='utf8')
+        for window in re.split(r'Window #\d+', windows):
+            if not re.search(r'ty=(?:INPUT_METHOD|2011)\b', window) or 'mHasSurface=true' not in window:
+                continue
+            frame = re.search(r'mFrame=\[\d+,(\d+)\]\[\d+,(\d+)\]', window)
+            inset = re.search(r'mGivenContentInsets=\[\d+,(\d+)\]', window)
+            if frame:
+                keyboard_tops.append(int(frame[1]) + (int(inset[1]) if inset else 0))
+    return min(keyboard_tops) if keyboard_tops else None
+
+
+def keyboard_bounds(q, key, name):
+    """Check screen bounds, not just the presence of an accessibility node."""
+    tree = q.capture(name)
+    node = q.find(tree, key)
+    assert node is not None and node.get('focused') == 'true', 'Input is not focused: ' + key
+    bounds = list(map(int, re.findall(r'\d+', node.get('bounds'))))
+    viewport = list(map(int, re.findall(r'\d+', q.find(tree, 'support-scroll').get('bounds'))))
+    top = keyboard_top(q, name)
+    assert top is not None, 'No visible IME bounds found'
+    density = int(re.findall(r'density: (\d+)', q.shell('wm', 'density').decode())[-1]) / 160
+    minimum_height = min(180 * density, max(48 * density, min(viewport[3], top) - viewport[1] - 32 * density)) if key == 'inquiry-body' else 50 * density
+    assert viewport[1] <= bounds[1] < bounds[3] < top, 'Input is obscured by header/keyboard: ' + key
+    assert bounds[3] - bounds[1] >= minimum_height - 2, 'Input is clipped: ' + key
+    result = {'input': key, 'bounds': bounds, 'viewport': viewport, 'keyboardTop': top}
+    (q.OUT / (name + '-bounds.json')).write_text(json.dumps(result), encoding='utf8')
+    return result
+
+
+def keyboard_input(q, key, value, name):
+    # Keep the IME open when switching fields, but swipe/tap only above it.
+    # API29 reports hidden body bounds as visible; tapping them types a key.
+    q.seek(key, bottom_limit=keyboard_top(q, name + '-before'))
+    text(q, key, value)
+    return keyboard_bounds(q, key, name)
 
 
 def inquiry_board(q, launch):
@@ -38,10 +87,10 @@ def inquiry_board(q, launch):
             time.sleep(.25)
     try:
         launch('service-inquiry')
-        wait_key('inquiry-title')
+        wait_key('inquiry-category')
         assert q.find(q.capture('inquiry-empty-form'), 'inquiry-email') is None
-        text(q, 'inquiry-title', 'INQUIRY_QA')
-        text(q, 'inquiry-body', 'Private inquiry body')
+        keyboard_input(q, 'inquiry-title', 'INQUIRY_QA', 'inquiry-keyboard-create-title')
+        keyboard_input(q, 'inquiry-body', 'Private inquiry body', 'inquiry-keyboard-create-body')
         q.shell('input', 'keyevent', '4')
         q.seek('inquiry-submit'); q.tap('inquiry-submit')
         wait_key('inquiry-detail-body')
@@ -50,7 +99,8 @@ def inquiry_board(q, launch):
         row = rows[0]; created.append(row['request_id'])
         assert row['status'] == '미확인' and 'contact_email' not in row
         q.seek('inquiry-edit'); q.tap('inquiry-edit')
-        text(q, 'inquiry-title', 'INQUIRY_EDITED')
+        keyboard_input(q, 'inquiry-title', 'INQUIRY_EDITED', 'inquiry-keyboard-edit-title')
+        keyboard_input(q, 'inquiry-body', 'Edited inquiry body\n' * 30, 'inquiry-keyboard-edit-long-body')
         q.shell('input', 'keyevent', '4')
         q.seek('inquiry-save'); q.tap('inquiry-save')
         wait_key('inquiry-detail-body')
@@ -62,9 +112,9 @@ def inquiry_board(q, launch):
         q.seek('목록으로 돌아가기'); q.tap('목록으로 돌아가기')
         wait_key('inquiry-write')
         q.seek('inquiry-' + row['request_id']); q.capture('inquiry-answered-list')
-        q.tap('inquiry-write'); wait_key('inquiry-title')
-        text(q, 'inquiry-title', 'INQUIRY_DELETE')
-        text(q, 'inquiry-body', 'Delete before reply')
+        q.tap('inquiry-write'); wait_key('inquiry-category')
+        keyboard_input(q, 'inquiry-title', 'INQUIRY_DELETE', 'inquiry-keyboard-new-title')
+        keyboard_input(q, 'inquiry-body', 'Delete before reply', 'inquiry-keyboard-new-body')
         q.shell('input', 'keyevent', '4')
         q.seek('inquiry-submit'); q.tap('inquiry-submit'); wait_key('inquiry-detail-body')
         rows = request('GET', rows_path)
@@ -77,8 +127,16 @@ def inquiry_board(q, launch):
         q.shell('am', 'force-stop', q.APP); launch('service-inquiry'); wait_key('inquiry-write')
         q.capture('inquiry-large-font-list')
         q.tap('inquiry-' + row['request_id']); q.seek('inquiry-reply'); q.capture('inquiry-large-font-reply')
+        q.seek('목록으로 돌아가기'); q.tap('목록으로 돌아가기'); wait_key('inquiry-write')
+        q.tap('inquiry-write'); wait_key('inquiry-category')
+        keyboard_input(q, 'inquiry-title', 'UNSENT_LARGE_FONT', 'inquiry-keyboard-large-title')
+        keyboard_input(q, 'inquiry-body', 'Large font inquiry body\n' * 30, 'inquiry-keyboard-large-long-body')
+        q.shell('input', 'keyevent', '4')
+        q.seek('inquiry-submit'); q.capture('inquiry-keyboard-dismissed')
+        q.shell('input', 'keyevent', '4'); wait_key('inquiry-write')
+        assert len(request('GET', rows_path)) == 1, 'Unsaved keyboard draft must not be submitted'
         (q.OUT / 'inquiry-board-result.json').write_text(json.dumps({'emptyForm': True, 'appSubmit': True, 'appEdit': True,
-            'adminReply': True, 'privateList': True, 'appDelete': True, 'largeFont': True, 'email': False}), encoding='utf8')
+            'adminReply': True, 'privateList': True, 'appDelete': True, 'largeFont': True, 'keyboardBounds': True, 'email': False}), encoding='utf8')
     finally:
         # Remove only this scenario's synthetic messages; the disposable account
         # teardown removes its minimal request ledger as well.

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "paths": ["src/components/ui/TextField.tsx", "src/features/support/SupportPage.tsx", "src/features/support/InquiryForm.tsx", "scripts/qa/inquiry_board.py", "scripts/qa/android.py"],
+  "behavior": "changed",
+  "decision": "2026-11-21 사용자 '키보드 문제 수정해': docs/quality/inquiry-phone-20261121.md의 A7 삼성 키보드 제목 가림을 수정한다.",
+  "before": "문의 작성/수정에서 Android 키보드가 나타나도 포커스 입력칸 위치를 보정하지 않고 긴 본문이 페이지 전체로 늘어날 수 있었다. 기존 검사는 노드 존재만 확인했다.",
+  "after": "입력/스크롤/키보드 경계를 측정해 제목과 본문을 보이게 이동한다. 본문은 가용 높이 내에서 내부 스크롤하고 키보드 종료 시 추가 여백을 제거한다.",
+  "invariants": ["기존 문의 입력/미확정 접수 복구·등록/수정/삭제·계정 보호 유지", "공지 레이아웃과 키보드 없는 지원 화면 유지", "DB·앱 ID·서명·계정/러닝 자료 변경 없음", "QA 임시 자료/기기 설정 복원과 기존 화면 마스크 유지"],
+  "tests": [
+    {"path": "tests/components/inquiry-board.test.tsx", "reason": "공유 입력 ref 추가 뒤 기존 작성/수정/삭제·충돌·계정 전환 회귀 확인"},
+    {"path": "tests/components/support.test.tsx", "reason": "공지/지원 화면 회귀 확인"}
+  ],
+  "visual": {"status": "changed", "reason": "키보드 표시 시 포커스 위치 보정과 긴 본문 내부 스크롤", "evidence": ["docs/quality/inquiry-keyboard-20261121.md; Android29/36 inquiry-keyboard-* PNG와 bounds.json/IME 덤프를 생성·직접 검토한다. 기존 마스크/허용 오차는 변경하지 않는다."]},
+  "native": "draft 빠른 검사 후 Android29/36 전체 필수 검사를 수행한다. 실제 삼성 키보드 재검증과 에뮬레이터 결과는 구분한다."
+}
