@@ -365,9 +365,13 @@ def signup_entry():
     launch()
     tree = q.capture('signup-entry')
     assert q.find(tree, 'signup-entry') is not None
-    assert q.find(tree, 'tab-home') is None and q.find(tree, 'signup-guest') is None
-    assert not any('5회 무료' in n.get('text', '') for n in tree.iter('node'))
-    q.seek('signup-mode'); q.tap('signup-mode'); q.capture('signup-login')
+    assert q.find(tree, 'tab-home') is None
+    assert q.find(tree, 'signup-guest') is not None
+    assert q.find(tree, 'signup-mode').get('content-desc') == '회원가입'
+    q.tap('signup-mode')
+    signup = q.capture('signup-benefits')
+    assert q.find(signup, 'signup-guest') is not None
+    assert any('생성 5회, 저장 10회' in n.get('text', '') for n in signup.iter('node'))
     routes = ['run','route-lab','courses','account','courses/'+'d'*32,'runs/'+'9'*32,
               'service-info','development','account-signup','run-card','service-inquiry','_sitemap','unknown-page']
     for i, route in enumerate(routes):
@@ -382,6 +386,18 @@ def signup_entry():
     assert q.find(q.capture('guest-required-policy'),'service-back') is not None
     q.tap('service-back')
     assert q.find(q.capture('guest-policy-back'),'signup-entry') is not None
+    q.tap('signup-guest')
+    wait_home(q)
+    q.tap('tab-archive')
+    assert q.find(q.capture('guest-archive-requires-membership'), 'guest-member-notice') is not None
+    q.tap('tab-courses')
+    q.seek('calculate-route')
+    q.tap('calculate-route')
+    offer = q.capture('guest-generation-offer')
+    assert q.find(offer, 'guest-signup') is not None and q.find(offer, 'generation-confirm') is None
+    q.tap('guest-signup')
+    assert q.find(q.capture('guest-to-signup'), 'signup-mode').get('content-desc') == '로그인'
+    q.shell('am', 'force-stop', q.APP)
     try:
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         # Configuration changes recreate the activity. Reach the entry through

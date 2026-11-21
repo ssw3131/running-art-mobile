@@ -97,6 +97,9 @@ def generation_flow(q):
     assert q.find(q.capture('s2a-name-restored'), 'course-rename-input').get('text') == 'S0_DRAFT'
     q.tap('이름 적용')
     q.seek('course-save'); q.tap('course-save')
+    q.seek('save-allowance-confirm')
+    assert not q.query("SELECT id FROM saved_courses WHERE name='S0_DRAFT'"), 'Saving must wait for consent'
+    q.tap('save-allowance-confirm')
     deadline = time.monotonic() + 20
     while True:
         rows = q.query("SELECT id,name,length_km,snapshot_json,snapshot_hash FROM saved_courses WHERE name='S0_DRAFT'")

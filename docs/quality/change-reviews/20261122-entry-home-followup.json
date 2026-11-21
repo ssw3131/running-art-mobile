@@ -20,7 +20,10 @@
     "assets/home/first-visit-20261122/strawberry.svg",
     "assets/home/first-visit-20261122/whale.svg",
     "src/features/membership/EntryLayout.tsx",
-    "src/features/service/InitialHome.tsx"
+    "src/features/service/InitialHome.tsx",
+    "scripts/qa/android.py",
+    "scripts/qa/home_states.py",
+    "scripts/qa/course_generation.py"
   ],
   "behavior": "changed",
   "decision": "사용자의 로그인/가입 간격·로그아웃 로그인+토스트·첫 방문 배너/도형5개 요청을 기존 draft PR90에 추가. main 미반영.",
@@ -58,6 +61,10 @@
     {
       "path": "tests/home-challenge.test.mjs",
       "reason": "기존 실제 미획득 추천/진행도와 완료 판정 보존"
+    },
+    {
+      "path": "tests/components/save-allowance.test.tsx",
+      "reason": "저장 전 취소와 동의 후 차감 흐름을 검사하며 에뮬레이터는 같은 흐름의 실제 서버 저장을 대조한다."
     }
   ],
   "visual": {
@@ -67,5 +74,5 @@
       "docs/quality/entry-home-followup-20261122.md: 원본 Figma/실제 EntryLayout·InitialHome 직접 대조. 로그인·가입8개 크기 조합에서 실제 scrollHeight/clientHeight·버튼 bounds 확인. 도형 원본5개/가로 이동 확인. native 기준 PNG는 변경하지 않음."
     ]
   },
-  "native": "Android 제품의 native Toast는 컴포넌트 mock 호출/일회성 상태와 코드로 검증. 전체 native 픽셀·실기기/OAuth 미검증, 사용자 요청은 같은 draft PR 추가이며 main 병합/폰 설치는 하지 않음."
+  "native": "Android 제품의 native Toast는 컴포넌트 mock 호출/일회성 상태와 코드로 검증. 전체 native 픽셀·실기기/OAuth 미검증, 사용자 요청은 같은 draft PR 추가이며 main 병합/폰 설치는 하지 않음. 이후 병합 요청에 따라 Android 29·36에서 게스트 입장 전/후, 가입 혜택, 회원 전용 탭, 도형 선택 즉시 이동과 저장 동의를 검사한다."
 }
