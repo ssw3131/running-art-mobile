@@ -10,13 +10,7 @@ from urllib.parse import urlparse
 from course_generation_figma import text
 
 
-def keyboard_bounds(q, key, name):
-    """Check screen bounds, not just the presence of an accessibility node."""
-    tree = q.capture(name)
-    node = q.find(tree, key)
-    assert node is not None and node.get('focused') == 'true', 'Input is not focused: ' + key
-    bounds = list(map(int, re.findall(r'\d+', node.get('bounds'))))
-    viewport = list(map(int, re.findall(r'\d+', q.find(tree, 'support-scroll').get('bounds'))))
+def keyboard_top(q, name):
     display = q.shell('dumpsys', 'window', 'displays').decode()
     (q.OUT / (name + '-display.txt')).write_text(display, encoding='utf8')
     keyboard_tops = [int(y) for y in re.findall(r'type=ime frame=\[\d+,(\d+)\]\[\d+,\d+\][^\r\n]*visible=true', display)]
@@ -24,7 +18,8 @@ def keyboard_bounds(q, key, name):
         # API29 exposes the IME window's frame/insets instead of InsetsSource.
         ime = q.shell('dumpsys', 'input_method').decode()
         (q.OUT / (name + '-ime.txt')).write_text(ime, encoding='utf8')
-        assert 'mInputShown=true' in ime, 'Software keyboard must actually be shown'
+        if 'mInputShown=true' not in ime:
+            return None
         windows = q.shell('dumpsys', 'window', 'windows').decode()
         (q.OUT / (name + '-windows.txt')).write_text(windows, encoding='utf8')
         for window in re.split(r'Window #\d+', windows):
@@ -34,18 +29,31 @@ def keyboard_bounds(q, key, name):
             inset = re.search(r'mGivenContentInsets=\[\d+,(\d+)\]', window)
             if frame:
                 keyboard_tops.append(int(frame[1]) + (int(inset[1]) if inset else 0))
-    assert keyboard_tops, 'No visible IME bounds found'
-    keyboard_top = min(keyboard_tops)
+    return min(keyboard_tops) if keyboard_tops else None
+
+
+def keyboard_bounds(q, key, name):
+    """Check screen bounds, not just the presence of an accessibility node."""
+    tree = q.capture(name)
+    node = q.find(tree, key)
+    assert node is not None and node.get('focused') == 'true', 'Input is not focused: ' + key
+    bounds = list(map(int, re.findall(r'\d+', node.get('bounds'))))
+    viewport = list(map(int, re.findall(r'\d+', q.find(tree, 'support-scroll').get('bounds'))))
+    top = keyboard_top(q, name)
+    assert top is not None, 'No visible IME bounds found'
     density = int(re.findall(r'density: (\d+)', q.shell('wm', 'density').decode())[-1]) / 160
-    minimum_height = min(180 * density, max(48 * density, min(viewport[3], keyboard_top) - viewport[1] - 32 * density)) if key == 'inquiry-body' else 50 * density
-    assert viewport[1] <= bounds[1] < bounds[3] < keyboard_top, 'Input is obscured by header/keyboard: ' + key
+    minimum_height = min(180 * density, max(48 * density, min(viewport[3], top) - viewport[1] - 32 * density)) if key == 'inquiry-body' else 50 * density
+    assert viewport[1] <= bounds[1] < bounds[3] < top, 'Input is obscured by header/keyboard: ' + key
     assert bounds[3] - bounds[1] >= minimum_height - 2, 'Input is clipped: ' + key
-    result = {'input': key, 'bounds': bounds, 'viewport': viewport, 'keyboardTop': keyboard_top}
+    result = {'input': key, 'bounds': bounds, 'viewport': viewport, 'keyboardTop': top}
     (q.OUT / (name + '-bounds.json')).write_text(json.dumps(result), encoding='utf8')
     return result
 
 
 def keyboard_input(q, key, value, name):
+    # Keep the IME open when switching fields, but swipe/tap only above it.
+    # API29 reports hidden body bounds as visible; tapping them types a key.
+    q.seek(key, bottom_limit=keyboard_top(q, name + '-before'))
     text(q, key, value)
     return keyboard_bounds(q, key, name)
 

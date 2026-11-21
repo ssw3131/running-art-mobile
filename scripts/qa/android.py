@@ -74,7 +74,7 @@ def page_scroll_x(tree, viewport, start, end):
         if right-map_right >= 24: return (map_right+right)//2
     return (left+right)//2
 
-def seek_visible(key, allow_disabled=False):
+def seek_visible(key, allow_disabled=False, bottom_limit=None):
     """Use the actual scroll viewport; do not assume a 2340px display."""
     upwards = False
     previous = None
@@ -88,10 +88,12 @@ def seek_visible(key, allow_disabled=False):
         if not bounds:
             if node is not None and (allow_disabled or node.get('enabled') == 'true'):
                 b = list(map(int, re.findall(r'\d+', node.get('bounds'))))
-                if b[2] > b[0] and b[3] > b[1]: return
+                if b[2] > b[0] and b[3] > b[1] and (bottom_limit is None or b[3] <= bottom_limit): return
             raise RuntimeError('No scroll viewport for: ' + key)
         # Bottom form below a fixed map takes precedence over a large ancestor.
         left, top, right, bottom = max(bounds, key=lambda b: b[1])
+        # Accessibility bounds may extend behind an overlay IME on API 29.
+        if bottom_limit is not None: bottom = min(bottom, bottom_limit)
         tab = q.find(tree, 'tab-home')
         if tab is not None: bottom = min(bottom, int(re.findall(r'\d+', tab.get('bounds'))[1]))
         # Text-only support screens can keep every testID fixed while scrolling.
