@@ -91,6 +91,14 @@ def inquiry_board(q, launch):
                 return tree
             assert time.monotonic() < deadline, 'Inquiry state did not appear: ' + key
             time.sleep(.25)
+    def wait_enabled(key):
+        deadline = time.monotonic() + 20
+        while True:
+            node = q.find(q.capture('inquiry-ready-' + key), key)
+            if node is not None and node.get('enabled') == 'true':
+                return
+            assert time.monotonic() < deadline, 'Inquiry action did not become ready: ' + key
+            time.sleep(.25)
     try:
         launch('service-inquiry')
         wait_key('inquiry-category')
@@ -138,13 +146,10 @@ def inquiry_board(q, launch):
         keyboard_input(q, 'inquiry-title', 'INQUIRY_PENDING', 'inquiry-pending-title')
         keyboard_input(q, 'inquiry-body', 'Synthetic unsent retry copy', 'inquiry-pending-body')
         q.shell('input', 'keyevent', '4'); q.seek('inquiry-submit'); q.tap('inquiry-submit')
-        wait_key('inquiry-new')
+        wait_enabled('inquiry-new')
         q.shell('am', 'force-stop', q.APP); launch('service-inquiry-write')
         wait_key('inquiry-new'); q.seek('inquiry-new')
-        deadline = time.monotonic() + 20
-        while q.find(q.capture('inquiry-recovery-ready'), 'inquiry-new').get('enabled') != 'true':
-            assert time.monotonic() < deadline, 'Recovery lookup did not finish'
-            time.sleep(.25)
+        wait_enabled('inquiry-new')
         q.tap('inquiry-new'); q.tap('취소')
         assert q.find(q.capture('inquiry-recovery-cancelled'), 'inquiry-pending') is not None
         q.tap('inquiry-new'); q.tap('새 문의 작성'); wait_key('inquiry-submit')

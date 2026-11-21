@@ -15,4 +15,10 @@
 
 ## 운영·기기·원격 검사 상태
 
-구현/로컬 검사 진행 중. 운영 정책은 최초 조회에서 version1/생성5/저장15였다. 운영 반영·최종 CI·화면 기준 분모10·수정 APK 설치는 아직 미완료다. 신형폰에서 기존 결함을 재현한 사실을 수정본 실기기 통과로 기록하지 않는다.
+17:05:38KST 운영 정책을 version1/생성5/저장15에서 version2/생성5/저장10으로 반영했다. CLI 파일20261121075848과 운영 migration20261121080538(name: save_limit_ten)은 동일 SQL이며 중복 적용하지 않는다. 기존 부분 적용 이력 때문에 전체 db push는 수행하지 않았다.
+
+전후 usage_subjects3행, usage_saved_courses13행, usage_operations51행의 전체 행 직렬화 MD5가 각각 `7b712a1856620912244e5b6ad97d04b0`, `2641035d420acf509f0968b9505d649e`, `57b2ef6429279d37aeab0de1370908f7`로 일치했다. 기존 사용량·코스·작업 원장은 보존됐다. 운영 보안 advisor의 기존 RLS 정책 없음(서버 전용)/SECURITY DEFINER RPC/비밀번호 보호 안내는 이 단일 정책 변경으로 수정하지 않았다. [공식 advisor 설명](https://supabase.com/docs/guides/database/database-linter).
+
+동일 설치본의 SM-S942N 홈에서 생성4/5·저장2/10을 확인했다. 서비스0·USB전달0, 진단용 폰 캡처 파일 정리 완료. 문의 수정 APK 설치는 아직 없으며 실제 결함 재현을 수정본 실기기 통과로 기록하지 않는다.
+
+[PR86](https://github.com/ssw3131/running-art-mobile/pull/86) draft 빠른427과 분모10 visual428 검사가 진행 중이다. 최종 CI·화면 기준 갱신·main 반영은 후속이다.
