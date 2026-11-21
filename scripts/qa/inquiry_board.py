@@ -152,7 +152,10 @@ def inquiry_board(q, launch):
         wait_enabled('inquiry-new')
         q.tap('inquiry-new'); q.tap('취소')
         assert q.find(q.capture('inquiry-recovery-cancelled'), 'inquiry-pending') is not None
-        q.tap('inquiry-new'); q.tap('새 문의 작성'); wait_key('inquiry-submit')
+        q.tap('inquiry-new'); q.tap('새 문의 작성')
+        # The fresh form resets to its top; submit is below the viewport.
+        # Wait for the editable field, then keyboard_input scrolls to it.
+        wait_enabled('inquiry-title')
         keyboard_input(q, 'inquiry-title', 'UNSENT_RECOVERED', 'inquiry-recovered-keyboard-title')
         keyboard_input(q, 'inquiry-body', 'Editable after recovery', 'inquiry-recovered-keyboard-body')
         q.shell('input', 'keyevent', '4')
