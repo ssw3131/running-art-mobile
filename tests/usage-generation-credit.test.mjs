@@ -12,7 +12,7 @@ test('account credits preserve counters, isolate owners, enforce reserve/commit 
     create table public.membership_policies(id text primary key,active boolean,published_at timestamptz);
     create table public.memberships(owner_id uuid,policy_id text,completed_at timestamptz);
     insert into public.membership_policies values('test',true,now());`);
-  for (const name of ['20261024120000_usage_allowances.sql', '20261107020000_account_generation_credits.sql'])
+  for (const name of ['20261024120000_usage_allowances.sql', '20261107020000_account_generation_credits.sql', '20261121075848_save_limit_ten.sql'])
     await db.exec(readFileSync('supabase/migrations/'+name,'utf8'));
   const owner = randomUUID(), other = randomUUID();
   for (const [i,id] of [owner,other].entries()) {
@@ -26,7 +26,7 @@ test('account credits preserve counters, isolate owners, enforce reserve/commit 
   await db.query("insert into usage_generation_credits(owner_id,extra_generations,reason) values($1,2,'isolated test')",[owner]);
   assert.deepEqual((await cmd(owner,'status')).generation,{used:5,total:7,available:true});
   assert.deepEqual((await cmd(other,'status')).generation,{used:5,total:5,available:false});
-  assert.deepEqual((await cmd(owner,'status')).save,{used:2,total:15,available:true});
+  assert.deepEqual((await cmd(owner,'status')).save,{used:2,total:10,available:true});
   assert.equal((await db.query('select generation_limit from usage_policy')).rows[0].generation_limit,5);
   const args = {id:randomUUID(),kind:'generation',fingerprint:'a'.repeat(64)};
   assert.equal((await cmd(other,'reserve',args)).state,'exhausted');

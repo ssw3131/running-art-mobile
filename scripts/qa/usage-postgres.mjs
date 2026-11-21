@@ -26,6 +26,7 @@ try {
  create table memberships(owner_id uuid,policy_id text,completed_at timestamptz);
  insert into membership_policies values('test',true,now());`);
  await sql(readFileSync('supabase/migrations/20261024120000_usage_allowances.sql','utf8'));
+ await sql(readFileSync('supabase/migrations/20261107020000_account_generation_credits.sql','utf8'));
  await sql(readFileSync('supabase/migrations/20261121075848_save_limit_ten.sql','utf8'));
  for(const [id,h] of [[owner,hash(1)],[other,hash(2)]])await sql(`insert into auth.users values(${q(id)});insert into memberships values(${q(id)},'test',now());select bind_usage_subject(${q(id)},array[${q(h)}]);`);
  const attempts=Array.from({length:40},(_,i)=>({id:randomUUID(),kind:'generation',fingerprint:hash(100+i)}));

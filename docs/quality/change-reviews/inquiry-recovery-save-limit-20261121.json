@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "paths": ["src/features/support/InquiryForm.tsx", "src/modules/support/inquiry.ts", "supabase/migrations/20261121075848_save_limit_ten.sql", "tests/components/inquiry-board.test.tsx", "tests/support-inquiry.test.mjs", "tests/usage-db.test.mjs", "tests/visual-usage.test.mjs", "scripts/qa/usage-postgres.mjs", "scripts/qa/visual-usage.mjs", "scripts/qa/android.py", "scripts/qa/inquiry_board.py"],
+  "paths": ["src/features/support/InquiryForm.tsx", "src/modules/support/inquiry.ts", "supabase/migrations/20261121075848_save_limit_ten.sql", "tests/components/inquiry-board.test.tsx", "tests/support-inquiry.test.mjs", "tests/usage-db.test.mjs", "tests/usage-generation-credit.test.mjs", "tests/visual-usage.test.mjs", "scripts/qa/usage-postgres.mjs", "scripts/qa/visual-usage.mjs", "scripts/qa/android.py", "scripts/qa/inquiry_board.py"],
   "behavior": "changed",
   "decision": "2026-11-21 사용자 요청: 신형폰 문의 입력 불가 수정, 최대 저장 횟수10회. 실제 폰에서 복원된 pending 때문에 입력 잠금 재현.",
   "before": "접수 확인 대기가 있으면 새 작성에서도 입력이 잠기고 하단 재시도만 표시. 저장 총량15회.",

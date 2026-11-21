@@ -13,6 +13,7 @@ test('lowering saves to ten preserves over-limit usage, courses and pending oper
     create table memberships(owner_id uuid,policy_id text,completed_at timestamptz);
     insert into membership_policies values('test',true,now());`);
   await db.exec(readFileSync('supabase/migrations/20261024120000_usage_allowances.sql','utf8'));
+  await db.exec(readFileSync('supabase/migrations/20261107020000_account_generation_credits.sql','utf8'));
   const owner = randomUUID(), hash = n => n.toString(16).padStart(64,'0');
   await db.query('insert into auth.users values($1)', [owner]);
   await db.query("insert into memberships values($1,'test',now())", [owner]);
@@ -48,6 +49,7 @@ test('isolated PostgreSQL usage: boundaries, idempotency, cancellation, deletion
     create table public.memberships(owner_id uuid,policy_id text,completed_at timestamptz);
     insert into public.membership_policies values('test',true,now());`);
   await db.exec(readFileSync('supabase/migrations/20261024120000_usage_allowances.sql','utf8'));
+  await db.exec(readFileSync('supabase/migrations/20261107020000_account_generation_credits.sql','utf8'));
   await db.exec(readFileSync('supabase/migrations/20261121075848_save_limit_ten.sql','utf8'));
   const hash = n => n.toString(16).padStart(64,'0');
   const owner = randomUUID(), other = randomUUID();
