@@ -1,0 +1,56 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "assets": [
+    {
+      "file": "assets/usage/figma-20261121/guest-wand.svg",
+      "figmaNode": "542:2573",
+      "source": "https://www.figma.com/api/mcp/asset/22ad5db3-f23e-4597-9c4a-c3fd1f36aa08.svg",
+      "width": "24",
+      "height": "24",
+      "viewBox": "0 0 24 24",
+      "sha256": "a532ce471b75c23904c1467f60b15e4785ca122b857ecb666af319041c4f3ef3",
+      "callsite": "src/features/usage/AllowanceSheets.tsx"
+    },
+    {
+      "file": "assets/usage/figma-20261121/guest-archive.svg",
+      "figmaNode": "542:2573",
+      "source": "https://www.figma.com/api/mcp/asset/6d6f566b-30eb-4ade-93c8-d3ad229eb9a2.svg",
+      "width": "22",
+      "height": "22",
+      "viewBox": "0 0 22 22",
+      "sha256": "7ea9b17e04134a615e63330b417257ffb9ac79b20b47e446ad79304a2160d3f3",
+      "callsite": "src/features/usage/AllowanceSheets.tsx"
+    },
+    {
+      "file": "assets/usage/figma-20261121/guest-divider.svg",
+      "figmaNode": "542:2573",
+      "source": "https://www.figma.com/api/mcp/asset/62f2a701-76d2-4c7f-9a92-4d46291b4463.svg",
+      "width": "216",
+      "height": "1",
+      "viewBox": "0 0 216 1",
+      "sha256": "b8bd4adea162b4d11e655b202410206254be88a4ea36efc9e2bcb96aaf445845",
+      "callsite": "src/features/usage/AllowanceSheets.tsx"
+    },
+    {
+      "file": "assets/usage/figma-20261121/diamond.svg",
+      "figmaNode": "795:3195",
+      "source": "https://www.figma.com/api/mcp/asset/39f08116-97a9-410e-8424-7381468e18f0.svg",
+      "width": "20",
+      "height": "20",
+      "viewBox": "0 0 20 20",
+      "sha256": "eea9975cd0737c7379542494abc87e6b37452c2a59478fd91afb6ea058555ba8",
+      "callsite": "src/features/usage/AllowanceSheets.tsx"
+    },
+    {
+      "file": "assets/usage/figma-20261121/diamond-small.svg",
+      "figmaNode": "35:4724",
+      "source": "https://www.figma.com/api/mcp/asset/423cd443-7135-4fa6-ae78-7636db89fc10.svg",
+      "width": "12",
+      "height": "12",
+      "viewBox": "0 0 12 12",
+      "sha256": "4726d16f35db312b828584b4086a035256e82dbbdb32f473c6f834d29863a149",
+      "callsite": "src/features/usage/AllowanceSheets.tsx"
+    }
+  ],
+  "note": "Original Figma exports; rendered with intrinsic dimensions and contain fit. Existing confirmation arrow and generation wand are reused."
+}

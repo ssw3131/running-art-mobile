@@ -2,7 +2,7 @@ jest.mock('../../src/features/course-generation/GenerationIcon',()=>({Generation
 jest.mock('../../src/modules/image-contour/picker',()=>({pickContourImage:jest.fn()}));
 import React from 'react';
 import { Alert } from 'react-native';
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import CourseGenerationScreen from '../../src/features/course-generation/CourseGenerationScreen';
 
 let mockParams:Record<string,string>={};
@@ -11,7 +11,10 @@ jest.mock('../../src/features/usage/use-usage', () => ({ useUsage: () => mockUsa
 let mockG: any;
 let mockMapProps: any;
 let mockAccount: { id: string } | null = null;
-const mockPush = jest.fn();
+const mockPush = jest.fn(), mockSave = jest.fn();
+jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>({account:mockAccount}),subscribe:()=>()=>{}}}));
+jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({courses:{findHash:async()=>null,save:(...args:any[])=>mockSave(...args)}})}));
+jest.mock('../../src/modules/usage/runtime',()=>({readUsage:async()=>({version:1,generation:{used:2,total:5},save:{used:2,total:10}})}));
 jest.mock('../../src/features/course-generation/use-course-generation', () => ({
   useCourseGeneration: () => mockG, locationMessage: () => '지도를 움직여 탐색 중심을 선택해 주세요.',
 }));
@@ -30,8 +33,8 @@ const completed = (count = 2) => ({ result: { ...baseline, candidates: baseline.
   origin: grid.origin, options: { ...grid.options, shape: 'heart', targetKm: 3 }, liveRoads: false });
 beforeEach(() => {mockParams={};
   mockUsage = { data: { generation: { used: 2, total: 5 } }, error: '', refresh: jest.fn() };
-  mockPush.mockReset();
-  mockAccount = null;
+  mockPush.mockReset();mockSave.mockReset().mockResolvedValue({id:'saved',created:true});
+  mockAccount = {id: 'owner'};
   mockG = {
     tab: 'conditions', datasetId: 'grid', dataset: { synthetic: true, input: grid, description: '가상 도로' },
     shape: 'heart', targetKm: 3, customTemplate: null, drawingOpen: false, diagnostics: false,
@@ -88,7 +91,7 @@ test('UI-GEN-03: old result keeps its conditions and real candidate count after 
   await fireEvent.press(screen.getByTestId('generation-view-results'));
   expect(mockG.setTab).toHaveBeenCalledWith('results');
   await screen.rerender(<CourseGenerationScreen />);
-  expect(screen.getByText('유사도가 높은 추천 코스 2개')).toBeVisible();
+  expect(screen.getByText('추천 코스 2개')).toBeVisible();
   expect(mockMapProps.origin).toEqual(grid.origin);
   expect(mockMapProps.interactive).toBe(false);
   expect(screen.queryByTestId('candidate-2')).toBeNull();
@@ -189,10 +192,10 @@ test('confirmation uses real exhausted allowance and never computes on cancel', 
   mockUsage.data.generation = { used: 5, total: 5 };
   await render(<CourseGenerationScreen />);
   await fireEvent.press(screen.getByTestId('calculate-route'));
-  expect(screen.getByTestId('generation-remaining')).toHaveTextContent('0회');
-  expect(screen.getByTestId('generation-after')).toHaveTextContent('0회');
-  expect(screen.getByTestId('generation-confirm')).toBeDisabled();
-  await fireEvent.press(screen.getByTestId('generation-confirm-cancel'));
+  expect(screen.getByText('코스 생성 횟수를 모두 사용했어요')).toBeVisible();
+  expect(screen.getByTestId('allowance-exhausted-count')).toHaveTextContent('5 / 5');
+  expect(screen.queryByTestId('generation-confirm')).toBeNull();
+  await fireEvent.press(screen.getByText('취소'));
   expect(mockG.start).not.toHaveBeenCalled();
 });
 
@@ -211,7 +214,7 @@ test('map expansion opens an account-scoped selected draft without generating', 
   await fireEvent.press(screen.getByTestId('recommendation-map-open'));
   expect(mockPush.mock.lastCall?.[0]).toMatchObject({ pathname: '/course-map', params: { target: '1' } });
   const { candidateDrafts } = require('../../src/features/course-generation/model');
-  const draft = candidateDrafts.get(mockPush.mock.lastCall[0].params.draft, 'guest');
+  const draft = candidateDrafts.get(mockPush.mock.lastCall[0].params.draft, 'owner');
   expect(draft.rank).toBe(2);
   expect(draft.snapshot.shape).toBe('heart');
   expect(mockG.start).not.toHaveBeenCalled();
@@ -241,7 +244,7 @@ test.each(['cancelled', 'error'])('generation without a completed result returns
 
 test('detail reset request opens populated course settings without consuming another generation',async()=>{
  const {requestRegeneration}=require('../../src/features/course-generation/regeneration-request');
- mockParams={resetRequest:requestRegeneration('guest',{origin:grid.origin,shape:'star',targetKm:7})};
+ mockParams={resetRequest:requestRegeneration('owner',{origin:grid.origin,shape:'star',targetKm:7})};
  await render(<CourseGenerationScreen/>);expect(mockG.start).not.toHaveBeenCalled();expect(mockG.reset).toHaveBeenCalled();expect(mockG.setTab).toHaveBeenCalledWith('conditions');expect(mockG.setShape).toHaveBeenCalledWith('star');expect(mockG.setTargetKm).toHaveBeenCalledWith(7);
 });
 
@@ -253,10 +256,10 @@ test('nearby comparison requires a choice and preserves the expansion reason wit
  await render(<CourseGenerationScreen/>);
  expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/5점/);
  expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/300m → 500m/);
- expect(screen.getByText('가까운 코스')).toBeVisible();expect(screen.getByText('모양이 더 닮은 코스')).toBeVisible();
+ expect(screen.getByText('가까운 코스')).toBeVisible();expect(screen.getByText('유사도가 높은 코스')).toBeVisible();
  expect(screen.getByTestId('candidate-0').props.accessibilityState.selected).toBe(false);
  expect(screen.queryByTestId('recommendation-map-open')).toBeNull();
- expect(screen.getAllByText(/출발지에서 합류까지/)).toHaveLength(2);
+ expect(screen.getAllByText(/코스까지 이동 거리/)).toHaveLength(2);
  await fireEvent.press(screen.getByTestId('candidate-1'));expect(mockG.setSelected).toHaveBeenCalledWith(1);
 });
 
@@ -289,4 +292,38 @@ test('empty qualified results explain the minimum without offering nonexistent a
  await screen.rerender(<CourseGenerationScreen/>);
  expect(screen.getByTestId('nearby-explanation')).toHaveTextContent(/보행 도로 연결을 확인하지 못/);
  expect(screen.getByTestId('generation-empty')).not.toHaveTextContent(/50%/);
+});
+
+ test('guest generation opens signup benefits without computing even when map is not ready',async()=>{
+  mockAccount=null;mockG.cannotCalculate=true;
+  await render(<CourseGenerationScreen/>);
+  expect(screen.getByTestId('calculate-route')).toBeEnabled();
+  await fireEvent.press(screen.getByTestId('calculate-route'));
+  expect(screen.getByText('무료 코스 저장')).toBeVisible();
+  expect(screen.queryByTestId('generation-confirm')).toBeNull();
+  await fireEvent.press(screen.getByTestId('guest-signup'));
+  expect(mockPush).toHaveBeenCalledWith({pathname:'/account-entry',params:{mode:'signup'}});
+  expect(mockG.start).not.toHaveBeenCalled();
+ });
+ test('recommendations sort similarity while preserving original candidate actions',async()=>{
+  mockG.tab='results';mockG.completed=completed();mockG.selected=1;
+  mockG.completed.result.candidates=mockG.completed.result.candidates.map((c:any,i:number)=>({...c,score:{...c.score,raw:i?95:60}}));
+  await render(<CourseGenerationScreen/>);
+  const rows=screen.getAllByLabelText(/^유사도/);
+  expect(rows.map(row=>row.props.testID)).toEqual(['candidate-1','candidate-0']);
+  await fireEvent.press(rows[0]);expect(mockG.setSelected).toHaveBeenCalledWith(1);
+  await fireEvent.press(screen.getByTestId('candidate-detail-1'));
+  const {candidateDrafts}=require('../../src/features/course-generation/model');
+  expect(candidateDrafts.get(mockPush.mock.lastCall[0].params.draft,'owner').rank).toBe(2);
+  expect(screen.queryByText(/코스 난이도/)).toBeNull();
+  expect(screen.getByTestId('generation-save')).toBeEnabled();
+ });
+
+test('selected recommendation saves only after consent and keeps its original candidate snapshot',async()=>{
+ mockG.tab='results';mockG.completed=completed();mockG.selected=1;
+ await render(<CourseGenerationScreen/>);await fireEvent.press(screen.getByTestId('generation-save'));
+ await waitFor(()=>screen.getByTestId('save-allowance-confirm'));expect(mockSave).not.toHaveBeenCalled();
+ await fireEvent.press(screen.getByTestId('save-allowance-confirm'));await waitFor(()=>expect(mockSave).toHaveBeenCalledTimes(1));
+ const {courseFromCalculation}=require('../../src/features/route-lab/saved-course');
+ expect(mockSave.mock.lastCall[0]).toEqual(courseFromCalculation(mockG.completed,1));expect(mockG.start).not.toHaveBeenCalled();
 });

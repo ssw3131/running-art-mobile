@@ -38,5 +38,5 @@ export function useHome() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner, attempt]));
   // Hide the preceding account's data in the very render that changes ownership.
-  return { ...(owner !== null && state.owner === owner ? state : { owner: '', data: null, error: '' }), recommendationSeed,retry: () => setAttempt(value => value + 1) };
+  return { ...(owner !== null && state.owner === owner ? state : { owner: '', data: auth.ready && !auth.account ? { owner: '', monthStart: 0, monthEnd: 0, monthlyDistanceM: 0, runCount: 0, recent: [], latestCompleted: null, courseCount: 0, courses: [], currentStreak: 0 } : null, error: '' }), recommendationSeed,retry: () => setAttempt(value => value + 1) };
 }
