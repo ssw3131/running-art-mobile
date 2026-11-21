@@ -137,7 +137,12 @@ def service_s56(q, launch):
         q.shell('am','force-stop',q.APP)
         launch('badges?view=challenges')
         q.seek('challenge-group-distance')
-        q.capture('s5-challenge-groups-360dp')
+        groups = q.capture('s5-challenge-groups-360dp')
+        count = next(n for n in groups.iter('node') if any(
+            re.fullmatch(r'현재 도전\s*\d+\s*개 진행 중', n.get(attr, '')) for attr in ('content-desc', 'text')))
+        _, top, _, bottom = map(int, re.findall(r'\d+', count.get('bounds')))
+        # At 480 dpi the row must fit the 36sp counter. A nested label previously cut it to 24dp.
+        assert bottom - top >= 36 * 3, 'Challenge count cropped by small label line height'
         q.seek('challenge-group-variation')
         group_bounds = q.find(q.capture('s5-challenge-scrolled'), 'challenge-group-variation').get('bounds')
         q.tap('challenge-group-variation')

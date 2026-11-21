@@ -30,7 +30,8 @@ test('the entire gallery starts gray and disabled; earned badges alone navigate 
 test('empty challenge tab keeps all six groups and opens category goals before the individual challenge',async()=>{
  const view=await render(<BadgeGalleryScreen/>);await fireEvent.press(screen.getByTestId('badge-tab-challenges'));
  expect(screen.getAllByTestId(/^challenge-group-/)).toHaveLength(6);
- expect(screen.getByText('현재 도전 0 개 진행 중')).toBeVisible();
+ expect(screen.getByLabelText('현재 도전 0개 진행 중')).toBeVisible();
+ expect(screen.getByTestId('badge-banner-count')).toHaveTextContent(/^0$/);
  await fireEvent.press(screen.getByTestId('challenge-group-category'));
  expect(mockPush).toHaveBeenLastCalledWith({pathname:'/badge-detail',params:{group:'category'}});
  mockParams={group:'category'};await view.rerender(<BadgeDetailScreen/>);

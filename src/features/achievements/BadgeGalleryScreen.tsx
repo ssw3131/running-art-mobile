@@ -17,16 +17,25 @@ export default function BadgeGalleryScreen(){
  const {width}=useWindowDimensions(),gridGap=Math.max(8,(Math.min(width,680)-64-40-240)/2);
  const challenges = challengeGroups(badges);
  const activeCount = challenges.filter(group => group.active).length;
- return <AchievementPage title="뱃지 보관함" gutter={32}>
-  <BadgeTabs challenge={challenge} onChange={setChallenge}/>
+ const count = challenge ? activeCount : earned.length;
+ const countLabel = challenge ? `현재 도전 ${count}개 진행 중` : `${count}개 획득`;
+ return <AchievementPage title="뱃지 보관함" gutter={challenge && width <= 380 ? 24 : 32} paddingTop={8}>
+  <View style={{gap:13}}>
+   <BadgeTabs challenge={challenge} onChange={setChallenge}/>
+   {!!gallery.data&&<View style={{backgroundColor:'#FEF2EC',borderRadius:20,minHeight:102,paddingHorizontal:20,paddingVertical:16,justifyContent:'center',overflow:'hidden'}}>
+    <Image source={require('../../../assets/achievements/figma-20261108/badge-banner.png')} style={{position:'absolute',right:0,bottom:0,width:152,height:82}} contentFit="contain" accessible={false}/>
+    <AppText weight="bold" style={{fontSize:challenge?18:16,lineHeight:24,color:'#111'}}>{challenge?'다음 성취를 향해 달리세요':'발로 차곡 차곡 모은 나의 뱃지'}</AppText>
+    <View accessible accessibilityRole="text" accessibilityLabel={countLabel}
+      style={{flexDirection:'row',alignItems:'baseline',columnGap:4,flexWrap:'wrap'}}>
+     {challenge&&<AppText weight="bold" style={{fontSize:14,lineHeight:20,color:'#111'}}>현재 도전</AppText>}
+     <AppText testID="badge-banner-count" weight="bold" style={{fontSize:36,lineHeight:44,color:c.selected}}>{count}</AppText>
+     <AppText weight="bold" style={{fontSize:14,lineHeight:20,color:'#111'}}>{challenge?'개 진행 중':'개 획득'}</AppText>
+    </View>
+   </View>}
+  </View>
   {!gallery.data&&!gallery.error&&<ActivityIndicator accessibilityLabel="뱃지 불러오는 중"/>}
   {!!gallery.error&&<><AppText accessibilityRole="alert">{gallery.error}</AppText><Button label="다시 확인" onPress={gallery.retry}/></>}
   {!!gallery.data&&<>
-   <View style={{backgroundColor:'#FEF2EC',borderRadius:20,minHeight:102,padding:20,overflow:'hidden'}}>
-    <Image source={require('../../../assets/achievements/figma-20261108/badge-banner.png')} style={{position:'absolute',right:0,bottom:0,width:152,height:82}} contentFit="contain" accessible={false}/>
-    <AppText weight="bold" style={{fontSize:challenge?18:16,lineHeight:24,color:'#111'}}>{challenge?'다음 성취를 향해 달리세요':'발로 차곡 차곡 모은 나의 뱃지'}</AppText>
-    <AppText weight="bold" style={{fontSize:36,lineHeight:44,color:c.selected}}>{challenge&&<AppText weight="bold" style={{fontSize:14,color:'#111'}}>현재 도전 </AppText>}{challenge?activeCount:earned.length}<AppText weight="bold" style={{fontSize:14,color:'#111'}}>{challenge?' 개 진행 중':' 개 획득'}</AppText></AppText>
-   </View>
    {!challenge?<View testID="badge-gallery" style={{padding:20,borderRadius:20,backgroundColor:c.surface,boxShadow:'0px 0px 5px rgba(0,0,0,.15)',gap:35}}>
     {groups.map(group=><View key={group} style={{gap:15}}><AppText weight="bold" style={{fontSize:16,lineHeight:22}}>{group}</AppText>
      <View style={{flexDirection:'row',flexWrap:'wrap',columnGap:gridGap,rowGap:16}}>

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "paths": [
     "scripts/qa/service_s56.py",
+    "src/features/achievements/AchievementPage.tsx",
     "src/features/achievements/BadgeDetailScreen.tsx",
     "src/features/achievements/BadgeGalleryScreen.tsx",
     "src/features/achievements/BadgeVisuals.tsx",
@@ -55,7 +56,8 @@
     "evidence": [
       "원본 도전 탭의 6개 카드 순서와 80dp 아이콘, 카드 최소 높이 109dp·모서리 20dp·진행 막대 10dp를 대조했다.",
       "갤러리의 기존 배너 그림을 동일 크기 원본 노드와 대조했다. 보관함 카드는 개별 배지의 잠금 상태를 계속 표시한다.",
-      "360dp Android에서 도전 목록·변주 목표·상세·두 번 뒤로가기와 스크롤 좌표를 검사하는 절차를 service_s56.py에 추가했다."
+      "360dp Android에서 도전 목록·변주 목표·상세·두 번 뒤로가기와 스크롤 좌표를 검사하는 절차를 service_s56.py에 추가했다.",
+      "첫 Android 36 실행에서 360dp 변주 카드 복귀 좌표가 일치했다. 원본 PNG에서 배너 숫자와 인접한 작은 글자의 하단이 잘린 현상을 확인해 각 텍스트를 독립적인 기준선에 배치하고 탭 위·아래 여백을 원본 기준으로 조정했다."
     ]
   },
   "native": "SQLite v9→v10 마이그레이션·원본 GPS 보존·복원은 로컬 SQLite에서 검증했다. Android 29/36에서 기존 자료 보존, 도전 화면 캡처와 스크롤 복귀를 확인하는 절차를 추가했다. 원격 검증 결과는 실행 기록에서 관리한다."
