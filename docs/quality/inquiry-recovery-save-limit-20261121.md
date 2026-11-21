@@ -1,5 +1,7 @@
 # 신형폰 문의 입력 잠금·저장 한도 10회 검증
 
+[최신 preview217411799 릴리스](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261121.217411799) · [기본 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217411799/runpen-preview-969fa1df6f7e-217411799.apk) · [기존 PC 테스트 서명 호환 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217411799/runpen-preview-969fa1df6f7e-217411799-legacy.apk). 기본 파일은 이전 GitHub preview/신규 설치용이며 legacy는 이번 신형폰에 설치한 파일과 같다. 기존 앱을 삭제하지 말고 서명이 맞는 파일로 업데이트한다. 이미217411799 설치 기기는 추가 설치가 필요 없다.
+
 ## 재현과 원인
 
 2026-11-21 SM-S942N(Android17), preview217408079에서 문의 작성의 유형/제목/내용이 모두 비활성이고 하단 버튼은 ‘같은 문의 접수 확인 · 재시도’였다. 접수 결과가 불확실해 암호화 저장된 pending 사본이 복원됐으나 잠금 이유와 새 작성 경로가 없었다. 키보드 위치 보정 실패와 구분한다. Git 제외 `.cache/inquiry-s942n-20261121/`에 접근성 트리·원본 화면·키보드 상태를 보존했다. 조사 중 기존 문의 전송/수정/삭제는 하지 않았다.
@@ -104,3 +106,13 @@ SM-S942N의 삼성 HoneyBoard에서 제목에 미전송 시험 문자열, 본문
 RunPen만 강제 종료 후 COLD 재시작했다. 로그인된 홈의 텍스트/접근성 설명/ID가 설치 전과 같고 사용량·기존 코스/러닝 표시를 유지했다. 새 작성의 제목/본문은 빈 값·enabled=true이고 pending 안내나 시험 입력이 남지 않았다. 기존 문의 목록의 ID·제목·답변 상태도 전후 동일했다.19:52:27KST 홈 복귀·앱 서비스0·USB 전달0·폰 임시 캡처0으로 USB 분리 가능하다.
 
 `phone-final-verification.json`, `phone-title-keyboard.*`, `phone-body-keyboard.*`, `phone-cold-empty-form.*`와 전후 홈/목록 원본은 Git 제외 캐시에 보존했다. 실제 폰의 비공개 DB 전체 해시·새 문의 접수/수정 왕복·야외 GPS/장시간 검증은 이번 후속 범위가 아니다. 코드 전체 검사는437/438, 앞선 문서 PR87/main441은 성공이며 이 설치 결과의 문서 PR/main 결과와 작업 브랜치 정리는 해당 PR 메타데이터에 남긴다.
+
+## 20:35 최신 APK GitHub 릴리스 공개
+
+사용자 요청으로20:35:11KST preview217411799를 [릴리스453645976](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261121.217411799)에 공개했다. 태그 `v0.1.0-preview.20261121.217411799`는 정확한 빌드 소스969fa1df6f7e97ee40e6315d478bd14c33f279ef를 가리킨다. 게시 기준 main7b9a1a3까지의 전체 변경 경로는 docs/tests/scripts/qa뿐이다. 새 빌드·재서명·폰 재설치는 하지 않았다.
+
+기본 APK는116,889,283바이트/SHA256 `d1d2ef868804d6f5e8ce63f1d7853bb0ca9f450e2a62da0ee1dc3b1d3916a32e`, legacy APK는117,005,234바이트/SHA256 `347f5a84b577363bedb976041422549e49bd2b7ee3be927903fa3fcf42305735`다. apksigner로 기존 GitHub 테스트 서명3cf9c514…/PC 테스트 서명fac61745…를 확인했고 앱 ID/버전·API24이상/target36·ARM64/ARMv7·non-debuggable와 서명 외 내부1,569개 파일 해시 일치를 다시 확인했다. 기존 서명별 자료 유지 업데이트 경로를 설치 안내와 릴리스 본문에서 구분했다.
+
+APK2개·체크섬2개·설치 안내·원본 metadata·서명별 variants의7개 자산 모두 서버 digest/크기가 일치한다. 공개 후 모든 파일을 인증 없이 HTTP200으로 전체 다운로드해 크기·SHA256까지 원본과 대조했다. 이전217408079 릴리스/자산은 보존했고 최신 목록의 첫 항목은217411799다. prerelease이며 Play 정식 배포는 아니다. 이번 최신 파일의 A7 추가 설치 검증은 수행하지 않았다.
+
+게시/다운로드 원본은 Git 제외 `.cache/inquiry-s942n-20261121/release-*.json`, 공개 파일은 `release/`에 보존한다. 기기 원본 화면/계정/문의 내용/개인 활동 수치/비밀 키는 릴리스 자산에 포함하지 않았다. 최종 문서 PR/main 검사·동기화·작업 브랜치 정리 결과는 해당 PR 본문에 기록한다.
