@@ -1,0 +1,99 @@
+"""Private inquiry acceptance against only the disposable local Supabase stack."""
+import json
+import os
+import subprocess
+import uuid
+import time
+import urllib.request
+from urllib.parse import urlparse
+from course_generation_figma import text
+
+
+def inquiry_board(q, launch):
+    assert q.SERIAL.startswith('emulator-')
+    status_path = os.environ.get('QA_SUPABASE_STATUS', str(q.ROOT / '.cache/qa-supabase-status.json'))
+    status = json.loads(open(status_path, encoding='utf8').read())
+    url = status['API_URL'].rstrip('/')
+    assert urlparse(url).hostname in ('localhost', '127.0.0.1'), 'Hosted inquiry tests are forbidden'
+    key = status['SERVICE_ROLE_KEY']
+
+    def request(method, path, body=None):
+        req = urllib.request.Request(url + '/rest/v1/' + path,
+            data=None if body is None else json.dumps(body).encode(), method=method,
+            headers={'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=representation'})
+        with urllib.request.urlopen(req, timeout=15) as response:
+            raw = response.read()
+            return json.loads(raw) if raw else None
+
+    rows_path = 'service_inquiries?owner_id=eq.' + q.OWNER
+    assert not request('GET', rows_path), 'Expected a new isolated inquiry owner'
+    created = []
+    def wait_key(key):
+        deadline = time.monotonic() + 20
+        while True:
+            tree = q.capture('inquiry-wait-' + key)
+            if q.find(tree, key) is not None:
+                return tree
+            assert time.monotonic() < deadline, 'Inquiry state did not appear: ' + key
+            time.sleep(.25)
+    try:
+        launch('service-inquiry')
+        wait_key('inquiry-title')
+        assert q.find(q.capture('inquiry-empty-form'), 'inquiry-email') is None
+        text(q, 'inquiry-title', 'INQUIRY_QA')
+        text(q, 'inquiry-body', 'Private inquiry body')
+        q.shell('input', 'keyevent', '4')
+        q.seek('inquiry-submit'); q.tap('inquiry-submit')
+        wait_key('inquiry-detail-body')
+        rows = request('GET', rows_path)
+        assert len(rows) == 1 and rows[0]['title'] == 'INQUIRY_QA'
+        row = rows[0]; created.append(row['request_id'])
+        assert row['status'] == '미확인' and 'contact_email' not in row
+        q.seek('inquiry-edit'); q.tap('inquiry-edit')
+        text(q, 'inquiry-title', 'INQUIRY_EDITED')
+        q.shell('input', 'keyevent', '4')
+        q.seek('inquiry-save'); q.tap('inquiry-save')
+        wait_key('inquiry-detail-body')
+        assert request('GET', rows_path)[0]['title'] == 'INQUIRY_EDITED'
+        request('PATCH', rows_path + '&request_id=eq.' + row['request_id'], {'reply_body': 'RunPen QA reply\n' * 15})
+        q.seek('최신 내용 확인'); q.tap('최신 내용 확인')
+        q.seek('inquiry-reply'); q.capture('inquiry-answered-detail')
+        assert q.find(q.capture('inquiry-answered-controls'), 'inquiry-delete') is None
+        q.seek('목록으로 돌아가기'); q.tap('목록으로 돌아가기')
+        wait_key('inquiry-write')
+        q.seek('inquiry-' + row['request_id']); q.capture('inquiry-answered-list')
+        q.tap('inquiry-write'); wait_key('inquiry-title')
+        text(q, 'inquiry-title', 'INQUIRY_DELETE')
+        text(q, 'inquiry-body', 'Delete before reply')
+        q.shell('input', 'keyevent', '4')
+        q.seek('inquiry-submit'); q.tap('inquiry-submit'); wait_key('inquiry-detail-body')
+        rows = request('GET', rows_path)
+        created.extend(r['request_id'] for r in rows if r['request_id'] not in created)
+        q.seek('inquiry-delete'); q.tap('inquiry-delete'); q.tap('삭제')
+        wait_key('inquiry-write')
+        assert len(request('GET', rows_path)) == 1
+        launch('account-settings'); q.seek('theme-dark'); q.tap('theme-dark')
+        q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
+        q.shell('am', 'force-stop', q.APP); launch('service-inquiry'); wait_key('inquiry-write')
+        q.capture('inquiry-large-font-list')
+        q.tap('inquiry-' + row['request_id']); q.seek('inquiry-reply'); q.capture('inquiry-large-font-reply')
+        (q.OUT / 'inquiry-board-result.json').write_text(json.dumps({'emptyForm': True, 'appSubmit': True, 'appEdit': True,
+            'adminReply': True, 'privateList': True, 'appDelete': True, 'largeFont': True, 'email': False}), encoding='utf8')
+    finally:
+        # Remove only this scenario's synthetic messages; the disposable account
+        # teardown removes its minimal request ledger as well.
+        for row in request('GET', rows_path):
+            if row['title'].startswith('INQUIRY_') and row['request_id'] not in created:
+                created.append(row['request_id'])
+        for request_id in created:
+            request('DELETE', rows_path + '&request_id=eq.' + request_id)
+        if created:
+            db = urlparse(status['DB_URL'])
+            assert db.hostname in ('localhost', '127.0.0.1')
+            ids = ','.join("'" + str(uuid.UUID(value)) + "'" for value in created)
+            env = {**os.environ, 'PGHOST': db.hostname, 'PGPORT': str(db.port), 'PGUSER': db.username, 'PGPASSWORD': db.password, 'PGDATABASE': db.path.lstrip('/')}
+            subprocess.run(['psql', '-v', 'ON_ERROR_STOP=1'], input=f"delete from support_private.inquiry_requests where owner_id='{uuid.UUID(q.OWNER)}' and request_id in ({ids});", text=True, capture_output=True, env=env, check=True)
+        q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
+        q.shell('am', 'force-stop', q.APP)
+        launch('account-settings'); q.seek('theme-light'); q.tap('theme-light')
+        launch('service-info')

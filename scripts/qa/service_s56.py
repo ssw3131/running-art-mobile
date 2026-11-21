@@ -4,6 +4,7 @@ import json
 import re
 import struct
 import time
+from inquiry_board import inquiry_board
 
 
 def wait_notice_detail(q, timeout=30):
@@ -105,7 +106,7 @@ def service_s56(q, launch):
         q.seek('support-about');q.tap('support-about');q.capture('s6-about');q.tap('service-back')
         q.seek('support-guide');q.tap('support-guide');q.capture('s6-guide');q.tap('service-back')
         q.seek('support-faq');q.tap('support-faq');q.seek('faq-gps');q.tap('faq-gps');q.capture('s6-faq');q.tap('service-back')
-        q.seek('support-inquiry');q.tap('support-inquiry');q.seek('inquiry-title');q.capture('s6-inquiry-member');q.tap('service-back')
+        inquiry_board(q, launch)
         # Exercise the app's real last-good cache with an explicitly synthetic
         # publication. No production notice or product fixture hook is used.
         fixture=q.OUT/'s56-notice-fixture.json'

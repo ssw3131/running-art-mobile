@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createInquiryController } from '../src/modules/support/inquiry.ts';
-import { createSupportRemote } from '../src/modules/support/remote.ts';
+import { createSupportRemote, inquiryRequest } from '../src/modules/support/remote.ts';
 const owner='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', id='11111111-1111-4111-8111-111111111111';
-const input={category:'기타',title:'의견',body:'첫째 줄\n둘째 줄',email:''};
+const input={category:'기타',title:'의견',body:'첫째 줄\n둘째 줄'};
 const receipt={id,receivedAt:'2026-10-14T00:00:00Z'};
 function fixture(send) {
  const values=new Map(); let current=owner;
@@ -31,7 +31,31 @@ test('persistence failure never sends or changes request id; raw errors never re
  await f.controller.submit(input);assert.equal(calls,0);assert.equal(f.controller.getSnapshot().pending.id,id);
  assert.doesNotMatch(f.controller.getSnapshot().message,/secret/);
 });
-test('remote success requires a matching parseable receipt, optional contact remains empty',async()=>{
- let rpcArgs;const remote=createSupportRemote({rpc:async(name,args)=>{rpcArgs=args;return {data:{...receipt,id:'wrong'},error:null};}});
- await assert.rejects(remote.submit(owner,id,input),/receipt/);assert.equal(rpcArgs.p_email,'');
+test('remote success requires a matching parseable receipt and never sends email',async()=>{
+ let rpcArgs;const remote=createSupportRemote({rpc:(name,args)=>({abortSignal:async()=>{rpcArgs=args;return {data:{...receipt,id:'wrong'},error:null};}})});
+ await assert.rejects(remote.submit(owner,id,{...input,email:'legacy@example.invalid'}),/receipt/);assert.equal('p_email' in rpcArgs,false);
+});
+
+test('legacy pending contact is removed from encrypted storage before retry; identity and content survive',async()=>{
+ const f=fixture(async()=>receipt);
+ f.values.set(`runpen.inquiry.${owner}`,JSON.stringify({owner,id,input:{...input,email:'private@example.invalid'}}));
+ await f.controller.load();
+ assert.deepEqual(f.controller.getSnapshot().pending,{owner,id,input});
+ assert.doesNotMatch(f.values.get(`runpen.inquiry.${owner}`),/email|private@/);
+});
+test('definite rejection unlocks editing while uncertain network outcomes retain the same request',async()=>{
+ const f=fixture(async()=>{throw {code:'P0001',message:'Inquiry rate limit'};});
+ await f.controller.load();await f.controller.submit(input);
+ assert.equal(f.controller.getSnapshot().pending,null);assert.equal(f.values.size,0);
+ assert.match(f.controller.getSnapshot().message,/한 시간에 5건/);
+});
+test('a transport ignoring abort still times out; late success cannot become a receipt',async()=>{
+ let signal;let resolve;
+ const result=inquiryRequest(s=>{signal=s;return new Promise(r=>{resolve=r;});},10);
+ await assert.rejects(result,/timed out/);assert.equal(signal.aborted,true);resolve(receipt);
+});
+test('replaying a deleted request reports deletion and clears pending without creating a receipt',async()=>{
+ const remote=createSupportRemote({rpc:()=>({abortSignal:async()=>({data:{...receipt,deleted:true},error:null})})});
+ const f=fixture((...args)=>remote.submit(...args));await f.controller.load();await f.controller.submit(input);
+ assert.equal(f.controller.getSnapshot().pending,null);assert.equal(f.controller.getSnapshot().receipt,null);assert.match(f.controller.getSnapshot().message,/삭제/);
 });

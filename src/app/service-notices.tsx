@@ -16,7 +16,7 @@ export default function ServiceNotices() {
       onPress={() => router.push({ pathname: '/service-notice', params: { id: notice.id } })}
       style={{ borderRadius: 20, borderWidth: 1, borderColor: c.divider, padding: 16, gap: 10, backgroundColor: c.surface }}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}><AppText variant="caption" weight="bold" style={{ color: c.onAction, backgroundColor: c.action, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 3 }}>{notice.category}</AppText><AppText variant="label" style={{ color: c.muted }}>{new Date(notice.publishedAt).toLocaleDateString()}</AppText></View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppText weight="bold" style={{ flex: 1 }}>{notice.title}</AppText><Icon name="chevronRight" /></View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppText weight="bold" style={{ flex: 1 }}>{notice.title}</AppText><Icon name="chevronRight" color={c.text} /></View>
     </Pressable>)}
     <Button label="공지 다시 확인" testID="notices-retry" variant="outline" onPress={retry} />
   </SupportPage>;
