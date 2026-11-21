@@ -22,6 +22,9 @@ def keyboard_bounds(q, key, name):
     keyboard_tops = [int(y) for y in re.findall(r'type=ime frame=\[\d+,(\d+)\]\[\d+,\d+\][^\r\n]*visible=true', display)]
     if not keyboard_tops:
         # API29 exposes the IME window's frame/insets instead of InsetsSource.
+        ime = q.shell('dumpsys', 'input_method').decode()
+        (q.OUT / (name + '-ime.txt')).write_text(ime, encoding='utf8')
+        assert 'mInputShown=true' in ime, 'Software keyboard must actually be shown'
         windows = q.shell('dumpsys', 'window', 'windows').decode()
         (q.OUT / (name + '-windows.txt')).write_text(windows, encoding='utf8')
         for window in re.split(r'Window #\d+', windows):
