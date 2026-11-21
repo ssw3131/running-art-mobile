@@ -1,5 +1,7 @@
 # 실제 실행한 계획 모음
 
+- [2026-11-21 최신 main A7 검증](2026-11-21-1605-main-phone.md) — 실기기 검증 완료, preview217408079 자료 유지·문의 키보드/접수/수정/삭제·배지6그룹/뒤로가기 확인; 시간26→22분 재표시의 개별 DB 재계산은 미검증, 문서 PR/main 후속
+
 - [2026-11-21 배지 지급과 도전 중 화면 수정](2026-11-21-1326-badge-progress.md) — 완료. Android 29·36의 360dp 배너·뒤로가기 검증, [PR #81](https://github.com/ssw3131/running-art-mobile/pull/81) 병합과 main 필수 검사 통과
 
 - [2026-11-21 문의 입력칸 키보드 가림 수정](2026-11-21-1201-inquiry-keyboard.md) — 완료, PR80/main b5acbc7·Android29/36 전체/동일 tree main 검사 통과·preview217394294 업로드; 실제 삼성 기기 재검증 후속
