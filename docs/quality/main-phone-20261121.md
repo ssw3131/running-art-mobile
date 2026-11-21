@@ -1,5 +1,7 @@
 # 최신 main A7 검증 — 2026-11-21
 
+[설치 APK 다운로드](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217408079/runpen-preview-a60a36b99a21-217408079.apk) · [GitHub preview 릴리스/설치 안내/해시](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261121.217408079). 사용자 요청으로 실제 검증한 APK를 공개 게시했다. 자산4개 서버 digest·크기가 원본과 일치하고 익명 APK 다운로드 HTTP200·116,885,911바이트를 확인했다. 태그는 정확한 빌드 소스 a60a36b를 가리키며 게시 기준 main d2cd60b와 제품 코드는 같다.
+
 ## 범위와 기준
 
 최신 main `a60a36b99a2183c94b091ee317a04c002a6fa8d8`의 문의 키보드 수정(PR80)과 이어달리기 집계·도전 그룹 수정(PR81)을 연결된 SM-A750N에서 검증한다. 원격 Verify44877598004 성공을 확인했다. [실행 기록](../history/executed-plans/2026-11-21-1605-main-phone.md).
