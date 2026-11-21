@@ -6,6 +6,7 @@ import { createRunRepository } from '../src/modules/running/repository.ts';
 import { createCourseRepository } from '../src/modules/courses/repository.ts';
 import { createSyncRepository } from '../src/modules/sync/repository.ts';
 import { decodePayload,digest } from '../src/modules/sync/model.ts';
+import { createHomeRepository } from '../src/modules/home/repository.ts';
 import { readAchievements } from '../src/modules/achievements/repository.ts';
 import { createRunningSimulation } from '../src/modules/running/simulation.ts';
 import { buildSimulationRecord,isSimulationRun } from '../src/modules/running/simulation-record.ts';
@@ -78,7 +79,26 @@ test('an unfinished simulation resumes the old orange trace and progress, comple
  assert.equal(resumed.snapshot().progressM,s.snapshot().progressM);assert.ok(resumed.snapshot().trace.flat().length>10);
  resumed.play(0);for(let t=100;t<60000;t+=100){if(resumed.update(t).status==='arrived')break;}
  assert.equal(resumed.snapshot().status,'arrived');const later=createRunRepository(f.db,()=>BASE+1000,()=>owner);const result=await later.saveSimulation({id:await later.newSimulationId(),courseId:f.course.id,...resumed.recording()},owner);
+ const credited=await readAchievements(f.db,owner,BASE+1000);
+ assert.equal(credited.activeMs,result.activeMs);assert.ok(Math.abs(credited.distanceM-result.distanceM)<1e-8);
  assert.equal(result.courseOutcome,'finished');assert.deepEqual(await f.runs.get(old.id),old);assert.equal(await f.runs.simulationContinuation(f.course.id),null);
+});
+
+test('a simulated continuation keeps each month’s distance after its stopped record is deleted',async t=>{
+ const {db,course}=await fixture(t),scope=()=>owner;
+ const firstDate=new Date(2026,1,27,12).getTime(),nextDate=new Date(2026,2,4,12).getTime();
+ const first=createRunRepository(db,()=>firstDate,scope),second=createRunRepository(db,()=>nextDate,scope);
+ const simulation=createRunningSimulation(route);simulation.play(0);simulation.update(3000);simulation.pause(3000);
+ const stopped=await first.saveSimulation({id:await first.newSimulationId(),courseId:course.id,...simulation.recording()},owner);
+ const resumed=createRunningSimulation(route,await second.simulationContinuation(course.id));resumed.play(0);
+ for(let tick=100;tick<60000;tick+=100){if(resumed.update(tick).status==='arrived')break;}
+ const final=await second.saveSimulation({id:await second.newSimulationId(),courseId:course.id,...resumed.recording()},owner);
+ const home=createHomeRepository(db,scope);
+ async function checkMonths(){
+   assert.ok(Math.abs((await home.read(firstDate)).monthlyDistanceM-stopped.distanceM)<1e-8);
+   assert.ok(Math.abs((await home.read(nextDate)).monthlyDistanceM-(final.distanceM-stopped.distanceM))<1e-8);
+ }
+ await checkMonths();await first.remove(stopped.id);await checkMonths();
 });
 
 test('reopening a simulation twice preserves stored pause segment boundaries even with a short virtual gap',async t=>{

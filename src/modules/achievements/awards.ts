@@ -22,7 +22,7 @@ export function achievementAwards(records:readonly AchievementRun[], generated=f
   add('distance-variation','거리 변주',[...distances.values()].some(set=>set.size>=3));
   add('region-variation','장소 변주',[...regions.values()].some(set=>set.size>=3));
   add('repeat-5','같은 코스 5회 완주',[...repeats.values()].some(n=>n>=5));
-  const distance=unique.reduce((s,r)=>s+Math.max(0,r.distanceM),0),time=unique.reduce((s,r)=>s+Math.max(0,r.activeMs),0);
+  const distance=unique.reduce((s,r)=>s+Math.max(0,(r.credited ?? r).distanceM),0),time=unique.reduce((s,r)=>s+Math.max(0,(r.credited ?? r).activeMs),0);
   for(const km of [10,50,100,300])add(`distance-${km}`,`누적 ${km}km`,distance>=km*1000);
   for(const hours of [5,50,100,500])add(`time-${hours}`,`누적 ${hours}시간`,time>=hours*3600000);
   return awards;

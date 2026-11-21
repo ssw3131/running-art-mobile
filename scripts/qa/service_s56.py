@@ -133,7 +133,23 @@ def service_s56(q, launch):
         q.shell('am','force-stop',q.APP);launch('account-settings');q.seek('theme-dark');q.capture('s6-theme-restarted')
         assert '선택됨' in q.find(q.capture('current'),'theme-dark').get('content-desc','') or any('어둡게 · 선택됨' in n.get('text','') for n in q.capture('current').iter('node'))
         q.seek('theme-light');q.tap('theme-light')
-        q.shell('wm','density','480');q.shell('settings','put','system','font_scale','1.6')
+        q.shell('wm','density','480')
+        q.shell('am','force-stop',q.APP)
+        launch('badges?view=challenges')
+        q.seek('challenge-group-distance')
+        q.capture('s5-challenge-groups-360dp')
+        q.seek('challenge-group-variation')
+        group_bounds = q.find(q.capture('s5-challenge-scrolled'), 'challenge-group-variation').get('bounds')
+        q.tap('challenge-group-variation')
+        q.seek('challenge-goal-region-variation')
+        q.capture('s5-variation-goals-360dp')
+        q.tap('challenge-goal-region-variation')
+        q.tap('service-back')
+        assert q.find(q.capture('s5-back-to-goals'), 'challenge-goal-region-variation') is not None
+        q.tap('service-back')
+        returned = q.find(q.capture('s5-back-to-challenges'), 'challenge-group-variation')
+        assert returned is not None and returned.get('bounds') == group_bounds, 'Challenge tab or scroll offset was lost'
+        q.shell('settings','put','system','font_scale','1.6')
         # Density/font changes recreate the activity; cold-launch the target only
         # after applying them so an old activity cannot consume the deep link.
         q.shell('am','force-stop',q.APP)

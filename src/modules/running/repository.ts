@@ -7,6 +7,7 @@ import { type GuidanceEvent, type GuidanceFix } from '../guidance/engine.ts';
 import { createRunGuidance, guidanceColumns, readRunGuidance, startReadiness, validateRunCourse, validateGuidanceOptions, type GuidanceOptions, type GuidanceRow } from './guidance.ts';
 import { validApproach, type ApproachPlan } from './approach.ts';
 import { buildSimulationRecord, isSimulationRun } from './simulation-record.ts';
+import { inheritActivity, writeActivityHistory } from './activity-history.ts';
 import { restoreRunCheckpoint } from './restore-checkpoint.ts';
 import { recordedPaths } from './recorded-paths.ts';
 import type { SimulationContinuation } from './simulation.ts';
@@ -63,6 +64,8 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
       const {run,points,checkpoint}=buildSimulationRecord(input.id,course,input.fixes,input.elapsedMs,now(),continuation);
       await tx.runAsync(`INSERT INTO running_sessions(id,status,started_at,ended_at,active_ms,checkpoint_at,resumed_at,distance_m,point_count,rejected_count,last_timestamp,segment,break_pending,reason,owner_id,course_id,course_name,course_outcome,course_snapshot_json,course_snapshot_hash,guidance_json,guidance_options_json)
         VALUES(?,'completed',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,run.id,run.startedAt,run.endedAt,run.activeMs,run.checkpointAt,run.resumedAt,run.distanceM,run.pointCount,run.rejectedCount,run.lastTimestamp,run.segment,run.breakPending,run.reason,expectedOwner,course.id,course.name,run.courseOutcome!,saved.snapshot_json,saved.snapshot_hash,JSON.stringify(checkpoint),JSON.stringify(defaultAccountPreferences.guidance));
+      const history = continuation ? await inheritActivity(tx, continuation.run, expectedOwner) : {ancestors:[]};
+      await writeActivityHistory(tx, run.id, history);
       for(const point of points)await tx.runAsync('INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy) VALUES(?,?,?,?,?,?,?)',run.id,point.sequence,point.segment,point.timestamp,point.latitude,point.longitude,point.accuracy);
       check();return read(tx,run.id,expectedOwner);
     }),
@@ -133,6 +136,7 @@ export function createRunRepository(db: StorageDatabase, now = Date.now, scope: 
         const engine = createRunGuidance(snapshot.route, continuation ? restoreRunCheckpoint({id:courseId,name:course.name,snapshot},continuation,priorPoints,continuation.guidance_json) : undefined);
         if(continuation){
           engine.resume();
+          await writeActivityHistory(tx, row.id, await inheritActivity(tx, continuation, owner));
           await tx.runAsync(`UPDATE running_sessions SET started_at=?,active_ms=?,distance_m=?,point_count=?,rejected_count=?,last_timestamp=?,segment=?,break_pending=1 WHERE id=?`,
             continuation.startedAt,continuation.activeMs,continuation.distanceM,continuation.pointCount,continuation.rejectedCount,continuation.lastTimestamp,continuation.segment,row.id);
           await tx.runAsync(`INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy)

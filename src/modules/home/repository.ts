@@ -36,9 +36,8 @@ export function createHomeRepository(database: StorageDatabase, scope: OwnerScop
     let result!: HomeData;
     await db.withExclusiveTransactionAsync(async tx => {
       check();
-      const summary = await tx.getFirstAsync<{ count: number; distance: number }>(
-        `SELECT count(*) count,coalesce(sum(CASE WHEN status='completed' AND started_at>=? AND started_at<? THEN distance_m ELSE 0 END),0) distance
-         FROM running_sessions WHERE owner_id=?`, month.start, month.end, owner);
+      const summary = await tx.getFirstAsync<{ count: number }>(
+        'SELECT count(*) count FROM running_sessions WHERE owner_id=?',owner);
       const latestCompleted = await tx.getFirstAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? AND status='completed' ORDER BY started_at DESC,id DESC LIMIT 1`, owner);
       const recentRuns = await tx.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=?
         ORDER BY CASE WHEN status='completed' THEN 1 ELSE 0 END,started_at DESC,id DESC LIMIT 3`, owner);
@@ -59,9 +58,9 @@ export function createHomeRepository(database: StorageDatabase, scope: OwnerScop
       }
       const completedRuns=await tx.getAllAsync<Run>(`SELECT ${columns} FROM running_sessions WHERE owner_id=? AND status='completed' AND course_outcome='finished' AND course_id IS NOT NULL ORDER BY started_at DESC,id DESC LIMIT 5`,owner);
       const completed=[];for(const run of completedRuns)completed.push({run,paths:await trace(tx,run)});
-      const records=await readBadgeRecords(tx,owner),achievements=summarizeAchievements(records,now),badges=badgeProgress(records);
+      const records=await readBadgeRecords(tx,owner,month),achievements=summarizeAchievements(records,now),badges=badgeProgress(records);
       check();
-      result = { owner, monthStart: month.start, monthEnd: month.end, monthlyDistanceM: summary?.distance ?? 0,
+      result = { owner, monthStart: month.start, monthEnd: month.end, monthlyDistanceM: records.reduce((sum,record) => sum + (record.credited?.periodDistanceM ?? 0), 0),
         runCount: summary?.count ?? 0, recent, latestCompleted, courseCount: count?.n ?? 0, courses, currentStreak: achievements.currentStreak,badges,completed };
     });
     check(); return result;

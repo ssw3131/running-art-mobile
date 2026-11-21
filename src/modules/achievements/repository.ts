@@ -3,28 +3,26 @@ import type { SqlExecutor, StorageDatabase } from '../storage/types.ts';
 import { StorageError } from '../storage/types.ts';
 import { serialDatabase } from '../storage/serial-database.ts';
 import { ownerId, type OwnerScope } from '../sync/ownership.ts';
-import { summarizeAchievements, type AchievementRun } from './model.ts';
+import { activityCredits, type ActivityHistory, type ActivityPeriod } from '../running/activity-history.ts';
+import { summarizeAchievements } from './model.ts';
 import { badgeProgress, type BadgeRecord } from './catalog.ts';
 
 export async function readAchievements(tx: SqlExecutor, owner: string, now: number) {
-  // Read only small summary columns, not GPS arrays or full course snapshots.
-  const rows = await tx.getAllAsync<AchievementRun>(`SELECT id,status,started_at AS startedAt,distance_m AS distanceM,active_ms AS activeMs,
-    course_id AS courseId,course_outcome AS courseOutcome,
-    CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.shape') ELSE NULL END AS shape,
-    CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.targetKm') ELSE NULL END AS targetKm,
-    course_snapshot_hash AS courseHash, (SELECT region FROM achievement_regions WHERE run_id=running_sessions.id AND owner_id=running_sessions.owner_id) AS region
-    FROM running_sessions WHERE owner_id=? AND status='completed' ORDER BY started_at,id`, owner);
-  return summarizeAchievements(rows, now);
+  return summarizeAchievements(await readBadgeRecords(tx, owner), now);
 }
 
-export async function readBadgeRecords(tx:SqlExecutor,owner:string):Promise<BadgeRecord[]>{
-  return await tx.getAllAsync<BadgeRecord>(`SELECT id,status,started_at AS startedAt,distance_m AS distanceM,active_ms AS activeMs,course_id AS courseId,course_outcome AS courseOutcome,course_name AS courseName,reason,
+export async function readBadgeRecords(tx:SqlExecutor,owner:string,period?:ActivityPeriod):Promise<BadgeRecord[]>{
+  const rows = await tx.getAllAsync<BadgeRecord & {historyJson:string|null}>(`SELECT id,status,started_at AS startedAt,ended_at AS endedAt,
+          distance_m AS distanceM,active_ms AS activeMs,(SELECT history FROM run_activity_history WHERE run_id=id) AS historyJson,course_id AS courseId,course_outcome AS courseOutcome,course_name AS courseName,reason,
           CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.shape') ELSE NULL END AS shape,
           CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.targetKm') ELSE NULL END AS targetKm,
           CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.origin.lat') ELSE NULL END AS originLat,
           CASE WHEN json_valid(course_snapshot_json) THEN json_extract(course_snapshot_json,'$.origin.lng') ELSE NULL END AS originLng,
           course_snapshot_hash AS courseHash,(SELECT region FROM achievement_regions WHERE run_id=running_sessions.id AND owner_id=running_sessions.owner_id) AS region
           FROM running_sessions WHERE owner_id=? AND status='completed' ORDER BY started_at,id`,owner);
+  const records = rows.map(({historyJson,...row}) => ({...row, history: historyJson ? JSON.parse(historyJson) as ActivityHistory : null}));
+  const credits = activityCredits(records, period);
+  return records.map(({history: _history,...row}) => ({...row, credited: credits.get(row.id)}));
 }
 
 export function createAchievementsRepository(database: StorageDatabase, scope: OwnerScope) {

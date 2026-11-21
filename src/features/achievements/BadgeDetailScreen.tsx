@@ -1,7 +1,7 @@
 import { useCallback,useRef,useState } from 'react';
 import { ActivityIndicator,Alert,Pressable,View,useWindowDimensions } from 'react-native';
 import { Image } from 'expo-image';
-import { router,useFocusEffect,useLocalSearchParams } from 'expo-router';
+import { useFocusEffect,useLocalSearchParams } from 'expo-router';
 import { captureRef,releaseCapture } from 'react-native-view-shot';
 import { AppModal,AppText,Button,Icon } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
@@ -18,9 +18,11 @@ import { BadgeCondition,BadgeHero,BadgeScale } from './BadgeVisuals';
 import { BadgeImage } from './BadgeImage';
 import { BadgeRunCard,recordDate } from './BadgeRunCard';
 import { useBadgeGallery } from './use-badge-gallery';
+import { challengeGroups } from '@/modules/achievements/challenges';
+import { ChallengeGoals } from './ChallengeGroups';
 
 export default function BadgeDetailScreen(){
- const params=useLocalSearchParams<{id?:string;challenge?:string}>(),id=typeof params.id==='string'?params.id:'',auth=useAuth(),owner=auth.account?.id??'',gallery=useBadgeGallery(),c=useThemeColors();
+ const params=useLocalSearchParams<{id?:string;challenge?:string;group?:string}>(),id=typeof params.id==='string'?params.id:'',auth=useAuth(),owner=auth.account?.id??'',gallery=useBadgeGallery(),c=useThemeColors();
  const badge=gallery.data?.badges.find(b=>b.definition.id===id),challenge=params.challenge==='1'||badge?.earned===false;
  const [shareOpen,setShareOpen]=useState(false),[deleteOpen,setDeleteOpen]=useState(false),[selected,setSelected]=useState<string[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[shareReady,setShareReady]=useState(false),[deleteLimit,setDeleteLimit]=useState(30);
  const working=useRef(false),revision=useRef(0),canvas=useRef<View>(null);
@@ -52,6 +54,14 @@ export default function BadgeDetailScreen(){
    })()}
   ]);
  };
+ if (params.group) {
+   const group = challengeGroups(gallery.data?.badges ?? []).find(item => item.id === params.group);
+   return <AchievementPage title="도전 상세">
+     {gallery.error ? <><AppText accessibilityRole="alert">{gallery.error}</AppText><Button label="다시 확인" onPress={gallery.retry}/></> :
+       !gallery.data ? <ActivityIndicator accessibilityLabel="도전 불러오는 중"/> :
+       group ? <ChallengeGoals group={group}/> : <AppText>찾을 수 없는 도전이에요.</AppText>}
+   </AchievementPage>;
+ }
  return <AchievementPage title={challenge?'도전 상세':'뱃지 상세'}>
   {!gallery.data&&!gallery.error&&<ActivityIndicator accessibilityLabel="뱃지 상세 불러오는 중"/>}
   {!!(gallery.error||error)&&<AppText accessibilityRole="alert">{gallery.error||error}</AppText>}
@@ -72,9 +82,6 @@ export default function BadgeDetailScreen(){
      {icon&&<GenerationIcon name={icon.id} color={done?c.selected:c.outline}/>}<AppText weight="bold" style={{flex:1,fontSize:16,color:done?c.text:c.subtle}}>{courseShapes[shape as keyof typeof courseShapes]} 코스</AppText><View style={{borderRadius:12,backgroundColor:done?c.selected:c.subtle,paddingHorizontal:10,paddingVertical:3}}><AppText weight="bold" style={{fontSize:10,lineHeight:14,color:'#FFF'}}>{done?'완주':'미완주'}</AppText></View>
     </View>;})}
    </View>}
-   {challenge&&milestone&&<View style={{gap:16}}>{gallery.data?.badges.filter(b=>b.definition.kind===d.kind).map(item=><Pressable key={item.definition.id} accessibilityRole="button" disabled={!item.earned} onPress={()=>router.push({pathname:'/badge-detail',params:{id:item.definition.id}})} style={{minHeight:80,padding:12,gap:14,alignItems:'center',flexDirection:'row',borderRadius:20,backgroundColor:c.surface,boxShadow:'0px 0px 5px rgba(0,0,0,.15)'}}>
-    <BadgeImage id={item.definition.id} size={60} earned={item.earned}/><AppText weight="bold" style={{flex:1,fontSize:16,color:item.earned?c.text:c.subtle}}>{item.definition.title} {item.definition.accent}</AppText><View style={{borderRadius:12,backgroundColor:item.earned?c.selected:c.subtle,paddingHorizontal:10,paddingVertical:3}}><AppText weight="bold" style={{fontSize:10,lineHeight:14,color:'#FFF'}}>{item.earned?'완료':'미완료'}</AppText></View>
-   </Pressable>)}</View>}
    {!milestone&&evidence.map(run=><BadgeRunCard key={run.id} run={run}/>)}
    {challenge&&!evidence.length&&<Button variant="outline" label="코스 생성하기" onPress={()=>openServiceTab('/route-lab')}/>}
    <View style={{flex:1,minHeight:24}}/>
