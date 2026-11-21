@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { ActivityIndicator } from 'react-native';
 import * as Crypto from 'expo-crypto';
-import { AppText, Button, SelectField, TextField } from '@/components/ui';
+import { AppText, Button, SelectField } from '@/components/ui';
 import { accountSecureStorage, authentication } from '@/modules/auth/runtime';
 import { createInquiryController } from '@/modules/support/inquiry';
 import { inquiryCategories, inquiryError, type Inquiry, type InquiryInput } from '@/modules/support/model';
 import { SupportArt } from './SupportArt';
+import { SupportTextField } from './SupportPage';
 import { inquiryRemote } from './use-inquiry-resource';
 
 const empty: InquiryInput = { category: '사용 방법', title: '', body: '' };
 function Fields({ value, locked, onChange }: { value: InquiryInput; locked: boolean; onChange(value: InquiryInput): void }) {
   return <>
     <SelectField label="문의 유형" testID="inquiry-category" value={value.category} disabled={locked} options={inquiryCategories.map(category => ({ value: category, label: category }))} onChange={category => onChange({ ...value, category: category as InquiryInput['category'] })} />
-    <TextField label="제목" testID="inquiry-title" value={value.title} onChangeText={title => onChange({ ...value, title })} editable={!locked} maxLength={200} placeholder="제목을 입력해 주세요" hint="1~100자" />
-    <TextField label="내용" testID="inquiry-body" value={value.body} onChangeText={body => onChange({ ...value, body })} editable={!locked} maxLength={10000} multiline style={{ minHeight: 180 }} placeholder="문의 내용을 입력해 주세요" hint="1~5,000자 · 비밀번호나 불필요한 개인정보는 적지 마세요." />
+    <SupportTextField label="제목" testID="inquiry-title" value={value.title} onChangeText={title => onChange({ ...value, title })} editable={!locked} maxLength={200} placeholder="제목을 입력해 주세요" hint="1~100자" />
+    <SupportTextField label="내용" testID="inquiry-body" value={value.body} onChangeText={body => onChange({ ...value, body })} editable={!locked} maxLength={10000} multiline placeholder="문의 내용을 입력해 주세요" hint="1~5,000자 · 비밀번호나 불필요한 개인정보는 적지 마세요." />
   </>;
 }
 export function InquiryForm({ owner, onSubmitted }: { owner: string; onSubmitted(id: string): void }) {

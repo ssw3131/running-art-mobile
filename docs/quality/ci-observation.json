@@ -3,15 +3,42 @@
   "repository": "ssw3131/running-art-mobile",
   "since": "2026-11-09T05:35:46Z",
   "targetPrCount": 20,
-  "failures": [{
-    "runId": 42569253461,
-    "attempt": 1,
-    "category": "test-contract",
-    "evidence": "수동227 visual 비교 실패: 새 계정0/5·0/15와 검토 기준1/5·1/15 차이. 원본 아티팩트13652593886, 실행 기록2026-11-09-1435-ci-feedback의15:13 이미지 대조. 앱 실행/정리는 통과; 단독 서버 fixture 의존 보완."
-  }],
-  "postMergeReviews": [{
-    "pr": 55,
-    "evidence": "2026-11-09 16:09 KST: main190d898의235(42577221796) 동일 트리 재사용·게이트와 Observe1(42577280953)의 회차 보존/누적 보고서를 원본 아티팩트로 확인. 검토 범위는 CI 동작이며 운영 제품·휴대폰의 사후 회귀를 확인한 것은 아님.",
-    "regressions": []
-  }]
+  "failures": [
+    {
+      "runId": 42569253461,
+      "attempt": 1,
+      "category": "test-contract",
+      "evidence": "수동227 visual 비교 실패: 새 계정0/5·0/15와 검토 기준1/5·1/15 차이. 원본 아티팩트13652593886, 실행 기록2026-11-09-1435-ci-feedback의15:13 이미지 대조. 앱 실행/정리는 통과; 단독 서버 fixture 의존 보완."
+    },
+    {
+      "runId": 44860357256,
+      "attempt": 1,
+      "category": "test-contract",
+      "evidence": "PR80 첫 전체 Android29/36: 제목 경계 통과 뒤 QA가 키보드 아래 본문 좌표를 탭해 제목에 g가 입력되고 본문 포커스 단언 실패. 원본 PNG/XML/IME로 확인하고 실제 IME 안에서 탐색하도록 보완. docs/quality/inquiry-keyboard-20261121.md; 실제 높이·포커스 단언 유지."
+    },
+    {
+      "runId": 44862807289,
+      "attempt": 1,
+      "category": "test-contract",
+      "evidence": "PR80 문의 단독 진단: 작성/수정/새 문의 6개 경계·CRUD 통과 후 큰 글씨 화면 밖 제목의 단순 노드 대기 실패. inquiry-wait-inquiry-title 원본은 양식/유형이 정상 표시됨을 확인. 문의 유형 준비 뒤 제목까지 기존 스크롤 탐색으로 보완; 기한·단언 유지. docs/quality/inquiry-keyboard-20261121.md."
+    },
+    {
+      "runId": 44866420129,
+      "attempt": 1,
+      "category": "environment",
+      "evidence": "Android36 job136731094981의 부팅 완료 후 앱 설치 이전 q.adb(root)에서 adb: unable to connect for root: closed. 기능 검사/report 시작 전 ADB 전송 종료이며 backend/TLS 정리 통과. 원본 job 로그와 482바이트 index-only 아티팩트14692871142를 대조. 더 깊은 연결 종료 원인은 미확정. Android29/fast/API 성공은 유지하고 같은 소스 Android36만 1회 재실행. docs/quality/inquiry-keyboard-20261121.md."
+    }
+  ],
+  "postMergeReviews": [
+    {
+      "pr": 55,
+      "evidence": "2026-11-09 16:09 KST: main190d898의235(42577221796) 동일 트리 재사용·게이트와 Observe1(42577280953)의 회차 보존/누적 보고서를 원본 아티팩트로 확인. 검토 범위는 CI 동작이며 운영 제품·휴대폰의 사후 회귀를 확인한 것은 아님.",
+      "regressions": []
+    },
+    {
+      "pr": 80,
+      "evidence": "2026-11-21T14:45:25+09:00: main b5acbc7/44872163519의 동일 tree 재사용 receipt와 필수 게이트를 다운로드 원본으로 확인. 최종 PR44866420129의 Android29 7/36 15단계·키보드 경계 원본·기존 정적4화면 차이0·자료 보존/정리, APK 제품 소스/서명/해시 대조 범위다. 실제 삼성 기기 설치나 앱 전체 사후 무결함을 확인한 것은 아니다. docs/quality/inquiry-keyboard-20261121.md.",
+      "regressions": []
+    }
+  ]
 }

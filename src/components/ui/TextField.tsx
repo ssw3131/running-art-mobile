@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode, type Ref } from 'react';
 import { Pressable, TextInput, View, type TextInputProps } from 'react-native';
 import { fonts, radius, size, type FontFamily } from '@/theme/tokens';
 import { useThemeColors } from '@/theme/ThemeProvider';
@@ -6,14 +6,14 @@ import { AppText } from './AppText';
 
 export type TextFieldProps = Omit<TextInputProps, 'value' | 'defaultValue' | 'onChangeText'> & {
   label: string; value: string; onChangeText(value: string): void; error?: string; hint?: string; family?: FontFamily;
-  labelContent?: ReactNode; clearable?: boolean;
+  labelContent?: ReactNode; clearable?: boolean; inputRef?: Ref<TextInput>;
 };
-export function TextField({ label, labelContent, clearable = false, value, onChangeText, error, hint, family = 'noto', style, editable = true, onFocus, onBlur, ...props }: TextFieldProps) {
+export function TextField({ label, labelContent, clearable = false, value, onChangeText, error, hint, family = 'noto', style, editable = true, onFocus, onBlur, inputRef, ...props }: TextFieldProps) {
   const c = useThemeColors(); const id = useId(); const [focused, setFocused] = useState(false);
   return <View style={{ gap: labelContent ? 15 : 8 }}>
     <AppText nativeID={id} variant="label" weight="medium">{labelContent ?? label}</AppText>
     <View>
-    <TextInput {...props} value={value} onChangeText={onChangeText} editable={editable}
+    <TextInput {...props} ref={inputRef} value={value} onChangeText={onChangeText} editable={editable}
       accessibilityLabel={props.accessibilityLabel ?? label} accessibilityHint={error ?? hint ?? props.accessibilityHint} accessibilityLabelledBy={id}
       accessibilityState={{ disabled: !editable }} placeholderTextColor={c.placeholder} selectionColor={c.selected}
       onFocus={e => { setFocused(true); onFocus?.(e); }} onBlur={e => { setFocused(false); onBlur?.(e); }}

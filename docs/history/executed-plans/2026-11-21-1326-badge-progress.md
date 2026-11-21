@@ -56,3 +56,4 @@
 - 2026-11-21T14:43:11+09:00 첫 [전체 검사](https://github.com/ssw3131/running-art-mobile/actions/runs/44868633379)에서 Android 36의 15개 시나리오, 자료 보존 및 뒤로가기 두 단계가 통과했다. 360dp 변주 카드 위치는 진입 전과 복귀 후 모두 [96,1242][984,1572]px였다. [원본 캡처](https://github.com/ssw3131/running-art-mobile/actions/runs/44868633379/artifacts/14693778193)
 - 같은 캡처에서 크기가 다른 텍스트를 중첩한 배너의 36sp 숫자가 높이 24dp로 잘렸다. 숫자와 단위를 별도 텍스트로 배치하고, 360dp 카드의 가로 여백과 탭 상단·배너 간격을 조정했다. Android 검사에 숫자 표시 높이를 추가했다.
 - 첫 Android 29는 가입 후 홈 전환에서 16MiB Java 힙 한도에 도달해 종료됐다. 원본 로그에 Glide의 이미지 디코딩 중 메모리 부족이 남았고 앱 대신 Android 런처가 캡처됐다. 직전 성공 실행과 비교한 에뮬레이터 버전 및 설정은 같았다. [첫 실패 산출물](https://github.com/ssw3131/running-art-mobile/actions/runs/44868633379/artifacts/14693735912)
+- 같은 커밋으로 Android 29 작업만 1회 재실행해 [가입·배지와 필수 검사 통과](https://github.com/ssw3131/running-art-mobile/actions/runs/44868633379/attempts/2)를 확인했다. 초기 메모리 부족은 이 재실행에서 재현되지 않았다. 배너 보완본에는 최신 main의 문의 키보드 수정과 검사를 함께 보존했다.
