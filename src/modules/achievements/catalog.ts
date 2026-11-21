@@ -18,11 +18,13 @@ export type BadgeProgress={definition:BadgeDefinition;progress:number;earned:boo
 /** Rebuilt from owned records, including after deletion/restore. No separately mutable badge flags. */
 export function badgeProgress(records:readonly BadgeRecord[]):BadgeProgress[]{
   const unique=[...new Map(records.filter(r=>r.status==='completed').map(r=>[r.id,r])).values()].sort((a,b)=>a.startedAt-b.startedAt||a.id.localeCompare(b.id));
+  const byCompletion = [...unique].sort((a,b)=>(a.endedAt ?? a.startedAt)-(b.endedAt ?? b.startedAt) || a.id.localeCompare(b.id));
   const finished=unique.filter(r=>r.courseId&&r.courseOutcome==='finished');
   return badgeCatalog.map(definition=>{
     let progress=0,evidence:BadgeRecord[]=[],completedShapes:string[]=[];
-    if(definition.kind==='distance'||definition.kind==='time'){
-      for(const run of unique){const value=Math.max(0,definition.kind==='distance'?run.distanceM:run.activeMs);if(progress<definition.goal&&value>0)evidence.push(run);progress+=value;}
+    const cumulative = definition.kind === 'distance' || definition.kind === 'time';
+    if(cumulative){
+      for(const run of byCompletion){const activity=run.credited ?? run;const value=Math.max(0,definition.kind==='distance'?activity.distanceM:activity.activeMs);if(progress<definition.goal&&value>0)evidence.push(run);progress+=value;}
     }else if(['shape','collection','category'].includes(definition.kind)){
       const seen=new Set<string>();
       for(const run of finished){if(!run.shape||!definition.shapes?.includes(run.shape))continue;
@@ -44,6 +46,8 @@ export function badgeProgress(records:readonly BadgeRecord[]):BadgeProgress[]{
       progress=best.length;evidence=best.slice(0,definition.goal);
     }
     const earned=progress>=definition.goal;
-    return {definition,progress,earned,earnedAt:earned?evidence.at(-1)?.startedAt??null:null,runIds:evidence.map(run=>run.id),completedShapes};
+    const last = earned ? evidence.at(-1) : undefined;
+    const earnedAt = (cumulative ? last?.endedAt ?? last?.startedAt : last?.startedAt) ?? null;
+    return {definition,progress,earned,earnedAt,runIds:evidence.map(run=>run.id),completedShapes};
   });
 }

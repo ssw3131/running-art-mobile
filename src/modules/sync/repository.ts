@@ -4,6 +4,7 @@ import { summaryColumns } from '../courses/repository.ts';
 import { decodeSnapshot, encodeSnapshot, type CourseSummary } from '../courses/model.ts';
 import { columns as runColumns, pointColumns } from '../running/repository.ts';
 import type { Run, RunPoint } from '../running/model.ts';
+import { readActivityHistory, repairActivityHistories, writeActivityHistory } from '../running/activity-history.ts';
 import { guidanceColumns, readRunGuidance, type GuidanceRow } from '../running/guidance.ts';
 import { requireOwner, type OwnerScope } from './ownership.ts';
 import { decodePayload, tableFor, SyncError, type PendingRecord, type RecordKind, type RemoteRecord } from './model.ts';
@@ -22,6 +23,16 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
       requireOwner(scope, owner);
     });
     return result;
+  }
+  async function runPayload(tx: SqlExecutor, owner: string, summary: Run) {
+    const points = await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`, summary.id);
+    if (!summary.courseId) return JSON.stringify(points);
+    const saved = readRunGuidance((await tx.getFirstAsync<GuidanceRow>(
+      `SELECT ${guidanceColumns} FROM running_sessions WHERE id=? AND owner_id=?`, summary.id, owner))!);
+    if (!saved) throw new SyncError('코스 기록의 사본을 확인하지 못했어요.');
+    const history = await readActivityHistory(tx, summary.id, owner);
+    return JSON.stringify({schemaVersion:2,points,course:saved.course,outcome:summary.courseOutcome,
+      ...(history ? {activityHistory:history} : {})});
   }
   async function local(tx: SqlExecutor, owner: string, kind: RecordKind, id: string): Promise<Metadata | null> {
     return tx.getFirstAsync<Metadata>(`SELECT ${meta} FROM ${tableFor(kind)} WHERE owner_id=? AND id=?`, owner, id);
@@ -42,6 +53,7 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
       await tx.runAsync(`DELETE FROM ${tableFor(kind)} WHERE id=? AND owner_id=?`, id, owner);
     } else {
       if (payload === null) throw new SyncError('복원할 경로 파일이 없어요.');
+      let repairedCourse: string | null = null;
       const decoded = decodePayload(remote, payload);
       if (decoded.kind === 'course') {
         const s = remote.summary as CourseSummary;
@@ -54,6 +66,14 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
         const s = remote.summary as Run;
         const active = await tx.getFirstAsync<{ status: string }>('SELECT status FROM running_sessions WHERE id=?', id);
         if (active && active.status !== 'completed') throw new SyncError('진행 중인 러닝은 서버 기록으로 바꿀 수 없어요.');
+        const encoded = decoded.course ? encodeSnapshot(decoded.course.snapshot) : null;
+        if (!decoded.history && active) {
+          // An older backup may omit ancestry for an otherwise identical record.
+          await tx.runAsync(`DELETE FROM run_activity_history WHERE run_id=? AND EXISTS (
+            SELECT 1 FROM running_sessions WHERE id=? AND (course_snapshot_hash IS NOT ? OR
+              started_at<>? OR distance_m<>? OR active_ms<>? OR point_count<>?))`,
+            id,id,encoded?.hash ?? null,s.startedAt,s.distanceM,s.activeMs,s.pointCount);
+        }
         await tx.runAsync(`INSERT INTO running_sessions(id,status,started_at,ended_at,active_ms,checkpoint_at,resumed_at,distance_m,point_count,
           rejected_count,last_timestamp,segment,break_pending,reason,owner_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
           ON CONFLICT(id) DO UPDATE SET status=excluded.status,started_at=excluded.started_at,ended_at=excluded.ended_at,
@@ -61,13 +81,15 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
           point_count=excluded.point_count,rejected_count=excluded.rejected_count,last_timestamp=excluded.last_timestamp,
           segment=excluded.segment,break_pending=excluded.break_pending,reason=excluded.reason`,
         id,s.status,s.startedAt,s.endedAt,s.activeMs,s.checkpointAt,s.resumedAt,s.distanceM,s.pointCount,s.rejectedCount,s.lastTimestamp,s.segment,s.breakPending,s.reason,owner);
-        const encoded = decoded.course ? encodeSnapshot(decoded.course.snapshot) : null;
+        repairedCourse = encoded?.hash ?? null;
+        if (decoded.history) await writeActivityHistory(tx, id, decoded.history);
         await tx.runAsync(`UPDATE running_sessions SET course_id=?,course_name=?,course_outcome=?,course_snapshot_json=?,course_snapshot_hash=?,guidance_json=NULL,guidance_options_json=NULL WHERE id=?`,
           decoded.course?.id ?? null, decoded.course?.name ?? null, s.courseOutcome ?? null, encoded?.json ?? null, encoded?.hash ?? null, id);
         await tx.runAsync('DELETE FROM running_points WHERE run_id=?', id);
         for (const p of decoded.points) await tx.runAsync('INSERT INTO running_points(run_id,sequence,segment,timestamp,latitude,longitude,accuracy) VALUES(?,?,?,?,?,?,?)', id,p.sequence,p.segment,p.timestamp,p.latitude,p.longitude,p.accuracy);
       }
       await tx.runAsync(`UPDATE ${tableFor(kind)} SET remote_version=?,dirty=0,mutation_id=? WHERE id=? AND owner_id=?`, remote.version,remote.mutation_id,id,owner);
+      if (repairedCourse) await repairActivityHistories(tx,owner,repairedCourse);
     }
     await tx.runAsync('DELETE FROM sync_deletions WHERE owner_id=? AND kind=? AND id=?', owner,kind,id);
     await tx.runAsync('DELETE FROM sync_conflicts WHERE owner_id=? AND kind=? AND id=?', owner,kind,id);
@@ -97,9 +119,7 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
       if(!item)throw new SyncError('공유할 완주 기록을 찾을 수 없어요.');
       if(await tx.getFirstAsync("SELECT id FROM sync_conflicts WHERE owner_id=? AND kind='run' AND id=?",owner,id))throw new SyncError('이 기록의 동기화 충돌을 먼저 확인해 주세요.');
       const summary=(await tx.getFirstAsync<Run>(`SELECT ${runColumns} FROM running_sessions WHERE owner_id=? AND id=?`,owner,id))!;
-      const points=await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`,id);
-      const saved=summary.courseId?readRunGuidance((await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`,id))!):null;
-      const payload=JSON.stringify(saved?{schemaVersion:2,points,course:saved.course,outcome:summary.courseOutcome}:points);
+      const payload = await runPayload(tx,owner,summary);
       return {kind:'run',id,remoteVersion:item.remoteVersion,mutationId:item.mutationId,dirty:item.dirty,deleted:false,summary,payload};
     }),
     pending: async (owner: string): Promise<PendingRecord[]> => transaction(owner, async tx => {
@@ -116,9 +136,7 @@ export function createSyncRepository(database: StorageDatabase, scope: OwnerScop
             decodeSnapshot(snapshot_json,snapshot_hash); summary=rest; payload=snapshot_json;
           } else {
             summary = (await tx.getFirstAsync<Run>(`SELECT ${runColumns} FROM running_sessions WHERE id=?`, item.id))!;
-            const points = await tx.getAllAsync<RunPoint>(`SELECT ${pointColumns} FROM running_points WHERE run_id=? ORDER BY sequence`, item.id);
-            const saved = summary.courseId ? readRunGuidance((await tx.getFirstAsync<GuidanceRow>(`SELECT ${guidanceColumns} FROM running_sessions WHERE id=?`, item.id))!) : null;
-            payload = JSON.stringify(saved ? { schemaVersion: 2, points, course: saved.course, outcome: summary.courseOutcome } : points);
+            payload = await runPayload(tx,owner,summary);
           }
           rows.push({ kind,id:item.id,remoteVersion:item.remoteVersion,mutationId:item.mutationId,deleted:false,summary,payload });
         }

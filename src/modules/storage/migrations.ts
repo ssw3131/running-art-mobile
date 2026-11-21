@@ -3,7 +3,14 @@ import { personalSyncMigration } from '../sync/schema.ts';
 import { runningGuidanceMigration } from '../running/guidance-schema.ts';
 import { accountMigration } from '../account/schema.ts';
 import { withdrawalMigration } from '../account/withdrawal-repository.ts';
+import { repairActivityHistories } from '../running/activity-history.ts';
 
+const activityMigration = `CREATE TABLE run_activity_history (
+    run_id TEXT PRIMARY KEY NOT NULL REFERENCES running_sessions(id) ON DELETE CASCADE,
+    history TEXT NOT NULL);
+  CREATE TRIGGER run_activity_started AFTER INSERT ON running_sessions WHEN NEW.status='running'
+    BEGIN INSERT INTO run_activity_history(run_id,history) VALUES(NEW.id,'{"ancestors":[]}'); END;
+  CREATE INDEX run_activity_course ON running_sessions(owner_id,course_snapshot_hash) WHERE course_snapshot_hash IS NOT NULL;`;
 export const DATABASE_NAME = 'running-art.db';
 
 // Append new migrations; never rewrite an already released migration.
@@ -58,6 +65,7 @@ export const migrations: readonly string[] = [
    CREATE TABLE usage_generation_pending(owner_id TEXT PRIMARY KEY NOT NULL,id TEXT NOT NULL,request_json TEXT NOT NULL,result_json TEXT);`,
   `CREATE TABLE achievement_regions(run_id TEXT PRIMARY KEY NOT NULL REFERENCES running_sessions(id) ON DELETE CASCADE,
     owner_id TEXT NOT NULL,region TEXT NOT NULL CHECK(length(region) BETWEEN 1 AND 300));`,
+  activityMigration,
 ];
 
 export const SCHEMA_VERSION = migrations.length;
@@ -74,6 +82,11 @@ export async function migrateDatabase(db: StorageDatabase, steps: readonly strin
     }
     for (let index = row.user_version; index < steps.length; index++) {
       await transaction.execAsync(steps[index]);
+      if (steps[index] === activityMigration) {
+        const courses = await transaction.getAllAsync<{owner: string; hash: string}>(
+          'SELECT DISTINCT owner_id AS owner,course_snapshot_hash AS hash FROM running_sessions WHERE course_snapshot_hash IS NOT NULL');
+        for (const course of courses) await repairActivityHistories(transaction, course.owner, course.hash);
+      }
       // Version comes only from the migration array, never from user input.
       await transaction.execAsync(`PRAGMA user_version = ${index + 1}`);
     }

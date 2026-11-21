@@ -27,17 +27,48 @@ test('the entire gallery starts gray and disabled; earned badges alone navigate 
  expect(screen.getByTestId('gallery-badge-heart')).toBeEnabled();expect(screen.getByTestId('gallery-badge-star')).toBeDisabled();
  await fireEvent.press(screen.getByTestId('gallery-badge-heart'));expect(mockPush).toHaveBeenCalledWith({pathname:'/badge-detail',params:{id:'heart'}});
 });
-test('challenge tab opens pending goals separately from the disabled earned gallery',async()=>{
- await render(<BadgeGalleryScreen/>);await fireEvent.press(screen.getByTestId('badge-tab-challenges'));
- expect(screen.getByTestId('badge-challenges')).toBeVisible();
- await fireEvent.press(screen.getByTestId('challenge-animals'));
- expect(mockPush).toHaveBeenCalledWith({pathname:'/badge-detail',params:{id:'animals',challenge:'1'}});
+test('empty challenge tab keeps all six groups and opens category goals before the individual challenge',async()=>{
+ const view=await render(<BadgeGalleryScreen/>);await fireEvent.press(screen.getByTestId('badge-tab-challenges'));
+ expect(screen.getAllByTestId(/^challenge-group-/)).toHaveLength(6);
+ expect(screen.getByLabelText('현재 도전 0개 진행 중')).toBeVisible();
+ expect(screen.getByTestId('badge-banner-count')).toHaveTextContent(/^0$/);
+ await fireEvent.press(screen.getByTestId('challenge-group-category'));
+ expect(mockPush).toHaveBeenLastCalledWith({pathname:'/badge-detail',params:{group:'category'}});
+ mockParams={group:'category'};await view.rerender(<BadgeDetailScreen/>);
+ expect(screen.getAllByTestId(/^challenge-goal-/)).toHaveLength(3);
+ await fireEvent.press(screen.getByTestId('challenge-goal-animals'));
+ expect(mockPush).toHaveBeenLastCalledWith({pathname:'/badge-detail',params:{id:'animals',challenge:'1'}});
+});
+test('group progress counts earned goals and the repeat detail counts completed attempts',async()=>{
+ mockData=data([record('a',{distanceM:25000}),record('b',{distanceM:25000})]); mockParams={view:'challenges'};
+ const view=await render(<BadgeGalleryScreen/>);
+ expect(screen.getByRole('button',{name:'누적 거리 달성, 4종 중 2종 달성'})).toBeVisible();
+ expect(screen.getByRole('button',{name:'동일 코스 반복 완주, 1종 중 0종 달성'})).toBeVisible();
+ await fireEvent.press(screen.getByTestId('challenge-group-repeat'));
+ expect(mockPush).toHaveBeenLastCalledWith({pathname:'/badge-detail',params:{id:'repeat-5',challenge:'1'}});
+ mockParams={id:'repeat-5',challenge:'1'};await view.rerender(<BadgeDetailScreen/>);
+ expect(screen.getByRole('progressbar').props.accessibilityValue).toEqual({min:0,max:5,now:2});
+ expect(screen.getAllByTestId(/^badge-record-/)).toHaveLength(2);
+});
+test('distance group shows the current total, four stages and the achieved badge detail',async()=>{
+ mockData=data([record('a',{distanceM:50000})]);mockParams={group:'distance'};
+ const view=await render(<BadgeDetailScreen/>);
+ expect(screen.getByText('러닝 누적 거리 해당 킬로수 달성')).toBeVisible();
+ expect(screen.getByRole('progressbar').props.accessibilityValue.now).toBe(50);
+ expect(screen.getAllByText('완료')).toHaveLength(2);expect(screen.getAllByText('미완료')).toHaveLength(2);
+ await fireEvent.press(screen.getByTestId('challenge-goal-distance-100'));
+ expect(mockPush).toHaveBeenLastCalledWith({pathname:'/badge-detail',params:{id:'distance-100',challenge:'1'}});
+ await fireEvent.press(screen.getByTestId('challenge-goal-distance-50'));
+ expect(mockPush).toHaveBeenLastCalledWith({pathname:'/badge-detail',params:{id:'distance-50'}});
+ mockParams={id:'distance-50'};await view.rerender(<BadgeDetailScreen/>);
+ expect(screen.getByTestId('badge-share')).toBeVisible();
+ expect(screen.getByText('활동 거리가 누적 50km에 도달')).toBeVisible();
 });
 test('pending category details show actual finished shapes and never expose earned sharing',async()=>{
- mockParams={id:'animals',challenge:'1'};mockData=data([record('1',{shape:'fish'}),record('2',{shape:'whale'})]);
+ mockParams={id:'animals',challenge:'1'};mockData=data([record('1',{shape:'fish'}),record('2',{shape:'whale'}),record('3',{shape:'turtle'})]);
  await render(<BadgeDetailScreen/>);
- expect(screen.getByRole('progressbar').props.accessibilityValue).toEqual({min:0,max:5,now:2});
- expect(screen.getAllByText('완주')).toHaveLength(2);expect(screen.getAllByText('미완주')).toHaveLength(3);
+ expect(screen.getByRole('progressbar').props.accessibilityValue).toEqual({min:0,max:5,now:3});
+ expect(screen.getAllByText('완주')).toHaveLength(3);expect(screen.getAllByText('미완주')).toHaveLength(2);
  expect(screen.queryByTestId('badge-share')).toBeNull();expect(mockRemove).not.toHaveBeenCalled();
 });
 test('an earned badge deletion requires an explicit record selection and destructive confirmation',async()=>{

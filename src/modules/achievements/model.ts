@@ -1,8 +1,9 @@
 import { achievementAwards, type Award } from './awards.ts';
+import type { ActivityCredit } from '../running/activity-history.ts';
 import type { Run } from '../running/model.ts';
 import { courseShapes } from '../courses/model.ts';
 
-export type AchievementRun = Pick<Run, 'id' | 'status' | 'startedAt' | 'distanceM' | 'activeMs' | 'courseId' | 'courseOutcome'> & { shape: string | null; targetKm?:number|null; region?:string|null; courseHash?:string|null };
+export type AchievementRun = Pick<Run, 'id' | 'status' | 'startedAt' | 'distanceM' | 'activeMs' | 'courseId' | 'courseOutcome'> & { endedAt?: number | null; credited?: ActivityCredit; shape: string | null; targetKm?:number|null; region?:string|null; courseHash?:string|null };
 export type ShapeBadge = { id: string; shape: string; count: number; firstRunId: string; firstAt: number; latestAt: number };
 export type Achievements = { runs: number; finishedCourses: number; distanceM: number; activeMs: number; currentStreak: number; longestStreak: number; activeDays: number; badges: ShapeBadge[]; awards?:Award[] };
 
@@ -22,7 +23,7 @@ export function summarizeAchievements(records: readonly AchievementRun[], now = 
     if (seen.has(run.id) || run.status !== 'completed') continue;
     seen.add(run.id);
     if (![run.distanceM, run.activeMs, run.startedAt].every(Number.isFinite) || run.distanceM < 0 || run.activeMs < 0) throw new Error('Invalid achievement record');
-    result.runs++; result.distanceM += run.distanceM; result.activeMs += run.activeMs;
+    result.runs++; result.distanceM += (run.credited ?? run).distanceM; result.activeMs += (run.credited ?? run).activeMs;
     const day = calendarDay(run.startedAt);
     if (run.distanceM > 0 && day <= today) days.add(day);
     if (run.courseOutcome !== 'finished') continue;

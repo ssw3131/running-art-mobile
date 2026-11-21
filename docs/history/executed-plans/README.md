@@ -1,5 +1,7 @@
 # 실제 실행한 계획 모음
 
+- [2026-11-21 배지 지급과 도전 중 화면 수정](2026-11-21-1326-badge-progress.md) — 로컬 빠른 검사 7단계·Android 번들 통과. Android 29·36과 360dp 검증은 [PR #81](https://github.com/ssw3131/running-art-mobile/pull/81)에서 확인
+
 - [2026-11-21 문의 입력칸 키보드 가림 수정](2026-11-21-1201-inquiry-keyboard.md) — 완료, PR80/main b5acbc7·Android29/36 전체/동일 tree main 검사 통과·preview217394294 업로드; 실제 삼성 기기 재검증 후속
 
 - [2026-11-21 A7 문의 게시판 실기기 검증](2026-11-21-1031-inquiry-phone.md) — 검증 완료, preview217384297 자료 유지·실제 접수/수정/삭제/답변/재시작 확인; 삼성 키보드 제목 가림 미수정·답변 QA1건 유지, 기존 SM-S942N 설치 기록과 함께 커밋

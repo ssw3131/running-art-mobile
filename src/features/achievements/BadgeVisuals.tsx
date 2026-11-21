@@ -4,10 +4,10 @@ import { AppText } from '@/components/ui';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { BadgeImage } from './BadgeImage';
 import type { BadgeProgress } from '@/modules/achievements/catalog';
-export function BadgeHero({badge,celebrate=true,challenge=false,onReady}:{badge:BadgeProgress;celebrate?:boolean;challenge?:boolean;onReady?():void}){
+export function BadgeHero({badge,celebrate=true,challenge=false,groupGoal=false,onReady}:{badge:BadgeProgress;celebrate?:boolean;challenge?:boolean;groupGoal?:boolean;onReady?():void}){
  const c=useThemeColors(),d=badge.definition;
  return <View style={{alignItems:'center',gap:20}}>
-  <AppText weight="black" style={{fontSize:32,lineHeight:46,textAlign:'center',alignSelf:'stretch',flexShrink:1}}>{d.kind==='shape'||d.kind==='collection'?d.title+'\n':''}<AppText weight="black" style={{fontSize:32,lineHeight:46,color:c.selected}}>{d.kind==='shape'||d.kind==='collection'?d.accent:d.title}</AppText>{!['shape','collection'].includes(d.kind)&&!(challenge&&['distance','time'].includes(d.kind))?<>{'\n'}<AppText weight="black" style={{fontSize:32,lineHeight:46,color:challenge||d.kind==='category'?c.text:c.selected}}>{d.accent}</AppText></>:null}{' '+d.subtitle}</AppText>
+  <AppText weight="black" style={{fontSize:32,lineHeight:46,textAlign:'center',alignSelf:'stretch',flexShrink:1}}>{d.kind==='shape'||d.kind==='collection'?d.title+'\n':''}<AppText weight="black" style={{fontSize:32,lineHeight:46,color:c.selected}}>{d.kind==='shape'||d.kind==='collection'?d.accent:d.title}</AppText>{!['shape','collection'].includes(d.kind)&&!groupGoal?<>{'\n'}<AppText weight="black" style={{fontSize:32,lineHeight:46,color:challenge||d.kind==='category'?c.text:c.selected}}>{d.accent}</AppText></>:null}{' '+d.subtitle}</AppText>
   <View style={{width:'100%',height:206,alignItems:'center',justifyContent:'center'}}>
    {celebrate&&<Image source={require('../../../assets/achievements/confetti.png')} style={{position:'absolute',left:-24,right:-24,height:206}} contentFit="cover" accessible={false}/>}
    <BadgeImage id={d.id} size={170} onLoad={onReady}/>

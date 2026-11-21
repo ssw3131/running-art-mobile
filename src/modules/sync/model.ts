@@ -3,6 +3,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { strToU8 } from 'fflate';
 import { courseId, courseName, encodeSnapshot, type CourseSummary } from '../courses/model.ts';
 import { distanceMeters, type Run, type RunPoint } from '../running/model.ts';
+import { validActivityHistory, type ActivityHistory } from '../running/activity-history.ts';
 import { ownerId } from './ownership.ts';
 import { validateRunCourse, type RunCourse } from '../running/guidance.ts';
 
@@ -70,11 +71,16 @@ export function decodePayload(row: RemoteRecord, payload: string) {
   const run = row.summary as Run;
   validateRun(run);
   let course: RunCourse | null = null;
+  let history: ActivityHistory | null = null;
   if (!Array.isArray(parsed)) {
-    const envelope = parsed as { schemaVersion?: number; points?: unknown; course?: unknown; outcome?: unknown } | null;
+    const envelope = parsed as { schemaVersion?: number; points?: unknown; activityHistory?: unknown; course?: unknown; outcome?: unknown } | null;
     if (envelope?.schemaVersion !== 2 || !Array.isArray(envelope.points)) return fail();
     course = validateRunCourse(envelope.course);
     if (course.id !== run.courseId || course.name !== run.courseName || envelope.outcome !== run.courseOutcome) return fail();
+    if (envelope.activityHistory !== undefined) {
+      if (!validActivityHistory(envelope.activityHistory, run)) return fail();
+      history = envelope.activityHistory;
+    }
     parsed = envelope.points;
   } else if (run.courseId != null) return fail();
   if (!Array.isArray(parsed) || parsed.length !== run.pointCount) return fail();
@@ -90,5 +96,5 @@ export function decodePayload(row: RemoteRecord, payload: string) {
     return { sequence: p.sequence, segment: p.segment, timestamp: p.timestamp, latitude: p.latitude, longitude: p.longitude, accuracy: p.accuracy };
   });
   if (Math.abs(distance - run.distanceM) > Math.max(0.01, run.distanceM * 1e-9)) return fail();
-  return { kind: 'run' as const, points, course };
+  return { kind: 'run' as const, points, course, history };
 }
