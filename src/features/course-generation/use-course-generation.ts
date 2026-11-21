@@ -65,9 +65,11 @@ export function useCourseGeneration() {
     }).catch(() => undefined);
   }, [completed]);
   useFocusEffect(useCallback(() => {
+    const owner=authentication.getSnapshot().account?.id;
+    if(!owner)return;
     let current = true;
     void getStorage().then(db => db.usageJobs.read()).then(row => {
-      if (current) setPendingRequest(row ? parseComputeRequest(JSON.parse(row.request_json)) : null);
+      if (current && authentication.getSnapshot().account?.id===owner) setPendingRequest(row ? parseComputeRequest(JSON.parse(row.request_json)) : null);
     }).catch(() => undefined);
     return () => { current = false; };
   }, []));

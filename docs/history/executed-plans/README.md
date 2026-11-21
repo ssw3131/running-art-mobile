@@ -145,3 +145,5 @@ Codex는 AGENTS.md와 `$running-art-plan-record`로 시작·종료 시 이 절�
 - [2026-11-13-1834-running-preparation-sharing.md](2026-11-13-1834-running-preparation-sharing.md) — 완료(PR59·main 미병합): 준비 로딩·미완주 이어달리기·방향 음성/공유 후속, SM-A102N 설치.
 
 - [2026-11-13-2040-reported-running-sharing-fixes.md](2026-11-13-2040-reported-running-sharing-fixes.md) — 진행 중: 보고된 러닝/공유 미작동 재현·후속.
+
+- [2026-11-21-2157-guest-usage-course-ui.md](2026-11-21-2157-guest-usage-course-ui.md) — 구현·로컬 검증 완료: 게스트·횟수 안내·추천 UI, 컴포넌트276/관련 DB12·Android 번들·하단창 배치 확인. 별도 draft PR 등록, main 미반영.

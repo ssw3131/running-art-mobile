@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import { AppModal, AppText, Button } from '@/components/ui';
 import { useUsage } from '@/features/usage/use-usage';
+import { ExhaustedAllowanceSheet } from '@/features/usage/AllowanceSheets';
 import { courseShapes } from '@/modules/courses/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import type { GenerationConditions } from './model';
@@ -24,10 +25,11 @@ export function GenerationConfirmationSheet({ conditions, location, regenerating
   const c = useThemeColors(), usage = useUsage();
   const remaining = usage.data ? Math.max(0, usage.data.generation.total - usage.data.generation.used) : null;
   const dark = c.background !== '#FFFFFF';
+  if(conditions && remaining===0) return <ExhaustedAllowanceSheet visible kind="generation" data={usage.data} onClose={onClose} />;
   return <AppModal presentation="sheet" sheetHandle dismissOnBackdrop visible={!!conditions}
     title={regenerating ? '같은 조건으로 다시 생성할까요?' : '현재 설정으로 코스 생성할까요?'} onClose={onClose} returnFocusRef={returnFocusRef}
     contentContainerStyle={{ gap: 0 }} footer={<View style={{ gap: 6 }}>
-      <Button label="코스 생성하기" testID="generation-confirm" leading={<SheetIcon name="generate" />} disabled={remaining === 0} onPress={onConfirm} />
+      <Button label="코스 생성하기" testID="generation-confirm" leading={<SheetIcon name="generate" />} disabled={remaining === null || usage.loading || !!usage.error} onPress={onConfirm} />
       <Button label="취소" testID="generation-confirm-cancel" variant="secondary" contentStyle={{ backgroundColor: c.surface, minHeight: 50 }} labelStyle={{ fontSize: 16 }} onPress={onClose} />
     </View>}>
     <AppText style={[styles.subtitle, { color: c.subtle }]}>설정한 조건을 바탕으로 추천 코스 5개를 만들어요.</AppText>
@@ -53,6 +55,8 @@ export function GenerationConfirmationSheet({ conditions, location, regenerating
         <View style={styles.charge}><AppText style={{ fontSize: 10, lineHeight: 14, color: '#AB7C64' }}>코스 생성 1회 차감</AppText></View>
       </View>
       {remaining === 0 && <AppText accessibilityRole="alert" variant="caption" style={{ color: c.danger }}>사용 가능한 생성 횟수를 모두 사용했어요.</AppText>}
+      {remaining === null && !usage.error && <AppText accessibilityLiveRegion="polite">이용 횟수를 확인하고 있어요.</AppText>}
+      {!!usage.error && <AppText accessibilityRole="alert">{usage.error}</AppText>}
       {!!usage.error && <Button compact variant="outline" label="횟수 다시 확인" onPress={() => void usage.refresh()} />}
       <AppText style={[styles.notes, { color: c.muted }]}>{'· 코스는 1번 생성하면 최대 5개가 생성돼요.\n· 조건을 바꿔 다시 생성하면 이용 횟수가 추가로 차감돼요.\n· 생성에는 잠시 시간이 걸릴 수 있어요.'}</AppText>
     </View>}

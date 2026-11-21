@@ -21,7 +21,7 @@ import { CourseInformation, courseDuration } from './CourseInformation';
 import { GenerationIcon } from '@/features/course-generation/GenerationIcon';
 import { usePointAddress } from '@/features/course-generation/use-point-address';
 import { requestRegeneration } from '@/features/course-generation/regeneration-request';
-import { useTerrain } from '@/features/terrain/use-terrain';
+import { useSaveAllowance } from '@/features/usage/use-save-allowance';
 import MapSurface from '@/modules/map/MapSurface';
 import { mapStyleUrl } from '@/modules/map/config';
 import { openServiceTab } from '@/features/service/open-service-tab';
@@ -64,7 +64,6 @@ export default function CourseDetailScreen() {
   const draft=useMemo(()=>candidateDrafts.get(params.draft,owner||'guest'),[params.draft,owner]);
   const routeKey=JSON.stringify([params.id,params.runId,params.draft]);
   const current=data?.owner===owner&&data.routeKey===routeKey?data:null;
-  const terrain=useTerrain(current?.snapshot.source==='osm'?current.snapshot.route:undefined,true);
   const pointAddress=usePointAddress(current?.snapshot.origin);
   const overlay=useMemo(()=>current?savedCourseOverlay(current.snapshot):null,[current]);
   const refresh=useCallback(async()=>{
@@ -86,11 +85,11 @@ export default function CourseDetailScreen() {
     }catch(cause){if(ticket===revision.current)setError(cause instanceof Error?cause.message:'코스를 확인하지 못했어요.');}
   },[draft,owner,params.id,params.runId,routeKey]);
   useFocusEffect(useCallback(()=>{void refresh();return()=>{revision.current++;exporting.current?.abort();};},[refresh]));
-  async function mutate(task:(check:()=>void)=>Promise<void>) {
+  async function mutate(task:(check:()=>void)=>Promise<void>, propagate=false) {
     if(working.current||!current)return;working.current=true;setBusy(true);setError('');setNotice('');
     const ticket=revision.current,captured=owner;
     const check=()=>{if(ticket!==revision.current||(authentication.getSnapshot().account?.id??'')!==captured)throw new Error('계정이나 화면이 바뀌었어요. 다시 시도해 주세요.');};
-    try{check();await task(check);}catch(cause){if(ticket===revision.current)setError(courseErrorMessage(cause));}
+    try{check();await task(check);}catch(cause){if(ticket===revision.current)setError(courseErrorMessage(cause));if(propagate)throw cause;}
     finally{working.current=false;if(ticket===revision.current)setBusy(false);}
   }
   const ensureSaved=async(check:()=>void)=>{
@@ -100,7 +99,7 @@ export default function CourseDetailScreen() {
     setData({...current!,name,savedId:result.id});setEditing(false);
     return result.id;
   };
-  const save=()=>void mutate(async check=>{await ensureSaved(check);check();ToastAndroid.show('해당 코스가 코스 보관함에 저장 되었습니다.',ToastAndroid.LONG);});
+  const save=()=>mutate(async check=>{await ensureSaved(check);check();ToastAndroid.show('해당 코스가 코스 보관함에 저장 되었습니다.',ToastAndroid.LONG);},true);
   const rename=()=>void mutate(async check=>{
     if(current!.savedId){const db=await getStorage();check();await db.courses.rename(current!.savedId,name);check();}
     if(draft)candidateDrafts.edit(draft.id,owner,{name});setData({...current!,name});setEditing(false);
@@ -114,7 +113,7 @@ export default function CourseDetailScreen() {
       const db=await getStorage();check();await db.courses.remove(current!.savedId!);check();
       if(router.canGoBack())router.back();else router.replace({pathname:'/courses',params:{view:'courses'}});
     })}]);
-  const startRun=()=>void mutate(async check=>{
+  const startRun=()=>mutate(async check=>{
     const db=await getStorage();check();const active=await db.runs.active(),last=await db.courses.latestAttempt(current!.savedId,encodeSnapshot(current!.snapshot).hash);check();
     const next=courseContinuation(last,active?.id??null);
     if(next.action==='other-active'){Alert.alert('진행 중인 러닝이 있어요','먼저 현재 러닝을 재개하거나 종료해 주세요.',[{text:'취소',style:'cancel'},{text:'현재 러닝 보기',onPress:()=>openServiceTab('/run')}]);return;}
@@ -122,14 +121,14 @@ export default function CourseDetailScreen() {
     const savedId=await ensureSaved(check);check();
     const prepare=()=>openServiceTab({pathname:'/run',params:{courseId:savedId}});
     prepare();
-  });
+  },true);
   const openMap=()=>{
     if(!current)return;
     const id=candidateDrafts.put(current.snapshot,draft?.rank??0,owner);
     if(current.savedId)candidateDrafts.edit(id,owner,{savedId:current.savedId,name:current.name});
     router.push({pathname:'/course-map',params:{draft:id,target:showTarget?'1':'0'}});
   };
-  const openTerrain=()=>{if(!current)return;const id=candidateDrafts.put(current.snapshot,draft?.rank??0,owner);router.push({pathname:'/course-terrain',params:{draft:id}});};
+
   const resetGeneration=()=>Alert.alert('재설정 및 재생성하기','저장하지 않은 생성 코스는 삭제되고 코스 설정 페이지로 이동합니다.',[{text:'취소',style:'cancel'},{text:'확인',onPress:regenerate}]);
   const regenerate=()=>{if(!current)return;
     const snapshot=current.snapshot;
@@ -137,6 +136,7 @@ export default function CourseDetailScreen() {
     candidateDrafts.discardUnsaved(owner);
     openServiceTab({pathname:'/route-lab',params:{resetRequest:request}});
   };
+  const allowance=useSaveAllowance(current?.snapshot??null,!!current?.savedId,intent=>intent==='run'?startRun():save());
   const continuation=courseContinuation(current?.last??null,current?.activeId??null);
   return <KeyboardAvoidingView style={{flex:1,backgroundColor:c.background}} behavior={Platform.OS==='ios'?'padding':undefined}>
     <ScrollView ref={scrollRef} onContentSizeChange={()=>{if(Keyboard.isVisible())revealName();}} onScroll={event=>{scrollY.current=event.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} onLayout={()=>{if(Keyboard.isVisible())revealName();}} testID="course-detail" keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:30+keyboardInset,gap:24}}>
@@ -163,21 +163,22 @@ export default function CourseDetailScreen() {
             <View style={{flexDirection:'row',gap:16}}><View style={{flex:1,gap:5}}><AppText variant="body" style={{color:c.muted}}>전체 거리</AppText><AppText family="roboto" weight="black" style={{fontSize:28,lineHeight:34}}>{current.snapshot.lengthKm.toFixed(2)}<AppText variant="label"> km</AppText></AppText></View>
               <View style={{flex:1,gap:5}}><AppText variant="body" style={{color:c.muted}}>예상 러닝 시간</AppText><AppText family="roboto" weight="black" style={{fontSize:28,lineHeight:34}}>{courseDuration((estimatedRunningMinutes(current.snapshot.lengthKm)??0))}</AppText></View></View>
           </View>
-          <CourseInformation name={current.name} address={pointAddress.label} distance={current.snapshot.lengthKm} minutes={estimatedRunningMinutes(current.snapshot.lengthKm)??0} terrain={{kind:terrain.state.profile?'ready':terrain.state.status==='loading'?'loading':'error',profile:terrain.state.profile??undefined}} onEdit={()=>setEditing(value=>!value)} onTerrain={openTerrain} editor={editing?<View style={{gap:10}}><TextInput ref={renameInput} onFocus={focusName} accessibilityLabel="코스 이름" testID="course-rename-input" value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/><Button label="이름 적용" disabled={busy||!name.trim()} onPress={rename}/></View>:undefined}/>
+          <CourseInformation name={current.name} address={pointAddress.label} distance={current.snapshot.lengthKm} minutes={estimatedRunningMinutes(current.snapshot.lengthKm)??0} onEdit={()=>setEditing(value=>!value)} editor={editing?<View style={{gap:10}}><TextInput ref={renameInput} onFocus={focusName} accessibilityLabel="코스 이름" testID="course-rename-input" value={name} onChangeText={setName} maxLength={COURSE_NAME_MAX} editable={!busy} style={{minHeight:48,padding:12,borderWidth:1,borderColor:c.border,borderRadius:8,color:c.text}}/><Button label="이름 적용" disabled={busy||!name.trim()} onPress={rename}/></View>:undefined}/>
           {!!notice&&<AppText testID="course-save-notice" accessibilityLiveRegion="polite">{notice}</AppText>}
           {!!error&&<AppText testID="course-detail-error" accessibilityRole="alert" accessibilityLiveRegion="assertive" style={{color:c.danger}}>{error}</AppText>}
           <View style={{gap:10}}>
             <View style={{flexDirection:'row',gap:6}}>
-              <Button testID="course-save" variant="outline" label={current.savedId?'저장된 코스':'코스 저장하기'} disabled={busy} onPress={save} style={{flex:1}} contentStyle={{borderWidth:1}} labelStyle={{fontSize:16,color:c.muted}}/>
+              <Button testID="course-save" variant="outline" label={current.savedId?'저장된 코스':'코스 저장하기'} disabled={busy||allowance.busy} onPress={()=>allowance.request('save')} style={{flex:1}} contentStyle={{borderWidth:1}} labelStyle={{fontSize:16,color:c.muted}}/>
               <Button testID="course-export-gpx" variant="outline" label="GPX파일 다운" disabled={busy} onPress={exportGpx} style={{flex:1}} contentStyle={{borderWidth:1}} labelStyle={{fontSize:16,color:c.muted}}/>
             </View>
             <Button testID="course-reset" variant="secondary" label="재설정 및 재생성하기" disabled={busy} onPress={resetGeneration} labelStyle={{fontSize:16}}/>
-            <Button testID="course-run" label={continuation.unfinished?continuation.label:'실시간 러닝 시작하기'} leading={<GenerationIcon name="run"/>} disabled={busy} onPress={startRun}/>
+            <Button testID="course-run" label={continuation.unfinished?continuation.label:'실시간 러닝 시작하기'} leading={<GenerationIcon name="run"/>} disabled={busy||allowance.busy} onPress={()=>allowance.request('run')}/>
             {!!current.savedId&&<Pressable testID="course-delete" accessibilityRole="button" disabled={busy} onPress={remove} style={{minHeight:48,justifyContent:'center',alignItems:'center'}}><AppText variant="caption" style={{color:c.muted}}>코스 삭제하기</AppText></Pressable>}
           </View>
         </View>
       </>}
     </ScrollView>
+    {allowance.sheets}
     <BottomTabBar value={draft?'courses':'archive'} bottomInset={insets.bottom} onChange={value=>{const tab=serviceTabs.find(t=>t.value===value);if(tab)openServiceTab(tab.href);}}/>
   </KeyboardAvoidingView>;
 }

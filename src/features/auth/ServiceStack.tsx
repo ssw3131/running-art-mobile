@@ -1,10 +1,11 @@
 import { Stack, useNavigationContainerRef } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { AppText } from '@/components/ui';
 import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { useAuth } from './use-auth';
+import { guestAccess } from '@/modules/auth/guest-access';
 import { useMembership } from '@/features/membership/use-membership';
 import { membershipAccess } from '@/modules/membership/access';
 
@@ -27,6 +28,8 @@ export const privateScreens = [
   ['+not-found', ''],
 ] as const;
 
+const guestScreens = new Set<string>(['(tabs)', 'course-location-picker', 'map', 'service-info', 'service-about', 'service-guide', 'service-faq', 'service-notices', 'service-notice']);
+
 type RouteState = { routeNames?: readonly string[]; routes: readonly { name: string; state?: RouteState }[] };
 type ResetState = { index: number; routes: { name: string; state?: ResetState }[] };
 function resetServiceState(state: RouteState, destination: string): ResetState | undefined {
@@ -40,12 +43,15 @@ export function ServiceStack() {
   const auth = useAuth(), registration = useMembership(), c = useThemeColors();
   const navigation = useNavigationContainerRef();
   const identity = auth.account?.id ?? null;
-  const access = membershipAccess(identity, registration);
+  const membership = membershipAccess(identity, registration);
+  const browsing = useSyncExternalStore(guestAccess.subscribe, guestAccess.getSnapshot);
+  const access = !identity && browsing ? 'browsing' : membership;
+  useEffect(() => { if (identity) guestAccess.leave(); }, [identity]);
   // Keep the initial URL pending while the owner's cached receipt is loading.
   // Mounting the signup navigator here would discard a cold course deep link.
   const restoringMembership = !!identity && (registration.owner !== identity || registration.status === 'idle' ||
     (registration.status === 'loading' && registration.policyStatus === 'loading' && !registration.offlineAvailable));
-  const destination = access === 'service' ? '(tabs)' : access === 'signup' ? 'account-signup' : 'account-entry';
+  const destination = (access === 'service' || access === 'browsing') ? '(tabs)' : access === 'signup' ? 'account-signup' : 'account-entry';
   const previous = useRef({ ready: false, identity, access });
   useEffect(() => {
     if (!auth.ready || restoringMembership) return;
@@ -63,15 +69,15 @@ export function ServiceStack() {
   </View>;
   return <Stack key={identity ?? 'guest'} screenOptions={{ contentStyle: { backgroundColor: c.background },
     header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back menu={!!auth.account} /> }}>
-    <Stack.Protected guard={access === 'service'}>
-      {privateScreens.map(([name, title]) => <Stack.Screen key={name} name={name} options={{ title,
+    <Stack.Protected guard={access === 'service' || access === 'browsing'}>
+      {privateScreens.map(([name, title]) => <Stack.Protected key={name} guard={access === 'service' || guestScreens.has(name)}><Stack.Screen key={name} name={name} options={{ title,
         // A native map can leave Android's slide transition and accessibility
         // hierarchy unfinished. Open this candidate detail without blending
         // the two native surfaces; retain the stack and ordinary back action.
         ...(Platform.OS === 'android' && name === 'course-candidate' ? { animation: 'none' as const } : {}),
         headerShown: name !== '(tabs)' && name !== 'guidance' && name !== 'run-simulation' && name !== 'course-location-picker' && name !== 'course-map',
         ...(name === 'service-info' || name === 'course-candidate' || name === 'run-settings' || name === 'run-card' ? { header: () => <ServiceHeader title={title} back menu={false} /> } : {}),
-      }} />)}
+      }} /></Stack.Protected>)}
     </Stack.Protected>
     <Stack.Protected guard={access === 'signup'}>
       <Stack.Screen name="account-signup" options={{ headerShown: false, gestureEnabled: false }} />

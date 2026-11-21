@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import { act, screen, waitFor } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import { router, Stack } from 'expo-router';
+import { guestAccess } from '../../src/modules/auth/guest-access';
 import { ServiceStack, privateScreens } from '../../src/features/auth/ServiceStack';
 
 jest.unmock('expo-router');
@@ -27,7 +28,7 @@ const routes: Record<string, any> = {
   'service-policy': () => <Text testID="policy">약관</Text>,
 };
 for (const [name] of privateScreens) routes[name === '(tabs)' ? '(tabs)/index' : name] = () => <Text testID="private">{name}</Text>;
-beforeEach(() => { mockMembership = undefined; mockAuth = { ready: true, account: null }; });
+beforeEach(() => { guestAccess.leave(); mockMembership = undefined; mockAuth = { ready: true, account: null }; });
 afterEach(() => jest.useRealTimers());
 
 test.each([...privateScreens.map(([name]) => name === '(tabs)' ? '/' : '/' + name.replace('[id]', 'abc').replace('/index', '')), '/account-signup', '/run', '/unknown-page'])('guest deep link %s cannot mount service content', async initialUrl => {
@@ -102,4 +103,20 @@ test('cold course link survives cached membership restoration without fabricated
   await act(async () => { mockMembership = { ...mockMembership, offlineAvailable: true }; refresh(); });
   await waitFor(() => expect(screen.getByTestId('private')).toHaveTextContent('courses/[id]'));
   expect(router.canGoBack()).toBe(false);
+});
+
+test('explicit guest browsing opens home but cannot mount private course details or development tools',async()=>{
+ await renderRouter(routes);
+ await act(async()=>guestAccess.enter());
+ await waitFor(()=>expect(screen.getByTestId('private')).toHaveTextContent('(tabs)'));
+ await act(async()=>router.push('/development'));
+ expect(screen.queryByText('development')).toBeNull();
+ await act(async()=>router.push('/courses/abc'));
+ expect(screen.queryByText('courses/[id]')).toBeNull();
+ await act(async()=>router.push('/course-location-picker'));
+ expect(screen.getByTestId('private')).toHaveTextContent('course-location-picker');
+ await act(async()=>{mockAuth={ready:true,account:{id:'A'}};refresh();});
+ await waitFor(()=>expect(guestAccess.getSnapshot()).toBe(false));
+ await act(async()=>{mockAuth={ready:true,account:null};refresh();});
+ expect(screen.getByTestId('entry')).toBeVisible();expect(screen.queryByTestId('private')).toBeNull();
 });

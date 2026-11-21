@@ -37,8 +37,10 @@ test('UI-HOME-01: loading/error are distinct from initial, explicit retry shows 
   mockRead.mockImplementationOnce(() => new Promise((_, fail) => { reject = fail; })).mockResolvedValue(data());
   await render(<HomeScreen />);
   expect(screen.getByTestId('home-loading')).toBeVisible(); expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0);
   await act(async () => reject(new Error('disk')));
   expect(screen.getByTestId('home-error')).toBeVisible(); expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0);
   await fireEvent.press(screen.getByTestId('home-retry'));
   expect(screen.getByTestId('home-initial')).toBeVisible();
   await fireEvent.press(screen.getByTestId('home-shape-fish'));
@@ -90,7 +92,8 @@ test('UI-HOME-04: account switch hides old history immediately and discards its 
 test('UI-HOME-05: authentication loading never reads guest storage or advertises an empty home', async () => {
   mockAuth = { ready: false, account: null }; await render(<HomeScreen />);
   expect(mockRead).not.toHaveBeenCalled(); expect(screen.getByTestId('home-loading')).toBeVisible();
-  expect(screen.queryByTestId('home-initial')).toBeNull(); expect(screen.queryByTestId('home-signup')).toBeNull();
+  expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0); expect(screen.queryByTestId('home-signup')).toBeNull();
 });
 
 test('saved-only home shows zero run statistics and opens the saved course without invented activity time', async () => {
@@ -106,7 +109,8 @@ test('saved-only home shows zero run statistics and opens the saved course witho
 });
 test('guest never queries or exposes preserved guest records', async () => {
   mockAuth = { ready: true, account: null }; await render(<HomeScreen />);
-  expect(mockRead).not.toHaveBeenCalled(); expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(mockRead).not.toHaveBeenCalled(); expect(screen.getByTestId('home-initial')).toBeVisible();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0);
 });
 
 test('returning home starts a conditions request without replacing the previously chosen shape', async () => {
