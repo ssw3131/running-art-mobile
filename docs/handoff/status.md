@@ -1,6 +1,8 @@
 # 현재 상태와 인수인계
 
-**2026-11-21 문의 게시판 진행 중:** 사용자 확정에 따라 이메일 없는 비공개 목록/상세·답변 전 수정/삭제·Supabase 운영팀 답변을 구현한다. 관련 로직10·문의 UI6·공지 회귀7·전체/부분 S6 DB 검사를 통과했으며 CI·운영·기기는 후속이다. [계약](../development/inquiry-board.md)·[검증](../quality/inquiry-board-20261121.md)·[실행 기록](../history/executed-plans/2026-11-21-0837-inquiry-board.md).
+**2026-11-21 문의 게시판 구현·운영 DB·main 검증 완료:** 이메일 없는 비공개 목록/상세·답변 전 수정/삭제·Supabase 운영팀 답변을 구현했다. 누락된 문의 테이블/접수 함수를 새 SQL로 반영했고 기존 부분 적용 약관4행의 해시를 보존했다. 운영팀은 Table Editor의 `service_inquiries.reply_body`만 저장하면 답변 상태/시각이 자동 반영된다. 등록 후 답변 제거와 사용자 직접 쓰기를 차단하고 별도 원장으로 중복/시간당5건/삭제 후 재전송을 보호한다.
+
+[PR77](https://github.com/ssw3131/running-art-mobile/pull/77) → main a679b47, 최종 전체44844724324·동일 tree main44849299041 필수 검사 통과. Node619/기존skip1·Jest256·API/DB 권한/동시 처리, Android29 7단계/36 15단계·정적4화면 차이0·자료 보존/정리를 확인했다. 밝은 테마 화살표를 수정하고 실제 원본 화면도 검토했다. 최종 서명 APK는790453d/preview217384297이며 Git 제외 `build/handset/inquiry-board-790453d/`에 해시/설치 안내와 함께 보존했다. **휴대폰은 연결되지 않아 설치·실제 문의→답변 왕복은 미완료다.** 최종 문서 전용 PR/main 검사·브랜치 정리는 후속 PR에 기록한다. [계약/답변 절차](../development/inquiry-board.md)·[검증/APK](../quality/inquiry-board-20261121.md)·[실행 기록](../history/executed-plans/2026-11-21-0837-inquiry-board.md). 아래11월19일 문의 SQL 미해결 기록은 당시 상태다.
 
 ## 2026-11-19 클라우드 Google Cloud 인증 연결 완료
 
