@@ -1,5 +1,13 @@
 # 현재 상태와 인수인계
 
+## 2026-11-21 신형폰 문의 입력 복구·저장10회 진행 중
+
+SM-S942N의 문의 입력 비활성은 키보드 가림이 아니라 남은 접수 확인 대기로 재현됐다. 기존 접수 읽기 복구와 명시적 새 문의 작성, 저장 정책15→10을 구현·검증 중이다. 기존 문의/기록·로그인은 보존하며 자동 문의 전송은 없다. [검증·운영/CI/기기 적용 상태](../quality/inquiry-recovery-save-limit-20261121.md)·[실행 기록](../history/executed-plans/2026-11-21-1657-inquiry-recovery-save-limit.md).
+
+## 2026-11-21 SM-S942N 최신 preview 설치 완료
+
+새로 연결된 SM-S942N(Android17)에16:45:10KST 최신 preview217408079를 자료 유지 업데이트했다. 공개 원본은 main a60a36b이며 현재 main9a4904b와 제품 코드가 같다. 이 폰의 기존 테스트 서명으로 준비한 사본의 ZIP 내용1569개·서명·패키지/버전과 실제 설치 해시를 확인했다. 최초 설치/자료 경로/식별자 유지, 로그인된 홈·저장 코스·최근 러닝 표시 및 Metro 없는 COLD 실행/재시작을 확인했다.16:46:06KST 서비스0·USB 전달0으로 분리 가능하다. DB 전체 내용 해시·새 기능 전체·야외 GPS는 이번 범위가 아니다. [설치 기록](../history/executed-plans/2026-11-21-1644-s942n-install.md).
+
 ## 2026-11-21 최신 main 통합 A7 검증
 
 사용자 요청으로 검증한 preview217408079를 [GitHub Releases](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261121.217408079)에 게시했다. APK·해시·설치 안내·metadata4개와 공개 APK 다운로드를 확인했다. [APK 직접 다운로드](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217408079/runpen-preview-a60a36b99a21-217408079.apk). 새 빌드/재서명 없이 폰 검증본 그대로이며 Play 정식 배포는 아니다.

@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import Board from '../../src/app/service-inquiry';
 import Detail from '../../src/app/service-inquiry-detail';
+import Write from '../../src/app/service-inquiry-write';
 
 const owner = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', id = '11111111-1111-4111-8111-111111111111';
 let mockOwner = owner;
@@ -111,4 +112,54 @@ test('switching accounts clears private content and ignores the previous account
   await waitFor(() => expect(screen.getByTestId('inquiry-title')).toBeVisible());
   await act(async () => finish({ items: [item], next: null }));
   expect(screen.queryByText('내 문의')).toBeNull();
+});
+
+test('a lost acknowledgement is looked up without resending and opens editable empty fields', async () => {
+  mockValues.set(`runpen.inquiry.${owner}`, JSON.stringify({ owner, id, input: inquiry }));
+  await render(<Write />);
+  await waitFor(() => expect(screen.getByTestId('inquiry-title')).toBeEnabled());
+  expect(mockRemote.detail).toHaveBeenCalledWith(id);
+  expect(mockRemote.submit).not.toHaveBeenCalled();
+  expect(mockValues.size).toBe(0);
+  expect(screen.getByTestId('inquiry-title').props.value).toBe('');
+  expect(screen.getByTestId('inquiry-body').props.value).toBe('');
+  await fireEvent.changeText(screen.getByTestId('inquiry-title'), '새 질문');
+  expect(screen.getByTestId('inquiry-title').props.value).toBe('새 질문');
+});
+
+test('unresolved pending copy explains locked inputs; cancel preserves it, confirmed new writing unlocks both fields', async () => {
+  mockValues.set(`runpen.inquiry.${owner}`, JSON.stringify({ owner, id, input: inquiry }));
+  mockRemote.detail.mockRejectedValue({ code: 'P0002' });
+  const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+  try {
+    await render(<Write />);
+    await waitFor(() => expect(screen.getByTestId('inquiry-new')).toBeEnabled());
+    expect(screen.getByTestId('inquiry-pending')).toHaveTextContent(/입력이 잠겨/);
+    expect(screen.getByTestId('inquiry-title')).toBeDisabled();
+    expect(screen.getByTestId('inquiry-body')).toBeDisabled();
+    await fireEvent.press(screen.getByTestId('inquiry-new'));
+    expect(alert.mock.calls[0][2]![0].style).toBe('cancel');
+    expect(mockValues.size).toBe(1);expect(mockRemote.submit).not.toHaveBeenCalled();
+    await act(async () => { alert.mock.calls[0][2]![1].onPress!(); });
+    await waitFor(() => expect(screen.getByTestId('inquiry-title')).toBeEnabled());
+    expect(screen.getByTestId('inquiry-body')).toBeEnabled();expect(mockValues.size).toBe(0);
+    await fireEvent.changeText(screen.getByTestId('inquiry-title'), '새 문의 제목');
+    await fireEvent.changeText(screen.getByTestId('inquiry-body'), '새 문의 내용');
+    expect(screen.getByTestId('inquiry-title').props.value).toBe('새 문의 제목');
+    expect(screen.getByTestId('inquiry-body').props.value).toBe('새 문의 내용');
+    expect(mockRemote.submit).not.toHaveBeenCalled();expect(mockRemote.remove).not.toHaveBeenCalled();
+  } finally { alert.mockRestore(); }
+});
+
+test('retry keeps the original request, and a definite rejection restores that text for editing', async () => {
+  mockValues.set(`runpen.inquiry.${owner}`, JSON.stringify({ owner, id, input: inquiry }));
+  mockRemote.detail.mockRejectedValue(new Error('offline'));
+  mockRemote.submit.mockRejectedValue({ code: 'P0001', message: 'Inquiry rate limit' });
+  await render(<Write />);
+  await waitFor(() => expect(screen.getByTestId('inquiry-retry')).toBeEnabled());
+  await fireEvent.press(screen.getByTestId('inquiry-retry'));
+  await waitFor(() => expect(screen.getByTestId('inquiry-title')).toBeEnabled());
+  expect(mockRemote.submit).toHaveBeenCalledWith(owner, id, { category: inquiry.category, title: inquiry.title, body: inquiry.body });
+  expect(screen.getByTestId('inquiry-title').props.value).toBe(inquiry.title);
+  expect(screen.getByTestId('inquiry-body').props.value).toBe(inquiry.body);
 });

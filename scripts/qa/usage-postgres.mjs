@@ -26,6 +26,8 @@ try {
  create table memberships(owner_id uuid,policy_id text,completed_at timestamptz);
  insert into membership_policies values('test',true,now());`);
  await sql(readFileSync('supabase/migrations/20261024120000_usage_allowances.sql','utf8'));
+ await sql(readFileSync('supabase/migrations/20261107020000_account_generation_credits.sql','utf8'));
+ await sql(readFileSync('supabase/migrations/20261121075848_save_limit_ten.sql','utf8'));
  for(const [id,h] of [[owner,hash(1)],[other,hash(2)]])await sql(`insert into auth.users values(${q(id)});insert into memberships values(${q(id)},'test',now());select bind_usage_subject(${q(id)},array[${q(h)}]);`);
  const attempts=Array.from({length:40},(_,i)=>({id:randomUUID(),kind:'generation',fingerprint:hash(100+i)}));
  const reserved=await Promise.all(attempts.map(args=>command('reserve',args)));
@@ -36,9 +38,9 @@ try {
  assert.equal((await command('status')).generation.used,5);report.checks.push('40 concurrent reservations: 5 granted; 15 concurrent commits: exactly 5 uses');
  const saves=Array.from({length:30},(_,i)=>{const id=randomUUID();return {id,kind:'save',fingerprint:hash(200+i),courseId:id.replaceAll('-','')};});
  const saveOps=await Promise.all(saves.map(args=>command('reserve',args)));
- assert.equal(saveOps.filter(op=>op.state==='reserved').length,15);
+ assert.equal(saveOps.filter(op=>op.state==='reserved').length,10);
  await Promise.all(saves.filter((_,i)=>saveOps[i].state==='reserved').map(args=>command('commit',args)));
- assert.equal((await command('status')).save.used,15);report.checks.push('30 simultaneous save requests: exactly 15 committed saves');
+ assert.equal((await command('status')).save.used,10);report.checks.push('30 simultaneous save requests: exactly 10 committed saves');
  await sql('update usage_policy set generation_limit=50,save_limit=50;');
  for(let i=0;i<12;i++){
   const args={id:randomUUID(),kind:'generation',fingerprint:hash(500+i)};await command('reserve',args);await command('ready',{...args,result:{result:{candidates:[{}]}}});

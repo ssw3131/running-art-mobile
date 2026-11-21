@@ -502,7 +502,7 @@ try:
         # Fixed visual fixtures, independent of the timestamped GPS scenario.
         if args.visual_only:
             # Full acceptance must keep its real UI-generated counters. Only the
-            # standalone visual fixture prepares the reviewed 1/5 and 1/15 state.
+            # standalone visual fixture prepares the reviewed 1/5 and 1/10 state.
             setup = {'id': 'visual-server-usage', 'status': 'running', 'startedAt': datetime.now(timezone.utc).isoformat()}
             result.setdefault('setups', []).append(setup)
             started = time.monotonic()

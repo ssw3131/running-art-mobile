@@ -65,6 +65,12 @@ def inquiry_board(q, launch):
     url = status['API_URL'].rstrip('/')
     assert urlparse(url).hostname in ('localhost', '127.0.0.1'), 'Hosted inquiry tests are forbidden'
     key = status['SERVICE_ROLE_KEY']
+    db = urlparse(status['DB_URL'])
+    assert db.hostname in ('localhost', '127.0.0.1'), 'Hosted inquiry recovery setup is forbidden'
+    env = {**os.environ, 'PGHOST': db.hostname, 'PGPORT': str(db.port), 'PGUSER': db.username, 'PGPASSWORD': db.password, 'PGDATABASE': db.path.lstrip('/')}
+
+    def sql(statement):
+        return subprocess.run(['psql', '-v', 'ON_ERROR_STOP=1'], input=statement, text=True, capture_output=True, env=env, check=True)
 
     def request(method, path, body=None):
         req = urllib.request.Request(url + '/rest/v1/' + path,
@@ -84,6 +90,18 @@ def inquiry_board(q, launch):
             if q.find(tree, key) is not None:
                 return tree
             assert time.monotonic() < deadline, 'Inquiry state did not appear: ' + key
+            time.sleep(.25)
+    def wait_enabled(key):
+        # Pending controls appear above the form, while the previous submit
+        # position remains scrolled down on API36. Readiness needs a visible
+        # target on both Android versions, even while it is still disabled.
+        q.seek(key, allow_disabled=True)
+        deadline = time.monotonic() + 20
+        while True:
+            node = q.find(q.capture('inquiry-ready-' + key), key)
+            if node is not None and node.get('enabled') == 'true':
+                return
+            assert time.monotonic() < deadline, 'Inquiry action did not become ready: ' + key
             time.sleep(.25)
     try:
         launch('service-inquiry')
@@ -122,6 +140,30 @@ def inquiry_board(q, launch):
         q.seek('inquiry-delete'); q.tap('inquiry-delete'); q.tap('삭제')
         wait_key('inquiry-write')
         assert len(request('GET', rows_path)) == 1
+        # A transient server error retains the encrypted retry copy. Reopen the
+        # real form to reproduce the handset's disabled-input state, then clear
+        # only that synthetic local copy through the explicit confirmation.
+        sql("""create function support_private.qa_pending_inquiry() returns trigger language plpgsql as $$
+          begin if new.title='INQUIRY_PENDING' then raise exception 'QA uncertain outcome' using errcode='08006'; end if; return new; end; $$;
+          create trigger qa_pending_inquiry before insert on public.service_inquiries for each row execute function support_private.qa_pending_inquiry();""")
+        q.tap('inquiry-write'); wait_key('inquiry-category')
+        keyboard_input(q, 'inquiry-title', 'INQUIRY_PENDING', 'inquiry-pending-title')
+        keyboard_input(q, 'inquiry-body', 'Synthetic unsent retry copy', 'inquiry-pending-body')
+        q.shell('input', 'keyevent', '4'); q.seek('inquiry-submit'); q.tap('inquiry-submit')
+        wait_enabled('inquiry-new')
+        q.shell('am', 'force-stop', q.APP); launch('service-inquiry-write')
+        wait_enabled('inquiry-new')
+        q.tap('inquiry-new'); q.tap('취소')
+        assert q.find(q.capture('inquiry-recovery-cancelled'), 'inquiry-pending') is not None
+        q.tap('inquiry-new'); q.tap('새 문의 작성')
+        # The fresh form resets to its top; submit is below the viewport.
+        # Wait for the editable field, then keyboard_input scrolls to it.
+        wait_enabled('inquiry-title')
+        keyboard_input(q, 'inquiry-title', 'UNSENT_RECOVERED', 'inquiry-recovered-keyboard-title')
+        keyboard_input(q, 'inquiry-body', 'Editable after recovery', 'inquiry-recovered-keyboard-body')
+        q.shell('input', 'keyevent', '4')
+        assert len(request('GET', rows_path)) == 1, 'Recovery must not send or delete inquiries'
+        sql('drop trigger qa_pending_inquiry on public.service_inquiries; drop function support_private.qa_pending_inquiry();')
         launch('account-settings'); q.seek('theme-dark'); q.tap('theme-dark')
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         q.shell('am', 'force-stop', q.APP); launch('service-inquiry'); wait_key('inquiry-write')
@@ -136,8 +178,10 @@ def inquiry_board(q, launch):
         q.shell('input', 'keyevent', '4'); wait_key('inquiry-write')
         assert len(request('GET', rows_path)) == 1, 'Unsaved keyboard draft must not be submitted'
         (q.OUT / 'inquiry-board-result.json').write_text(json.dumps({'emptyForm': True, 'appSubmit': True, 'appEdit': True,
-            'adminReply': True, 'privateList': True, 'appDelete': True, 'largeFont': True, 'keyboardBounds': True, 'email': False}), encoding='utf8')
+            'adminReply': True, 'privateList': True, 'appDelete': True, 'largeFont': True, 'keyboardBounds': True,
+            'pendingRecovery': True, 'recoveryKeyboard': True, 'email': False}), encoding='utf8')
     finally:
+        sql('drop trigger if exists qa_pending_inquiry on public.service_inquiries; drop function if exists support_private.qa_pending_inquiry();')
         # Remove only this scenario's synthetic messages; the disposable account
         # teardown removes its minimal request ledger as well.
         for row in request('GET', rows_path):
@@ -146,11 +190,8 @@ def inquiry_board(q, launch):
         for request_id in created:
             request('DELETE', rows_path + '&request_id=eq.' + request_id)
         if created:
-            db = urlparse(status['DB_URL'])
-            assert db.hostname in ('localhost', '127.0.0.1')
             ids = ','.join("'" + str(uuid.UUID(value)) + "'" for value in created)
-            env = {**os.environ, 'PGHOST': db.hostname, 'PGPORT': str(db.port), 'PGUSER': db.username, 'PGPASSWORD': db.password, 'PGDATABASE': db.path.lstrip('/')}
-            subprocess.run(['psql', '-v', 'ON_ERROR_STOP=1'], input=f"delete from support_private.inquiry_requests where owner_id='{uuid.UUID(q.OWNER)}' and request_id in ({ids});", text=True, capture_output=True, env=env, check=True)
+            sql(f"delete from support_private.inquiry_requests where owner_id='{uuid.UUID(q.OWNER)}' and request_id in ({ids});")
         q.shell('wm', 'density', '420'); q.shell('settings', 'put', 'system', 'font_scale', '1.0')
         q.shell('am', 'force-stop', q.APP)
         launch('account-settings'); q.seek('theme-light'); q.tap('theme-light')
