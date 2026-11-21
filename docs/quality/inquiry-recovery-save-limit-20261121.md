@@ -60,3 +60,29 @@ PR86을 draft로 돌려 전체431의 진행 중이던 Android36은 취소했다.
 활성 상태 대기 공통 절차에서 `q.seek(key, allow_disabled=True)`로 실제 뷰포트 안에 대상을 먼저 찾은 뒤 완료를 기다리도록 고쳤다. 재시작 경로의 중복된 화면 고정 대기는 제거했다. 앱 소스·검사 제한 시간·키보드 경계 조건은 유지한다. 사용자 ‘다시해봐’ 지시로 같은 문의 단독 진단부터 재실행한다.
 
 artifact14700774606의 ZIP SHA256은 `79dfcc9a646c97731ea97ad4c7f8bf3f41a03bc9e26ce6308476626a54a6b833`이며 `.cache/inquiry-s942n-20261121/achievements433/`에 원본을 보존했다.433은 정리 통과·덤프 대기1/전송 경고0, 앞선431 Android29는 정리 통과·덤프 대기5/전송 경고3이다. 최초 실패와 관측 경고를 성공 결과로 덮지 않는다.
+
+## 18:51 문의 단독435 통과·최종 전체 재개
+
+head5c3d42d의 draft436 빠른 검사와 [문의 단독435](https://github.com/ssw3131/running-art-mobile/actions/runs/44889609893)가 통과했다. `pendingRecovery`·`recoveryKeyboard`와 작성/수정/답변/삭제/큰 글씨 결과가 모두 true이며 제목/본문의 실제 포커스·IME 경계12개를 확인했다. 복구 후 제목은 `[63,1283][1017,1415]`, 본문은 `[63,942][1017,1415]`, 키보드 상단은1457px로 두 원본 PNG에서도 입력칸 전체가 보인다. 재시도·덤프 대기·전송 경고0, 정리 통과다.
+
+artifact14701926556 ZIP SHA256 `0063996f2a684dfde669651a4c4711fc67fbd473d9e4b9864bcfc99e72d33c04`를 대조하고 `.cache/inquiry-s942n-20261121/achievements435/`에 전체 원본을 보존했다. 단독 성공은 필수 전체 검사 성공과 구분한다. 같은 head를 ready로 전환해 Android29/36 최종 전체 검사를 재개했다.
+
+18:32 신형폰의 기존217408079 설치 APK가 보존 원본 해시와 일치함을 확인하고 패키지/자료 식별자를 Git 제외 캐시에 보존했다. 실행 중 앱 서비스·USB 전달은0이다. 아직 업데이트는 실행하지 않았다.
+
+## 19:19 최종437 Android29 통과
+
+[전체437](https://github.com/ssw3131/running-art-mobile/actions/runs/44891524638)의 fast/API와 Android29 7단계가 통과했다. 문의 복구 결과와 키보드12개 경계가 모두 통과했으며 복구 후 제목 `[63,1299][1017,1431]`, 본문 `[63,958][1017,1431]` 전체가 키보드 상단1473px 위에 보이는 원본도 검토했다. 원본 fixture 행 보존 SHA256은 `1431c3c9a260d639f32a1b44e93d317dd9c8c2fe647015404013ec0aac738b8f`, 정리 통과·재시도0·덤프 대기2/전송 경고3이다.
+
+artifact14702707718의 ZIP SHA256 `e54c6213736d23bf4c16c6b6fa474bf17b6b312af8e30b616f216510c589f8ad`를 대조하고 `.cache/inquiry-s942n-20261121/android29-437/`에 전체 원본을 보존했다. 실제 checkout은 PR merge ref0fd0ef6(head5c3d42d/base9a4904b)다. 이 시점 Android36·필수 게이트는 아직 진행 중이다.
+
+## 19:37 최종 전체·main 반영 완료, USB 재연결 대기
+
+전체437의 Android36 15단계·문의 복구/키보드12개 경계·원본 fixture 보존·정리와 필수 게이트까지 통과했다. 기존 마스크/허용 오차로 정적4화면 차이0이다. 복구 후 제목/본문 경계는 단독435와 같고 원본 본문 PNG도 검토했다. 재시도0·덤프 대기2/전송 경고0이며 원본 fixture 보존 SHA256은 `271962b71dca0ee4d548a57b127c05c1798653edf06f26fc4c314870ec3572eb`다.
+
+artifact14703363397 ZIP SHA256 `b3ee5a7fe3decd7acd04ce8128ca90219c789be138437d33f282c76bd605f257`를 대조하고 `.cache/inquiry-s942n-20261121/android36-437/`에 전체 원본을 보존했다. 최초431/433 실패는 그대로 남긴다.
+
+[PR86](https://github.com/ssw3131/running-art-mobile/pull/86)을 main `ba1fdf6ff10ff6869ce107a5b6eabc9621194cdb`에 squash 병합했다. tree `18abedae9f75e744a5d5674568ba4b61b3497407`이 검증 head와 같으며, [main438](https://github.com/ssw3131/running-art-mobile/actions/runs/44895148059)은 동일 tree의 전체437 성공 증거를 확인·재사용해 필수 게이트를 통과했다. main 네이티브 재실행으로 기록하지 않는다.
+
+APK source969fa1d 이후 현재 제품 main까지의 변경 경로 전체를 대조했으며 docs/tests/scripts/qa 외 차이가 없다. 최초 PowerShell의 따옴표 없는 Git `^{tree}` 인수 조회는 실패했고, 참조를 따옴표로 보호한 재조회로 정확한 tree 일치를 확인했다. 강제 초기화는 하지 않았다.
+
+19:36 설치 직전 USB 목록이 다시 비어 기기 명령이 `device not found`로 종료됐다. **설치 명령은 실행하지 않았다.** 사용자에게 재연결·잠금 해제를 요청했다. ‘검사 통과 후 설치·확인’ 승인은 유지되며 준비 APK217411799·기존 설치본·패키지/자료 식별자·진단 원본은 Git 제외 캐시에 보존한다. 실제 업데이트·삼성 키보드·업데이트 후 자료 표시 확인은 재연결 후 수행한다.
