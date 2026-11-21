@@ -1,5 +1,11 @@
 # 현재 상태와 인수인계
 
+## 2026-11-21 문의 키보드·저장10회 최신 APK 릴리스 공개 완료
+
+사용자 요청으로20:35:11KST [preview217411799 릴리스](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261121.217411799)를 공개했다. [기본 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217411799/runpen-preview-969fa1df6f7e-217411799.apk)는 이전 GitHub preview/신규 설치용이며, [legacy 호환 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217411799/runpen-preview-969fa1df6f7e-217411799-legacy.apk)는 기존 PC 테스트 서명/이번 신형폰 설치본용이다. 내용·버전은 같고 서명만 다르다. 기존 앱을 삭제하지 않으며 이미217411799면 재설치가 필요 없다.
+
+APK2개·체크섬2개·설치 안내·metadata·variants 총7개 자산의 서버 해시/크기와 인증 없는 전체 다운로드의 SHA256/바이트 일치를 확인했다. 태그는 정확한969fa1d, 게시 기준 main7b9a1a3과 제품 코드가 같다. 기존 릴리스·개인 근거는 보존했으며 새 빌드/재서명/폰 재설치는 없다. 최종 게시 기록의 문서 PR/main 검사와 브랜치 정리는 해당 PR 본문을 따른다. [검증 기록](../quality/inquiry-recovery-save-limit-20261121.md).
+
 ## 2026-11-21 문의 입력 복구·저장10회·신형폰 키보드 확인 완료
 
 SM-S942N에 남은 문의 접수 확인 대기로 입력이 잠긴 문제를 수정했다. 접수 읽기 확인과 명시적 새 작성 경로를 제공하며 자동 전송은 없다. 저장 정책은17:05:38KST 운영에10회로 반영했고 기존 사용량/저장 코스/작업 원장 전체 행 해시를 보존했다. 기존 폰에서4/5·2/10 표시를 확인했다.
