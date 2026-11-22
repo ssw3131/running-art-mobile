@@ -24,9 +24,11 @@ test('UI-ARCHIVE-02: account transition suppresses old pending page and its erro
 });
 
 test('only the selected saved row is highlighted; unfinished status does not select every row',async()=>{
- const rows=[{...row(1),unfinished:true},{...row(2),unfinished:true}];
+ const rows=[{...row(1),unfinished:true,inProgress:false},{...row(2),unfinished:true,inProgress:true}];
  jest.mocked(getStorage).mockResolvedValue({courses:{recover:async()=>{},list:async()=>rows,count:async()=>2},runs:{active:async()=>({courseId:'2'})}} as any);
  await render(<CoursesScreen embedded/>);
+ expect(screen.getByTestId('course-status-1')).toHaveTextContent('미완주');
+ expect(screen.getByTestId('course-status-2')).toHaveTextContent('진행 중');
  expect(screen.getByTestId('course-row-1').props.accessibilityState.selected).toBe(false);
  expect(screen.getByTestId('course-row-2').props.accessibilityState.selected).toBe(true);
  await fireEvent.press(screen.getByTestId('course-row-1'));

@@ -10,7 +10,7 @@ jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({cours
 test('saved courses keep unfinished status, select without starting GPS, and create CTA reaches generation',async()=>{
  mockList.mockResolvedValue([{id:'a'.repeat(32),name:'나의 하트',shape:'heart',lengthKm:3,unfinished:true,inProgress:true}]);
  await render(<SavedCourseChooser busy={false}/>);
- await waitFor(()=>expect(screen.getByTestId('run-in-progress-'+'a'.repeat(32))).toHaveTextContent('진행중'));
+ await waitFor(()=>expect(screen.getByTestId('run-in-progress-'+'a'.repeat(32))).toHaveTextContent('진행 중'));
  expect(screen.getByTestId('run-selected-start')).toBeDisabled();
  await fireEvent.press(screen.getByTestId('run-saved-course-'+'a'.repeat(32)));expect(mockParams).not.toHaveBeenCalled();expect(screen.getByTestId('run-selected-start')).toBeEnabled();
  await fireEvent.press(screen.getByTestId('run-course-detail-'+'a'.repeat(32)));expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'a'.repeat(32)}});expect(mockParams).not.toHaveBeenCalled();
@@ -22,5 +22,5 @@ test('an ended incomplete attempt is not labelled as still running',async()=>{
  mockList.mockResolvedValue([{id:'b'.repeat(32),name:'고양이',shape:'cat',lengthKm:5,unfinished:true,inProgress:false}]);
  await render(<SavedCourseChooser busy={false}/>);
  await waitFor(()=>expect(screen.getByTestId('run-in-progress-'+'b'.repeat(32))).toHaveTextContent('미완주'));
- expect(screen.queryByText('진행중')).toBeNull();
+ expect(screen.queryByText('진행 중')).toBeNull();
 });
