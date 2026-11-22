@@ -14,6 +14,7 @@ import { membershipAccess } from '@/modules/membership/access';
 export const privateScreens = [
   ['(tabs)', ''], ['service-info', '서비스 안내 및 지원'], ['development', '개발 도구'],
   ['account-profile', '프로필 편집'],
+  ['packs', 'RunPen 팩 구매'], ['purchase-history', '구매 내역'],
   ['badges', '뱃지 보관함'], ['badge-detail', '뱃지 상세'],
   ['account-settings', '설정'], ['account-sync', '개인 기록 동기화'], ['account-withdraw', '회원 탈퇴'],
   ['map', '내 주변 지도'], ['storage', '저장소 테스트'], ['courses/[id]', '코스 상세'],
@@ -28,7 +29,7 @@ export const privateScreens = [
   ['+not-found', ''],
 ] as const;
 
-const guestScreens = new Set<string>(['(tabs)', 'course-location-picker', 'map', 'service-info', 'service-about', 'service-guide', 'service-faq', 'service-notices', 'service-notice']);
+const guestScreens = new Set<string>(['(tabs)', 'packs', 'purchase-history', 'course-location-picker', 'map', 'service-info', 'service-about', 'service-guide', 'service-faq', 'service-notices', 'service-notice']);
 
 type RouteState = { routeNames?: readonly string[]; routes: readonly { name: string; state?: RouteState }[] };
 type ResetState = { index: number; routes: { name: string; params?: { mode: string }; state?: ResetState }[] };

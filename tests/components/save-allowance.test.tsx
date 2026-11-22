@@ -5,13 +5,13 @@ import { Button } from '../../src/components/ui';
 import { useSaveAllowance } from '../../src/features/usage/use-save-allowance';
 import { AllowanceError, exhaustedMessage } from '../../src/modules/usage/model';
 let mockOwner='owner',mockExisting:string|null=null;
-const mockRead=jest.fn(),mockCommit=jest.fn();
+const mockRead=jest.fn(),mockCommit=jest.fn(),mockPush=jest.fn();
 const snapshot={schemaVersion:1,engineVersion:'0.2',source:'osm',shape:'heart',origin:{lat:37,lng:127},targetKm:3,lengthKm:3,score:80,route:[[127,37],[127.01,37],[127,37]],target:[[127,37],[127.01,37],[127,37]]};
 jest.mock('../../src/features/auth/use-auth',()=>({useAuth:()=>({account:{id:mockOwner}})}));
 jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>({account:{id:mockOwner}})}}));
 jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({courses:{findHash:async()=>mockExisting}})}));
 jest.mock('../../src/modules/usage/runtime',()=>({readUsage:()=>mockRead()}));
-jest.mock('expo-router',()=>({useFocusEffect:(fn:any)=>require('react').useEffect(fn,[fn])}));
+jest.mock('expo-router',()=>({router:{push:(path:string)=>mockPush(path)},useFocusEffect:(fn:any)=>require('react').useEffect(fn,[fn])}));
 function Harness(){const gate=useSaveAllowance(snapshot as any,false,mockCommit);return <><Button testID="save" label="저장" disabled={gate.busy} onPress={()=>gate.request()}/>{gate.sheets}</>;}
 beforeEach(()=>{mockOwner='owner';mockExisting=null;mockRead.mockReset().mockResolvedValue({version:1,generation:{used:0,total:5},save:{used:3,total:10}});mockCommit.mockReset().mockResolvedValue(undefined);jest.spyOn(Alert,'alert').mockImplementation(()=>{});});
 afterEach(()=>jest.restoreAllMocks());
@@ -22,11 +22,11 @@ test('consent displays actual remaining counts; cancel does not save; repeated c
  await fireEvent.press(screen.getByTestId('save'));await waitFor(()=>screen.getByTestId('save-allowance-confirm'));
  await fireEvent.press(screen.getByTestId('save-allowance-confirm'));expect(mockCommit).toHaveBeenCalledTimes(1);
 });
-test('exhausted accounts see add notice and cannot save; purchase gives prepared notice',async()=>{
+test('exhausted accounts see add notice and cannot save; adding opens the prepared packs',async()=>{
  mockRead.mockResolvedValue({version:1,generation:{used:0,total:5},save:{used:10,total:10}});
  await render(<Harness/>);await fireEvent.press(screen.getByTestId('save'));await waitFor(()=>screen.getByTestId('allowance-add-save'));
  expect(screen.queryByTestId('save-allowance-confirm')).toBeNull();await fireEvent.press(screen.getByTestId('allowance-add-save'));
- expect(Alert.alert).toHaveBeenCalledWith('추가 이용권 구매는 준비 중입니다',expect.any(String));expect(mockCommit).not.toHaveBeenCalled();
+ expect(mockPush).toHaveBeenCalledWith('/packs');expect(mockCommit).not.toHaveBeenCalled();expect(screen.queryByTestId('allowance-add-save')).toBeNull();
 });
 test('duplicate owned course bypasses consent and online quota check',async()=>{
  mockExisting='saved';mockRead.mockRejectedValue(Error('offline'));

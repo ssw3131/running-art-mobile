@@ -83,10 +83,10 @@ export default function AccountScreen(){
     </View>
    </View>
    <View style={{backgroundColor:'#FEF2EC',borderRadius:10,padding:14,gap:12}}>
-    <View style={{flexDirection:'row',gap:8,alignItems:'center'}}><AppText weight="bold" style={{fontSize:20,lineHeight:28,color:'#111'}}>기본 팩</AppText><View style={{borderWidth:1,borderColor:c.accent,borderRadius:10,paddingHorizontal:8}}><AppText weight="bold" style={{fontSize:12,color:c.accent}}>이용중</AppText></View><View style={{flex:1}}/><Pressable testID="account-packs" accessibilityRole="button" onPress={()=>setInfo('팩 구매 / 추가 혜택')} style={{backgroundColor:c.accent,borderRadius:20,paddingHorizontal:12,paddingVertical:4}}><AppText weight="bold" style={{fontSize:12,color:'#FFF'}}>팩 구매 ›</AppText></Pressable></View>
+    <View style={{flexDirection:'row',gap:8,alignItems:'center'}}><AppText weight="bold" style={{fontSize:18,lineHeight:28,color:'#111',flexShrink:1}}>남은 이용 횟수</AppText><View style={{flex:1}}/><Pressable testID="account-packs" accessibilityRole="button" onPress={()=>router.push('/packs')} style={{backgroundColor:c.accent,borderRadius:20,paddingHorizontal:12,paddingVertical:4}}><AppText weight="bold" style={{fontSize:12,color:'#FFF'}}>팩 구매 ›</AppText></Pressable></View>
     <View style={{flexDirection:'row',gap:8}}>
      <View style={{flex:1,backgroundColor:'#FFD0B94D',borderRadius:5,paddingVertical:5,paddingHorizontal:6,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:4}}><AccountIcon name="wand"/><AppText weight="bold" style={{fontSize:12,color:'#AB7C64'}}>코스 생성 <AppText weight="black" style={{fontSize:14,color:c.accent}}>{remaining('generation')}회</AppText></AppText></View>
-     <View style={{flex:1,backgroundColor:'#FFD0B94D',borderRadius:5,paddingVertical:5,paddingHorizontal:6,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:4}}><AccountIcon name="archive"/><AppText weight="bold" style={{fontSize:12,color:'#AB7C64'}}>보관함 <AppText weight="black" style={{fontSize:14,color:c.accent}}>{remaining('save')}개</AppText></AppText></View>
+     <View style={{flex:1,backgroundColor:'#FFD0B94D',borderRadius:5,paddingVertical:5,paddingHorizontal:6,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:4}}><AccountIcon name="archive"/><AppText weight="bold" style={{fontSize:12,color:'#AB7C64'}}>코스 저장 <AppText weight="black" style={{fontSize:14,color:c.accent}}>{remaining('save')}회</AppText></AppText></View>
     </View>
    </View>
    {!auth.account&&<Button testID="account-signup" label="회원가입 · 로그인 안내" disabled={!auth.ready||auth.busy} onPress={()=>router.push('/account-entry')}/>}
@@ -116,7 +116,7 @@ export default function AccountScreen(){
   {!!(message||data.error)&&<AppText accessibilityRole="alert" style={{color:c.danger}}>{message||data.error}</AppText>}
   {!!data.error&&<Button testID="account-retry" label="다시 불러오기" onPress={data.reload}/>}
   <View style={{...card,padding:30,gap:15}}><AppText weight="bold" style={{fontSize:18,color:c.text}}>이용 및 결제</AppText>
-   <View>{row('account-benefits','팩 구매 / 추가 혜택 보기','payment',()=>setInfo('팩 구매 / 추가 혜택'),true)}{row('account-purchases','구매 내역','document',()=>setInfo('구매 내역'))}{row('account-refunds','결제 및 환불 안내','document',()=>setInfo('결제 및 환불 안내'))}</View>
+   <View>{row('account-benefits','팩 구매 / 추가 혜택 보기','payment',()=>router.push('/packs'),true)}{row('account-purchases','구매 내역','document',()=>router.push('/purchase-history'))}{row('account-refunds','결제 및 환불 안내','document',()=>setInfo('결제 및 환불 안내'))}</View>
   </View>
   <View style={{...card,padding:30,gap:22}}><View style={{flexDirection:'row',gap:16}}><Icon name="map"/><View style={{flex:1,gap:5}}><AppText weight="bold" style={{fontSize:18,color:c.text}}>계정 관리</AppText><AppText style={{fontSize:12,lineHeight:18,color:c.muted}}>연결된 계정을 확인하고 로그인이나 회원 탈퇴를 관리해요.</AppText></View></View>
    <View style={{gap:10}}><AppText weight="bold" style={{fontSize:14,color:c.text}}>연결된 계정</AppText>

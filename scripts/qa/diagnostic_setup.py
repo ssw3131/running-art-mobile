@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import time
 
 DIAGNOSTIC_MODES = frozenset(['home-only', 'home-states-only', 'generation-only',
-                            'accessibility-only', 'service-only', 'achievements-only'])
+                            'accessibility-only', 'service-only', 'achievements-only', 'packs-only'])
 
 
 def prepare_diagnostic(q, launch, reset_seed, wait_home, scenario):

@@ -27,6 +27,24 @@
       "attempt": 1,
       "category": "environment",
       "evidence": "Android36 job136731094981의 부팅 완료 후 앱 설치 이전 q.adb(root)에서 adb: unable to connect for root: closed. 기능 검사/report 시작 전 ADB 전송 종료이며 backend/TLS 정리 통과. 원본 job 로그와 482바이트 index-only 아티팩트14692871142를 대조. 더 깊은 연결 종료 원인은 미확정. Android29/fast/API 성공은 유지하고 같은 소스 Android36만 1회 재실행. docs/quality/inquiry-keyboard-20261121.md."
+    },
+    {
+      "runId": 44981520098,
+      "attempt": 1,
+      "category": "test-contract",
+      "evidence": "API36 화면 진단의 account7938픽셀 차이는 허구의 기본 팩 이용중 제거·실제 잔여 횟수와 저장 단위 정정. 다른3화면 차이0·실제 실행/보존/정리 성공. 원본/현재/차이 직접 검토 후 account 기준만 채택; docs/quality/packs-preparation-20261122.md."
+    },
+    {
+      "runId": 44982931973,
+      "attempt": 1,
+      "category": "unclassified",
+      "evidence": "혼합 원인으로 단일 환경 실패로 집계하지 않음. Android29: 명시적 동의 뒤 서비스 회원 시작에서16MB growth limit OOM 종료, 런처 PNG·failure-logcat·report 보존. runner의 무효 hw.heapSize 키를 vm.heapSize로 보완하고 독립44985065215 검증 중. Android36: 기존15단계 통과 뒤 정상 비활성 pack-purchase를 enabled=true만 허용하는 검사로 탐색해 실패(test-contract); 원본14740101184 PNG/XML을 확인하고 두 비활성 확인에만 allow_disabled 적용. docs/quality/packs-preparation-20261122.md."
+    },
+    {
+      "runId": 44985065215,
+      "attempt": 1,
+      "category": "test-contract",
+      "evidence": "API29 compatibility b92bf8a: 기존7단계·정리 통과/OOM 미재현 뒤 수정 전 pack-purchase 비활성 탐색 실패. 아티팩트14740541425 report/PNG/XML 보존. dalvik heap512m/growthlimit 빈 값이며 vm.heapSize 보정의 인과를 단1회로 확정하지 않음. docs/quality/packs-preparation-20261122.md."
     }
   ],
   "postMergeReviews": [

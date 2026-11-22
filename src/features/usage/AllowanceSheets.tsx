@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { Image } from 'expo-image';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 import { AppModal, AppText, Button } from '@/components/ui';
 import { freeAllowanceNotice, type UsageKind, type UsageSummary } from '@/modules/usage/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
@@ -32,7 +32,7 @@ export function SheetCancel({ onPress, disabled = false }: { onPress(): void; di
 export function ExhaustedAllowanceSheet({ visible, kind, data, onClose, exhausted = true }: { visible: boolean; kind: UsageKind; data: UsageSummary | null; onClose(): void; exhausted?: boolean }) {
   const c = useThemeColors(), label = kind === 'generation' ? '생성' : '저장', row = data?.[kind];
   return <AppModal visible={visible} title={exhausted ? `코스 ${label} 횟수를 모두 사용했어요` : `코스 ${label} 횟수를 추가할까요?`} presentation="sheet" sheetHandle dismissOnBackdrop onClose={onClose} contentContainerStyle={{ gap: 6 }}
-    footer={<View style={{ gap: 9 }}><Button testID={`allowance-add-${kind}`} label={`${label} 횟수 추가하기`} leading={<AllowanceDiamond />} onPress={() => Alert.alert('추가 이용권 구매는 준비 중입니다', '이용권을 구매할 수 있게 되면 안내해 드릴게요.')} /><SheetCancel onPress={onClose} /></View>}>
+    footer={<View style={{ gap: 9 }}><Button testID={`allowance-add-${kind}`} label={`${label} 횟수 추가하기`} leading={<AllowanceDiamond />} onPress={() => { onClose(); router.push('/packs'); }} /><SheetCancel onPress={onClose} /></View>}>
     <AppText style={{ fontSize: 12, lineHeight: 18, textAlign: 'center', color: c.subtle }}>{kind === 'generation' ? '이 설정으로 코스를 생성하려면 생성 횟수를 추가해 주세요.' : '이 코스를 저장하려면 저장 횟수를 추가해 주세요.'}</AppText>
     <View style={{ width: '100%', maxWidth: 328, gap: 19, alignItems: 'center', marginTop: 13 }}>
       <View style={{ width: 244, maxWidth: '100%', minHeight: 48, borderRadius: 16, backgroundColor: c.background === '#FFFFFF' ? '#FFEDE8' : c.navigation, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 }}><AppText weight="bold" style={{ fontSize: 14 }}>현재</AppText><AppText testID="allowance-exhausted-count" weight="bold" style={{ fontSize: 22, color: c.selected }}>{row ? `${row.used} / ${row.total}` : '—'}</AppText><AppText weight="bold" style={{ fontSize: 14 }}>회 사용</AppText></View>
