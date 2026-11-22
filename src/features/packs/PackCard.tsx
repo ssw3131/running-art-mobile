@@ -30,9 +30,13 @@ export function PackCard({ pack, selected = false, onSelect }: { pack: Pack; sel
       {pack.recommended && !!onSelect && <View style={{ borderRadius: radius.pill, backgroundColor: c.action, paddingHorizontal: 10, paddingVertical: 2 }}><AppText variant="caption" weight="bold" style={{ color: c.onAction }}>추천</AppText></View>}
       <AppText variant="heading" weight="bold" style={{ marginLeft: 'auto' }}>{formatPackPrice(pack.priceKrw)}</AppText>
     </View>
+    {!!onSelect && <View style={{ gap: 4, paddingVertical: 4 }}>
+      <AppText variant="caption" weight="bold" style={{ color: c.selected }}>런칭 특별가 · 부가세 포함</AppText>
+      {pack.postLaunchPriceKrw !== undefined && <AppText testID={`pack-${pack.id}-future-price`} variant="caption" style={{ color: c.muted }}>런칭 종료 후 적용 예정가 {formatPackPrice(pack.postLaunchPriceKrw)}</AppText>}
+    </View>}
     <AppText variant="caption" style={{ color: c.muted }}>{pack.description}</AppText>
     <PackBenefits generation={pack.generation} save={pack.save} />
   </View>;
-  return onSelect ? <Pressable testID={`pack-${pack.id}`} accessibilityRole="radio" accessibilityLabel={`${pack.name}, ${formatPackPrice(pack.priceKrw)}, 코스 생성 ${pack.generation}회, 코스 저장 ${pack.save}회`}
+  return onSelect ? <Pressable testID={`pack-${pack.id}`} accessibilityRole="radio" accessibilityLabel={`${pack.name}, 런칭 특별가 ${formatPackPrice(pack.priceKrw)}, 부가세 포함${pack.postLaunchPriceKrw === undefined ? '' : `, 런칭 종료 후 적용 예정가 ${formatPackPrice(pack.postLaunchPriceKrw)}`}, 코스 생성 ${pack.generation}회, 코스 저장 ${pack.save}회`}
     accessibilityState={{ selected, checked: selected }} aria-checked={selected} onPress={onSelect}>{content}</Pressable> : content;
 }

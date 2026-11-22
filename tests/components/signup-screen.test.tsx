@@ -43,7 +43,7 @@ test('UI-SIGNUP-05: leaving during photo preparation discards the late result an
   let finish!: (value: any) => void;
   mockPick.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
   await render(<SignupScreen />);
-  await fireEvent.press(screen.getByTestId('signup-consent-all'));
+  await fireEvent.press(screen.getByTestId('signup-age-confirmation'));await fireEvent.press(screen.getByTestId('signup-consent-all'));
   await fireEvent.press(screen.getByTestId('signup-photo'));
   expect(screen.getByTestId('signup-complete')).toBeDisabled();
   const latePhoto = { uri: 'file:///synthetic.jpg' };
@@ -103,7 +103,7 @@ test('preset selection marks only the prepared choice and profile save precedes 
   expect(mockPrepare).toHaveBeenCalledWith(1);
   expect(screen.getByTestId('signup-preset-1').props.accessibilityState.selected).toBe(true);
   expect(screen.getByTestId('signup-preset-0').props.accessibilityState.selected).toBe(false);
-  await fireEvent.press(screen.getByTestId('signup-consent-all'));
+  await fireEvent.press(screen.getByTestId('signup-age-confirmation'));await fireEvent.press(screen.getByTestId('signup-consent-all'));
   await fireEvent.press(screen.getByTestId('signup-complete'));
   expect(mockSaveProfile).toHaveBeenCalledWith({ nickname: '기존 이름', picture: 'uploaded' }, photo);
   expect(screen.getByTestId('signup-nickname').props.value).toBe('기존 이름');
@@ -113,7 +113,7 @@ test('preset selection marks only the prepared choice and profile save precedes 
 test('optional weight shows the 60kg fallback and rejects invalid input before profile or consent writes',async()=>{
   mockState={...mockState,status:'required',policy:mockPolicy,policyStatus:'ready'};
   await render(<SignupScreen/>);expect(screen.getByText(/기본 몸무게 60kg/)).toBeVisible();
-  await fireEvent.changeText(screen.getByTestId('signup-weight'),'0');await fireEvent.press(screen.getByTestId('signup-consent-all'));
+  await fireEvent.changeText(screen.getByTestId('signup-weight'),'0');await fireEvent.press(screen.getByTestId('signup-age-confirmation'));await fireEvent.press(screen.getByTestId('signup-consent-all'));
   await fireEvent.press(screen.getByTestId('signup-complete'));
   expect(screen.getByTestId('signup-message')).toHaveTextContent(/10~500kg/);expect(mockAccept).not.toHaveBeenCalled();
 });
@@ -121,6 +121,6 @@ test('signup persists valid optional weight with the existing owned preferences 
   mockState={...mockState,status:'required',policy:mockPolicy,policyStatus:'ready'};
   mockSaveProfile.mockResolvedValue(true);mockAccept.mockImplementation(async(_input:unknown,save:()=>Promise<boolean>)=>save());
   await render(<SignupScreen/>);await fireEvent.changeText(screen.getByTestId('signup-weight'),'65.5');
-  await fireEvent.press(screen.getByTestId('signup-consent-all'));await fireEvent.press(screen.getByTestId('signup-complete'));
+  await fireEvent.press(screen.getByTestId('signup-age-confirmation'));await fireEvent.press(screen.getByTestId('signup-consent-all'));await fireEvent.press(screen.getByTestId('signup-complete'));
   await waitFor(()=>expect(mockSavePreferences).toHaveBeenCalledWith({theme:'system',guidance:{voice:true},weightKg:65.5}));
 });

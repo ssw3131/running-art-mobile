@@ -23,9 +23,13 @@ export function PackSelection({ onBack, onHistory }: { onBack(): void; onHistory
       {packCatalog.map(pack => <PackCard key={pack.id} pack={pack} selected={selected === pack.id} onSelect={() => setSelected(pack.id)} />)}
     </View>
     <View style={{ gap: 12 }}><AppText variant="heading" weight="bold">구매 전 안내</AppText>
-      {['팩은 생성·저장 횟수를 함께 추가하는 단건 상품이에요.', '결제 기능을 준비하고 있어요. 지금은 결제되거나 횟수가 지급되지 않아요.',
+      {['팩은 생성·저장 횟수를 함께 추가하는 단건 상품이며 자동결제되지 않아요.', '결제 기능을 준비하고 있어요. 지금은 결제되거나 횟수가 지급되지 않아요.',
         '팩을 선택해도 현재 남은 횟수는 바뀌지 않아요.', '저장 횟수는 새 코스를 저장할 수 있는 횟수예요. 보관함 공간 수와 달라요.',
-        '이용 조건과 환불 안내는 구매가 가능해지기 전에 확인할 수 있어요.'].map(text => <AppText key={text} variant="caption" style={{ color: c.muted }}>• {text}</AppText>)}
+        '이용권은 유효기간 없이 계정에 보관하며, 추가 구매하면 잔여 횟수에 합산해요. 탈퇴·환불 시 정산은 별도 안내해요.',
+        '무료 이용권부터 사용하고 유료 이용권은 먼저 구매한 순서로 사용해요.',
+        '대한민국에서 원화로 판매할 예정이며, 표시 가격은 부가세를 포함해요.',
+        '런칭 종료일은 정해지지 않았어요. 종료할 때는 최소 14일 전에 앱 공지와 구매 화면에서 안내해요.',
+        '구매 건별 미사용 생성·저장권 전체를 환불 신청할 수 있어요. 자세한 환불·탈퇴 안내는 구매가 가능해지기 전에 제공해요.'].map(text => <AppText key={text} variant="caption" style={{ color: c.muted }}>• {text}</AppText>)}
     </View>
     <View style={{ gap: 10 }}>
       <Button testID="pack-purchase" label="구매 준비 중" disabled onPress={() => {}} />

@@ -16,8 +16,6 @@ jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({cours
 jest.mock('../../src/modules/courses/share-gpx',()=>({shareCourseGpx:jest.fn(),shareCourseSnapshotGpx:(...args:any[])=>mockExportSnapshot(...args)}));
 jest.mock('../../src/features/service/open-service-tab',()=>({openServiceTab:(...args:any[])=>mockNavigate(...args)}));
 jest.mock('../../src/modules/map/MapSurface',()=>({__esModule:true,default:(props:any)=>require('react').createElement(require('react-native').View,{testID:'detail-map',...props})}));
-jest.mock('../../src/features/terrain/use-terrain',()=>({useTerrain:()=>({state:{status:'idle',profile:null}})}));
-jest.mock('../../src/features/terrain/TerrainPanel',()=>()=>null);
 jest.mock('../../src/features/usage/use-usage',()=>({useUsage:()=>({data:{generation:{used:2,total:5}},error:'',refresh:jest.fn()})}));
 beforeEach(()=>{
  mockPoints.mockReset().mockResolvedValue([]);candidateDrafts.clear();jest.spyOn(ToastAndroid,'show').mockImplementation(()=>{});
