@@ -21,6 +21,7 @@ export function ConsentForm({ policy, policyStatus = policy ? 'ready' : 'unavail
   const available = !!policy && policyStatus === 'ready';
   const change = (patch: Partial<{ terms: boolean; privacy: boolean }>) => setConsent({ id: policy?.id, terms, privacy, ...patch });
   const [document, setDocument] = useState<'terms' | 'privacy' | null>(null);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   return <View style={{ gap: 38 }}>
     <View style={{ flexDirection: 'row', gap: 7, marginHorizontal: 16 }}>
       <View style={{ minHeight: 54, minWidth: 71, padding: 12, borderRadius: 10, backgroundColor: c.divider, justifyContent: 'center', alignItems: 'center' }}><AppText variant="caption" weight="bold" style={{ color: c.subtle }}>이메일</AppText></View>
@@ -35,6 +36,9 @@ export function ConsentForm({ policy, policyStatus = policy ? 'ready' : 'unavail
     <View style={{ marginHorizontal: 9 }}>{profile}</View>
     {weight&&<View style={{marginHorizontal:9}}>{weight}</View>}
     <View style={{ gap: 14 }}>
+      <Checkbox testID="signup-age-confirmation" label="[필수] 만 19세 이상입니다" checked={ageConfirmed} disabled={busy}
+        onChange={setAgeConfirmed} labelProps={{ weight: 'medium', style: { color: c.muted } }} />
+      <AppText variant="caption" style={{ color: c.muted }}>생년월일이나 신분증을 수집하지 않고, 연령을 직접 확인하는 항목이에요.</AppText>
       {available ? <>
         <Checkbox testID="signup-consent-all" label="필수 약관 전체 동의" labelProps={{ variant: 'heading', weight: 'bold', style: { color: c.muted } }}
           checked={terms && privacy} disabled={busy} onChange={value => change({ terms: value, privacy: value })} />
@@ -59,7 +63,8 @@ export function ConsentForm({ policy, policyStatus = policy ? 'ready' : 'unavail
       </Pressable>
     </View>
     {!!message && <AppText testID="signup-message" accessibilityRole="alert">{message}</AppText>}
-    <Button testID="signup-complete" label="완료" loading={busy} disabled={!available || !terms || !privacy} onPress={onSubmit} />
+    <Button testID="signup-complete" label="완료" loading={busy} disabled={!available || !terms || !privacy || !ageConfirmed}
+      onPress={() => { if (available && terms && privacy && ageConfirmed && !busy) onSubmit(); }} />
     <AppModal visible={!!document && available} title={document === 'terms' ? '서비스 이용약관' : '개인정보 수집 및 이용'} onClose={() => setDocument(null)}
       footer={<Button label="닫기" onPress={() => setDocument(null)} />}>
       <AppText variant="caption">버전 {policy?.id}</AppText>

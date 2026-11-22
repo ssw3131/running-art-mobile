@@ -14,6 +14,10 @@ DB 전체 내용 해시·첫 방문/게스트 전체 흐름·야외 GPS/배터�
 
 문서3개의 원격 push는 자동 승인 검토에서 해당 설치·기기 검증 기록의 GitHub 게시에 대한 명시적 사용자 승인이 없다는 이유로 거절됐다. 로컬 링크/검토/diff 검사와 커밋까지 완료했고, 기록은 `codex/phone-install-20261122`에 보존한다. 문서 PR/main 반영은 미실행이다. 휴대폰 설치 완료에는 영향이 없다.
 
+## 2026-11-22 정책 회신·유료 팩 검증 기반 main 반영 완료
+
+테스트 구매 검증·소유권/중복 원장·구매 내역 계약과 [정책 회신](../product/policy-decision-reply-20261122.md)의 가격 안내·환불/FIFO 계산·만19세 자기확인·고도 UI/자동 조회 제거를 반영했다. 기본 비활성이며 검증된 구매도 `not_granted`로 남긴다. 기존 생성/저장 횟수를 유지한다. [PR95](https://github.com/ssw3131/running-art-mobile/pull/95) → main `e011264`, 최종 전체485의 타입/린트·로직652/기존skip1·UI299·실제 DB4개·Android29 8단계/36 16단계·정적4화면 차이0·자료 보존/정리 및 main486의 동일 tree 증거 재사용 검사가 통과했다. 최초 DB 권한 결함과 수정, 다운로드 지연/재실행, API29 UI 수집 종료 경고4건을 보존했다. 실제 결제·지급/차감·환불 통합·서버 연령 증빙·운영 정책 게시·폰 설치는 후속이다. [정책 대조/남은 항목](../product/policy-implementation-20261122.md)·[데이터 흐름](../product/policy-dataflows-20261122.md)·[개발 계약](../development/billing-foundation-20261122.md)·[검증](../quality/billing-foundation-20261122.md)·[실행 기록](../history/executed-plans/2026-11-22-1559-billing-foundation.md). 최종 문서 검사·main 반영·임시 체크아웃 정리는 후속 문서 PR 본문을 따른다.
+
 ## 2026-11-22 팩 진입 통합·PR/main 검사 완료
 
 PR90/main f5e73ff를 통합하고 마이페이지·이용/소진 안내·회원/게스트 경로에 팩 선택과 구매 내역 준비 화면을 연결했다. 실제 남은 횟수를 표시하며 구매는 비활성이다. [PR93](https://github.com/ssw3131/running-art-mobile/pull/93)은 main0f0ac3d에 반영됐다. 최종44988058902의 타입/린트·UI49묶음299개·로직634개(기존skip1)·API·Android29 8단계/36 16단계·정적4화면 차이0·자료/사용량 보존·정리, main44991474048의 동일 tree 증거 재사용·필수 게이트가 통과했다. 최초 실패와 API29 UI 수집 종료 경고1건을 [통합 검증](../quality/packs-preparation-20261122.md)에 보존했다. 정책 초안 PR92·실제 결제·정책 게시·운영 구조 변경은 별도이며 이번 결과 문서의 검사·병합·브랜치 정리는 해당 문서 PR의 실제 상태를 따른다.

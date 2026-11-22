@@ -21,9 +21,7 @@ import { COURSE_NAME_MAX } from '@/modules/courses/model';
 import { durationLabel } from '@/modules/running/model';
 import { prepareRunRetry } from '@/modules/running/retry';
 import { isSimulationRun } from '@/modules/running/simulation-record';
-import { useTerrain } from '@/features/terrain/use-terrain';
 import { usePointAddress } from '@/features/course-generation/use-point-address';
-import { DifficultyTag } from '@/features/course-generation/DifficultyTag';
 
 import { DetailIcon,InformationRow } from '@/features/courses/CourseInformation';
 import { openServiceTab } from '@/features/service/open-service-tab';
@@ -33,7 +31,7 @@ import RunPath from './RunPath';
 export default function CompletedDetail({id}:{id:string}){
  const {data,error,retry}=useRunResult(id),c=useThemeColors(),auth=useAuth(),insets=useSafeAreaInsets();
  const [busy,setBusy]=useState(false),[failure,setFailure]=useState(''),[editing,setEditing]=useState(false),[name,setName]=useState('');
- const working=useRef(false),terrain=useTerrain(data?.course?.snapshot.route,true),address=usePointAddress(data?.course?.snapshot.origin);
+ const working=useRef(false),address=usePointAddress(data?.course?.snapshot.origin);
  const first=data?.achievements.badges.some(b=>b.shape===data.course?.snapshot.shape&&b.firstRunId===id),owner=auth.account?.id??'';
  const check=()=>{if((authentication.getSnapshot().account?.id??'')!==owner)throw new Error('계정이 바뀌었어요.');};
  async function act(task:()=>Promise<unknown>){
@@ -76,7 +74,6 @@ export default function CompletedDetail({id}:{id:string}){
      <InformationRow icon="pin" label="출발지"><AppText weight="bold" style={{fontSize:16}}>{address.label}</AppText></InformationRow>
      <InformationRow icon="map" label="전체 거리"><AppText testID="run-distance" weight="bold" style={{fontSize:18}}>{(data.run.distanceM/1000).toFixed(2)} km</AppText></InformationRow>
      <InformationRow icon="watch" label="실제 러닝 시간"><AppText weight="bold" style={{fontSize:18}}>{durationLabel(data.run.activeMs).replaceAll(':',' : ')}</AppText></InformationRow>
-     <InformationRow icon="difficulty" label="난이도"><DifficultyTag state={{kind:terrain.state.profile?'ready':terrain.state.status==='loading'?'loading':'error',profile:terrain.state.profile??undefined}}/></InformationRow>
     </View>
     <View style={{paddingHorizontal:26,marginTop:55,gap:20}}>
      <Button testID="completed-share" label="공유 하기" leading={<Image source={require('../../../assets/achievements/sharing-20261109/share.svg')} style={{width:21.5,height:20.666}}/>} disabled={busy} onPress={()=>router.push({pathname:'/run-card',params:{id}})}/>
