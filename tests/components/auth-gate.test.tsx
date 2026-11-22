@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, ToastAndroid } from 'react-native';
 import { act, screen, waitFor } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { guestAccess } from '../../src/modules/auth/guest-access';
 import { ServiceStack, privateScreens } from '../../src/features/auth/ServiceStack';
 
 jest.unmock('expo-router');
@@ -22,12 +23,12 @@ const routes: Record<string, any> = {
   _layout: ServiceStack,
   '(tabs)/_layout': () => <Stack />,
   'account-signup': () => <Text testID="signup">가입 정보</Text>,
-  'account-entry': () => <Text testID="entry">회원가입</Text>,
+  'account-entry': function EntryRoute(){ const params=useLocalSearchParams();return <Text testID="entry">{params.mode??'signup'}</Text>; },
   'auth/callback': () => <Text testID="callback">인증 처리</Text>,
   'service-policy': () => <Text testID="policy">약관</Text>,
 };
 for (const [name] of privateScreens) routes[name === '(tabs)' ? '(tabs)/index' : name] = () => <Text testID="private">{name}</Text>;
-beforeEach(() => { mockMembership = undefined; mockAuth = { ready: true, account: null }; });
+beforeEach(() => { guestAccess.leave(); mockMembership = undefined; mockAuth = { ready: true, account: null }; });
 afterEach(() => jest.useRealTimers());
 
 test.each([...privateScreens.map(([name]) => name === '(tabs)' ? '/' : '/' + name.replace('[id]', 'abc').replace('/index', '')), '/account-signup', '/run', '/unknown-page'])('guest deep link %s cannot mount service content', async initialUrl => {
@@ -102,4 +103,33 @@ test('cold course link survives cached membership restoration without fabricated
   await act(async () => { mockMembership = { ...mockMembership, offlineAvailable: true }; refresh(); });
   await waitFor(() => expect(screen.getByTestId('private')).toHaveTextContent('courses/[id]'));
   expect(router.canGoBack()).toBe(false);
+});
+
+test('explicit guest browsing opens home but cannot mount private course details or development tools',async()=>{
+ await renderRouter(routes);
+ await act(async()=>guestAccess.enter());
+ await waitFor(()=>expect(screen.getByTestId('private')).toHaveTextContent('(tabs)'));
+ await act(async()=>router.push('/development'));
+ expect(screen.queryByText('development')).toBeNull();
+ await act(async()=>router.push('/courses/abc'));
+ expect(screen.queryByText('courses/[id]')).toBeNull();
+ await act(async()=>router.push('/course-location-picker'));
+ expect(screen.getByTestId('private')).toHaveTextContent('course-location-picker');
+ await act(async()=>{mockAuth={ready:true,account:{id:'A'}};refresh();});
+ await waitFor(()=>expect(guestAccess.getSnapshot()).toBe(false));
+ await act(async()=>{mockAuth={ready:true,account:null};refresh();});
+ expect(screen.getByTestId('entry')).toBeVisible();expect(screen.queryByTestId('private')).toBeNull();
+});
+
+test('verified logout resets the login route and shows the toast once without private back history',async()=>{
+ const toast=jest.spyOn(ToastAndroid,'show').mockImplementation(()=>{});
+ mockAuth={ready:true,account:{id:'A'},logoutNotice:0};await renderRouter(routes);
+ await act(async()=>router.push('/development'));
+ await act(async()=>{mockAuth={ready:true,account:null,logoutNotice:0};refresh();});
+ await waitFor(()=>expect(screen.getByTestId('entry')).toBeVisible());
+ expect(router.canGoBack()).toBe(false);expect(toast).not.toHaveBeenCalled();
+ expect(screen.getByTestId('entry')).toHaveTextContent('login');
+ await act(async()=>{mockAuth={...mockAuth,logoutNotice:1};refresh();});
+ expect(toast).toHaveBeenCalledWith('로그아웃이 되었습니다.',ToastAndroid.SHORT);
+ await act(async()=>refresh());expect(toast).toHaveBeenCalledTimes(1);toast.mockRestore();
 });

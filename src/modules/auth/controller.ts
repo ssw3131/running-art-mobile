@@ -11,7 +11,7 @@ import { syncNaverProfile } from './naver-profile.ts';
 type AuthApi = Pick<SupabaseClient['auth'], 'getSession' | 'onAuthStateChange' | 'signInWithOAuth' | 'exchangeCodeForSession' | 'signOut' | 'startAutoRefresh' | 'stopAutoRefresh' | 'updateUser' | 'refreshSession'>;
 type BrowserResult = { type: string; url?: string };
 export type Account = { id: string; email: string; name: string; picture: ProfileInput['picture']; avatarUrl: string | null; photoPath: string | null; profileRevision: string | null; providers: string[] };
-export type AuthState = { ready: boolean; configured: boolean; busy: boolean; account: Account | null; message: string; providers: readonly SignInProvider[] };
+export type AuthState = { ready: boolean; configured: boolean; busy: boolean; account: Account | null; message: string; logoutNotice?: number; providers: readonly SignInProvider[] };
 type Pending = { createdAt: number; flowId?: string; provider?: SignInProvider };
 const SIGN_IN_ERROR = '로그인을 완료하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';
 
@@ -39,7 +39,7 @@ export function createAuthController(deps: {
 }) {
   const { auth, storage } = deps;
   const providers = Object.freeze([...new Set((deps.providers ?? ['google']).filter(isSignInProvider))]);
-  let state: AuthState = { ready: !auth, configured: !!auth, busy: false, account: null, message: '', providers };
+  let state: AuthState = { ready: !auth, configured: !!auth, busy: false, account: null, message: '', logoutNotice: 0, providers };
   const listeners = new Set<() => void>();
   let initialize: Promise<void> | undefined;
   let observing = false;
@@ -72,7 +72,7 @@ export function createAuthController(deps: {
         observing = true;
         auth.onAuthStateChange((event, session) => {
           acceptSession(session);
-          if (event === 'SIGNED_OUT') update({ message: '로그아웃되었습니다.' });
+          if (event === 'SIGNED_OUT') update({ message: '' });
         });
       }
       const before = revision;
@@ -219,6 +219,7 @@ export function createAuthController(deps: {
       update({ busy: true, message: '' });
       try {
         await start();
+        if (!state.account) return;
         if (deps.canChangeAccount && !await deps.canChangeAccount()) { update({ message:'진행 중인 러닝을 종료한 뒤 로그아웃해 주세요.' }); return; }
         await clearPending();
         const { error } = await auth.signOut({ scope: 'local' });
@@ -227,7 +228,7 @@ export function createAuthController(deps: {
         const restored = await auth.getSession();
         if (restored.error || restored.data.session) throw new Error('Session remains');
         acceptSession(null);
-        update({ message: error ? '이 기기에서 로그아웃했습니다. 서버의 세션 종료는 확인하지 못했습니다.' : '로그아웃되었습니다.' });
+        update({ logoutNotice: (state.logoutNotice ?? 0) + 1, message: error ? '이 기기에서 로그아웃했습니다. 서버의 세션 종료는 확인하지 못했습니다.' : '' });
       } catch { update({ message: '로그아웃을 완료하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.' }); }
       finally { update({ busy: false }); }
     },

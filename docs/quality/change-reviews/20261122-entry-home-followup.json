@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/features/auth/ServiceStack.tsx",
+    "src/features/membership/EntryScreen.tsx",
+    "src/features/membership/SignupBrand.tsx",
+    "src/features/membership/SocialButton.tsx",
+    "src/features/service/HomeBadges.tsx",
+    "src/features/service/HomeScreen.tsx",
+    "src/modules/auth/controller.ts",
+    "tests/auth.test.mjs",
+    "tests/components/auth-gate.test.tsx",
+    "tests/components/generation-home-entry.test.tsx",
+    "tests/components/guest-entry.test.tsx",
+    "tests/components/home.test.tsx",
+    "assets/home/first-visit-20261122/bone.svg",
+    "assets/home/first-visit-20261122/fish.svg",
+    "assets/home/first-visit-20261122/icecream.svg",
+    "assets/home/first-visit-20261122/manifest.json",
+    "assets/home/first-visit-20261122/strawberry.svg",
+    "assets/home/first-visit-20261122/whale.svg",
+    "src/features/membership/EntryLayout.tsx",
+    "src/features/service/InitialHome.tsx",
+    "scripts/qa/android.py",
+    "scripts/qa/home_states.py",
+    "scripts/qa/course_generation.py"
+  ],
+  "behavior": "changed",
+  "decision": "사용자의 로그인/가입 간격·로그아웃 로그인+토스트·첫 방문 배너/도형5개 요청을 기존 draft PR90에 추가. main 미반영.",
+  "before": "큰 간격의 진입 스크롤, 지속 로그아웃 문구와 가입 기본 모드, 첫 방문3도형 선택 후 별도 생성 CTA.",
+  "after": "화면별 반응형 여백/가로 배치, 확인된 로그아웃 로그인 모드+1회 토스트, 첫 방문 미획득 배너/도형5개 가로 목록과 즉시 조건 전달.",
+  "invariants": [
+    "가입 완료·서버 권한·익명 DB/회원 기록 보호 유지",
+    "실패/진행 중 러닝 로그아웃은 성공 토스트를 발행하지 않음",
+    "기존 기록/사용량/원장/운영 정책 변경 없음",
+    "단순 스크롤 차단으로 넘친 버튼/오류/확대 글자를 자르지 않음",
+    "반복 사용자 홈·일반 탭 이동·이전 생성 결과 보존",
+    "정적 원본 자산/동적 뱃지 분리, main/폰 설치/운영 배포 없음"
+  ],
+  "tests": [
+    {
+      "path": "tests/auth.test.mjs",
+      "reason": "SDK 제거 확인 후 일회 알림, 지속 성공 문구 제거와 실패/러닝 보호"
+    },
+    {
+      "path": "tests/components/auth-gate.test.tsx",
+      "reason": "실제 라우트 로그인 params·토스트1회·비공개 뒤로 이력 차단"
+    },
+    {
+      "path": "tests/components/guest-entry.test.tsx",
+      "reason": "가입 혜택/게스트 보존, 먼저 마운트된 가입 화면의 로그아웃 로그인 전환"
+    },
+    {
+      "path": "tests/components/home.test.tsx",
+      "reason": "첫 방문 배너와5개 도형 즉시 전달·게스트 익명 DB 미조회·기존 반복 홈"
+    },
+    {
+      "path": "tests/components/generation-home-entry.test.tsx",
+      "reason": "전달된5개 도형이 생성 설정에 실제 선택되고 계산하지 않음"
+    },
+    {
+      "path": "tests/home-challenge.test.mjs",
+      "reason": "기존 실제 미획득 추천/진행도와 완료 판정 보존"
+    },
+    {
+      "path": "tests/components/save-allowance.test.tsx",
+      "reason": "저장 전 취소와 동의 후 차감 흐름을 검사하며 에뮬레이터는 같은 흐름의 실제 서버 저장을 대조한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "Figma3화면의 간격/첫 홈 배너와 도형 목록 변경",
+    "evidence": [
+      "docs/quality/entry-home-followup-20261122.md: 원본 Figma/실제 EntryLayout·InitialHome 직접 대조. 로그인·가입8개 크기 조합에서 실제 scrollHeight/clientHeight·버튼 bounds 확인. 도형 원본5개/가로 이동 확인. native 기준 PNG는 변경하지 않음."
+    ]
+  },
+  "native": "Android 제품의 native Toast는 컴포넌트 mock 호출/일회성 상태와 코드로 검증. 전체 native 픽셀·실기기/OAuth 미검증, 사용자 요청은 같은 draft PR 추가이며 main 병합/폰 설치는 하지 않음. 이후 병합 요청에 따라 Android 29·36에서 게스트 입장 전/후, 가입 혜택, 회원 전용 탭, 도형 선택 즉시 이동과 저장 동의를 검사한다."
+}

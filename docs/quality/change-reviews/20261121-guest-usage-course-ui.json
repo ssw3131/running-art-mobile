@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/app/(tabs)/account.tsx",
+    "src/app/(tabs)/courses.tsx",
+    "src/app/(tabs)/run.tsx",
+    "src/features/auth/ServiceStack.tsx",
+    "src/features/course-generation/CourseGenerationScreen.tsx",
+    "src/features/course-generation/GenerationConfirmationSheet.tsx",
+    "src/features/course-generation/RecommendationResults.tsx",
+    "src/features/course-generation/use-course-generation.ts",
+    "src/features/courses/CourseDetailScreen.tsx",
+    "src/features/courses/CourseInformation.tsx",
+    "src/features/membership/EntryScreen.tsx",
+    "src/features/service/use-home.ts",
+    "src/features/usage/UsagePanel.tsx",
+    "tests/components/auth-gate.test.tsx",
+    "tests/components/course-detail.test.tsx",
+    "tests/components/course-generation.test.tsx",
+    "tests/components/home.test.tsx",
+    "assets/usage/figma-20261121/diamond-small.svg",
+    "assets/usage/figma-20261121/diamond.svg",
+    "assets/usage/figma-20261121/guest-archive.svg",
+    "assets/usage/figma-20261121/guest-divider.svg",
+    "assets/usage/figma-20261121/guest-wand.svg",
+    "assets/usage/figma-20261121/manifest.json",
+    "src/features/auth/GuestMemberNotice.tsx",
+    "src/features/usage/AllowanceSheets.tsx",
+    "src/features/usage/use-save-allowance.tsx",
+    "src/modules/auth/guest-access.ts",
+    "tests/components/guest-entry.test.tsx",
+    "tests/components/save-allowance.test.tsx",
+    "tests/components/usage-banner.test.tsx",
+    "tests/visual/android-linux-api36/baseline.json",
+    "tests/visual/android-linux-api36/archive.png"
+  ],
+  "behavior": "changed",
+  "decision": "사용자 요청: 게스트·생성/저장 차감 안내·추천 UI를 별도 PR에 등록하고 main 미반영. 무료 생성5회/저장10회, 구매 준비 중 안내로 확정.",
+  "before": "로그인 필수 진입, 일반 차감/소진 문구, 추천 난이도와 경사 상세, 사용량 중심 보관함 배너.",
+  "after": "세션 단위 게스트 탐색과 회원 데이터 차단, 실제 잔량 기반 저장 동의와 소진 하단창, 추천 유사도 순서/제목/선택 저장, 난이도/경사 제거 및 남은 저장 횟수 배너.",
+  "invariants": [
+    "기존 서버 정책10회와 계정별 사용량·코스·러닝·원장을 변경하지 않음",
+    "취소/중복/오프라인/계정 전환은 새 저장 차감이나 가짜 성공을 만들지 않음",
+    "기존 미확인 저장 복구와 신규 서버 예약/확정 권한 유지",
+    "게스트에게 익명 DB·회원 기록·개발 도구를 노출하지 않음",
+    "추천 정렬 후 지도/상세/저장에 동일 원본 후보 사용",
+    "main 병합·폰 설치·실제 결제·운영 배포 없음"
+  ],
+  "tests": [
+    {
+      "path": "tests/components/auth-gate.test.tsx",
+      "reason": "명시적 게스트 탐색, 비공개 딥링크 차단과 로그인/로그아웃 경계"
+    },
+    {
+      "path": "tests/components/guest-entry.test.tsx",
+      "reason": "로그인·가입 게스트 입장과 회원 탭 자식 미마운트"
+    },
+    {
+      "path": "tests/components/course-generation.test.tsx",
+      "reason": "게스트 회원가입 유도, 잔량/소진, 정렬 후 동일 후보 상세/명시 저장"
+    },
+    {
+      "path": "tests/components/course-detail.test.tsx",
+      "reason": "저장 차감 동의와 기존 저장/러닝/GPX/중도 종료 동작 보존"
+    },
+    {
+      "path": "tests/components/save-allowance.test.tsx",
+      "reason": "취소/중복/소진/오프라인/계정 전환과 서버 소진 경합"
+    },
+    {
+      "path": "tests/components/usage-banner.test.tsx",
+      "reason": "실제 남은 횟수와 초과 사용량 보존·추가 안내"
+    },
+    {
+      "path": "tests/archive-usage.test.mjs",
+      "reason": "기존 원장/복구/중복 미차감/계정 격리 불변 계약 재검증"
+    },
+    {
+      "path": "tests/usage-db.test.mjs",
+      "reason": "기존 저장10회 정책과 초과 사용량 보존/권한 검증"
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "Figma10화면의 게스트/차감/소진 하단창과 추천/상세/보관함 문구 변경",
+    "evidence": [
+      "docs/quality/guest-usage-course-ui-20261121.md: 원본 Figma 스크린샷 직접 검토, 412/360 폭 실제 안내창 렌더와 원본 SVG 비교. 작은 화면 잘림/차감 카드 행간 확인. 전체 앱 Android 픽셀 비교는 draft 범위에서 미실행이며 기존 기준을 임의 갱신하지 않음.",
+      "Android 36 전체 기능 15단계 통과. 실행 44966331984의 원본/현재/차이 이미지를 직접 대조했다. 보관함 배너 안의 20,718픽셀만 달라 해당 원본 캡처를 기준에 반영한다."
+    ]
+  },
+  "native": "Android 번들 생성 통과. 실제 기기/전체 Android29·36 화면 비교는 미검증, draft PR 빠른 검사만 실행하며 사용자 지시에 따라 ready/main 병합은 하지 않음."
+}

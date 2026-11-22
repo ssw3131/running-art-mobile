@@ -165,3 +165,11 @@ test('plain PKCE never launches a browser and clears the pending attempt', async
   assert.equal(await f.storage.getItem(AUTH_PENDING_KEY), null);
   assert.match(f.controller.getSnapshot().message, /완료하지 못/);
 });
+
+test('verified logout emits one transient notice and leaves no persistent success message',async()=>{
+ const f=fixture({session});await f.controller.start();assert.equal(f.controller.getSnapshot().logoutNotice,0);
+ await f.controller.signOut();assert.equal(f.controller.getSnapshot().logoutNotice,1);assert.equal(f.controller.getSnapshot().message,'');
+ await f.controller.signOut();assert.equal(f.controller.getSnapshot().logoutNotice,1);
+ const kept=fixture({session,logoutError:true,keepSession:true});await kept.controller.start();await kept.controller.signOut();assert.equal(kept.controller.getSnapshot().logoutNotice,0);assert.match(kept.controller.getSnapshot().message,/완료하지 못/);
+ const blocked=fixture({session,canChangeAccount:async()=>false});await blocked.controller.signOut();assert.equal(blocked.controller.getSnapshot().logoutNotice,0);
+});

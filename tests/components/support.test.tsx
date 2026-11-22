@@ -19,3 +19,8 @@ test('UI-S6-02 notice loading, failure, empty, cached and published content are 
  mockNotices={data:{notices:[{id:'real',title:'게시된 제목',body:'본문',category:'공지',publishedAt:'2026-10-14T00:00:00Z'}],offline:true,fetchedAt:1},error:''};await view.rerender(<Notices/>);
  expect(screen.getByText(/오프라인 저장본/)).toBeVisible();await fireEvent.press(screen.getByTestId('notice-real'));expect(mockPush).toHaveBeenCalledWith({pathname:'/service-notice',params:{id:'real'}});
 });
+
+test('FAQ states signup benefits are one-time and never refilled monthly',async()=>{
+ await render(<Faq/>);await fireEvent.press(screen.getByTestId('faq-free-allowance'));
+ expect(screen.getByText(/매월 무료 횟수가 추가되거나 초기화되지 않아요/)).toBeVisible();
+});

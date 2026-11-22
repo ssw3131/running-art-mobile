@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Alert, ToastAndroid, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { AppText, Button } from '@/components/ui';
 import { useAuth } from '@/features/auth/use-auth';
 import DrawingEditor, { DrawingPreview } from '@/features/route-lab/DrawingEditor';
@@ -21,10 +21,13 @@ import { GenerationIcon } from './GenerationIcon';
 import { GenerationDistanceInput } from './GenerationDistanceInput';
 import ImageShapeEditor from './ImageShapeEditor';
 import { locationMessage, useCourseGeneration } from './use-course-generation';
-import { candidateOverlay } from '@/modules/route-engine/geojson';
 import { openServiceTab } from '@/features/service/open-service-tab';
 import { PlaceSearch } from './PlaceSearch';
-import { useRecommendationTerrain } from './use-recommendation-terrain';
+import { GuestGenerationSheet } from '@/features/usage/AllowanceSheets';
+import { useSaveAllowance } from '@/features/usage/use-save-allowance';
+import { getStorage } from '@/modules/storage/database';
+import { authentication } from '@/modules/auth/runtime';
+import { courseShapes } from '@/modules/courses/model';
 import { consumeCourseLocation } from './location-picker-handoff';
 
 const styleUrl = mapStyleUrl(process.env.EXPO_PUBLIC_MAPTILER_API_KEY);
@@ -41,6 +44,7 @@ export default function CourseGenerationScreen() {
   const shapeWidth = (width - 48 - 10 * (shapeColumns - 1)) / shapeColumns;
   const scroll = useRef<ScrollView>(null), generateButton = useRef<View>(null);
   const [confirmation, setConfirmation] = useState<GenerationConditions | null>(null);
+  const [guestPrompt,setGuestPrompt]=useState(false);
   const [regenerating, setRegenerating] = useState(false);
   const [place, setPlace] = useState<{ address: string; lat: number; lng: number } | null>(null);
   const generationRef = useRef(g);
@@ -56,12 +60,10 @@ export default function CourseGenerationScreen() {
   const choosing = g.tab === 'conditions';
   const busy = g.state.kind === 'running';
   const result = g.completed;
-  const routes = useMemo(() => result?.liveRoads ? result.result.candidates.map(candidate => candidateOverlay(candidate, result.origin).route.geometry.coordinates.map(([lng, lat]): [number, number] => [lng, lat])) : [], [result]);
-  const terrain = useRecommendationTerrain(routes, !choosing && !busy);
   const addressOrigin = choosing ? current.origin : result?.origin ?? current.origin;
   const pointAddress = usePointAddress(addressOrigin, place && Math.abs(place.lat-addressOrigin.lat)<0.00001 && Math.abs(place.lng-addressOrigin.lng)<0.00001 ? place.address : '');
   const locationLabel = (origin: {lat: number; lng: number}) => place && Math.abs(place.lat-origin.lat)<0.00001 && Math.abs(place.lng-origin.lng)<0.00001 ? place.address : pointAddress.label;
-  useFocusEffect(useCallback(() => () => { setConfirmation(null); setImageOpen(false); }, []));
+  useFocusEffect(useCallback(() => () => { setGuestPrompt(false); setConfirmation(null); setImageOpen(false); }, []));
   useFocusEffect(useCallback(() => {
     const picked = consumeCourseLocation();
     if (!picked) return;
@@ -95,6 +97,7 @@ export default function CourseGenerationScreen() {
     return () => cancelAnimationFrame(frame);
   }, [homeParams.homeSection, homeParams.homeRequest, choosing, shapeY]);
   const showConfirmation = () => {
+    if(!auth.account){Keyboard.dismiss();setGuestPrompt(true);return;}
     if (g.cannotCalculate || busy) return;
     Keyboard.dismiss();
     setRegenerating(false);
@@ -124,6 +127,20 @@ export default function CourseGenerationScreen() {
       router.push({ pathname: '/course-candidate', params: { draft, ...(run ? { intent: 'run' } : {}) } });
     } catch { setNotice('선택한 코스를 열지 못했어요. 다시 생성해 주세요.'); }
   };
+  const selectedSnapshot=useMemo(()=>result&&g.selected>=0&&g.selected<result.result.candidates.length?courseFromCalculation(result,g.selected):null,[result,g.selected]);
+  const selectedSave=useSaveAllowance(selectedSnapshot,false,async()=>{
+    if(!selectedSnapshot||!auth.account||!result)return;
+    const owner=auth.account.id,index=g.selected;
+    const db=await getStorage();
+    if(authentication.getSnapshot().account?.id!==owner)throw new Error('계정이 바뀌었어요.');
+    const draft=candidateDrafts.put(selectedSnapshot,index+1,owner,result.result.candidates.length);
+    const previous=candidateDrafts.get(draft,owner);
+    const name=previous?.name??`${courseShapes[selectedSnapshot.shape]} 코스`;
+    const saved=await db.courses.save(selectedSnapshot,name);
+    if(authentication.getSnapshot().account?.id!==owner)return;
+    candidateDrafts.edit(draft,owner,{savedId:saved.id,name});
+    ToastAndroid.show('해당 코스가 코스 보관함에 저장 되었습니다.',ToastAndroid.LONG);
+  });
   const openLocationPicker = () => router.push({ pathname: '/course-location-picker', params: {
     lat: String(current.origin.lat), lng: String(current.origin.lng), ...(place ? { address: place.address } : {}),
   } });
@@ -198,13 +215,15 @@ export default function CourseGenerationScreen() {
           <DrawingPreview template={g.customTemplate} /><AppText style={{ flex: 1 }} variant="label">사용자 도형을 사용해요. 직접 그리기에서 수정할 수 있어요.</AppText></View>}
         {g.state.kind !== 'idle' && status}
         <View style={styles.generateAction}>
-          <Button ref={generateButton} testID="calculate-route" label="코스 생성하기" leading={<GenerationIcon name="generate" />} disabled={g.cannotCalculate || busy} onPress={showConfirmation} />
+          <Button ref={generateButton} testID="calculate-route" label="코스 생성하기" leading={<GenerationIcon name="generate" />} disabled={(!!auth.account && g.cannotCalculate) || busy} onPress={showConfirmation} />
           <AppText testID="generation-charge-notice" variant="caption" weight="medium" style={[styles.chargeNotice, { color: c.subtle }]}>코스를 생성하면 보유한 횟수가 1회 차감됩니다.</AppText>
         </View>
       </>}
-    </ScrollView> : <RecommendationResults g={g} terrain={terrain} location={locationLabel(result?.origin ?? current.origin)}
+    </ScrollView> : <RecommendationResults g={g} location={locationLabel(result?.origin ?? current.origin)}
       showTarget={showTarget} onTarget={setShowTarget} onEdit={() => {if(!result){g.reset();g.setTab('conditions');return;}Alert.alert('재설정 및 재생성하기','저장하지 않은 생성 코스는 삭제되고 코스 설정 페이지로 이동합니다.',[{text:'취소',style:'cancel'},{text:'확인',onPress:()=>{candidateDrafts.discardUnsaved(auth.account?.id??'guest');g.reset();g.setTab('conditions');}}]);}} onDetail={index => detail(false, index)}
-      onMap={() => detail(false, g.selected, true)} onRun={() => detail(true)} status={status} />}
+      onMap={() => detail(false, g.selected, true)} onRun={() => detail(true)} onSave={()=>selectedSave.request()} saving={selectedSave.busy} status={status} />}
+    {selectedSave.sheets}
+    <GuestGenerationSheet visible={guestPrompt} onClose={()=>setGuestPrompt(false)} />
     <GenerationConfirmationSheet conditions={confirmation} location={confirmation ? locationLabel(confirmation.origin) : ''}
       regenerating={regenerating} onClose={() => setConfirmation(null)} onConfirm={confirm} returnFocusRef={generateButton} />
     {g.drawingOpen && <DrawingEditor initial={g.customTemplate} onCancel={() => g.setDrawingOpen(false)}
