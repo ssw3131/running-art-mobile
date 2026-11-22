@@ -17,6 +17,10 @@ LOCAL = ROOT / '.cache/qa-membership'
 
 def main():
     assert '--serial' in sys.argv and sys.argv[sys.argv.index('--serial') + 1].startswith('emulator-')
+    serial = sys.argv[sys.argv.index('--serial') + 1]
+    heap = {name: subprocess.check_output(['adb', '-s', serial, 'shell', 'getprop', name], text=True, timeout=20).strip()
+            for name in ('dalvik.vm.heapsize', 'dalvik.vm.heapgrowthlimit')}
+    print('Emulator heap properties: ' + json.dumps(heap), flush=True)
     assert not (LOCAL / 'private-state.json').exists(), 'Clean up the previous fixture run first; never overwrite credentials'
     assert (LOCAL / 'tls/ca.crt').is_file(), 'Prepare the native QA TLS build first'
     env = {**os.environ, 'QA_SUPABASE_STATUS': str(pathlib.Path(os.environ.get('QA_SUPABASE_STATUS', ROOT / '.cache/qa-supabase-status.json')).resolve())}

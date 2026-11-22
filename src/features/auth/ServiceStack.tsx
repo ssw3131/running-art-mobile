@@ -1,10 +1,11 @@
 import { Stack, useNavigationContainerRef } from 'expo-router';
-import { useEffect, useRef } from 'react';
-import { ActivityIndicator, Platform, View } from 'react-native';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { ActivityIndicator, Platform, ToastAndroid, View } from 'react-native';
 import { AppText } from '@/components/ui';
 import { ServiceHeader } from '@/features/service/ServiceHeader';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { useAuth } from './use-auth';
+import { guestAccess } from '@/modules/auth/guest-access';
 import { useMembership } from '@/features/membership/use-membership';
 import { membershipAccess } from '@/modules/membership/access';
 
@@ -13,11 +14,12 @@ import { membershipAccess } from '@/modules/membership/access';
 export const privateScreens = [
   ['(tabs)', ''], ['service-info', '서비스 안내 및 지원'], ['development', '개발 도구'],
   ['account-profile', '프로필 편집'],
+  ['packs', 'RunPen 팩 구매'], ['purchase-history', '구매 내역'],
   ['badges', '뱃지 보관함'], ['badge-detail', '뱃지 상세'],
   ['account-settings', '설정'], ['account-sync', '개인 기록 동기화'], ['account-withdraw', '회원 탈퇴'],
   ['map', '내 주변 지도'], ['storage', '저장소 테스트'], ['courses/[id]', '코스 상세'],
   ['course-location-picker', '출발 위치 선택'], ['course-map', '지도에서 코스 보기'],
-  ['course-terrain', '경사 정보'], ['course-candidate', '코스 상세'], ['guidance', ''], ['runs/index', '러닝 기록 목록'], ['runs/[id]', '러닝 상세'],
+  ['course-terrain', '기록 보관함'], ['course-candidate', '코스 상세'], ['guidance', ''], ['runs/index', '러닝 기록 목록'], ['runs/[id]', '러닝 상세'],
   ['road-file-lab', '도로 파일 검증'], ['road-cache-lab', '영구 도로 캐시'], ['environment', '개발 환경'],
   ['approach-benchmark', '합류 경로 반복 측정'],
   ['ui-preview', 'UI 미리보기'], ['service-notices', '공지사항'], ['service-notice', '공지사항'],
@@ -27,12 +29,14 @@ export const privateScreens = [
   ['+not-found', ''],
 ] as const;
 
+const guestScreens = new Set<string>(['(tabs)', 'packs', 'purchase-history', 'course-location-picker', 'map', 'service-info', 'service-about', 'service-guide', 'service-faq', 'service-notices', 'service-notice']);
+
 type RouteState = { routeNames?: readonly string[]; routes: readonly { name: string; state?: RouteState }[] };
-type ResetState = { index: number; routes: { name: string; state?: ResetState }[] };
-function resetServiceState(state: RouteState, destination: string): ResetState | undefined {
-  if (state.routeNames?.includes('service-policy')) return { index: 0, routes: [{ name: destination }] };
+type ResetState = { index: number; routes: { name: string; params?: { mode: string }; state?: ResetState }[] };
+function resetServiceState(state: RouteState, destination: string, params?: {mode:string}): ResetState | undefined {
+  if (state.routeNames?.includes('service-policy')) return { index: 0, routes: [{ name: destination, ...(params?{params}:{}) }] };
   for (const route of state.routes) {
-    const nested = route.state && resetServiceState(route.state, destination);
+    const nested = route.state && resetServiceState(route.state, destination, params);
     if (nested) return { index: 0, routes: [{ name: route.name, state: nested }] };
   }
 }
@@ -40,21 +44,32 @@ export function ServiceStack() {
   const auth = useAuth(), registration = useMembership(), c = useThemeColors();
   const navigation = useNavigationContainerRef();
   const identity = auth.account?.id ?? null;
-  const access = membershipAccess(identity, registration);
+  const membership = membershipAccess(identity, registration);
+  const browsing = useSyncExternalStore(guestAccess.subscribe, guestAccess.getSnapshot);
+  const access = !identity && browsing ? 'browsing' : membership;
+  useEffect(() => { if (identity) guestAccess.leave(); }, [identity]);
   // Keep the initial URL pending while the owner's cached receipt is loading.
   // Mounting the signup navigator here would discard a cold course deep link.
   const restoringMembership = !!identity && (registration.owner !== identity || registration.status === 'idle' ||
     (registration.status === 'loading' && registration.policyStatus === 'loading' && !registration.offlineAvailable));
-  const destination = access === 'service' ? '(tabs)' : access === 'signup' ? 'account-signup' : 'account-entry';
+  const destination = (access === 'service' || access === 'browsing') ? '(tabs)' : access === 'signup' ? 'account-signup' : 'account-entry';
+  const logoutNotice = auth.logoutNotice ?? 0;
+  const shownLogout = useRef(logoutNotice);
+  useEffect(() => {
+    if (shownLogout.current === logoutNotice) return;
+    shownLogout.current = logoutNotice;
+    if (!identity && Platform.OS === 'android') ToastAndroid.show('로그아웃이 되었습니다.', ToastAndroid.SHORT);
+  }, [logoutNotice, identity]);
   const previous = useRef({ ready: false, identity, access });
   useEffect(() => {
     if (!auth.ready || restoringMembership) return;
+    const wasSignedIn = !!previous.current.identity;
     const changed = previous.current.ready && (previous.current.identity !== identity || previous.current.access !== access);
     previous.current = { ready: true, identity, access };
     // A navigator key alone remounts views but preserves the container's route
     // state. Clear that state too, including shared policy/callback history.
     if (changed && navigation.isReady()) {
-      const next = resetServiceState(navigation.getRootState(), destination);
+      const next = resetServiceState(navigation.getRootState(), destination, wasSignedIn && destination === 'account-entry' ? {mode:'login'} : undefined);
       if (next) navigation.resetRoot(next);
     }
   }, [auth.ready, restoringMembership, identity, access, destination, navigation]);
@@ -63,21 +78,21 @@ export function ServiceStack() {
   </View>;
   return <Stack key={identity ?? 'guest'} screenOptions={{ contentStyle: { backgroundColor: c.background },
     header: ({ options }) => <ServiceHeader title={options.title ?? 'RunPen'} back menu={!!auth.account} /> }}>
-    <Stack.Protected guard={access === 'service'}>
-      {privateScreens.map(([name, title]) => <Stack.Screen key={name} name={name} options={{ title,
+    <Stack.Protected guard={access === 'service' || access === 'browsing'}>
+      {privateScreens.map(([name, title]) => <Stack.Protected key={name} guard={access === 'service' || guestScreens.has(name)}><Stack.Screen key={name} name={name} options={{ title,
         // A native map can leave Android's slide transition and accessibility
         // hierarchy unfinished. Open this candidate detail without blending
         // the two native surfaces; retain the stack and ordinary back action.
         ...(Platform.OS === 'android' && name === 'course-candidate' ? { animation: 'none' as const } : {}),
         headerShown: name !== '(tabs)' && name !== 'guidance' && name !== 'run-simulation' && name !== 'course-location-picker' && name !== 'course-map',
         ...(name === 'service-info' || name === 'course-candidate' || name === 'run-settings' || name === 'run-card' ? { header: () => <ServiceHeader title={title} back menu={false} /> } : {}),
-      }} />)}
+      }} /></Stack.Protected>)}
     </Stack.Protected>
     <Stack.Protected guard={access === 'signup'}>
       <Stack.Screen name="account-signup" options={{ headerShown: false, gestureEnabled: false }} />
     </Stack.Protected>
     <Stack.Protected guard={!auth.account}>
-      <Stack.Screen name="account-entry" options={{ headerShown: false }} />
+      <Stack.Screen name="account-entry" initialParams={{mode:'login'}} options={{ headerShown: false }} />
     </Stack.Protected>
     <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
     <Stack.Screen name="service-policy" options={{ title: '약관 및 정책', header: () => <ServiceHeader title="약관 및 정책" back menu={false} /> }} />

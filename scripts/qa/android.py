@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from sqlite_snapshot import query_snapshot
 from display_profile import PIXEL5, device_overlays, display_geometry, is_pixel5_geometry
 from home_states import verify_home_states, verify_home_result
+from packs_preparation import pack_preparation
 from course_generation import generation_flow, scaled_generation
 from course_generation_figma import inputs as figma_inputs, real_course as figma_real_course
 from service_s234 import service_s234
@@ -43,13 +44,14 @@ parser.add_argument('--accessibility-only', action='store_true', help='Diagnose 
 parser.add_argument('--map-previews', action='store_true', help='Require real online map previews in a separately authorized local test APK')
 parser.add_argument('--service-only', action='store_true', help='Diagnose S234 integration only; never substitutes for full CI')
 parser.add_argument('--achievements-only', action='store_true', help='Diagnose S5/S6 only; never substitutes for full CI')
+parser.add_argument('--packs-only', action='store_true', help='Diagnose pack selection/history and preservation; never substitutes for full CI')
 parser.add_argument('--generation-only', action='store_true', help='Run S2a generation and accessibility diagnostics; never substitutes for full CI')
 parser.add_argument('--figma-generation-only', action='store_true', help='Figma input, real Korean search/route, save gate; not a full regression')
 parser.add_argument('--figma-real-only', action='store_true', help='Diagnose real Figma route/save and scaled UI')
 parser.add_argument('--visual-only', action='store_true', help='Capture candidates only; does not count as a functional pass')
 parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'test-results/android')
 args = parser.parse_args()
-assert sum([args.signup_only, args.home_only, args.home_states_only, args.accessibility_only, args.generation_only, args.figma_generation_only, args.figma_real_only, args.service_only, args.achievements_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
+assert sum([args.signup_only, args.home_only, args.home_states_only, args.accessibility_only, args.generation_only, args.figma_generation_only, args.figma_real_only, args.service_only, args.achievements_only, args.packs_only, args.smoke, args.visual_only]) <= 1, 'Choose one scenario mode'
 assert args.serial.startswith('emulator-') and args.serial[9:].isdigit(), 'Physical devices are forbidden'
 assert 1 <= args.repeat <= 10
 sdk = pathlib.Path(os.environ.get('ANDROID_HOME', ROOT / '.tools/android-sdk'))
@@ -182,6 +184,7 @@ if int(environment['api']) >= 36:
     (args.output / 'radio-profile.json').write_text(json.dumps(report['radioSignalProfile']), encoding='utf8')
 maestro = next((ROOT / '.tools/maestro-2.11.0').rglob('maestro.bat' if os.name == 'nt' else 'bin/maestro'), None)
 if args.figma_real_only: report['mode'] = 'figma-real-only'
+if args.packs_only: report['mode'] = 'packs-only'
 assert maestro is not None, 'Run scripts/qa/install-maestro.py first'
 original_overlays = None
 
@@ -365,9 +368,13 @@ def signup_entry():
     launch()
     tree = q.capture('signup-entry')
     assert q.find(tree, 'signup-entry') is not None
-    assert q.find(tree, 'tab-home') is None and q.find(tree, 'signup-guest') is None
-    assert not any('5회 무료' in n.get('text', '') for n in tree.iter('node'))
-    q.seek('signup-mode'); q.tap('signup-mode'); q.capture('signup-login')
+    assert q.find(tree, 'tab-home') is None
+    assert q.find(tree, 'signup-guest') is not None
+    assert q.find(tree, 'signup-mode').get('content-desc') == '회원가입'
+    q.tap('signup-mode')
+    signup = q.capture('signup-benefits')
+    assert q.find(signup, 'signup-guest') is not None
+    assert any('생성 5회, 저장 10회' in n.get('text', '') for n in signup.iter('node'))
     routes = ['run','route-lab','courses','account','courses/'+'d'*32,'runs/'+'9'*32,
               'service-info','development','account-signup','run-card','service-inquiry','_sitemap','unknown-page']
     for i, route in enumerate(routes):
@@ -382,6 +389,18 @@ def signup_entry():
     assert q.find(q.capture('guest-required-policy'),'service-back') is not None
     q.tap('service-back')
     assert q.find(q.capture('guest-policy-back'),'signup-entry') is not None
+    q.tap('signup-guest')
+    wait_home(q)
+    q.tap('tab-archive')
+    assert q.find(q.capture('guest-archive-requires-membership'), 'guest-member-notice') is not None
+    q.tap('tab-courses')
+    q.seek('calculate-route')
+    q.tap('calculate-route')
+    offer = q.capture('guest-generation-offer')
+    assert q.find(offer, 'guest-signup') is not None and q.find(offer, 'generation-confirm') is None
+    q.tap('guest-signup')
+    assert q.find(q.capture('guest-to-signup'), 'signup-mode').get('content-desc') == '로그인'
+    q.shell('am', 'force-stop', q.APP)
     try:
         q.shell('wm', 'density', '480'); q.shell('settings', 'put', 'system', 'font_scale', '1.6')
         # Configuration changes recreate the activity. Reach the entry through
@@ -426,7 +445,7 @@ try:
         launch(); wait_for_storage(q); q.snapshot('empty')
         signup_entry()
         result['steps'].append({'id':'AUTH-guest-gate','status':'passed'})
-        if args.signup_only or not (args.home_only or args.home_states_only or args.accessibility_only or args.generation_only or args.service_only or args.achievements_only or args.visual_only):
+        if args.signup_only or not (args.home_only or args.home_states_only or args.accessibility_only or args.generation_only or args.service_only or args.achievements_only or args.packs_only or args.visual_only):
             signup_membership(q, launch)
             result['steps'].append({'id': 'S1-membership-explicit-consent', 'status': 'passed'})
         if args.signup_only:
@@ -453,6 +472,7 @@ try:
         # Native PNG capture, SAF and theme behavior also need the API 29
         # compatibility run; a modern-Android-only pass is insufficient.
         steps += [('S56-01-achievements-support', lambda: service_s56(q, launch))]
+        steps += [('Packs-preparation', lambda: pack_preparation(q, launch))]
         if args.home_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch)),
                                    ('S0-02-draft', q.navigation), ('S0-04-save', save_and_home)]
         if args.home_states_only: steps = [('S1-02-home-states', lambda: verify_home_states(q, launch))]
@@ -466,6 +486,7 @@ try:
                                          ('S2a-02-accessibility', lambda: scaled_generation(q, launch))]
         if args.service_only: steps = [('S0-05-preparation', q.course_preparation), ('S234-01-integrated', lambda: service_s234(q, launch))]
         if args.achievements_only: steps = [('S56-01-achievements-support', lambda: service_s56(q, launch))]
+        if args.packs_only: steps = [('Packs-preparation', lambda: pack_preparation(q, launch))]
         if args.visual_only: steps = []
         for scenario, action in steps:
             if report['mode'] in DIAGNOSTIC_MODES:

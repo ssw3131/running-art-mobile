@@ -37,16 +37,19 @@ test('UI-HOME-01: loading/error are distinct from initial, explicit retry shows 
   mockRead.mockImplementationOnce(() => new Promise((_, fail) => { reject = fail; })).mockResolvedValue(data());
   await render(<HomeScreen />);
   expect(screen.getByTestId('home-loading')).toBeVisible(); expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0);
   await act(async () => reject(new Error('disk')));
   expect(screen.getByTestId('home-error')).toBeVisible(); expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0);
   await fireEvent.press(screen.getByTestId('home-retry'));
   expect(screen.getByTestId('home-initial')).toBeVisible();
   await fireEvent.press(screen.getByTestId('home-shape-fish'));
+  expect(mockNavigate.mock.lastCall?.[0]).toMatchObject({pathname:'/route-lab',params:{homeShape:'fish',homeSection:'conditions'}});
   await fireEvent.press(screen.getByTestId('open-route-lab'));
   expect(mockNavigate.mock.lastCall?.[0]).toMatchObject({ pathname: '/route-lab', params: { homeShape: 'fish' } });
-  expect(screen.getByTestId('home-shape-dog')).toBeEnabled();
-  await fireEvent.press(screen.getByTestId('home-shape-dog'));await fireEvent.press(screen.getByTestId('open-route-lab'));
-  expect(mockNavigate.mock.lastCall?.[0]).toMatchObject({pathname:'/route-lab',params:{homeShape:'dog'}});
+  expect(screen.getByTestId('home-shape-whale')).toBeEnabled();
+  await fireEvent.press(screen.getByTestId('home-shape-whale'));await fireEvent.press(screen.getByTestId('open-route-lab'));
+  expect(mockNavigate.mock.lastCall?.[0]).toMatchObject({pathname:'/route-lab',params:{homeShape:'whale'}});
 });
 
 test('UI-HOME-02: unfinished course stays in saved courses, not completed history; opening does not resume GPS', async () => {
@@ -101,7 +104,8 @@ test('UI-HOME-04: account switch hides old history immediately and discards its 
 test('UI-HOME-05: authentication loading never reads guest storage or advertises an empty home', async () => {
   mockAuth = { ready: false, account: null }; await render(<HomeScreen />);
   expect(mockRead).not.toHaveBeenCalled(); expect(screen.getByTestId('home-loading')).toBeVisible();
-  expect(screen.queryByTestId('home-initial')).toBeNull(); expect(screen.queryByTestId('home-signup')).toBeNull();
+  expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0); expect(screen.queryByTestId('home-signup')).toBeNull();
 });
 
 test('saved-only home shows zero run statistics and opens the saved course without invented activity time', async () => {
@@ -117,7 +121,8 @@ test('saved-only home shows zero run statistics and opens the saved course witho
 });
 test('guest never queries or exposes preserved guest records', async () => {
   mockAuth = { ready: true, account: null }; await render(<HomeScreen />);
-  expect(mockRead).not.toHaveBeenCalled(); expect(screen.queryByTestId('home-initial')).toBeNull();
+  expect(mockRead).not.toHaveBeenCalled(); expect(screen.getByTestId('home-initial')).toBeVisible();
+  expect(screen.queryAllByTestId(/^home-course-/)).toHaveLength(0);
 });
 
 test('returning home starts a conditions request without replacing the previously chosen shape', async () => {
@@ -158,4 +163,16 @@ test('home courses, completions and earned badges are horizontal and capped at f
  expect(screen.getByTestId('home-run-run4')).toBeVisible();expect(screen.queryByTestId('home-run-run5')).toBeNull();
  expect(screen.getByTestId('home-earned-badge2')).toBeVisible();expect(screen.queryByTestId('home-earned-badge1')).toBeNull();
  expect(screen.getByText('내 완주 뱃지')).toBeVisible();
+});
+
+test('first visit shows a real unearned challenge and five horizontally scrollable shape shortcuts',async()=>{
+ mockRead.mockResolvedValue({...data(),badges:[]});await render(<HomeScreen/>);
+ expect(screen.getByTestId('home-badge-challenge')).toBeVisible();expect(screen.getByTestId('home-shapes-carousel').props.horizontal).toBe(true);
+ const shapes=screen.getAllByTestId(/^home-shape-/);expect(shapes).toHaveLength(5);
+ for(const id of ['icecream','strawberry','fish','bone','whale']){await fireEvent.press(screen.getByTestId('home-shape-'+id));expect(mockNavigate.mock.lastCall[0]).toMatchObject({pathname:'/route-lab',params:{homeShape:id,homeSection:'conditions'}});}
+ await fireEvent.press(screen.getByTestId('home-challenge-start'));expect(mockPush.mock.lastCall[0]).toMatchObject({pathname:'/badge-detail',params:{challenge:'1'}});
+});
+test('guest challenge opens signup without reading anonymous records or private badge detail',async()=>{
+ mockAuth={ready:true,account:null};await render(<HomeScreen/>);await fireEvent.press(screen.getByTestId('home-challenge-start'));
+ expect(mockRead).not.toHaveBeenCalled();expect(mockPush.mock.lastCall[0]).toEqual({pathname:'/account-entry',params:{mode:'signup'}});
 });

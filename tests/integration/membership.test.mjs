@@ -3,8 +3,12 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { isolatedSupabase } from '../../scripts/qa/isolated-supabase.mjs';
 import { createMembershipRemote } from '../../src/modules/membership/remote.ts';
+import { billingIntegration } from '../helpers/billing-integration.mjs';
 
 const { admin, client: createIsolatedClient } = isolatedSupabase();
+
+// Sequential in this file: both scenarios temporarily activate their own membership policy.
+test('DB-BILLING-01: real PostgreSQL concurrent receipts, cancellation and deletion barrier', billingIntegration);
 
 test('DB-SIGNUP-01: real Auth pending state, concurrent RPC receipt, account isolation and cascade', async t => {
   const users = [], clients = [], policyId = `qa-${randomUUID()}`;

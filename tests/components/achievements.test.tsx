@@ -11,7 +11,6 @@ jest.mock('../../src/features/auth/use-auth',()=>({useAuth:()=>({ready:true,acco
 jest.mock('../../src/modules/auth/runtime',()=>({authentication:{getSnapshot:()=>({account:{id:'owner'}})}}));
 jest.mock('../../src/modules/storage/database',()=>({getStorage:jest.fn()}));
 jest.mock('../../src/modules/courses/share-gpx',()=>({shareRunCourseGpx:jest.fn()}));
-jest.mock('../../src/features/terrain/use-terrain',()=>({useTerrain:()=>({state:{status:'idle',profile:null}})}));
 jest.mock('../../src/features/course-generation/use-point-address',()=>({usePointAddress:()=>({label:'Test region',address:'Test region'})}));
 jest.mock('../../src/features/running/RunPath',()=>()=>null);
 jest.mock('../../src/features/running/RunSharePanel',()=>()=>null);
@@ -56,6 +55,8 @@ test.each([true,false])('completed detail shares this record and keeps retry ava
  const data={run:{id,status:'completed',startedAt:Date.UTC(2026,10,8),courseOutcome:'finished',distanceM:3000,activeMs:1800000},course:{snapshot,name:'하트 코스'},points:[],shapeCompletion:first?1:2,achievements:{finishedCourses:2,badges:[{shape:'heart',firstRunId:first?id:'older'}]}};
  mockResult={data,error:''};
  await render(<CompletedDetail id={id}/>);
+ expect(screen.queryByText('난이도')).toBeNull();
+ expect(screen.queryByTestId('terrain-panel')).toBeNull();
  expect(screen.getByTestId('run-rechallenge')).toBeEnabled();
  await fireEvent.press(screen.getByTestId('completed-share'));
  expect(mockPush).toHaveBeenCalledWith({pathname:'/run-card',params:{id}});

@@ -1,4 +1,7 @@
 import { HomeBadgeChallenge, HomeEarnedBadges } from './HomeBadges';
+import { badgeProgress } from '@/modules/achievements/catalog';
+import { authentication } from '@/modules/auth/runtime';
+import { InitialHome, type InitialShape } from './InitialHome';
 import { recommendHomeBadge } from '@/modules/home/recommendation';
 import { router, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
@@ -10,18 +13,12 @@ import { homeKind, homeRunOutcome, type HomeCourse, type HomeData, type HomeRun 
 import { durationLabel, elapsedMs } from '@/modules/running/model';
 import { isSimulationRun } from '@/modules/running/simulation-record';
 import { useThemeColors } from '@/theme/ThemeProvider';
-import { radius, space } from '@/theme/tokens';
+import { space } from '@/theme/tokens';
 import { HomePreview } from './HomePreview';
 import { RegionText } from '@/features/achievements/RegionText';
 import { estimatedRunningMinutes } from '@/features/course-generation/recommendation-metrics';
 import { useHome } from './use-home';
 
-const shapeAssets = {
-  heart: { source: require('../../../assets/home/heart.svg'), width: 49.0004, height: 42.0002, name: '하트' },
-  fish: { source: require('../../../assets/home/fish.svg'), width: 52.9996, height: 45.9984, name: '물고기' },
-  dog: { source: require('../../../assets/home/dog.svg'), width: 52.9995, height: 45.9979, name: '강아지' },
-};
-type Shape = keyof typeof shapeAssets;
 type Row = { key: string; kind: 'initial' | 'stats' | 'run-heading' | 'course-heading' | 'runs' | 'courses' | 'challenge' | 'badges' | 'action' | 'credits'; runs?: HomeRun[]; courses?: HomeCourse[] };
 const viewability = { itemVisiblePercentThreshold: 1 };
 const km = (distance: number) => (distance / 1000).toFixed(1);
@@ -37,29 +34,6 @@ function TextLink({ label, onPress, testID }: { label: string; onPress(): void; 
     <AppText weight="medium" style={{ color: c.subtle, flexShrink: 1 }}>{label}</AppText>
     <Image source={require('../../../assets/ui/chevron-right.svg')} tintColor={c.subtle} contentFit="contain" style={{ width: 20, height: 20 }} accessible={false} />
   </Pressable>;
-}
-
-function InitialHome({ shape, setShape }: { shape: Shape; setShape(value: Shape): void }) {
-  const c = useThemeColors();
-  return <View testID="home-initial" style={{ gap: 10 }}>
-    <AppText variant="heading" weight="medium">오늘은 어떤 그림을 달릴까요?</AppText>
-    <AppText variant="label" style={{ color: c.muted }}>마음에 드는 모양을 골라보세요.{'\n'}익숙한 길이 나만의 러닝 아트가 됩니다.</AppText>
-    <View accessible accessibilityLabel="RunPen, 달린 경로로 만드는 나만의 그림" style={styles.hero}>
-      <Image source={require('../../../assets/home/intro.png')} contentFit="fill" accessible={false} style={styles.heroImage} />
-    </View>
-    <View style={styles.sectionHeading}><AppText weight="bold" style={styles.sectionTitle}>추천 도형 선택</AppText>
-      <TextLink label="전체보기" testID="home-all-shapes" onPress={() => router.navigate({ pathname: '/route-lab', params: { homeSection: 'shapes', homeRequest: String(Date.now()) } })} />
-    </View>
-    <View style={styles.shapes}>{(Object.keys(shapeAssets) as Shape[]).map(id => {
-      const asset = shapeAssets[id], selected = shape === id;
-      return <Pressable key={id} testID={`home-shape-${id}`} accessibilityRole="button" accessibilityLabel={asset.name}
-        accessibilityState={{ selected }} onPress={() => setShape(id)} style={[styles.shape, { borderColor: selected ? c.selected : c.outline }]}>
-        <View style={{ width: 45, height: 38 }}><Image source={asset.source} accessible={false} contentFit="contain"
-          style={{ position: 'absolute', width: asset.width, height: asset.height, left: (45 - asset.width) / 2, top: (38 - asset.height) / 2 }} /></View>
-        <AppText weight="bold" style={{ color: selected ? c.selected : c.muted, fontSize: 18, textAlign: 'center' }}>{asset.name}</AppText>
-      </Pressable>;
-    })}</View>
-  </View>;
 }
 
 function Stats({ data }: { data: HomeData }) {
@@ -83,12 +57,19 @@ function Stats({ data }: { data: HomeData }) {
 export default function HomeScreen() {
   const auth = useAuth(), c = useThemeColors(), { data, error, retry, recommendationSeed } = useHome();
   const { fontScale } = useWindowDimensions(), cardWidth = fontScale >= 1.4 ? 180 : 115;
-  const list = useRef<FlatList<Row>>(null), [shape, setShape] = useState<Shape>('heart'), [focused, setFocused] = useState(false);
+  const list = useRef<FlatList<Row>>(null), [shape, setShape] = useState<InitialShape>('icecream'), [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState<Set<string>>(new Set());
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken<Row>[] }) => setVisible(new Set(viewableItems.map(v => v.item.key))), []);
   useFocusEffect(useCallback(() => { setFocused(true); return () => setFocused(false); }, []));
   const kind = data ? homeKind(data) : null;
-  const challenge=useMemo(()=>recommendHomeBadge(data?.badges??[],recommendationSeed??0),[data?.badges,recommendationSeed]);
+  const challenge=useMemo(()=>recommendHomeBadge(data?.badges?.length?data.badges:kind==='initial'?badgeProgress([]):[],recommendationSeed??0),[data,recommendationSeed,kind]);
+  const openChallenge=()=>{
+    if(!challenge)return;
+    if(!auth.account){router.push({pathname:'/account-entry',params:{mode:'signup'}});return;}
+    if(authentication.getSnapshot().account?.id!==data?.owner)return;
+    router.push({pathname:'/badge-detail',params:{id:challenge.badge.definition.id,challenge:'1'}});
+  };
+  const chooseShape=(value:InitialShape)=>{setShape(value);router.navigate({pathname:'/route-lab',params:{homeSection:'conditions',homeShape:value,homeRequest:String(Date.now())}});};
   const rows = useMemo(() => {
     if (!data) return [];
     if (kind === 'initial') return [{ key: 'initial', kind: 'initial' }, { key: 'action', kind: 'action' }] as Row[];
@@ -109,9 +90,9 @@ export default function HomeScreen() {
       </View>}
       renderItem={({ item }) => {
         const active = focused && visible.has(item.key);
-        if (item.kind === 'initial') return <InitialHome shape={shape} setShape={setShape} />;
+        if (item.kind === 'initial') return <InitialHome shape={shape} onShape={chooseShape} challenge={challenge} onChallenge={openChallenge} onAllShapes={()=>router.navigate({pathname:'/route-lab',params:{homeSection:'shapes',homeRequest:String(Date.now())}})} />;
         if (item.kind === 'stats') return <Stats data={data!} />;
-        if(item.kind==='challenge')return challenge?<HomeBadgeChallenge challenge={challenge} owner={data!.owner}/>:null;
+        if(item.kind==='challenge')return challenge?<HomeBadgeChallenge challenge={challenge} onPress={openChallenge}/>:null;
         if(item.kind==='badges')return <HomeEarnedBadges badges={data?.badges??[]}/>;
         if (item.kind === 'run-heading' || item.kind === 'course-heading') {
           const runs = item.kind === 'run-heading';
@@ -148,7 +129,6 @@ const styles = StyleSheet.create({
   content: { padding: space.xxl, gap: 12, flexGrow: 1 }, greeting: { fontSize: 32, lineHeight: 44 },
   loading: { padding: 24, gap: 12 }, hero: { width: '100%', aspectRatio: 366 / 288, overflow: 'hidden', borderRadius: 15, marginTop: 16 },
   heroImage: { position: 'absolute', width: '129.23%', height: '109.49%', left: '-4.63%', top: '-3.82%' },
-  shapes: { flexDirection: 'row', gap: 5 }, shape: { flex: 1, minHeight: 113, borderWidth: 2, borderRadius: radius.compact, paddingHorizontal: 4, paddingVertical: 16, gap: 10, alignItems: 'center', justifyContent: 'center' },
   sectionHeading: { marginTop: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }, sectionTitle: { fontSize: 18, flexShrink: 1 },
   textLink: { minHeight: 48, paddingVertical: 12, flexDirection: 'row', gap: 4, alignItems: 'center' },
   stats: { flexDirection: 'row', gap: 6, marginTop: 12 }, stat: { flex: 1, paddingHorizontal: 6, paddingVertical: 12, borderRadius: 16, gap: 10 },

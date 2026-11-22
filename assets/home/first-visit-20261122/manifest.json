@@ -1,0 +1,67 @@
+{
+  "fileKey": "QYRGII8OdvQB1SrtH3BA08",
+  "nodeId": "2:855",
+  "assets": [
+    {
+      "file": "assets/home/first-visit-20261122/icecream.svg",
+      "source": "https://www.figma.com/api/mcp/asset/a1f2d6da-c8af-4b3e-af96-f1eb7f3fee2f.svg",
+      "width": "48",
+      "height": "48",
+      "viewBox": "0 0 48 48",
+      "bytes": 767,
+      "sha256": "e1f652ff666cee00193d1a58add8b9df58a454bc5446432154ad1b19654ffe58",
+      "callsite": "src/features/service/InitialHome.tsx",
+      "slot": "icecream",
+      "transform": "none"
+    },
+    {
+      "file": "assets/home/first-visit-20261122/strawberry.svg",
+      "source": "https://www.figma.com/api/mcp/asset/e884a7db-3a36-4ecb-9fe6-825cbe4296ec.svg",
+      "width": "48",
+      "height": "48",
+      "viewBox": "0 0 48 48",
+      "bytes": 824,
+      "sha256": "f9a68e2db5332df508f5815af2f4e2d259053e82185732a9be67e5f590e01142",
+      "callsite": "src/features/service/InitialHome.tsx",
+      "slot": "strawberry",
+      "transform": "none"
+    },
+    {
+      "file": "assets/home/first-visit-20261122/fish.svg",
+      "source": "https://www.figma.com/api/mcp/asset/a12ea86a-d7d0-4958-bf20-5e9d2cd7edf3.svg",
+      "width": "45",
+      "height": "45",
+      "viewBox": "0 0 45 45",
+      "bytes": 717,
+      "sha256": "01a9a26edb38bd986a2a79ef523c8cf43052a2ba03dbd46c4851cb4edcb7d9b2",
+      "callsite": "src/features/service/InitialHome.tsx",
+      "slot": "fish",
+      "transform": "none"
+    },
+    {
+      "file": "assets/home/first-visit-20261122/bone.svg",
+      "source": "https://www.figma.com/api/mcp/asset/bc9d3c95-621a-4b25-b692-34e1655bba66.svg",
+      "width": "48",
+      "height": "48",
+      "viewBox": "0 0 48 48",
+      "bytes": 982,
+      "sha256": "b35194972d0c8935ccea355932b0e70eb84c20e2e59df08c2964a1618cf90e90",
+      "callsite": "src/features/service/InitialHome.tsx",
+      "slot": "bone",
+      "transform": "scaleX(-1)"
+    },
+    {
+      "file": "assets/home/first-visit-20261122/whale.svg",
+      "source": "https://www.figma.com/api/mcp/asset/1533818a-7246-450b-95e1-d32c95973be6.svg",
+      "width": "48",
+      "height": "48",
+      "viewBox": "0 0 48 48",
+      "bytes": 804,
+      "sha256": "439727f6df3e80100f9132603328027ef337ef69b51e78dd012c283cc0a7cef8",
+      "callsite": "src/features/service/InitialHome.tsx",
+      "slot": "whale",
+      "transform": "none"
+    }
+  ],
+  "reused": "Existing home intro, challenge stage, dynamic BadgeImage, and UI chevrons; original signup brand and social icons."
+}

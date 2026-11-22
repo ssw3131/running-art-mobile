@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/features/membership/EntryLayout.tsx",
+    "src/features/usage/AllowanceSheets.tsx",
+    "src/features/usage/UsagePanel.tsx",
+    "src/modules/support/content.ts",
+    "src/modules/usage/model.ts",
+    "tests/components/guest-entry.test.tsx",
+    "tests/components/support.test.tsx"
+  ],
+  "behavior": "changed",
+  "decision": "사용자: 매월 무료 생성/저장 추가 지급 없음도 PR90에 반영하고 최종 빌드/폰 설치 요청. main 미반영.",
+  "before": "누적 서버 정책은 이미 자동 충전이 없지만 가입/FAQ에서 월별 무료 추가 없음이 충분히 명시되지 않음.",
+  "after": "가입 최초1회 제공·월별 무료 추가/초기화 없음 공통 문구를 가입/게스트/이용 안내·소진/FAQ에 명시. 원장/사용량/운영 정책은 변경하지 않음.",
+  "invariants": [
+    "기존 계정별 사용량/추가 지급·누적 원장 보존",
+    "결제·월별 자동 지급·초기화 작업 추가 없음",
+    "서버 운영 과부하 제한과 사용자 무료 혜택을 혼동하지 않음",
+    "신규 문구 뒤에도 작은 화면 가입 버튼은 영역 내 노출",
+    "main 병합·운영 약관 게시·기록 초기화 없음"
+  ],
+  "tests": [
+    {
+      "path": "tests/components/guest-entry.test.tsx",
+      "reason": "가입 혜택 최초1회/월별 무료 추가 없음 안내 표시"
+    },
+    {
+      "path": "tests/components/support.test.tsx",
+      "reason": "실제 FAQ 확장 시 월별 지급/초기화 없음 답변"
+    },
+    {
+      "path": "tests/usage-db.test.mjs",
+      "reason": "누적 사용량/원장·한도/권한 보존 검증"
+    },
+    {
+      "path": "tests/usage-generation-credit.test.mjs",
+      "reason": "기존 추가 지급 계정 격리/누적 카운터/클라이언트 차단 보존"
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "혜택·이용 안내에 월별 무료 추가 없음 문구 추가",
+    "evidence": [
+      "docs/quality/entry-home-followup-20261122.md: 문구 추가 후320/360/412 세로 및640 가로 실제 DOM scrollHeight/clientHeight·게스트 버튼 bounds 재검토. 원본 자산 변경 없음."
+    ]
+  },
+  "native": "사용자 요청 최종 SHA Handset 빌드/서명·해시 확인 후 실기기 자료 유지 업데이트. 실제 진행 결과는 PR본문·로컬 설치 기록에 남기고 main은 병합하지 않음."
+}

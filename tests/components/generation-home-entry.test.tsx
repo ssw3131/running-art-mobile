@@ -42,7 +42,7 @@ test('home conditions request preserves the completed route, shape and distance 
 });
 
 
-test.each(['star','cloud','crown','icecream','strawberry','bone','whale','turtle','cat'])('badge challenge selects %s without starting a calculation',async shape=>{
+test.each(['star','cloud','crown','icecream','strawberry','fish','bone','whale','turtle','cat'])('badge challenge selects %s without starting a calculation',async shape=>{
  const {result,rerender}=await renderHook(()=>useCourseGeneration());
  await act(()=>result.current.setTargetKm(7));
  mockParams={homeSection:'conditions',homeRequest:'badge-'+shape,homeShape:shape};

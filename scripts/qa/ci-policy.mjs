@@ -2,7 +2,7 @@
 export const diagnostics = Object.freeze({
   full: '', home: '--home-only', generation: '--generation-only',
   service: '--service-only', achievements: '--achievements-only',
-  accessibility: '--accessibility-only', visual: '--visual-only',
+  accessibility: '--accessibility-only', visual: '--visual-only', packs: '--packs-only',
 });
 
 export function classifyChanges(changed) {
@@ -11,6 +11,7 @@ export function classifyChanges(changed) {
 }
 
 export function androidSelection(event, scenario = 'full') {
+  if (event === 'workflow_dispatch' && scenario === 'compatibility') return { matrix: [29], argument: '--smoke' };
   if (event === 'workflow_dispatch' && scenario === 'diagnostics') return { matrix: [36], argument: '' };
   if (!Object.hasOwn(diagnostics, scenario)) throw Error('Unknown Android diagnostic');
   if (event !== 'workflow_dispatch' && scenario !== 'full') throw Error('Diagnostics require a manual run');

@@ -19,14 +19,14 @@ jest.mock('../../src/modules/storage/database',()=>({getStorage:async()=>({accou
 beforeEach(()=>{jest.clearAllMocks();mockReadPermission.mockResolvedValue({granted:false,canAskAgain:true});mockRequestPermission.mockResolvedValue({granted:false});mockSave.mockImplementation(async value=>value);});
 test('account shows actual remaining counts and checks permission without requesting it on entry',async()=>{
  await render(<AccountScreen/>);await waitFor(()=>expect(mockReadPermission).toHaveBeenCalled());
- expect(screen.getByText('Google 계정과 연결됨')).toBeVisible();expect(screen.getByText(/95회/)).toBeVisible();expect(screen.getByText(/9개/)).toBeVisible();
+ expect(screen.getByText('Google 계정과 연결됨')).toBeVisible();expect(screen.getByText(/95회/)).toBeVisible();expect(screen.getByText(/9회/)).toBeVisible();
  expect(mockRequestPermission).not.toHaveBeenCalled();expect(screen.getByRole('switch',{name:'위치 권한'}).props.accessibilityState.checked).toBe(false);
  await fireEvent.press(screen.getByTestId('setting-location'));await waitFor(()=>expect(mockRequestPermission).toHaveBeenCalledTimes(1));
 });
 test('voice and theme controls save owned preferences, billing does not invent a purchase history',async()=>{
  await render(<AccountScreen/>);await fireEvent.press(screen.getByTestId('setting-voice'));await waitFor(()=>expect(mockSave).toHaveBeenCalledWith({...defaultAccountPreferences,guidance:{...defaultAccountPreferences.guidance,voice:!defaultAccountPreferences.guidance.voice}}));
  await waitFor(()=>expect(screen.getByTestId('theme-dark')).toBeEnabled());await fireEvent.press(screen.getByTestId('theme-dark'));await waitFor(()=>expect(mockSave).toHaveBeenCalledWith({...defaultAccountPreferences,theme:'dark'}));
- await fireEvent.press(screen.getByTestId('account-purchases'));expect(screen.getByText(/현재 앱에는 결제 기능이 연결되어 있지 않아/)).toBeVisible();expect(mockSignOut).not.toHaveBeenCalled();
+ await fireEvent.press(screen.getByTestId('account-purchases'));expect(mockPush).toHaveBeenCalledWith('/purchase-history');expect(mockSignOut).not.toHaveBeenCalled();
 });
 test('body weight is opt-in, validates input before a write, and can be cleared explicitly',async()=>{
  await render(<AccountScreen/>);await fireEvent.press(screen.getByTestId('account-weight'));
@@ -39,3 +39,9 @@ test('body weight is opt-in, validates input before a write, and can be cleared 
  await fireEvent.press(screen.getByTestId('account-weight'));await fireEvent.press(screen.getByTestId('save-weight'));
  await waitFor(()=>expect(mockSave).toHaveBeenLastCalledWith(defaultAccountPreferences));
 });
+
+ test('pack entry points show actual allowances without inventing an active paid pack',async()=>{
+ await render(<AccountScreen/>);expect(screen.getByText('남은 이용 횟수')).toBeVisible();expect(screen.queryByText('이용중')).toBeNull();
+ for(const id of ['account-packs','account-benefits']){await fireEvent.press(screen.getByTestId(id));expect(mockPush).toHaveBeenLastCalledWith('/packs');}
+ expect(mockSave).not.toHaveBeenCalled();
+ });

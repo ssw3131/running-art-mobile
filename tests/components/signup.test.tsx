@@ -5,7 +5,7 @@ import { ConsentForm } from '../../src/features/membership/ConsentForm';
 const policy = { id: 'qa-v1', terms: '실제 표시할 검증용 이용약관 본문', privacy: '실제 표시할 검증용 개인정보 본문', publishedAt: '2026-10-13T00:00:00Z' };
 const props = () => ({ policy, email: '', nickname: '러너', onNickname: jest.fn(), busy: false, message: '', profile: null, onSubmit: jest.fn() });
 
-test('UI-SIGNUP-01: both required consents enable completion; marketing is absent and email is optional', async () => {
+test('UI-SIGNUP-01: adult self-confirmation is separate, unchecked and required in addition to both consents', async () => {
   const p = props(); await render(<ConsentForm {...p} />);
   expect(screen.getByText('이메일 정보가 없는 계정')).toBeVisible();
   expect(screen.getByTestId('signup-complete')).toBeDisabled();
@@ -13,6 +13,10 @@ test('UI-SIGNUP-01: both required consents enable completion; marketing is absen
   await fireEvent.press(screen.getByTestId('signup-consent-terms'));
   expect(screen.getByTestId('signup-complete')).toBeDisabled();
   await fireEvent.press(screen.getByTestId('signup-consent-privacy'));
+  expect(screen.getByTestId('signup-complete')).toBeDisabled();
+  expect(screen.getByTestId('signup-age-confirmation')).not.toBeChecked();
+  await fireEvent.press(screen.getByTestId('signup-complete')); expect(p.onSubmit).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByTestId('signup-age-confirmation'));
   expect(screen.getByTestId('signup-complete')).toBeEnabled();
   await fireEvent.press(screen.getByTestId('signup-complete')); expect(p.onSubmit).toHaveBeenCalledTimes(1);
   await fireEvent.press(screen.getByTestId('signup-consent-all'));
@@ -28,6 +32,7 @@ test('UI-SIGNUP-02: policy viewer shows exact version and does not opt in on clo
 });
 test('UI-SIGNUP-03: submit locks input and choices; retry retains choices; new version resets consent', async () => {
   const p = props(); const view = await render(<ConsentForm key={policy.id} {...p} />);
+  await fireEvent.press(screen.getByTestId('signup-age-confirmation'));
   await fireEvent.press(screen.getByTestId('signup-consent-all'));
   await view.rerender(<ConsentForm key={policy.id} {...p} busy />);
   expect(screen.getByTestId('signup-complete')).toBeDisabled();
@@ -42,6 +47,7 @@ test('UI-SIGNUP-03: submit locks input and choices; retry retains choices; new v
 
 test('UI-SIGNUP-06: policy absence keeps profile inputs and blocks completion; changing version resets both consents without a remount', async () => {
   const p = props(); const view = await render(<ConsentForm {...p} />);
+  await fireEvent.press(screen.getByTestId('signup-age-confirmation'));
   await fireEvent.press(screen.getByTestId('signup-consent-all'));
   expect(screen.getByTestId('signup-complete')).toBeEnabled();
   await view.rerender(<ConsentForm {...p} policy={{ ...policy, id: 'qa-v2' }} />);
