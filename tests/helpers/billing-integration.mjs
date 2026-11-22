@@ -59,5 +59,20 @@ export async function billingIntegration(t) {
   const removed=users.shift();assert.equal((await admin.auth.admin.deleteUser(removed)).error,null);
   assert.equal((await admin.from('billing_purchase_receipts').select('owner_id').eq('id',results[0].purchaseId).single()).data.owner_id,null);
   await assert.rejects(backend.record(users[0],receipt),{code:'purchase_owner'});
+  // Direct Auth administration can bypass the app deletion marker. FK and receipt
+  // row locks must still leave only tombstones, never an orphan/reassigned receipt.
+  const directOwner=users[0], directReceipt={...receipt,tokenHash:await purchaseTokenHash(randomUUID()),
+    accountId:await billingAccountId(directOwner,'isolated-billing-integration-key!!')};
+  const direct=await backend.record(directOwner,directReceipt);
+  const directRace=await Promise.allSettled([admin.auth.admin.deleteUser(directOwner),
+    ...Array.from({length:12},()=>backend.record(directOwner,directReceipt))]);
+  assert.equal(directRace[0].status,'fulfilled');assert.equal(directRace[0].value.error,null);users.shift();
+  for(const result of directRace.slice(1)) {
+    if(result.status==='fulfilled') assert.equal(result.value.purchaseId,direct.purchaseId);
+    else assert.ok(['membership_required','purchase_owner'].includes(result.reason.code),'Only the deletion boundary may reject racing receipts');
+  }
+  assert.equal((await admin.from('billing_purchase_receipts').select('owner_id').eq('id',direct.purchaseId).single()).data.owner_id,null);
+  await assert.rejects(backend.history(directOwner,null),{code:'membership_required'});
+  await assert.rejects(backend.record(directOwner,directReceipt),{code:'membership_required'});
   assert.deepEqual((await admin.from('usage_subjects').select('*').order('id')).data,before);
 }

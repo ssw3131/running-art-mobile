@@ -11,8 +11,8 @@ export async function verifyGoogleReceipt(raw: unknown, token: string, accountId
   const line = object(lines[0]), offer = object(line.productOfferDetails);
   const product = products.find(item => item.productId === line.productId);
   if (!product || offer.quantity !== 1 || offer.rentOfferDetails !== undefined || offer.preorderOfferDetails !== undefined) throw new BillingError('unsupported_purchase', 422);
-  if (!['PURCHASED', 'PENDING', 'CANCELLED'].includes(String(context.purchaseState))) throw new BillingError('invalid_store_response');
-  if (!['CONSUMPTION_STATE_YET_TO_BE_CONSUMED', 'CONSUMPTION_STATE_CONSUMED'].includes(String(offer.consumptionState))) throw new BillingError('invalid_store_response');
+  if (typeof context.purchaseState !== 'string' || !['PURCHASED', 'PENDING', 'CANCELLED'].includes(context.purchaseState)) throw new BillingError('invalid_store_response');
+  if (typeof offer.consumptionState !== 'string' || !['CONSUMPTION_STATE_YET_TO_BE_CONSUMED', 'CONSUMPTION_STATE_CONSUMED'].includes(offer.consumptionState)) throw new BillingError('invalid_store_response');
   if (offer.refundableQuantity !== undefined && offer.refundableQuantity !== 0 && offer.refundableQuantity !== 1) throw new BillingError('unsupported_purchase', 422);
   const state = context.purchaseState === 'CANCELLED' || (context.purchaseState === 'PURCHASED' && offer.refundableQuantity === 0)
     ? 'cancelled' : context.purchaseState === 'PURCHASED' ? 'verified' : 'pending';

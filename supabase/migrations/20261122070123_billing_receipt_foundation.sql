@@ -26,10 +26,11 @@ language plpgsql security invoker set search_path='' as $$
 begin
  -- Same lock as begin_account_deletion: deletion cannot cross an accepted receipt transaction.
  perform pg_catalog.pg_advisory_xact_lock_shared(pg_catalog.hashtextextended('account/'||p_owner::text,0));
- perform 1 from auth.users where id=p_owner for key share;
- if not found or exists(select 1 from public.account_deletions where owner_id=p_owner) then
+ if p_owner is null or exists(select 1 from public.account_deletions where owner_id=p_owner) then
    raise exception 'account_unavailable' using errcode='42501';
  end if;
+ -- Membership's auth.users FK establishes existence without broadening Auth SQL
+ -- privileges. Receipt FK/row locks serialize direct Auth deletion as well.
  if not exists(select 1 from public.memberships m join public.membership_policies p on p.id=m.policy_id
    where m.owner_id=p_owner and m.completed_at is not null and p.active and p.published_at<=now()) then
    raise exception 'membership_required' using errcode='42501';

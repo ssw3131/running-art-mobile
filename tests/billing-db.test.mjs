@@ -11,9 +11,8 @@ test('billing database: idempotency, ownership, terminal cancellation, history, 
   const db=new PGlite();t.after(()=>db.close());
   await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
     create schema auth; create table auth.users(id uuid primary key);
-    grant usage on schema auth to service_role; grant select,update on auth.users to service_role;
-    create table account_deletions(owner_id uuid primary key);
-    create table memberships(owner_id uuid,policy_id text,completed_at timestamptz);
+    create table account_deletions(owner_id uuid primary key references auth.users(id) on delete cascade);
+    create table memberships(owner_id uuid primary key references auth.users(id) on delete cascade,policy_id text,completed_at timestamptz);
     create table membership_policies(id text primary key,active boolean,published_at timestamptz);
     grant select on account_deletions,memberships,membership_policies to service_role;
     insert into membership_policies values('test',true,now());
@@ -28,6 +27,7 @@ test('billing database: idempotency, ownership, terminal cancellation, history, 
   const history=async(id,cursor=null)=>(await db.query('select billing_purchase_history($1,$2) value',[id,cursor])).rows[0].value;
   const receipt={tokenHash:hash(1),accountId:hash(100),productId:'qa_basic',packId:'basic',state:'pending',purchasedAt:null,orderId:null,consumed:false};
   await db.exec('set role service_role');
+  await assert.rejects(db.query('select * from auth.users')); // Match hosted/isolated Auth privilege boundary.
   const first=await record(owner,receipt);
   assert.equal(first.state,'pending');assert.equal(first.deliveryState,'not_granted');
   const duplicates=await Promise.all(Array.from({length:10},()=>record(owner,receipt)));

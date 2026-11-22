@@ -15,7 +15,8 @@ const object = (v: unknown): Record<string, unknown> => v && typeof v === 'objec
 export function parsePurchaseReceipt(value: unknown): PurchaseReceipt {
   const v = object(value);
   if (!uuid(v.purchaseId) || typeof v.productId !== 'string' || !/^[a-z0-9][a-z0-9._]{0,149}$/.test(v.productId)
-    || !['basic', 'plus', 'expanded'].includes(String(v.packId)) || !['pending', 'verified', 'cancelled'].includes(String(v.state))
+    || typeof v.packId !== 'string' || !['basic', 'plus', 'expanded'].includes(v.packId)
+    || typeof v.state !== 'string' || !['pending', 'verified', 'cancelled'].includes(v.state)
     || v.deliveryState !== 'not_granted' || v.testPurchase !== true
     || (v.purchasedAt !== null && (typeof v.purchasedAt !== 'string' || !/^\d{4}-\d\d-\d\dT/.test(v.purchasedAt) || !Number.isFinite(Date.parse(v.purchasedAt))))
     || (v.state === 'verified' && v.purchasedAt === null)

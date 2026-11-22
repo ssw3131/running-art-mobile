@@ -28,6 +28,8 @@ CLI로 생성한 `20261122070123_billing_receipt_foundation.sql`은 검증 원�
 
 RLS를 켜고 anon/authenticated의 테이블·RPC 접근을 차단한다. 함수는 SECURITY INVOKER이고 service_role만 필요한 테이블 권한과 실행 권한을 갖는다. 가입·탈퇴 상태를 트랜잭션 안에서 재확인하고 기존 탈퇴의 `account/` 공유 advisory lock을 사용한다. 탈퇴 시 owner_id는 null로 바뀌며 토큰 해시는 타 계정 재사용 방지용으로 남는다. **보존 기간과 삭제 정책이 확정되기 전 운영에 적용하지 않는다.**
 
+Auth 서버 확인은 HTTP 경계에서 수행한다. SQL은 `auth.users` 직접 조회/갱신 권한을 추가하지 않고 회원 테이블의 외래키와 유효 가입 상태를 사용한다. 직접 Auth 삭제와 원장 쓰기의 관계는 구매 원장의 외래키·행 잠금으로 보장한다. [PostgreSQL 외래키](https://www.postgresql.org/docs/17/ddl-constraints.html#DDL-CONSTRAINTS-FK).
+
 내역은 인증한 본인의 생성 순서로20개씩 반환한다. 다음 페이지는 마지막 구매 ID와 불변 생성 시각을 사용한다. 타 계정 커서는 거절하며 응답에는 토큰 해시·HMAC 계정 값·서버 키가 없다. 외부 오류 본문과 토큰이 포함될 수 있는 URL도 사용자 오류에 전달하지 않는다.
 
 ## 후속 연결 순서

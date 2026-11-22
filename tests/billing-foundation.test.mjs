@@ -38,8 +38,8 @@ test('real money, unknown products, missing binding, multiple units and malforme
     raw({obfuscatedExternalAccountId:other}),raw({obfuscatedExternalAccountId:undefined}),raw({regionCode:'US'}),raw({regionCode:undefined}),
     raw({productLineItem:[]}),raw({productLineItem:[...raw().productLineItem,...raw().productLineItem]}),
     raw({purchaseCompletionTime:undefined}),raw({purchaseCompletionTime:'bad'}),raw({orderId:''}),
-    raw({purchaseStateContext:{purchaseState:'NEW_STATE'}})];
-  for(const [key,value] of [['quantity',2],['quantity',undefined],['consumptionState','NEW'],['rentOfferDetails',{}],['preorderOfferDetails',{}],['refundableQuantity',-1]]) {
+    raw({purchaseStateContext:{purchaseState:'NEW_STATE'}}),raw({purchaseStateContext:{purchaseState:['PURCHASED']}})];
+  for(const [key,value] of [['quantity',2],['quantity',undefined],['consumptionState','NEW'],['consumptionState',['CONSUMPTION_STATE_CONSUMED']],['rentOfferDetails',{}],['preorderOfferDetails',{}],['refundableQuantity',-1]]) {
     const v=raw();v.productLineItem[0].productOfferDetails[key]=value;cases.push(v);
   }
   const unknown=raw();unknown.productLineItem[0].productId='forged';cases.push(unknown);
@@ -136,7 +136,7 @@ test('public receipt contract separates verification from delivery and drops une
   assert.equal(purchaseStateLabel(publicReceipt),'결제 확인 · 팩 적용 전');
   assert.deepEqual(parsePurchaseHistory({purchases:[],nextCursor:null}),{purchases:[],nextCursor:null});
   assert.throws(()=>parsePurchaseHistory({error:'unavailable'}));
-  for(const overrides of [{state:'confirmed'},{state:'granted'},{deliveryState:'granted'},{testPurchase:false},{purchasedAt:null},{orderId:undefined},{purchaseId:'order-id'}]) assert.throws(()=>parsePurchaseReceipt({...publicReceipt,...overrides}));
+  for(const overrides of [{state:'confirmed'},{state:'granted'},{state:['verified']},{packId:['basic']},{deliveryState:'granted'},{testPurchase:false},{purchasedAt:null},{orderId:undefined},{purchaseId:'order-id'}]) assert.throws(()=>parsePurchaseReceipt({...publicReceipt,...overrides}));
   assert.throws(()=>parsePurchaseHistory({purchases:[publicReceipt,publicReceipt],nextCursor:null}));
   assert.throws(()=>parsePurchaseHistory({purchases:[publicReceipt],nextCursor:owner}));
   assert.throws(()=>parsePurchaseHistory({purchases:[publicReceipt]}));
