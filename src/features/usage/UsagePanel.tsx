@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { Image } from 'expo-image';
 import { AppModal, AppText, Button } from '@/components/ui';
@@ -29,6 +30,7 @@ export function UsagePanel({compact=false}:{compact?:boolean}) {
       <AppText variant="caption">생성은 후보를 받은 계산당 1회, 저장은 새 코스당 1회 사용해요. 삭제해도 저장 횟수는 돌아오지 않아요.</AppText>
       <AppText testID="usage-free-allowance-policy" variant="caption">{freeAllowanceNotice}</AppText>
       <AppText weight="bold">추가 이용권 구매는 준비 중입니다.</AppText>
+      <Button testID="usage-packs" label="팩 살펴보기" variant="outline" onPress={() => { setOpen(false); router.push('/packs'); }} />
       {!!usage.error&&<><AppText accessibilityRole="alert" variant="caption">{usage.error}</AppText><Button label="횟수 다시 확인" variant="outline" onPress={()=>void usage.refresh()}/></>}
     </AppModal>
   </>;

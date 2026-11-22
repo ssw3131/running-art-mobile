@@ -18,7 +18,7 @@ on:
       android_scenario:
         description: 'Targeted diagnostics never replace the required full PR check'
         type: choice
-        options: [full, home, generation, service, achievements, accessibility, visual, diagnostics]
+        options: [full, home, generation, service, achievements, accessibility, visual, packs, diagnostics, compatibility]
         default: full
 
 permissions:
@@ -247,8 +247,9 @@ jobs:
           arch: x86_64
           profile: pixel_5
           avd-name: RunPen_CI
-          # API 29 otherwise inherits a 16 MB heap from the newer Pixel profile.
-          heap-size: 256M
+          # The pinned runner writes an ignored hw.heapSize key. Set the actual
+          # integer vm.heapSize on API 29; preserve the reviewed API 36 profile.
+          pre-emulator-launch-script: python scripts/qa/configure-ci-avd.py ${{ matrix.api }}
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -prop persist.sys.locale=en-US
           disable-animations: true
           script: python scripts/qa/run-membership-android.py --serial emulator-5554 --apk android/app/build/outputs/apk/release/app-release.apk --repeat ${{ inputs.repetitions || '1' }} ${{ matrix.argument }} --output test-results/android-${{ matrix.api }}

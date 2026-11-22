@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/modules/packs/catalog.ts",
+    "src/features/packs/PackCard.tsx",
+    "src/features/packs/PackPage.tsx",
+    "src/features/packs/PackFrame.tsx",
+    "src/features/packs/PackSelection.tsx",
+    "src/features/packs/PurchaseHistory.tsx",
+    "src/features/packs/PackPurchaseComplete.tsx",
+    "tests/components/packs.test.tsx",
+    "tests/components/packs-navigation.test.tsx",
+    "scripts/qa/packs_preparation.py",
+    "src/app/packs.tsx",
+    "src/app/purchase-history.tsx",
+    "src/features/auth/ServiceStack.tsx",
+    "src/features/account/AccountScreen.tsx",
+    "src/features/usage/UsagePanel.tsx",
+    "src/features/usage/AllowanceSheets.tsx",
+    "tests/components/account-figma.test.tsx",
+    "tests/components/usage-banner.test.tsx",
+    "scripts/qa/android.py",
+    "tests/components/save-allowance.test.tsx",
+    "tests/visual/android-linux-api36/account.png",
+    "tests/visual/android-linux-api36/baseline.json",
+    ".github/workflows/verify.yml",
+    "scripts/qa/configure-ci-avd.py",
+    "scripts/qa/ci-policy.mjs",
+    "scripts/qa/run-membership-android.py",
+    "tests/ci-policy.test.mjs",
+    "scripts/qa/diagnostic_setup.py"
+  ],
+  "behavior": "changed",
+  "decision": "사용자 승인 계획의 기본/플러스/확장 팩과 60회 플러스 혜택을 결제 연결 전 표시 컴포넌트로 준비한다.",
+  "before": "팩 선택과 구매 내역이 없고 마이페이지의 준비 중 안내만 제공했다.",
+  "after": "PR90 병합 후 마이페이지·이용/소진 안내에서 팩 선택과 구매 내역 준비 화면으로 이동한다. 게스트 직접 접근은 가입 안내를 보여준다. 실제 구매는 비활성이며 현재 잔량만 표시하고 유료 팩 이용중 상태를 만들지 않는다.",
+  "invariants": [
+    "기존 생성/저장 총량·사용량·원장·계정별 기록을 변경하지 않는다.",
+    "완료 컴포넌트는 앱 경로나 단순 선택에 연결하지 않고 실제 결제·지급도 호출하지 않는다.",
+    "기존 Cloud PR #90의 공통 진입점은 해당 PR 병합 후에만 연결한다.",
+    "CI는 격리 서버/에뮬레이터만 사용한다. 결제·지급·사용량 초기화와 운영 서버/DB 변경은 하지 않는다."
+  ],
+  "tests": [
+    {
+      "path": "tests/components/packs.test.tsx",
+      "reason": "세 상품 표시·선택/완료 일치, 구매 비활성·가짜 내역 부재와 과거 확인된 구매 스냅샷 보존을 검증한다."
+    },
+    {
+      "path": "tests/components/packs-navigation.test.tsx",
+      "reason": "기존 화면 복귀·직접 접근의 마이페이지 복귀, 하드웨어 뒤로가기와 기존 하단 메뉴 이동을 검증한다."
+    },
+    {
+      "path": "tests/components/account-figma.test.tsx",
+      "reason": "실제 잔여 횟수 및 팩/내역 진입, 임의 유료 팩 이용중 표시 부재."
+    },
+    {
+      "path": "tests/components/usage-banner.test.tsx",
+      "reason": "이용/소진 안내를 닫은 뒤 팩 선택으로 이동."
+    },
+    {
+      "path": "tests/components/auth-gate.test.tsx",
+      "reason": "새 경로의 인증·가입 상태 보호 및 로그아웃 시 기록 스택 보호."
+    },
+    {
+      "path": "tests/components/save-allowance.test.tsx",
+      "reason": "저장 소진 시 저장 금지·팩 화면 이동 및 기존 중복 저장/계정 전환 보호."
+    },
+    {
+      "path": "tests/ci-policy.test.mjs",
+      "reason": "API29 compatibility와 API36 packs 수동 진단을 분리하고 필수 PR의29/36 및 수동 제한을 보존한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "Figma 선택/완료/내역을 기존 토큰과 원본 아이콘으로 구현하고 준비 상태에 맞는 실제 문구를 적용한다.",
+    "evidence": [
+      "Figma 268:9405·795:2394·305:11162 원본과 대조; docs/quality/packs-preparation-20261122.md에 실제 웹 렌더·확대 글씨와 실패 이력을 기록한다.",
+      "API36 visual44981520098: 홈/러닝/보관함 차이0, 마이페이지7938픽셀은 잔여 횟수/저장 단위 문구에만 한정됨을 원본/현재/차이로 직접 확인. 마스크/오차 변경 없이 account 원본만 채택."
+    ]
+  },
+  "native": "최초 전체44982931973의 Android29 OOM과36 비활성 구매 탐색 실패 원본 보존. API29 compatibility44985065215는 기존7단계 통과 후 수정 전 팩 탐색 실패. 수정본 API36 packs44986503585는 팩 기능·작은 화면/큰 글씨·자료/사용량 불변 통과 뒤 공통 OS 상태 표시줄 준비 실패. 기한/화면 기준은 유지하고 최종 필수29/36·화면 비교·main 결과는 PR93의 실제 연결 실행을 따른다."
+}

@@ -1,5 +1,7 @@
 # RunPen 브랜치와 자동 검증 운영
 
+2026-11-22 후속: 수동 `android_scenario=compatibility`는 API29의 기존 smoke 전체만 실행하며 필수 PR/main의29+36 검사를 대체하지 않는다. pinned emulator runner가 `heap-size`를 무효 속성 `hw.heapSize`로 기록하므로 API29 전용 CI AVD에 정수 `vm.heapSize=256`을 설정한다. 실행 중 실제 heap 속성도 기록하며 API36 프로필·화면 기준은 유지한다. [발견 근거](../quality/packs-preparation-20261122.md).
+
 **2026-10-25 사용자 확정:** 기본 모바일 폴더 하나에서 브랜치를 전환한다. 동시 작업일 때만 임시 worktree를 만들며, main 반영·필수 검사 확인·자료 보존·임시 폴더/완료 로컬 브랜치 정리까지를 작업 완료 조건으로 한다. 사용자 지시로 보류한 단계는 미완료 범위를 명시한다.
 
 작업은 `feat/*`, `fix/*`, `chore/*`에서 진행하고 PR 검사를 통과한 뒤 `main`에 squash merge한다. 계속 유지하는 브랜치는 main 하나다. UI·API·검사는 기능별로 함께 변경한다. APK 설치와 서버 배포는 별도 작업이다.
@@ -42,7 +44,7 @@ git push -u origin feat/signup-home
 
 공통 내비게이션·인증·저장·의존성과 미분류 변경은 준비된 PR에서 모두 전체 검사다. PC 검사 통과나 경로 안내만으로 이 범위를 생략하지 않는다. 이전 실행은 같은 PR의 새 실행이 시작되면 취소한다. 자동 배포·예약 실행·유료 러너는 구성하지 않는다. 확인된 저장소는 public이며 표준 GitHub 호스팅 러너만 사용한다. 보고서와 재사용 증거 보관은7일이다.
 
-수동 `all`과 `android_scenario=full`은 API29/36을 포함한다. `android_scenario`의 home·generation·service·achievements·accessibility·visual은 API36의 해당 기존 진단만 실행하며, `suite=android`와 함께 쓰면 후반 실패를 빠르게 재현할 수 있다. 모든 수동 실행은 `manual-verification`이므로 병합용 성공 증거를 발행하지 않는다. visual은 원본 후보와 차이를 검토하는 실행이며 자동 기준 갱신이 아니다. main 후속 검사에 실패하면 실패 증거와 영향 범위를 확인하고 수정 PR에서 재검증한다.
+수동 `all`과 `android_scenario=full`은 API29/36을 포함한다. `android_scenario`의 home·generation·service·achievements·accessibility·visual·packs는 API36의 해당 진단만 실행하며, `suite=android`와 함께 쓰면 후반 실패를 빠르게 재현할 수 있다. packs는 세 상품 선택·비활성 구매·내역/뒤로가기·320dp/큰 글씨·사용량/기존 기록 보존을 확인한다. diagnostics는 이 일곱 분야를 각각 실행한다. 모든 수동 실행은 `manual-verification`이므로 병합용 성공 증거를 발행하지 않는다. visual은 원본 후보와 차이를 검토하는 실행이며 자동 기준 갱신이 아니다. main 후속 검사에 실패하면 실패 증거와 영향 범위를 확인하고 수정 PR에서 재검증한다.
 
 ## main의 검증 결과 재사용
 

@@ -42,13 +42,17 @@ test('unknown paths remain full; native diagnostics require explicit manual sele
   assert.equal(classifyChanges(['docs/a.md', 'README.md']).full, false);
   assert.deepEqual(androidSelection('pull_request').matrix, [36, 29]);
   assert.deepEqual(androidSelection('workflow_dispatch', 'generation'), { matrix: [36], argument: '--generation-only' });
+  assert.deepEqual(androidJobs('workflow_dispatch', 'compatibility'), [{ api: 29, scenario: 'compatibility', argument: '--smoke' }]);
+  assert.throws(() => androidSelection('pull_request', 'compatibility'));
+  assert.deepEqual(androidJobs('workflow_dispatch', 'packs'), [{ api: 36, scenario: 'packs', argument: '--packs-only' }]);
+  assert.throws(() => androidSelection('pull_request', 'packs'));
   assert.throws(() => androidSelection('pull_request', 'visual'));
   assert.throws(() => androidSelection('workflow_dispatch', 'unknown'));
 });
 
-test('diagnostic batch owns six separate jobs and never changes the ready PR matrix', () => {
+test('diagnostic batch owns seven separate jobs and never changes the ready PR matrix', () => {
   const jobs = androidJobs('workflow_dispatch', 'diagnostics');
-  assert.deepEqual(jobs.map(j => j.scenario), ['home', 'generation', 'service', 'achievements', 'accessibility', 'visual']);
+  assert.deepEqual(jobs.map(j => j.scenario), ['home', 'generation', 'service', 'achievements', 'accessibility', 'visual', 'packs']);
   assert.ok(jobs.every(j => j.api === 36 && j.argument.endsWith('-only')));
   assert.deepEqual(androidJobs('pull_request'), [{ api: 36, scenario: 'full', argument: '' }, { api: 29, scenario: 'full', argument: '--smoke' }]);
   assert.throws(() => androidJobs('pull_request', 'diagnostics'));
