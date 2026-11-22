@@ -17,3 +17,6 @@ export function assertAllowed(operation: UsageOperation | null) {
   if (!operation || operation.state === 'cancelled') throw new AllowanceError('작업이 취소되었거나 만료됐어요. 다시 시도해 주세요.');
   return operation;
 }
+
+/** Signup benefit is one-time; counters are cumulative, with no monthly refill. */
+export const freeAllowanceNotice = '가입 시 1회 제공 · 매월 무료 추가 없음';

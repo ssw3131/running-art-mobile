@@ -4,6 +4,7 @@ import { Image } from 'expo-image';
 import { AppModal, AppText, Button } from '@/components/ui';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { AllowanceDiamond, ExhaustedAllowanceSheet } from './AllowanceSheets';
+import { freeAllowanceNotice } from '@/modules/usage/model';
 import { useUsage } from './use-usage';
 export function UsagePanel({compact=false}:{compact?:boolean}) {
   const c=useThemeColors(),usage=useUsage(),[open,setOpen]=useState(false);
@@ -26,6 +27,7 @@ export function UsagePanel({compact=false}:{compact?:boolean}) {
     <AppModal visible={compact&&open} title="생성·저장 이용 안내" presentation="sheet" onClose={()=>setOpen(false)} footer={<Button label="확인" onPress={()=>setOpen(false)}/>}>
       <AppText>생성 {count('generation')}회 · 저장 {count('save')}회 사용</AppText>
       <AppText variant="caption">생성은 후보를 받은 계산당 1회, 저장은 새 코스당 1회 사용해요. 삭제해도 저장 횟수는 돌아오지 않아요.</AppText>
+      <AppText testID="usage-free-allowance-policy" variant="caption">{freeAllowanceNotice}</AppText>
       <AppText weight="bold">추가 이용권 구매는 준비 중입니다.</AppText>
       {!!usage.error&&<><AppText accessibilityRole="alert" variant="caption">{usage.error}</AppText><Button label="횟수 다시 확인" variant="outline" onPress={()=>void usage.refresh()}/></>}
     </AppModal>

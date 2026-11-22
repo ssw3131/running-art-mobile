@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { Image } from 'expo-image';
 import { Alert, View } from 'react-native';
 import { AppModal, AppText, Button } from '@/components/ui';
-import type { UsageKind, UsageSummary } from '@/modules/usage/model';
+import { freeAllowanceNotice, type UsageKind, type UsageSummary } from '@/modules/usage/model';
 import { useThemeColors } from '@/theme/ThemeProvider';
 import { GenerationIcon } from '@/features/course-generation/GenerationIcon';
 
@@ -21,7 +21,8 @@ export function GuestGenerationSheet({ visible, onClose }: { visible: boolean; o
         <View style={{ width: 180, flexDirection: 'row', alignItems: 'center', gap: 12 }}><Image source={item.source} style={{ width: item.size, height: item.size }} contentFit="contain" accessible={false} /><AppText weight="bold" style={{ flex: 1, fontSize: 12, lineHeight: 18 }}>{item.label}</AppText><AppText family="roboto" weight="black" style={{ fontSize: 24, lineHeight: 24, color: c.selected }}>{item.value}<AppText weight="black" style={{ fontSize: 12 }}>회</AppText></AppText></View>
       </View>)}
     </View>
-    <AppText style={{ fontSize: 11, lineHeight: 18, color: c.muted, marginTop: 16 }}>· 카카오, 네이버, 구글 계정으로 빠르게 시작할 수 있어요.</AppText>
+    <AppText testID="guest-free-allowance-policy" style={{fontSize:12,lineHeight:18,color:c.muted,textAlign:'center',marginTop:10}}>{freeAllowanceNotice}</AppText>
+    <AppText style={{ fontSize: 11, lineHeight: 18, color: c.muted, marginTop: 8 }}>· 카카오, 네이버, 구글 계정으로 빠르게 시작할 수 있어요.</AppText>
   </AppModal>;
 }
 export function SheetCancel({ onPress, disabled = false }: { onPress(): void; disabled?: boolean }) {
@@ -35,7 +36,7 @@ export function ExhaustedAllowanceSheet({ visible, kind, data, onClose, exhauste
     <AppText style={{ fontSize: 12, lineHeight: 18, textAlign: 'center', color: c.subtle }}>{kind === 'generation' ? '이 설정으로 코스를 생성하려면 생성 횟수를 추가해 주세요.' : '이 코스를 저장하려면 저장 횟수를 추가해 주세요.'}</AppText>
     <View style={{ width: '100%', maxWidth: 328, gap: 19, alignItems: 'center', marginTop: 13 }}>
       <View style={{ width: 244, maxWidth: '100%', minHeight: 48, borderRadius: 16, backgroundColor: c.background === '#FFFFFF' ? '#FFEDE8' : c.navigation, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 }}><AppText weight="bold" style={{ fontSize: 14 }}>현재</AppText><AppText testID="allowance-exhausted-count" weight="bold" style={{ fontSize: 22, color: c.selected }}>{row ? `${row.used} / ${row.total}` : '—'}</AppText><AppText weight="bold" style={{ fontSize: 14 }}>회 사용</AppText></View>
-      <AppText weight="semibold" style={{ fontSize: 14, lineHeight: 24, color: c.muted }}>{'· 이용권에는 코스 생성·저장 횟수가 함께 포함돼요.\n· 추가 이용권 구매는 준비 중입니다.'}</AppText>
+      <AppText weight="semibold" style={{ fontSize: 14, lineHeight: 24, color: c.muted }}>{`· ${freeAllowanceNotice}\n· 이용권에는 코스 생성·저장 횟수가 함께 포함돼요.\n· 추가 이용권 구매는 준비 중입니다.`}</AppText>
     </View>
   </AppModal>;
 }

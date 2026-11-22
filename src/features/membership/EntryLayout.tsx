@@ -3,6 +3,7 @@ import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText, Button } from '@/components/ui';
 import type { SignInProvider } from '@/modules/auth/providers';
+import { freeAllowanceNotice } from '@/modules/usage/model';
 import { SignupBrand } from './SignupBrand';
 import { SocialButton } from './SocialButton';
 import { useThemeColors } from '@/theme/ThemeProvider';
@@ -25,7 +26,7 @@ export function EntryLayout({signup,ready,configured,busy,providers,provider,mes
     <View style={{height:brandHeight,width:172,alignItems:'center',justifyContent:'center'}}><View style={{transform:[{scale:brandHeight/106}]}}><SignupBrand uncropped={!signup}/></View></View>
     <View style={{gap:signup?15:10,alignItems:'center',width:'100%'}}>
      <AppText weight={signup?'black':'medium'} style={{fontSize:signup?24:window.width<360?18:20,lineHeight:signup?29:24,textAlign:'center'}}>{signup?'RunPen 회원 가입':'나의 러닝을 작품으로 간직하세요'}</AppText>
-     {signup?<View style={{gap:5,alignItems:'center'}}><AppText weight="bold" style={{color:c.selected,fontSize:16,lineHeight:25,textAlign:'center'}}>{'🎁 지금 가입하면\n러닝코스 생성 5회, 저장 10회 무료!'}</AppText><AppText style={{fontSize:14,lineHeight:20,color:c.muted,textAlign:'center'}}>회원가입하고 러닝코스 5개 무료로 만들어보세요!</AppText></View>
+     {signup?<View style={{gap:5,alignItems:'center'}}><AppText weight="bold" style={{color:c.selected,fontSize:16,lineHeight:25,textAlign:'center'}}>{'🎁 지금 가입하면\n러닝코스 생성 5회, 저장 10회 무료!'}</AppText><AppText style={{fontSize:14,lineHeight:20,color:c.muted,textAlign:'center'}}>회원가입하고 러닝코스 5개 무료로 만들어보세요!</AppText><AppText testID="signup-free-allowance-policy" style={{fontSize:12,lineHeight:18,color:c.muted,textAlign:'center'}}>{freeAllowanceNotice}</AppText></View>
       :<AppText style={{fontSize:14,lineHeight:20,color:c.muted,textAlign:'center'}}>{'로그인하고, 달려온 길과 완성한 그림을\n차곡차곡 쌓아보세요.'}</AppText>}
     </View>
    </View>

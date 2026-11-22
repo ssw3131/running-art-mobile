@@ -11,7 +11,7 @@ beforeEach(()=>{guestAccess.leave();mockLogoutNotice=0;mockReplace.mockReset();}
 test.each(['login','signup'])('%s guest entry opens browsing without authenticating',async mode=>{
  mockMode=mode;await render(<EntryScreen/>);await fireEvent.press(screen.getByTestId('signup-guest'));
  expect(guestAccess.getSnapshot()).toBe(true);expect(mockReplace).toHaveBeenCalledWith('/');
- if(mode==='signup')expect(screen.getByText('러닝코스 생성 5회, 저장 10회 무료!',{exact:false})).toBeVisible();
+ if(mode==='signup'){expect(screen.getByText('러닝코스 생성 5회, 저장 10회 무료!',{exact:false})).toBeVisible();expect(screen.getByTestId('signup-free-allowance-policy')).toHaveTextContent('가입 시 1회 제공 · 매월 무료 추가 없음');}
 });
 test('member tab notice never mounts guest record readers',async()=>{
  const read=jest.fn();function Private(){read();return null;}
