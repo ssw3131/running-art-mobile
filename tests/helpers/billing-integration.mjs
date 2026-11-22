@@ -22,13 +22,25 @@ export async function billingIntegration(t) {
     const client=createClient();assert.equal((await client.auth.signInWithPassword({email,password})).error,null);clients.push(client);
     await createMembershipRemote(client).accept({owner:data.user.id,policyId,terms:true,privacy:true,requestId:randomUUID()});
   }
-  const backend=createBillingBackend({url:env.API_URL,serviceKey:env.SERVICE_ROLE_KEY});
+  // Only the disposable loopback stack is permitted above. Record SQL diagnostics,
+  // never HTTP credentials or request bodies, without changing production errors.
+  const backend=createBillingBackend({url:env.API_URL,serviceKey:env.SERVICE_ROLE_KEY},async(input,init)=>{
+    const response=await fetch(input,init);
+    if(!response.ok){
+      const problem=await response.clone().json().catch(()=>({}));
+      const message=String(problem.message??'').replace(/[a-f0-9]{8}-[a-f0-9-]{27,}|[a-f0-9]{64}/gi,'[id]').slice(0,200);
+      t.diagnostic(JSON.stringify({status:response.status,code:problem.code,message}));
+    }
+    return response;
+  });
   const session=(await clients[0].auth.getSession()).data.session;
   assert.equal(await backend.authenticate(session.access_token),users[0]);
   const receipt={tokenHash:await purchaseTokenHash(randomUUID()),accountId:await billingAccountId(users[0],'isolated-billing-integration-key!!'),
     productId:'qa_basic',packId:'basic',state:'verified',purchasedAt:'2026-11-22T01:00:00Z',orderId:null,consumed:false};
   const before=(await admin.from('usage_subjects').select('*').order('id')).data;
-  const results=await Promise.all(Array.from({length:12},()=>backend.record(users[0],receipt)));
+  const attempts=await Promise.allSettled(Array.from({length:12},()=>backend.record(users[0],receipt)));
+  assert.ok(attempts.every(result=>result.status==='fulfilled'),'All simultaneous receipts must complete successfully');
+  const results=attempts.map(result=>result.value);
   assert.equal(new Set(results.map(row=>row.purchaseId)).size,1);
   assert.ok(results.every(row=>row.deliveryState==='not_granted'));
   await assert.rejects(backend.record(users[1],receipt),{code:'purchase_owner'});
