@@ -29,7 +29,7 @@ def signup_membership(q, launch):
     q.seek('로그아웃')
     assert q.find(q.capture('membership-one-consent'), 'signup-complete').get('enabled') == 'false'
     q.seek('signup-consent-privacy'); q.tap('signup-consent-privacy')
-    q.seek('signup-complete')
+    q.seek('signup-complete', allow_disabled=True)
     assert q.find(q.capture('membership-age-not-confirmed'), 'signup-complete').get('enabled') == 'false'
     q.seek('signup-age-confirmation'); q.tap('signup-age-confirmation')
     q.seek('signup-complete'); q.tap('signup-complete')
