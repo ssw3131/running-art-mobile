@@ -97,7 +97,17 @@ def generation_flow(q):
     assert q.find(q.capture('s2a-name-restored'), 'course-rename-input').get('text') == 'S0_DRAFT'
     q.tap('이름 적용')
     q.seek('course-save'); q.tap('course-save')
-    q.seek('save-allowance-confirm')
+    # The confirmation button is in the fixed footer below the scrollable body.
+    deadline = time.monotonic() + 20
+    while True:
+        sheet = q.capture('s2a-save-consent')
+        confirm = q.find(sheet, 'save-allowance-confirm')
+        if confirm is not None and confirm.get('enabled') == 'true': break
+        assert time.monotonic() < deadline, 'Save confirmation did not become available'
+        time.sleep(.3)
+    remaining = q.find(sheet, 'save-allowance-remaining').get('text')
+    after = q.find(sheet, 'save-allowance-after').get('text')
+    assert int(remaining.removesuffix('회')) - 1 == int(after.removesuffix('회'))
     assert not q.query("SELECT id FROM saved_courses WHERE name='S0_DRAFT'"), 'Saving must wait for consent'
     q.tap('save-allowance-confirm')
     deadline = time.monotonic() + 20
