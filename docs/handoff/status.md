@@ -1,5 +1,15 @@
 # 현재 상태와 인수인계
 
+## 2026-11-22 코스 정렬 main 반영·팩 화면/정책 초안 준비
+
+진행 중(러닝·일시정지·중단 복구) → 종료 미완주 → 나머지 순서와 `진행 중`/`미완주` 문구를 [PR91](https://github.com/ssw3131/running-art-mobile/pull/91)로 main `d1e03fd`에 반영했다. 오래된 진행 코스+새 미완주6개, 페이지·계정 전환·완주 후 재정렬을 확인했다. 최종 Android29 7단계/36 15단계·재시도0·자료 보존/정리·정적4화면 차이0 및 [main44975011688](https://github.com/ssw3131/running-art-mobile/actions/runs/44975011688)의 동일 tree 근거 재사용·필수 검사가 통과했다. 이번 정렬 로컬 브랜치는 정리했다.
+
+**후속 계획은 부분 완료다.** [팩 PR93](https://github.com/ssw3131/running-art-mobile/pull/93)은 단일 카탈로그(기본10/20·플러스30/60·확장60/120), 선택/내역 준비 및 확인된 결과 전용 완료 컴포넌트를 준비했다. 실제 구매는 비활성이고 완료 화면은 경로에 없다. 전체 UI46묶음271개·타입/린트와 웹10조건/큰 글씨 접근성 확인을 통과했지만 실제 회원/게스트 진입점 연결·팩 Android29/36·PR/main 반영은 남았다.
+
+[정책 PR92](https://github.com/ssw3131/running-art-mobile/pull/92)는 11월22일 [초안3종·결정표·Figma 정정4건](../product/policies-draft-20261122/README.md)을 별도 작성했다. 기존 원문·시험 게시 이력은 유지했다. 환불 산식·유효기간·재구매·운영 보관 조건·시행일은 미정이며 정책은 미게시다.
+
+11:35KST 기준 기존 클라우드 채팅이 PR90에 정렬 main을 합친 `9cdc172`의 [필수 검사44976662660](https://github.com/ssw3131/running-art-mobile/actions/runs/44976662660)를 실행 중이다. 사용자 지시에 따라 이 채팅은 PR90 수정/병합을 하지 않고 **그 병합 뒤 최신 main에서 팩 진입점·공통 기획을 연결한다.** 미병합 팩/정책 브랜치는 보존하고 PR92는 후속 최종 결과를 덧붙일 수 있게 유지한다. [실행 기록과 재개 지점](../history/executed-plans/2026-11-22-1016-course-packs-policy.md)을 따른다. 실제 결제·운영 서버/DB·정책 게시·휴대폰 설치는 수행하지 않았다.
+
 ## 2026-11-21 문의 키보드·저장10회 최신 APK 릴리스 공개 완료
 
 사용자 요청으로20:35:11KST [preview217411799 릴리스](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261121.217411799)를 공개했다. [기본 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217411799/runpen-preview-969fa1df6f7e-217411799.apk)는 이전 GitHub preview/신규 설치용이며, [legacy 호환 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261121.217411799/runpen-preview-969fa1df6f7e-217411799-legacy.apk)는 기존 PC 테스트 서명/이번 신형폰 설치본용이다. 내용·버전은 같고 서명만 다르다. 기존 앱을 삭제하지 않으며 이미217411799면 재설치가 필요 없다.
