@@ -70,6 +70,8 @@ Sync는 추적/새 파일 변경이 있으면 멈추고 ahead/diverged 브랜치
 
 ## APK 생성·다운로드
 
+2026-11-22 최신 독립 실행본은 [preview217513425 릴리스](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261122.217513425)에서 GitHub 로그인 없이 직접 받습니다. [기본 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261122.217513425/runpen-preview-edc1114fd9f1-217513425.apk)는 신규 설치·기존 GitHub preview/A7용, [호환 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261122.217513425/runpen-preview-edc1114fd9f1-217513425-legacy.apk)는 기존 PC 테스트 서명/신형폰용입니다. 내용·버전은 같고 서명만 다르므로 기존 앱을 삭제하지 말고 맞는 파일로 업데이트합니다. [빌드·서명·공개 다운로드 검증](../quality/latest-apk-release-20261122.md). 이번 새 파일의 폰 재설치는 수행하지 않았습니다.
+
 GitHub Actions의 **Handset APK → Run workflow**에서 워크플로 브랜치는 main으로 두고 source_ref와 kind를 선택합니다. source_ref는 main, 저장소의 codex/* 브랜치 또는 해당 브랜치에서 도달 가능한 전체 SHA만 허용합니다. 빌드 기능을 포함한 커밋을 선택해야 합니다.
 
 | kind | 용도 |

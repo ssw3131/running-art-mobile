@@ -1,5 +1,7 @@
 # RunPen — Running Art Mobile
 
+**최신 설치파일 — 2026-11-22 preview217513425:** [기본 APK(신규 설치·A7·GitHub preview)](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261122.217513425/runpen-preview-edc1114fd9f1-217513425.apk) · [호환 APK(기존 PC 서명·신형폰)](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261122.217513425/runpen-preview-edc1114fd9f1-217513425-legacy.apk) · [릴리스·설치 안내](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261122.217513425). GitHub 로그인·PC·Metro 없이 다운로드/실행하며 온라인 기능에는 인터넷이 필요합니다. 기존 앱을 삭제하지 말고 같은 서명의 파일로 업데이트하세요. 최신 통합 소스edc1114의 파일 검증·공개 다운로드를 확인했고 이번 새 APK의 폰 재설치는 하지 않았습니다. [검증 범위](docs/quality/latest-apk-release-20261122.md). 아래 날짜별 기록의 과거 다운로드 링크와 구분합니다.
+
 **처음 참여하는 분:** [설치·사용 안내 — 개발 / PC 화면 확인 / 폰 검증](docs/development/project-usage.md). 목적별 준비물·설치 명령·APK 받는 법을 먼저 확인하세요.
 
 **2026-10-31 클라우드 중심 개발·최소 PC 환경:** Codex 클라우드에서 수정/검사하고 GitHub Actions에서 휴대폰용 development/preview APK를 수동 생성한다. 기본 PC 폴더는 `D:\running-art\running-art-mobile`이며 Node·ADB·Metro를 사용한다. C: 백업·복원 검증 후 복구 원본과 불필요한 로컬 빌드 도구/압축파일을 정리했다. 구현 PR/main 전체 CI와 두 APK 빌드는 통과했으며, 실제 신규 Cloud 작업·휴대폰/다른 PC 검증은 남았다. 아래 과거 로컬 전체 빌드 안내보다 [현재 사용법](docs/development/cloud-preview.md)과 [실행 결과·남은 작업](docs/history/executed-plans/2026-10-31-1629-project-recovery-setup.md)을 우선한다.
