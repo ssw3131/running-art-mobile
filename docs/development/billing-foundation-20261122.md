@@ -40,4 +40,4 @@ Auth 서버 확인은 HTTP 경계에서 수행한다. SQL은 `auth.users` 직접
 4. 원자적 지급 후 consume 재시도, RTDN·voided 복구와 필요한 서버 토큰 보관. 현재 해시만으로는 Google 재조회/consume 작업을 재구성할 수 없다.
 5. 앱 구매·내역/복원·완료 연결과 실제 테스트 결제 검증. 내부 테스트용 잠정 규칙을 출시 정책으로 자동 채택하지 않는다.
 
-운영 DB·서버·정책 게시와 휴대폰 설치는 이번 작업에서 수행하지 않는다. [검증 기록](../quality/billing-foundation-20261122.md)과 [실행 기록](../history/executed-plans/2026-11-22-1559-billing-foundation.md)을 함께 본다.
+최초 소스 구현 범위에는 운영 DB·서버·정책 게시·휴대폰 설치가 포함되지 않았다. 후속 사용자 요청으로 preview217503281의 S942N 설치만·A7 설치/실기기 검증을 완료했으며 운영 결제/DB·정책 게시는 계속 후속이다. [휴대폰 결과와 한계](../quality/billing-handset-20261122.md), [전체 CI](../quality/billing-foundation-20261122.md), [실행 기록](../history/executed-plans/2026-11-22-1559-billing-foundation.md)을 함께 본다.
