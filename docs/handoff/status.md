@@ -1,5 +1,11 @@
 # 현재 상태와 인수인계
 
+## 2026-11-22 최신 main APK 생성·직접 다운로드 공개 완료
+
+사용자 요청으로 mainedc1114의 preview217513425를 새로 빌드해21:36:38KST [릴리스454436176](https://github.com/ssw3131/running-art-mobile/releases/tag/v0.1.0-preview.20261122.217513425)에 공개했다. [기본 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261122.217513425/runpen-preview-edc1114fd9f1-217513425.apk)는 신규/GitHub/A7용, [호환 APK](https://github.com/ssw3131/running-art-mobile/releases/download/v0.1.0-preview.20261122.217513425/runpen-preview-edc1114fd9f1-217513425-legacy.apk)는 기존 PC 테스트 서명/신형폰용이다. 기존 앱을 삭제하지 않고 업데이트한다.
+
+빌드45021865264·타입/린트·서명/패키지 검사를 통과했고 서명 외 내용1,576개가 같다. 자산7개 서버 digest/크기와 인증 없는 전체 다운로드 HTTP200·SHA256/바이트 일치, 태그의 정확한 소스를 확인했다. 이전 설치본217503281 이후 제품 차이는 문서뿐이며 이번 새 APK의 폰 재설치는 하지 않았다. 이전 기기 설치 결과와 공개 다운로드 버전을 구분한다. [검증·한계](../quality/latest-apk-release-20261122.md)·[실행 기록](../history/executed-plans/2026-11-22-2120-latest-apk-release.md). 기록의 최종 문서 PR/main 검사·PC 동기화·브랜치 정리는 해당 PR 본문을 따른다.
+
 ## 2026-11-22 남은 원격 변경·정책 초안 통합
 
 사용자 ‘원격에서 병합안된것도 다 합쳐줘’ 요청으로 실제 원격9개(main 포함)와 열린 PR 전체를 조회했다. 새로 합칠 변경은 [정책 초안 PR92](https://github.com/ssw3131/running-art-mobile/pull/92) 하나다. 최신 main08f4d26을 통합하고 인수인계·실행 이력·목록의 충돌은 양쪽 기록을 보존해 해결했다. [회신 전 초안](../product/policies-draft-20261122/README.md)과 확정 회신·현재 구현을 구분했다. 아래의 PR92 미병합·정책 미정 기록은 각 시점의 이력이며 최종 PR/main 검사·병합·PC 동기화/정리 결과는 PR92 본문을 따른다.
