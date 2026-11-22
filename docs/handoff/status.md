@@ -1,5 +1,9 @@
 # 현재 상태와 인수인계
 
+## 2026-11-22 유료 팩 구매 검증 기반 개발
+
+테스트 구매 검증·소유권/중복 원장·구매 내역 계약을 구현했고 후속 [정책 회신](../product/policy-decision-reply-20261122.md)의 가격 안내·환불/FIFO 계산·만19세 자기확인·고도 UI/자동 조회 제거를 반영했다. 기본 비활성이며 검증된 구매도 `not_granted`로 남긴다. 기존 생성/저장 횟수를 유지한다. 타입·린트, UI299개·결제/정책 Node18개와 관련 사용량 회귀, 웹13조건을 통과했다. PR/main 검사는 진행 중이고 실제 결제·지급·환불 통합·운영 반영은 후속이다. [정책 대조/남은 항목](../product/policy-implementation-20261122.md)·[개발 계약](../development/billing-foundation-20261122.md)·[검증](../quality/billing-foundation-20261122.md)·[실행 기록](../history/executed-plans/2026-11-22-1559-billing-foundation.md).
+
 ## 2026-11-22 팩 진입 통합·PR/main 검사 완료
 
 PR90/main f5e73ff를 통합하고 마이페이지·이용/소진 안내·회원/게스트 경로에 팩 선택과 구매 내역 준비 화면을 연결했다. 실제 남은 횟수를 표시하며 구매는 비활성이다. [PR93](https://github.com/ssw3131/running-art-mobile/pull/93)은 main0f0ac3d에 반영됐다. 최종44988058902의 타입/린트·UI49묶음299개·로직634개(기존skip1)·API·Android29 8단계/36 16단계·정적4화면 차이0·자료/사용량 보존·정리, main44991474048의 동일 tree 증거 재사용·필수 게이트가 통과했다. 최초 실패와 API29 UI 수집 종료 경고1건을 [통합 검증](../quality/packs-preparation-20261122.md)에 보존했다. 정책 초안 PR92·실제 결제·정책 게시·운영 구조 변경은 별도이며 이번 결과 문서의 검사·병합·브랜치 정리는 해당 문서 PR의 실제 상태를 따른다.

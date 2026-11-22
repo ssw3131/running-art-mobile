@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "scripts/qa/signup_membership.py",
+    "src/app/course-terrain.tsx",
+    "src/features/auth/ServiceStack.tsx",
+    "src/features/course-generation/CourseMetrics.tsx",
+    "src/features/course-generation/DifficultyTag.tsx",
+    "src/features/course-generation/use-recommendation-terrain.ts",
+    "src/features/membership/ConsentForm.tsx",
+    "src/features/membership/SignupScreen.tsx",
+    "src/features/packs/PackCard.tsx",
+    "src/features/packs/PackSelection.tsx",
+    "src/features/running/CompletedDetail.tsx",
+    "src/features/terrain/CourseTerrainScreen.tsx",
+    "src/features/terrain/TerrainPanel.tsx",
+    "src/features/terrain/use-terrain.ts",
+    "src/modules/packs/catalog.ts",
+    "src/modules/support/content.ts",
+    "tests/components/achievements.test.tsx",
+    "tests/components/course-detail.test.tsx",
+    "tests/components/packs.test.tsx",
+    "tests/components/signup-screen.test.tsx",
+    "tests/components/signup.test.tsx",
+    "tests/integration/membership.test.mjs",
+    "src/modules/packs/policy.ts",
+    "src/modules/packs/purchases.ts",
+    "supabase/functions/_shared/billing-backend.ts",
+    "supabase/functions/_shared/billing-google.ts",
+    "supabase/functions/_shared/billing-handler.ts",
+    "supabase/functions/_shared/billing-model.ts",
+    "supabase/migrations/20261122070123_billing_receipt_foundation.sql",
+    "tests/billing-db.test.mjs",
+    "tests/billing-foundation.test.mjs",
+    "tests/helpers/billing-integration.mjs",
+    "tests/pack-policy.test.mjs"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-22 준비와 무관한 결제 기반 구현 요청, 이후 사용자가 전달한 정책 최종 회신서를 함께 반영한다. 원문은 docs/product/policy-decision-reply-20261122.md에 보존한다.",
+  "before": "팩은 준비 화면이고 서버 구매 검증 원장과 환불 계산이 없었다. 가입 연령 확인이 없고 완주 상세가 고도를 자동 조회했다.",
+  "after": "TEST/KR 영수증 검증·소유권/중복/취소 원장·내역 파서를 준비하되 지급/구매는 비활성이다. 확정 가격 안내와 환불·FIFO 계산, 가입19세 자기확인과 고도 UI/자동 조회 제거를 반영한다.",
+  "invariants": [
+    "기존 계정·코스·러닝·생성/저장 카운터와 운영자 추가 생성권을 변경하지 않는다.",
+    "구매 확인과 지급 완료를 구분한다. 운영 DB/서버/정책 게시와 결제·지급·환급은 실행하지 않는다.",
+    "실제 나이 인증·법률/계약 확인·운영 기간별 삭제를 완료했다고 주장하지 않는다. 회신서의 미검증 항목은 구현 대조표에 남긴다."
+  ],
+  "tests": [
+    {
+      "path": "tests/billing-foundation.test.mjs",
+      "reason": "Google 응답·소유자·테스트 계정/국가·HTTP 입력·비밀값 비노출·기본 비활성을 검증한다."
+    },
+    {
+      "path": "tests/billing-db.test.mjs",
+      "reason": "중복·취소 단조성·RLS/실행 권한·커서/탈퇴 재사용 차단을 검사한다."
+    },
+    {
+      "path": "tests/helpers/billing-integration.mjs",
+      "reason": "실제 격리 Supabase에서12개 동시 영수증과 취소·탈퇴 경합을 확인한다."
+    },
+    {
+      "path": "tests/pack-policy.test.mjs",
+      "reason": "환불6예시·정확한 올림/상한·FIFO/무료·예약/환불 제한과 고도 UI 제거를 확인한다."
+    },
+    {
+      "path": "tests/components/signup.test.tsx",
+      "reason": "전체 약관 동의만으로 완료할 수 없고 직접19세 확인이 필요하다."
+    },
+    {
+      "path": "tests/components/packs.test.tsx",
+      "reason": "예정가/현재가·혜택, 준비상태와 완료 입력 스냅샷을 확인한다."
+    },
+    {
+      "path": "tests/components/achievements.test.tsx",
+      "reason": "고도 UI 제거 후 완주 상세의 공유와 재도전 동작을 보존한다."
+    }
+  ],
+  "visual": {
+    "status": "changed",
+    "reason": "팩의 두 가격 구분·구매 안내, 가입 연령 체크와 추정치 문구, 완주 상세의 고도 행 제거.",
+    "evidence": [
+      "docs/quality/billing-foundation-20261122.md에서 실제 컴포넌트 웹 렌더와 작은 화면/큰 글씨 검토를 기록한다. 정적4화면의 기준/마스크는 유지한다."
+    ]
+  },
+  "native": "수정한 signup_membership.py의 연령 미확인/확인과 기존 packs 작은 화면·비활성·자료/횟수 보존을 포함해 ready PR Android29/36 전체 검사를 수행한다. 실제 기기 설치는 다른 채팅 범위다."
+}
