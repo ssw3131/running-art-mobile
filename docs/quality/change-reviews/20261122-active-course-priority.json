@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "paths": [
+    "src/modules/courses/ordering.ts",
+    "src/features/courses/CoursesScreen.tsx",
+    "src/features/service/HomeScreen.tsx",
+    "src/features/running/SavedCourseChooser.tsx",
+    "tests/course-priority.test.mjs",
+    "tests/components/archive.test.tsx",
+    "tests/components/home.test.tsx",
+    "tests/components/running-chooser.test.tsx"
+  ],
+  "behavior": "changed",
+  "decision": "2026-11-22 사용자 승인: 진행·일시정지·중단 복구 중 코스, 종료한 미완주, 나머지 순으로 분리한다. Figma697:2991의 진행 중 맨앞 요구를 보완하며 PR90의 게스트/횟수 작업과 분리한다.",
+  "before": "진행 중과 종료한 미완주가 같은 순위여서 오래된 진행 코스가 새 미완주6개 뒤로 밀려 홈 최대5개에서 사라졌다. 홈/보관함은 활성 시도도 미완주로 표시했다.",
+  "after": "계정별 동일 코스 사본의 최신 시도를 기준으로 진행 중0·종료 미완주1·나머지2를 LIMIT/OFFSET 전에 적용한다. 그룹 내 저장 최신순 유지, 세 목록의 진행 중/미완주 문구 일치.",
+  "invariants": [
+    "코스 ID 또는 동일 불변 사본 해시로 연결하며 다른 계정 기록은 제외한다.",
+    "정렬 조회는 코스/러닝/좌표/사용량을 변경하거나 GPS를 시작하지 않는다.",
+    "완주 시 순위와 상태를 다시 계산하며 기존 선택·페이지 이동·계정 전환 보호를 유지한다."
+  ],
+  "tests": [
+    {"path":"tests/course-priority.test.mjs","reason":"실제 SQLite/repository에서 running/paused/interrupted와 새 stopped6개, 페이지 경계/홈5개, 해시 연결/타인 격리/조회 불변/완주 재정렬을 확인한다."},
+    {"path":"tests/components/home.test.tsx","reason":"홈에서 진행 중/미완주를 구분하고 명시적 상세 이동을 유지한다."},
+    {"path":"tests/components/archive.test.tsx","reason":"보관함 상태와 선택 강조를 독립적으로 표시한다."},
+    {"path":"tests/components/running-chooser.test.tsx","reason":"러닝 선택 상태 표기를 통일하고 선택만으로 GPS를 시작하지 않는다."}
+  ],
+  "visual": {
+    "status":"changed",
+    "reason":"진행 중 코스의 위치와 상태 태그 문구만 변경한다. 기존 미완주 및 완료/미시작 목록의 표현은 유지한다.",
+    "evidence":["Figma697:2991 메모와35:4724 화면을 조회했다. 로컬 UI 상태 회귀 및 최종 Android29/36 검증 결과는 실행 기록에 후속 기록한다."]
+  },
+  "native":"네이티브 의존성/권한/DB 구조 변경 없음. 정렬/표시 관련 회귀와 최종 ready PR Android29/36 전체 검사 및 정적4화면 비교를 수행한다."
+}

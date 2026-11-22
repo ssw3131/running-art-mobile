@@ -62,6 +62,17 @@ test('UI-HOME-02: unfinished course stays in saved courses, not completed histor
   expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'course'}});
 });
 
+test('home distinguishes an active course from an ended unfinished attempt',async()=>{
+ const active={id:'active',name:'진행 코스',lengthKm:3,createdAt:1000,source:'osm',unfinished:true,inProgress:true};
+ const stopped={...active,id:'stopped',name:'미완주 코스',inProgress:false};
+ mockRead.mockResolvedValue({...data(),courseCount:2,courses:[{course:active,paths:[]},{course:stopped,paths:[]}],completed:[]});
+ await render(<HomeScreen/>);
+ expect(screen.getByTestId('home-course-progress-active')).toHaveTextContent('진행 중');
+ expect(screen.getByTestId('home-course-progress-stopped')).toHaveTextContent('미완주');
+ await fireEvent.press(screen.getByTestId('home-course-active'));
+ expect(mockPush).toHaveBeenCalledWith({pathname:'/courses/[id]',params:{id:'active'}});
+});
+
 test('UI-HOME-03: history opens the real record and matching archive, without guest entry', async () => {
   mockRead.mockResolvedValue({ ...data(), runCount: 1, recent: [{ run, paths: [] }] });
   await render(<HomeScreen />);

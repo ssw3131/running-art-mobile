@@ -16,7 +16,7 @@ import { openServiceTab } from '@/features/service/open-service-tab';
 function SavedCourseItem({course,selected,onSelect}:{course:CourseSummary;selected:boolean;onSelect():void}){
   const c=useThemeColors();
   const preview=useSavedCoursePresentation(course.id);
-  const statusLabel=course.inProgress?'진행중':'미완주';
+  const statusLabel=course.inProgress?'진행 중':'미완주';
   return <View style={{minHeight:100,padding:9,borderRadius:20,borderWidth:1,borderColor:selected?c.selected:'transparent',backgroundColor:c.surface,boxShadow:'0px 0px 10px rgba(0,0,0,0.12)',flexDirection:'row',alignItems:'center'}}><Pressable testID={`run-saved-course-${course.id}`} accessibilityRole="button" accessibilityLabel={`${course.name}, ${course.lengthKm.toFixed(2)}킬로미터${course.unfinished?`, ${statusLabel}`:''}`} accessibilityState={{selected}} onPress={onSelect} style={{flex:1,flexDirection:'row',alignItems:'center',gap:20}}>
     <SavedCourseThumbnail snapshot={preview.snapshot} failed={preview.failed}/>
     <View style={{flex:1,gap:3}}>
