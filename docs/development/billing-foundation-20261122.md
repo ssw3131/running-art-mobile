@@ -6,7 +6,7 @@
 
 - `supabase/functions/_shared/billing-*`는 Request/Response·fetch 기반의 서버 모듈이다. 배포 진입점이나 환경변수로 켜지는 앱 경로를 추가하지 않았다. 후속 전용 Cloud Run 서비스에서 조합할 수 있다.
 - `createGooglePurchaseReader`는 고정된 `com.runningart.mobile.dev`의 Google API를 조회한다. 토큰 발급은 서버 런타임 신원 어댑터로 주입한다. 앱의 패키지·가격·혜택·계정 주장을 받지 않는다.
-- `createBillingHandler`의 기본 모드는 `disabled`다. `verify-test-only`도 구매 시작은 항상 false이며 서버 허용 계정·가입 상태·Google TEST 구매를 모두 요구한다. 등록 상품 ID와 팩 연결은 서버 설정으로 주입하며 이번 소스에 실제 상품을 등록하거나 가격·혜택을 확정하지 않았다.
+- `createBillingHandler`의 기본 모드는 `disabled`다. `verify-test-only`도 구매 시작은 항상 false이며 서버 허용 계정·가입 상태·Google TEST 구매를 모두 요구한다. 상품 ID와 팩 연결은 서버 설정으로 주입한다. 가격·혜택은 정책 회신을 코드에 반영했으며 실제 Play 상품 등록과 스토어 가격 대조는 후속이다.
 - `createBillingBackend`는 Supabase Auth 서버에서 사용자를 확인한 뒤 본인 원장 RPC만 호출한다. 기존 사용량 주체 연결·카운터·운영자 추가 생성 횟수는 건드리지 않는다.
 - `src/modules/packs/purchases.ts`는 구매 확인 상태와 내역 페이지를 검증한다. 확인되지 않은 응답을 빈 내역으로 바꾸지 않으며 토큰·계정 식별자 등 추가 필드를 보존하지 않는다. 실제 화면은 기존 준비 상태다.
 
