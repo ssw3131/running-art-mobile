@@ -17,7 +17,7 @@ function CourseRow({course,selected,onSelect}:{course:CourseSummary;selected:boo
   <Pressable testID={`course-row-${course.id}`} accessibilityRole="button" accessibilityState={{selected}} onPress={onSelect} style={{minHeight:100,padding:10,borderRadius:radius.card,backgroundColor:c.surface,borderWidth:selected?1:0,borderColor:c.selected,boxShadow:'0px 0px 5px rgba(0,0,0,0.15)',flexDirection:'row',alignItems:'center',gap:16}}>
    <SavedCourseThumbnail snapshot={preview.snapshot} failed={preview.failed}/>
    <View style={{flex:1,gap:3}}>
-    <View style={{flexDirection:'row',alignItems:'center',gap:6}}><AppText weight="bold" numberOfLines={2} style={{flexShrink:1}}>{course.name}</AppText>{course.unfinished&&<AppText variant="caption" weight="bold" style={{fontSize:10,color:c.onAction,backgroundColor:c.selected,borderRadius:10,paddingHorizontal:6}}>미완주</AppText>}</View>
+    <View style={{flexDirection:'row',alignItems:'center',gap:6}}><AppText weight="bold" numberOfLines={2} style={{flexShrink:1}}>{course.name}</AppText>{course.unfinished&&<AppText testID={`course-status-${course.id}`} variant="caption" weight="bold" style={{fontSize:10,color:c.onAction,backgroundColor:c.selected,borderRadius:10,paddingHorizontal:6}}>{course.inProgress?'진행 중':'미완주'}</AppText>}</View>
     <AppText variant="label" weight="bold">{course.lengthKm.toFixed(2)} km</AppText>
     <AppText variant="caption" weight="bold">약 {estimatedRunningMinutes(course.lengthKm)}분</AppText>
     <AppText numberOfLines={1} variant="caption" style={{color:c.muted}}>{preview.failed?'주소를 확인하지 못했어요.':preview.address}</AppText>
